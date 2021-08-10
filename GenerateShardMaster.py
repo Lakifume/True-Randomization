@@ -28,14 +28,14 @@ skip_list = [
 log = []
 
 #Content
-with open("Data\\ShardMaster\\Content\\PB_DT_ShardMaster.json", "r") as file_reader:
+with open("Data\\ShardMaster\\Content\\PB_DT_ShardMaster.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 #Data
-with open("Data\\ShardMaster\\ShardRange.json", "r") as file_reader:
+with open("Data\\ShardMaster\\ShardRange.json", "r", encoding="utf-8") as file_reader:
     data = json.load(file_reader)
 
-with open("Data\\ShardMaster\\Translation.json", "r") as file_reader:
+with open("Data\\ShardMaster\\Translation.json", "r", encoding="utf-8") as file_reader:
     translation = json.load(file_reader)
 
 if data["Value"]["Min"] <= 100:
@@ -91,7 +91,7 @@ def eye_max():
 
 def write_shard(patched):
     if patched:
-        with open("Serializer\\PB_DT_ShardMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_ShardMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -107,7 +107,7 @@ def reset_shard():
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
 
 def write_shard_log():
-    with open("SpoilerLog\\Shard.json", "w") as file_writer:
+    with open("SpoilerLog\\Shard.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
 
 def reset_shard_log():

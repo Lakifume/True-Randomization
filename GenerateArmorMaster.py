@@ -3,7 +3,7 @@ import os
 import shutil
 
 #Content
-with open("Data\\ArmorMaster\\Content\\PB_DT_ArmorMaster.json", "r") as file_reader:
+with open("Data\\ArmorMaster\\Content\\PB_DT_ArmorMaster.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 def no_black_belt():
@@ -12,7 +12,7 @@ def no_black_belt():
 
 def write_armor(patched):
     if patched:
-        with open("Serializer\\PB_DT_ArmorMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_ArmorMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")

@@ -18,16 +18,16 @@ play_id = []
 play_name = []
 restrictions = False
 
-with open("Data\\BossRooms.json", "r") as file_reader:
+with open("Data\\BossRooms.json", "r", encoding="utf-8") as file_reader:
     boss_room = json.load(file_reader)
     
-with open("Data\\ConnectedRooms.json", "r") as file_reader:
+with open("Data\\ConnectedRooms.json", "r", encoding="utf-8") as file_reader:
     connected_room = json.load(file_reader)
 
-with open("Data\\MusicTranslation.json", "r") as file_reader:
+with open("Data\\MusicTranslation.json", "r", encoding="utf-8") as file_reader:
     music_translate = json.load(file_reader)
 
-with open("Data\\PlayTranslation.json", "r") as file_reader:
+with open("Data\\PlayTranslation.json", "r", encoding="utf-8") as file_reader:
     play_translate = json.load(file_reader)
 
 for i in music_translate:
@@ -525,7 +525,7 @@ class Main(QMainWindow):
         self.room_list = []
         self.change_title("")
         self.unsaved = True
-        with open(filename, "r") as file_reader:
+        with open(filename, "r", encoding="utf-8") as file_reader:
             self.content = json.load(file_reader)
         self.draw_map()
         self.use_restr_action()
@@ -538,7 +538,7 @@ class Main(QMainWindow):
         self.update_offsets()
         self.same_check()
         self.adj_check()
-        with open(filename, "w") as file_writer:
+        with open(filename, "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(self.content, indent=2))
         self.change_title("")
         self.unsaved = False

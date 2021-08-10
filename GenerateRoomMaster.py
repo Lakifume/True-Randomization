@@ -48,7 +48,7 @@ def reset_map_icon():
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset")
 
 def write_map_log():
-    with open("SpoilerLog\\Map.json", "w") as file_writer:
+    with open("SpoilerLog\\Map.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
 
 def reset_map_log():

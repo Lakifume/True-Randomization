@@ -9,11 +9,11 @@ count = []
 log = []
 
 #Content
-with open("Data\\BookMaster\\Content\\PB_DT_BookMaster.json", "r") as file_reader:
+with open("Data\\BookMaster\\Content\\PB_DT_BookMaster.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 #Data
-with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Translation.json", "r", encoding="utf-8") as file_reader:
     translation = json.load(file_reader)
 
 for i in range(7):
@@ -64,7 +64,7 @@ def any_pick_true(array):
     return item
 
 def write_book():
-    with open("Serializer\\PB_DT_BookMaster.json", "w") as file_writer:
+    with open("Serializer\\PB_DT_BookMaster.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(content, indent=2))
     root = os.getcwd()
     os.chdir("Serializer")
@@ -78,7 +78,7 @@ def reset_book():
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset")
 
 def write_book_log():
-    with open("SpoilerLog\\Library.json", "w") as file_writer:
+    with open("SpoilerLog\\Library.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
 
 def reset_book_log():

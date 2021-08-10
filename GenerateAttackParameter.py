@@ -3,13 +3,13 @@ import os
 import shutil
 
 #Content
-with open("Data\\BallisticMaster\\Content\\PB_DT_BallisticMaster.json", "r") as file_reader:
+with open("Data\\BallisticMaster\\Content\\PB_DT_BallisticMaster.json", "r", encoding="utf-8") as file_reader:
     ballistic_content = json.load(file_reader)
 
-with open("Data\\BulletMaster\\Content\\PB_DT_BulletMaster.json", "r") as file_reader:
+with open("Data\\BulletMaster\\Content\\PB_DT_BulletMaster.json", "r", encoding="utf-8") as file_reader:
     bullet_content = json.load(file_reader)
 
-with open("Data\\CollisionMaster\\Content\\PB_DT_CollisionMaster.json", "r") as file_reader:
+with open("Data\\CollisionMaster\\Content\\PB_DT_CollisionMaster.json", "r", encoding="utf-8") as file_reader:
     collision_content = json.load(file_reader)
 
 def normal_bomber():
@@ -95,7 +95,7 @@ def normal_bael():
 
 def write_ballistic(patched):
     if patched:
-        with open("Serializer\\PB_DT_BallisticMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_BallisticMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(ballistic_content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -108,7 +108,7 @@ def write_ballistic(patched):
 
 def write_bullet(patched):
     if patched:
-        with open("Serializer\\PB_DT_BulletMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_BulletMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(bullet_content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -121,7 +121,7 @@ def write_bullet(patched):
 
 def write_collision(patched):
     if patched:
-        with open("Serializer\\PB_DT_CollisionMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_CollisionMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(collision_content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")

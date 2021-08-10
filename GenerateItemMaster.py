@@ -10,11 +10,11 @@ thousand = []
 log = []
 
 #Content
-with open("Data\\ItemMaster\\Content\\PB_DT_ItemMaster.json", "r") as file_reader:
+with open("Data\\ItemMaster\\Content\\PB_DT_ItemMaster.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 #Data
-with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Translation.json", "r", encoding="utf-8") as file_reader:
     translation = json.load(file_reader)
 
 i = 10
@@ -114,7 +114,7 @@ def rand_shop(scale):
 
 def write_item(patched):
     if patched:
-        with open("Serializer\\PB_DT_ItemMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_ItemMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -130,7 +130,7 @@ def reset_item():
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
 
 def write_item_log():
-    with open("SpoilerLog\\Shop.json", "w") as file_writer:
+    with open("SpoilerLog\\Shop.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def reset_item_log():

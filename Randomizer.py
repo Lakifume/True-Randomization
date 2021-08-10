@@ -78,11 +78,11 @@ sound_files = [
 
 #Config
 
-with open("Data\\config.json", "r") as file_reader:
+with open("Data\\config.json", "r", encoding="utf-8") as file_reader:
     config = json.load(file_reader)
 
 def writing():
-    with open("Data\\config.json", "w") as file_writer:
+    with open("Data\\config.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(config, indent=2))
     sys.exit()
 

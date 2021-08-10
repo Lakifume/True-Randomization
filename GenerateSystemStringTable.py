@@ -3,7 +3,7 @@ import os
 import shutil
 
 #Content
-with open("Data\\SystemStringTable\\Content\\PBSystemStringTable.json", "r") as file_reader:
+with open("Data\\SystemStringTable\\Content\\PBSystemStringTable.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 def rename_difficulty(normal, hard, nightmare):
@@ -13,7 +13,7 @@ def rename_difficulty(normal, hard, nightmare):
 
 def write_system(patched):
     if patched:
-        with open("Serializer\\PBSystemStringTable.json", "w") as file_writer:
+        with open("Serializer\\PBSystemStringTable.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")

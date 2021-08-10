@@ -45,32 +45,32 @@ enemy_skip_list = [
 log = []
 
 #Content
-with open("Data\\DropRateMaster\\Content\\PB_DT_DropRateMaster.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Content\\PB_DT_DropRateMaster.json", "r", encoding="utf-8") as file_reader:
     item_content = json.load(file_reader)
 
-with open("Data\\QuestMaster\\Content\\PB_DT_QuestMaster.json", "r") as file_reader:
+with open("Data\\QuestMaster\\Content\\PB_DT_QuestMaster.json", "r", encoding="utf-8") as file_reader:
     quest_content = json.load(file_reader)
 
-with open("Data\\ScenarioStringTable\\Content\\PBScenarioStringTable.json", "r") as file_reader:
+with open("Data\\ScenarioStringTable\\Content\\PBScenarioStringTable.json", "r", encoding="utf-8") as file_reader:
     string_content = json.load(file_reader)
 
 #Data
-with open("Data\\DropRateMaster\\Chest.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Chest.json", "r", encoding="utf-8") as file_reader:
     chest_data = json.load(file_reader)
 
-with open("Data\\DropRateMaster\\Enemy.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Enemy.json", "r", encoding="utf-8") as file_reader:
     enemy_data = json.load(file_reader)
 
-with open("Data\\DropRateMaster\\Shard.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Shard.json", "r", encoding="utf-8") as file_reader:
     shard_data = json.load(file_reader)
 
-with open("Data\\QuestMaster\\Requirements.json", "r") as file_reader:
+with open("Data\\QuestMaster\\Requirements.json", "r", encoding="utf-8") as file_reader:
     item_req_data = json.load(file_reader)
 
-with open("Data\\QuestMaster\\EnemyLocationInfo.json", "r") as file_reader:
+with open("Data\\QuestMaster\\EnemyLocationInfo.json", "r", encoding="utf-8") as file_reader:
     enemy_req_data = json.load(file_reader)
 
-with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Translation.json", "r", encoding="utf-8") as file_reader:
     translation = json.load(file_reader)
 
 max_ratio = 0
@@ -800,7 +800,7 @@ def any_pick(item_array, remove, item_type):
 
 def write_drop(patched):
     if patched:
-        with open("Serializer\\PB_DT_DropRateMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_DropRateMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(item_content, ensure_ascii=False, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -812,7 +812,7 @@ def write_drop(patched):
         shutil.copyfile("Serializer\\PB_DT_DropRateMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
 
 def write_quest():
-    with open("Serializer\\PB_DT_QuestMaster.json", "w") as file_writer:
+    with open("Serializer\\PB_DT_QuestMaster.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(quest_content, ensure_ascii=False, indent=2))
     root = os.getcwd()
     os.chdir("Serializer")
@@ -822,7 +822,7 @@ def write_quest():
     os.remove("Serializer\\PB_DT_QuestMaster.json")
 
 def write_scenario():
-    with open("Serializer\\PBScenarioStringTable.json", "w") as file_writer:
+    with open("Serializer\\PBScenarioStringTable.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(string_content, ensure_ascii=False, indent=2))
     root = os.getcwd()
     os.chdir("Serializer")
@@ -852,7 +852,7 @@ def write_drop_log():
     for i in enemy_data:
         log[1]["Value"][i["Key"]] = list(dict.fromkeys(log[1]["Value"][i["Key"]]))
         log[1]["Value"][i["Key"]].sort()
-    with open("SpoilerLog\\Item.json", "w") as file_writer:
+    with open("SpoilerLog\\Item.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def reset_drop_log():

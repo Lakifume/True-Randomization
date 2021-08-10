@@ -21,7 +21,7 @@ Todd = []
 Coachman = []
 
 #Content
-with open("Data\\DialogueTableItems\\Content\\PB_DT_DialogueTableItems.json", "r") as file_reader:
+with open("Data\\DialogueTableItems\\Content\\PB_DT_DialogueTableItems.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 #Data
@@ -100,7 +100,7 @@ def any_pick(array):
     return item
 
 def write_dialogue():
-    with open("Serializer\\PB_DT_DialogueTableItems.json", "w") as file_writer:
+    with open("Serializer\\PB_DT_DialogueTableItems.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(content, indent=2))
     root = os.getcwd()
     os.chdir("Serializer")

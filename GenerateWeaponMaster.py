@@ -6,14 +6,14 @@ import random
 log = []
 
 #Content
-with open("Data\\WeaponMaster\\Content\\PB_DT_WeaponMaster.json", "r") as file_reader:
+with open("Data\\WeaponMaster\\Content\\PB_DT_WeaponMaster.json", "r", encoding="utf-8") as file_reader:
     content = json.load(file_reader)
 
 #Data
-with open("Data\\WeaponMaster\\WeaponRange.json", "r") as file_reader:
+with open("Data\\WeaponMaster\\WeaponRange.json", "r", encoding="utf-8") as file_reader:
     data = json.load(file_reader)
 
-with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
+with open("Data\\DropRateMaster\\Translation.json", "r", encoding="utf-8") as file_reader:
     translation = json.load(file_reader)
 
 def rand_weapon(power, rate):
@@ -46,7 +46,7 @@ def rand_weapon(power, rate):
 
 def write_weapon(patched):
     if patched:
-        with open("Serializer\\PB_DT_WeaponMaster.json", "w") as file_writer:
+        with open("Serializer\\PB_DT_WeaponMaster.json", "w", encoding="utf-8") as file_writer:
             file_writer.write(json.dumps(content, indent=2))
         root = os.getcwd()
         os.chdir("Serializer")
@@ -62,7 +62,7 @@ def reset_weapon():
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
 
 def write_weapon_log():
-    with open("SpoilerLog\\Weapon.json", "w") as file_writer:
+    with open("SpoilerLog\\Weapon.json", "w", encoding="utf-8") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
 
 def reset_weapon_log():
