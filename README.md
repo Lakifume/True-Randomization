@@ -4,13 +4,13 @@ New and improved randomization options for Bloodstained randomizer
 
 # How to build from source
 
-
 Requirements:
 
 -latest version of Python
--latest version of Pyside6
--latest version of Pyinstaller
 
+-latest version of Pyside6
+
+-latest version of Pyinstaller
 
 Steps:
 
