@@ -2,7 +2,7 @@
 
 New and improved randomization options for Bloodstained randomizer
 
-# How to build from source
+## How to build from source
 
 Requirements:
 * latest version of Python
