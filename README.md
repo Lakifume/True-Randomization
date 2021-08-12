@@ -9,7 +9,6 @@ Requirements:
 
 -latest version of Python
 -latest version of Pyside6
-
 -latest version of Pyinstaller
 
 
