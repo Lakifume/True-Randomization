@@ -11,4 +11,4 @@ Requirements:
 
 Steps:
 * open cmd in the folder that contains the .py files
-* input this command: pyinstaller.exe --onefile --noconsole --icon=[Bloodstained/Map].ico [Randomizer/MapEditor].py
+* input "pyinstaller.exe --onefile --noconsole --icon=[Bloodstained/Map].ico [Randomizer/MapEditor].py"
