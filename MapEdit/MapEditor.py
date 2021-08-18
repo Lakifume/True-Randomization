@@ -88,8 +88,6 @@ class RoomItem(QGraphicsRectItem):
     def __init__(self, data, outline, fill, can_move, group_list, room_list, metadata=None, parent=None):
         super().__init__(0, 0, data.width, data.height, parent)
         self.setPos(data.offset_x, data.offset_z)
-        self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable | QGraphicsItem.ItemIsMovable)
-        self.setZValue(0 - (data.width/TILEWIDTH)*(data.height/TILEHEIGHT))
         self.setData(KEY_METADATA, metadata)
         self.setCursor(Qt.PointingHandCursor)
         
@@ -135,6 +133,18 @@ class Main(QMainWindow):
         self.reset()
         
     def initUI(self):
+        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: 18px}"
+        + "QGraphicsView{border: 0px}"
+        + "QMenuBar{background-color: #21222e}"
+        + "QMenu{background-color: #21222e}" 
+        + "QComboBox{background-color: #21222e}"
+        + "QMessageBox{background-color: #21222e}"
+        + "QDialog{background-color: #21222e}"
+        + "QPushButton{background-color: #21222e}"
+        + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: 18px}")
+        
+        #Graphics
+        
         self.scene = QGraphicsScene(self)
         self.view = QGraphicsView(self.scene, self)
         self.scene.selectionChanged.connect(self.selection_event)
@@ -146,13 +156,9 @@ class Main(QMainWindow):
         self.current_zoom = 1
         self.setCentralWidget(self.view)
         
-        background = QPixmap("Data\\background.png")
-        palette = QPalette()
-        palette.setBrush(QPalette.Window, background)
-        self.setPalette(palette)
-
+        #Menu
+        
         bar = self.menuBar()
-        bar.setStyleSheet("background-color: #21222e")
         file = bar.addMenu("File")
         edit = bar.addMenu("Edit")
         view_bar = bar.addMenu("View")
@@ -205,6 +211,8 @@ class Main(QMainWindow):
         restrictions = QAction("Boss restrictions", self)
         restrictions.triggered.connect(self.restrictions)
         help.addAction(restrictions)
+        
+        #Buttons
         
         reverse = QPushButton()
         reverse.setShortcut(QKeySequence(Qt.Key_D))
@@ -263,26 +271,38 @@ class Main(QMainWindow):
         self.zoom_out.setFixedSize(50, 30)
         self.zoom_out.setEnabled(False)
         
+        #Labels
+        
         self.lock_label = QLabel()
         self.lock_label.setPixmap(QPixmap("Data\\lock_icon.png"))
         
+        self.loading_label = QLabel()
+        self.loading_label.setPixmap(QPixmap("Data\\loading_icon.png"))
+        
+        #DropDownLists
+        
         self.music_drop_down = QComboBox()
-        self.music_drop_down.setStyleSheet("background-color: #21222e")
         self.music_drop_down.addItems(music_name)
         self.music_drop_down.currentIndexChanged.connect(self.music_drop_down_change)
         self.music_drop_down.setVisible(False)
         
         self.play_drop_down = QComboBox()
-        self.play_drop_down.setStyleSheet("background-color: #21222e")
         self.play_drop_down.addItems(play_name)
         self.play_drop_down.currentIndexChanged.connect(self.play_drop_down_change)
         self.play_drop_down.setVisible(False)
+        
+        #Layouts
         
         hbox_top = QHBoxLayout()
         hbox_top.addWidget(self.lock_label)
         hbox_top.addStretch(1)
         hbox_top.addWidget(self.music_drop_down)
         hbox_top.addWidget(self.play_drop_down)
+        
+        hbox_center = QHBoxLayout()
+        hbox_center.addStretch(1)
+        hbox_center.addWidget(self.loading_label)
+        hbox_center.addStretch(1)
         
         hbox_bottom = QHBoxLayout()
         hbox_bottom.addWidget(reverse)
@@ -299,14 +319,24 @@ class Main(QMainWindow):
         vbox = QVBoxLayout()
         vbox.addLayout(hbox_top)
         vbox.addStretch(1)
+        vbox.addLayout(hbox_center)
+        vbox.addStretch(1)
         vbox.addLayout(hbox_bottom)
         
-        self.view.setLayout(vbox)
+        #Window
         
+        self.view.setLayout(vbox)
         self.setMinimumSize(1200, 700)
         self.showMaximized()
-        self.setStyleSheet("QWidget{color: #ffffff; font-family: Cambria; font-size: 18px}" + "QGraphicsView{background:transparent; border: 0px}" + "QMessageBox{background-color: #21222e}" + "QDialog{background-color: #21222e}" + "QPushButton{background-color: #21222e}" + "QLabel{background-color: #21222e}" + "QToolTip{border: 1px solid white; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: 18px}")
         self.setWindowIcon(QIcon("Data\\icon.png"))
+        
+        #Background
+        
+        background = QPixmap("Data\\background.png")
+        palette = QPalette()
+        palette.setBrush(QPalette.Window, background)
+        self.show()
+        self.setPalette(palette)
     
     def open_file(self):
         self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="Custom", filter="*.json"))[0]
@@ -339,16 +369,18 @@ class Main(QMainWindow):
         global restrictions
         if self.use_restr.isChecked():
             restrictions = True
-            self.lock_label.setVisible(True)
+            self.lock_label.setPixmap(QPixmap("Data\\lock_icon.png"))
         else:
             restrictions = False
-            self.lock_label.setVisible(False)
+            self.lock_label.setPixmap(QPixmap("Data\\unlock_icon.png"))
         for i in self.room_list:
             if not i.can_move:
                 if restrictions:
                     i.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
                 else:
                     i.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable | QGraphicsItem.ItemIsMovable)
+            else:
+                i.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable | QGraphicsItem.ItemIsMovable)
     
     def show_out_action(self):
         for i in self.room_list:
@@ -505,18 +537,27 @@ class Main(QMainWindow):
             self.play_drop_down.setVisible(False)
     
     def load_from_json(self, filename):
+        self.unsaved = True
+        self.loading_label.setVisible(True)
+        
         self.scene.clear()
         self.room_list = []
         self.change_title("")
-        self.unsaved = True
+        
+        QApplication.processEvents()
+        
         with open(filename, "r") as file_reader:
             self.content = json.load(file_reader)
         self.draw_map()
         self.use_restr_action()
-        self.show_out_action()
         self.show_name_action()
         self.selection_event()
+        
         self.unsaved = False
+        self.loading_label.setVisible(False)
+        QApplication.processEvents()
+        
+        self.show_out_action()
     
     def save_to_json(self, filename):
         self.update_offsets()
@@ -990,7 +1031,7 @@ class Main(QMainWindow):
                 
                 #Text
                 
-                text = self.scene.addText(data.name.replace('_', '').replace('(', '').replace(')', ''), QFont("Impact"))
+                text = self.scene.addText(data.name.replace('_', '').replace('(', '').replace(')', ''), "Impact")
                 text.setDefaultTextColor(QColor("#ffffff"))
                 text.setTransform(QTransform.fromScale(0.25, -0.5))
                 text.setPos(data.width/2 - text.document().size().width()/8, data.height/2 + TILEHEIGHT/2 - 0.5)
@@ -1094,7 +1135,6 @@ class Main(QMainWindow):
 def main():
     app = QApplication(sys.argv)
     main = Main()
-    main.show()
     sys.exit(app.exec())
 
 if __name__ == '__main__':
