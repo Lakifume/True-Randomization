@@ -93,44 +93,44 @@ def normal_bael():
     collision_content[746]["Value"]["R00"] = 2.0
     collision_content[746]["Value"]["R01"] = 6.0
 
-def write_ballistic(patched):
-    if patched:
-        with open("Serializer\\PB_DT_BallisticMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(ballistic_content, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_BallisticMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_BallisticMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
-        os.remove("Serializer\\PB_DT_BallisticMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_BallisticMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
+def write_patched_ballistic():
+    with open("Serializer\\PB_DT_BallisticMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(ballistic_content, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_BallisticMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_BallisticMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
+    os.remove("Serializer\\PB_DT_BallisticMaster.json")
 
-def write_bullet(patched):
-    if patched:
-        with open("Serializer\\PB_DT_BulletMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(bullet_content, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_BulletMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_BulletMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
-        os.remove("Serializer\\PB_DT_BulletMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_BulletMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
+def write_ballistic():
+    shutil.copyfile("Serializer\\PB_DT_BallisticMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
 
-def write_collision(patched):
-    if patched:
-        with open("Serializer\\PB_DT_CollisionMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(collision_content, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_CollisionMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_CollisionMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
-        #os.remove("Serializer\\PB_DT_CollisionMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_CollisionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
+def write_patched_bullet():
+    with open("Serializer\\PB_DT_BulletMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(bullet_content, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_BulletMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_BulletMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
+    os.remove("Serializer\\PB_DT_BulletMaster.json")
+    
+def write_bullet():
+    shutil.copyfile("Serializer\\PB_DT_BulletMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
+
+def write_patched_collision():
+    with open("Serializer\\PB_DT_CollisionMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(collision_content, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_CollisionMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_CollisionMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
+    os.remove("Serializer\\PB_DT_CollisionMaster.json")
+
+def write_collision():
+    shutil.copyfile("Serializer\\PB_DT_CollisionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
 
 def reset_ballistic():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset"):

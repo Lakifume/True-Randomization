@@ -173,14 +173,6 @@ def give_map_help(item):
     item_content[6]["Value"]["RareIngredientQuantity"] = 1
     item_content[6]["Value"]["RareIngredientRate"] = 100.0
 
-def zangetsu_drops():
-    for i in item_content:
-        if i["Value"]["ItemType"] == "EItemType::Upgrade":
-            i["Value"]["RareItemId"] = "None"
-            i["Value"]["RareItemQuantity"] = 0
-            i["Value"]["RareItemRate"] = 0.0
-            i["Value"]["ItemType"] = "EItemType::None"
-
 def chaos_key():
     item_content[11]["Value"]["ItemType"] = "EItemType::Weapon"
     item_content[157]["Value"]["ItemType"] = "EItemType::" + random.choice(["Accessory", "Body", "Head", "Recipe", "Scarf"])
@@ -230,8 +222,10 @@ def rand_pool():
             item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateLow"])
         elif item_content[i]["Value"]["ShardRate"] != 100.0:
             item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateNormal"])
-        if item_content[i]["Key"][0:5] != item_content[i-1]["Key"][0:5]:
-            patch_enemy_entry(random.choice(enemy_type), i)
+        if item_content[i]["Key"][0:5] == "N3090" or item_content[i]["Key"][0:5] == "N3099":
+            patch_enemy_entry(random.choice(enemy_type), "ItemRateLow", i)
+        elif item_content[i]["Key"][0:5] != item_content[i-1]["Key"][0:5]:
+            patch_enemy_entry(random.choice(enemy_type), "ItemRateNormal", i)
     for i in enemy_index:
         if item_content[i]["Key"][0:5] == item_content[i-1]["Key"][0:5]:
             item_content[i]["Value"]["RareItemId"] = item_content[i-1]["Value"]["RareItemId"]
@@ -520,12 +514,12 @@ def patch_chest_entry(item_type, i):
         if chest_data[12]["Value"]["IsUnique"]:
             log[0]["Value"][item_type].append(translation["Value"][item_content[i]["Value"]["RareItemId"]])
     
-def patch_enemy_entry(item_type, i):
+def patch_enemy_entry(item_type, item_rate, i):
     if item_type == enemy_data[0]["Key"]:
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[0]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[0]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
@@ -535,7 +529,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[11]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[11]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[1]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[1]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
@@ -545,7 +539,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[2]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[2]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
@@ -555,7 +549,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[0]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[0]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
@@ -567,7 +561,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[11]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[11]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[1]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[1]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
@@ -577,7 +571,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[2]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[2]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
@@ -587,7 +581,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[0]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[0]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
@@ -597,7 +591,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[11]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[11]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[1]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[1]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
@@ -609,7 +603,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[2]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[2]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
@@ -619,7 +613,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[0]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[0]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
@@ -629,7 +623,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and chest_data[11]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[11]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[1]["Value"]["ItemRate"])
+            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[1]["Key"]].append(translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
@@ -639,7 +633,7 @@ def patch_enemy_entry(item_type, i):
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[2]["Value"]["ItemRate"])
+            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
                 log[1]["Value"][enemy_data[2]["Key"]].append(translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
@@ -798,20 +792,20 @@ def any_pick(item_array, remove, item_type):
             item_array.remove(item)
     return item
 
-def write_drop(patched):
-    if patched:
-        with open("Serializer\\PB_DT_DropRateMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(item_content, ensure_ascii=False, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_DropRateMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_DropRateMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
-        os.remove("Serializer\\PB_DT_DropRateMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_DropRateMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
+def write_patched_drop():
+    with open("Serializer\\PB_DT_DropRateMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(item_content, ensure_ascii=False, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_DropRateMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_DropRateMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
+    os.remove("Serializer\\PB_DT_DropRateMaster.json")
 
-def write_quest():
+def write_drop():
+    shutil.copyfile("Serializer\\PB_DT_DropRateMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
+
+def write_patched_quest():
     with open("Serializer\\PB_DT_QuestMaster.json", "w") as file_writer:
         file_writer.write(json.dumps(quest_content, ensure_ascii=False, indent=2))
     root = os.getcwd()
@@ -821,7 +815,7 @@ def write_quest():
     shutil.move("Serializer\\PB_DT_QuestMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_QuestMaster.uasset")
     os.remove("Serializer\\PB_DT_QuestMaster.json")
 
-def write_scenario():
+def write_patched_scenario():
     with open("Serializer\\PBScenarioStringTable.json", "w") as file_writer:
         file_writer.write(json.dumps(string_content, ensure_ascii=False, indent=2))
     root = os.getcwd()

@@ -89,18 +89,18 @@ def rand_shard(scale):
 def eye_max():
     content[114]["Value"]["minGradeValue"] = content[114]["Value"]["maxGradeValue"]
 
-def write_shard(patched):
-    if patched:
-        with open("Serializer\\PB_DT_ShardMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(content, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_ShardMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_ShardMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
-        os.remove("Serializer\\PB_DT_ShardMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_ShardMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
+def write_patched_shard():
+    with open("Serializer\\PB_DT_ShardMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(content, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_ShardMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_ShardMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
+    os.remove("Serializer\\PB_DT_ShardMaster.json")
+
+def write_shard():
+    shutil.copyfile("Serializer\\PB_DT_ShardMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
 
 def reset_shard():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset"):

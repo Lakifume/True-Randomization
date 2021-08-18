@@ -99,7 +99,7 @@ def any_pick(array):
     array.remove(item)
     return item
 
-def write_dialogue():
+def write_patched_dialogue():
     with open("Serializer\\PB_DT_DialogueTableItems.json", "w") as file_writer:
         file_writer.write(json.dumps(content, indent=2))
     root = os.getcwd()

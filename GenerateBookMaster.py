@@ -63,7 +63,7 @@ def any_pick_true(array):
     array.remove(item)
     return item
 
-def write_book():
+def write_patched_book():
     with open("Serializer\\PB_DT_BookMaster.json", "w") as file_writer:
         file_writer.write(json.dumps(content, indent=2))
     root = os.getcwd()

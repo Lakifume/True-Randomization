@@ -44,18 +44,18 @@ def rand_weapon(power, rate):
         log.append(log_data)
         i += 1
 
-def write_weapon(patched):
-    if patched:
-        with open("Serializer\\PB_DT_WeaponMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(content, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_WeaponMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_WeaponMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
-        os.remove("Serializer\\PB_DT_WeaponMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_WeaponMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
+def write_patched_weapon():
+    with open("Serializer\\PB_DT_WeaponMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(content, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_WeaponMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_WeaponMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
+    os.remove("Serializer\\PB_DT_WeaponMaster.json")
+
+def write_weapon():
+    shutil.copyfile("Serializer\\PB_DT_WeaponMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
 
 def reset_weapon():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset"):

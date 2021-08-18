@@ -112,18 +112,18 @@ def rand_shop(scale):
         log_data["Value"]["SellPrice"] = content[i]["Value"]["sellPrice"]
         log.append(log_data)
 
-def write_item(patched):
-    if patched:
-        with open("Serializer\\PB_DT_ItemMaster.json", "w") as file_writer:
-            file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
-        root = os.getcwd()
-        os.chdir("Serializer")
-        os.system("cmd /c UAsset2Json.exe -tobin PB_DT_ItemMaster.json")
-        os.chdir(root)
-        shutil.move("Serializer\\PB_DT_ItemMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
-        os.remove("Serializer\\PB_DT_ItemMaster.json")
-    else:
-        shutil.copyfile("Serializer\\PB_DT_ItemMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
+def write_patched_item():
+    with open("Serializer\\PB_DT_ItemMaster.json", "w") as file_writer:
+        file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_ItemMaster.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_ItemMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
+    os.remove("Serializer\\PB_DT_ItemMaster.json")
+
+def write_item():
+    shutil.copyfile("Serializer\\PB_DT_ItemMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
 
 def reset_item():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset"):

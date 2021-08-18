@@ -7,6 +7,9 @@ def write_master():
 def write_ammunition():
     shutil.copyfile("Serializer\\PB_DT_AmmunitionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_AmmunitionMaster.uasset")
 
+def write_armor():
+    shutil.copyfile("Serializer\\PB_DT_ArmorMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset")
+
 def write_arts():
     shutil.copyfile("Serializer\\PB_DT_ArtsCommandMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArtsCommandMaster.uasset")
 
@@ -43,6 +46,10 @@ def reset_master():
 def reset_ammunition():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_AmmunitionMaster.uasset"):
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_AmmunitionMaster.uasset")
+
+def reset_armor():
+    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset"):
+        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset")
 
 def reset_arts():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArtsCommandMaster.uasset"):
