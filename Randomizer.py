@@ -54,6 +54,7 @@ datatable_files = [
     "PB_DT_ArmorMaster",
     "PB_DT_ArtsCommandMaster",
     "PB_DT_BallisticMaster",
+    "PB_DT_BRVAttackDamage",
     "PB_DT_BulletMaster",
     "PB_DT_CharacterParameterMaster",
     "PB_DT_CharaUniqueParameterMaster",
@@ -84,8 +85,8 @@ sound_files = [
 ]
 
 patch_list = []
-write_list = [write_master, write_ammunition, write_armor, write_arts, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
-reset_list = [reset_master, reset_scenario, reset_system, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
+write_list = [write_master, write_ammunition, write_armor, write_arts, write_brv, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
+reset_list = [reset_master, reset_scenario, reset_system, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_brv, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
 json_list = []
 
 #Config
