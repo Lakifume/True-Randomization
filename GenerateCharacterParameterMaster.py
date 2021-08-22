@@ -188,41 +188,61 @@ def rand_enemy(level, resist, custom, value):
         patch_level(chance_6_range, 185)
         patch_level(chance_6_range, 186)
 
+def no_level(difficulty):
+    i = 12
+    while i < len(content):
+        if difficulty == "Normal":
+            content[i]["Value"]["HardEnemyLevel"] = 1
+            content[i]["Value"]["NightmareEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeHardEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeNightmareEnemyLevel"] = 1
+        elif difficulty == "Hard":
+            content[i]["Value"]["DefaultEnemyLevel"] = 1
+            content[i]["Value"]["NightmareEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeDefaultEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeNightmareEnemyLevel"] = 1
+        else:
+            content[i]["Value"]["DefaultEnemyLevel"] = 1
+            content[i]["Value"]["HardEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeDefaultEnemyLevel"] = 1
+            content[i]["Value"]["BloodlessModeHardEnemyLevel"] = 1
+        i += 1
+
 def patch_level(array, position):
     if content[position]["Key"] == "N3001_Armor":
-        content[position]["Value"]["HardEnemyLevel"] = content[38]["Value"]["HardEnemyLevel"]
+        content[position]["Value"]["DefaultEnemyLevel"] = content[38]["Value"]["DefaultEnemyLevel"]
         stat_scale(position)
     elif content[position]["Key"] == "N3098_Guard":
-        content[position]["Value"]["HardEnemyLevel"] = content[position-2]["Value"]["HardEnemyLevel"]
+        content[position]["Value"]["DefaultEnemyLevel"] = content[position-2]["Value"]["DefaultEnemyLevel"]
         stat_scale(position)
     elif content[position]["Key"][0:5] == "N1013" or content[position]["Key"] == "N1009_Bael":
         if len(array) == 1:
-            content[position]["Value"]["HardEnemyLevel"] = random.choice(array)
+            content[position]["Value"]["DefaultEnemyLevel"] = random.choice(array)
         else:
-            content[position]["Value"]["HardEnemyLevel"] = abs(content[159]["Value"]["HardEnemyLevel"] - 100)
+            content[position]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
         stat_scale(position)
         if content[position]["Key"] == "N1013_Dominique":
             create_log(position)
     elif content[position]["Key"][0:5] == content[position-1]["Key"][0:5] and content[position]["Key"][0:5] != "N1011" or content[position]["Key"] == "JuckPod" or content[position]["Key"][0:5] == "N3125":
-        content[position]["Value"]["HardEnemyLevel"] = content[position-1]["Value"]["HardEnemyLevel"]
+        content[position]["Value"]["DefaultEnemyLevel"] = content[position-1]["Value"]["DefaultEnemyLevel"]
         stat_scale(position)
     elif content[position]["Key"] != "P1003" and content[position]["Key"] != "N1011_PL" and content[position]["Key"] != "N3049" and content[position]["Key"] != "N3050" and content[position]["Key"] != "N3068":
-        content[position]["Value"]["HardEnemyLevel"] = random.choice(array)
+        content[position]["Value"]["DefaultEnemyLevel"] = random.choice(array)
         stat_scale(position)
         create_log(position)
     
-    content[position]["Value"]["DefaultEnemyLevel"] = content[position]["Value"]["HardEnemyLevel"]
-    content[position]["Value"]["NightmareEnemyLevel"] = content[position]["Value"]["HardEnemyLevel"]
-    content[position]["Value"]["BloodlessModeDefaultEnemyLevel"] = content[position]["Value"]["HardEnemyLevel"]
-    content[position]["Value"]["BloodlessModeHardEnemyLevel"] = content[position]["Value"]["HardEnemyLevel"]
-    content[position]["Value"]["BloodlessModeNightmareEnemyLevel"] = content[position]["Value"]["HardEnemyLevel"]
+    content[position]["Value"]["HardEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
+    content[position]["Value"]["NightmareEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
+    content[position]["Value"]["BloodlessModeDefaultEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
+    content[position]["Value"]["BloodlessModeHardEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
+    content[position]["Value"]["BloodlessModeNightmareEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
 
 def stat_scale(position):
     for i in second_stat:
         stat_num = content[position]["Value"][i]
-        if content[position]["Value"]["HardEnemyLevel"] > content[position]["Value"]["NightmareEnemyLevel"]:
+        if content[position]["Value"]["DefaultEnemyLevel"] > content[position]["Value"]["HardEnemyLevel"]:
             stat_num += 25.0
-        if content[position]["Value"]["HardEnemyLevel"] > (content[position]["Value"]["NightmareEnemyLevel"] + ((99 - content[position]["Value"]["NightmareEnemyLevel"]) / 2)):
+        if content[position]["Value"]["DefaultEnemyLevel"] > (content[position]["Value"]["HardEnemyLevel"] + ((99 - content[position]["Value"]["HardEnemyLevel"]) / 2)):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
@@ -261,16 +281,16 @@ def create_log(position):
     log_data = {}
     log_data["Key"] = translation["Value"][content[position]["Key"]]
     log_data["Value"] = {}
-    log_data["Value"]["Level"] = content[position]["Value"]["HardEnemyLevel"]
+    log_data["Value"]["Level"] = content[position]["Value"]["DefaultEnemyLevel"]
     log_data["Value"]["MainStats"] = {}
-    log_data["Value"]["MainStats"]["HP"] = int(((content[position]["Value"]["MaxHP99Enemy"] - content[position]["Value"]["MaxHP"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["MaxHP"])
-    log_data["Value"]["MainStats"]["STR"] = int(((content[position]["Value"]["STR99Enemy"] - content[position]["Value"]["STR"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["STR"])
-    log_data["Value"]["MainStats"]["INT"] = int(((content[position]["Value"]["INT99Enemy"] - content[position]["Value"]["INT"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["INT"])
-    log_data["Value"]["MainStats"]["CON"] = int(((content[position]["Value"]["CON99Enemy"] - content[position]["Value"]["CON"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["CON"])
-    log_data["Value"]["MainStats"]["MND"] = int(((content[position]["Value"]["MND99Enemy"] - content[position]["Value"]["MND"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["MND"])
-    log_data["Value"]["MainStats"]["LUC"] = int(((content[position]["Value"]["LUC99Enemy"] - content[position]["Value"]["LUC"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["LUC"])
-    log_data["Value"]["MainStats"]["EXP"] = int(((content[position]["Value"]["Experience99Enemy"] - content[position]["Value"]["Experience"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["Experience"])
-    log_data["Value"]["MainStats"]["AP"] = int(((content[position]["Value"]["ArtsExperience99Enemy"] - content[position]["Value"]["ArtsExperience"])/98)*(content[position]["Value"]["HardEnemyLevel"]-1) + content[position]["Value"]["ArtsExperience"])
+    log_data["Value"]["MainStats"]["HP"] = int(((content[position]["Value"]["MaxHP99Enemy"] - content[position]["Value"]["MaxHP"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["MaxHP"])
+    log_data["Value"]["MainStats"]["STR"] = int(((content[position]["Value"]["STR99Enemy"] - content[position]["Value"]["STR"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["STR"])
+    log_data["Value"]["MainStats"]["INT"] = int(((content[position]["Value"]["INT99Enemy"] - content[position]["Value"]["INT"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["INT"])
+    log_data["Value"]["MainStats"]["CON"] = int(((content[position]["Value"]["CON99Enemy"] - content[position]["Value"]["CON"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["CON"])
+    log_data["Value"]["MainStats"]["MND"] = int(((content[position]["Value"]["MND99Enemy"] - content[position]["Value"]["MND"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["MND"])
+    log_data["Value"]["MainStats"]["LUC"] = int(((content[position]["Value"]["LUC99Enemy"] - content[position]["Value"]["LUC"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["LUC"])
+    log_data["Value"]["MainStats"]["EXP"] = int(((content[position]["Value"]["Experience99Enemy"] - content[position]["Value"]["Experience"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["Experience"])
+    log_data["Value"]["MainStats"]["AP"] = int(((content[position]["Value"]["ArtsExperience99Enemy"] - content[position]["Value"]["ArtsExperience"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["ArtsExperience"])
     log_data["Value"]["Resistances"] = {}
     for i in stat:
         log_data["Value"]["Resistances"][i] = int(content[position]["Value"][i])
@@ -287,9 +307,6 @@ def write_patched_chara():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CharacterParameterMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
     os.remove("Serializer\\PB_DT_CharacterParameterMaster.json")
-
-def write_chara():
-    shutil.copyfile("Serializer\\PB_DT_CharacterParameterMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
 
 def reset_chara():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset"):

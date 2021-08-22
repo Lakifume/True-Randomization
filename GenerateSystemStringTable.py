@@ -21,9 +21,6 @@ def write_patched_system():
     shutil.move("Serializer\\PBSystemStringTable.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBSystemStringTable.uasset")
     os.remove("Serializer\\PBSystemStringTable.json")
 
-def write_system():
-    shutil.copyfile("Serializer\\PBSystemStringTable.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBSystemStringTable.uasset")
-
 def reset_system():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBSystemStringTable.uasset"):
         os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBSystemStringTable.uasset")

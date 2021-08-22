@@ -40,12 +40,12 @@ tweak_color = "#ff80bf"
 
 checkbox_list = []
 
-empty_preset = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-trial_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, False, False, False, True, True, True, True, True]
-race_preset = [True, True, True, True, False, True, True, True, False, True, True, True, True, False, False, False, True, True, False, True, True]
-meme_preset = [True, True, False, False, False, True, False, True, False, True, False, True, True, False, True, False, True, True, True, False, True]
-all_in_preset = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
-risk_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False]
+empty_preset = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+trial_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, False, False, False, True, True, True, True]
+race_preset = [True, True, True, True, False, True, True, True, False, True, True, True, True, False, False, False, True, True, False, True]
+meme_preset = [True, True, False, False, False, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True]
+all_in_preset = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+risk_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False]
 
 preset_amount = len(os.listdir("MapEdit\\Custom"))
 
@@ -465,44 +465,43 @@ class Main(QWidget):
         box_9_grid.addWidget(self.check_box_15, 0, 0)
         checkbox_list.append(self.check_box_15)
 
-        self.check_box_20 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option1Id"]), self)
-        self.check_box_20.setToolTip("Take out the ability to stock up infinite amounts\nof food dishes or bullets in your inventory by\nsimply not having them appear in the shop.")
-        self.check_box_20.stateChanged.connect(self.check_box_20_changed)
-        box_10_grid.addWidget(self.check_box_20, 0, 1)
-        checkbox_list.append(self.check_box_20)
-
-        self.check_box_21 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option2Id"]), self)
+        self.check_box_21 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option1Id"]), self)
         self.check_box_21.setToolTip("Give playable Bloodless all of her stat upgrades at the\nbeginning of the game. Abilities will still need to be collected.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
-        box_10_grid.addWidget(self.check_box_21, 1, 1)
+        box_10_grid.addWidget(self.check_box_21, 0, 0)
         checkbox_list.append(self.check_box_21)
 
         #RadioButtons
         
-        self.radio_button_1 = QRadioButton(config[10]["Value"]["Option1Id"])
+        self.radio_button_1 = QRadioButton(re.sub(p, r"\1 \2", config[10]["Value"]["Option1Id"]))
         self.radio_button_1.setToolTip("Select the difficulty you'll be using in-game.")
         self.radio_button_1.toggled.connect(self.radio_button_group_1_checked)
         box_11_grid.addWidget(self.radio_button_1, 0, 0)
         
-        self.radio_button_2 = QRadioButton(config[10]["Value"]["Option2Id"])
+        self.radio_button_2 = QRadioButton(re.sub(p, r"\1 \2", config[10]["Value"]["Option2Id"]))
         self.radio_button_2.setToolTip("Select the difficulty you'll be using in-game.")
         self.radio_button_2.toggled.connect(self.radio_button_group_1_checked)
         box_11_grid.addWidget(self.radio_button_2, 1, 0)
         
-        self.radio_button_3 = QRadioButton(config[11]["Value"]["Option1Id"])
-        self.radio_button_3.setToolTip("Select the game mode that this file is meant for.")
-        self.radio_button_3.toggled.connect(self.radio_button_group_2_checked)
-        box_13_grid.addWidget(self.radio_button_3, 0, 0)
+        self.radio_button_3 = QRadioButton(re.sub(p, r"\1 \2", config[10]["Value"]["Option3Id"]))
+        self.radio_button_3.setToolTip("Select the difficulty you'll be using in-game.")
+        self.radio_button_3.toggled.connect(self.radio_button_group_1_checked)
+        box_11_grid.addWidget(self.radio_button_3, 0, 1)
         
-        self.radio_button_4 = QRadioButton("Custom NG+")
+        self.radio_button_4 = QRadioButton(re.sub(p, r"\1 \2", config[11]["Value"]["Option1Id"]))
         self.radio_button_4.setToolTip("Select the game mode that this file is meant for.")
         self.radio_button_4.toggled.connect(self.radio_button_group_2_checked)
-        box_13_grid.addWidget(self.radio_button_4, 0, 1)
+        box_13_grid.addWidget(self.radio_button_4, 0, 0)
         
-        self.radio_button_5 = QRadioButton(config[11]["Value"]["Option3Id"])
+        self.radio_button_5 = QRadioButton(re.sub(p, r"\1 \2", config[11]["Value"]["Option2Id"]))
         self.radio_button_5.setToolTip("Select the game mode that this file is meant for.")
         self.radio_button_5.toggled.connect(self.radio_button_group_2_checked)
         box_13_grid.addWidget(self.radio_button_5, 1, 0)
+        
+        self.radio_button_6 = QRadioButton(re.sub(p, r"\1 \2", config[11]["Value"]["Option3Id"]))
+        self.radio_button_6.setToolTip("Select the game mode that this file is meant for.")
+        self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
+        box_13_grid.addWidget(self.radio_button_6, 0, 1)
         
         if config[12]["Value"]["Level"] < 0x01:
             config[12]["Value"]["Level"] = 0x01
@@ -580,20 +579,21 @@ class Main(QWidget):
         if config[8]["Value"]["Option1Value"]:
             self.check_box_15.setChecked(True)
         if config[9]["Value"]["Option1Value"]:
-            self.check_box_20.setChecked(True)
-        if config[9]["Value"]["Option2Value"]:
             self.check_box_21.setChecked(True)
         
         if config[10]["Value"]["Option1Value"]:
             self.radio_button_1.setChecked(True)
         elif config[10]["Value"]["Option2Value"]:
             self.radio_button_2.setChecked(True)
-        if config[11]["Value"]["Option1Value"]:
+        elif config[10]["Value"]["Option3Value"]:
             self.radio_button_3.setChecked(True)
-        elif config[11]["Value"]["Option2Value"]:
+        
+        if config[11]["Value"]["Option1Value"]:
             self.radio_button_4.setChecked(True)
-        elif config[11]["Value"]["Option3Value"]:
+        elif config[11]["Value"]["Option2Value"]:
             self.radio_button_5.setChecked(True)
+        elif config[11]["Value"]["Option3Value"]:
+            self.radio_button_6.setChecked(True)
         
         self.matches_preset()
         
@@ -660,7 +660,7 @@ class Main(QWidget):
             self.check_box_16.setEnabled(True)
             self.check_box_17.setEnabled(True)
             self.check_box_18.setEnabled(True)
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_3])
+            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_4])
         else:
             config[0]["Value"]["Option1Value"] = False
             self.check_box_1.setStyleSheet("color: #ffffff")
@@ -668,7 +668,7 @@ class Main(QWidget):
             self.check_box_16.setEnabled(False)
             self.check_box_17.setEnabled(False)
             self.check_box_18.setEnabled(False)
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_3])
+            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_4])
 
     def check_box_2_changed(self):
         self.matches_preset()
@@ -677,13 +677,13 @@ class Main(QWidget):
             self.check_box_2.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_3])
+            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_4])
             self.add_to_list(datatable_files, "PBScenarioStringTable", [])
         else:
             config[0]["Value"]["Option2Value"] = False
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_3])
+            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_4])
             self.remove_from_list(datatable_files, "PBScenarioStringTable", [])
 
     def check_box_16_changed(self):
@@ -924,28 +924,15 @@ class Main(QWidget):
             self.box_9.setStyleSheet("color: #ffffff")
             self.remove_from_list(datatable_files, "PB_DT_DialogueTableItems", [])
 
-    def check_box_20_changed(self):
-        self.matches_preset()
-        if self.check_box_20.isChecked():
-            config[9]["Value"]["Option1Value"] = True
-            self.check_box_20.setStyleSheet("color: " + tweak_color)
-            if self.check_box_21.isChecked():
-                self.box_10.setStyleSheet("color: " + tweak_color)
-        else:
-            config[9]["Value"]["Option1Value"] = False
-            self.check_box_20.setStyleSheet("color: #ffffff")
-            self.box_10.setStyleSheet("color: #ffffff")
-
     def check_box_21_changed(self):
         self.matches_preset()
         if self.check_box_21.isChecked():
-            config[9]["Value"]["Option2Value"] = True
+            config[9]["Value"]["Option1Value"] = True
             self.check_box_21.setStyleSheet("color: " + tweak_color)
-            if self.check_box_20.isChecked():
-                self.box_10.setStyleSheet("color: " + tweak_color)
+            self.box_10.setStyleSheet("color: " + tweak_color)
             self.add_to_list(datatable_files, "PB_DT_BloodlessAbilityData", [])
         else:
-            config[9]["Value"]["Option2Value"] = False
+            config[9]["Value"]["Option1Value"] = False
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
             self.remove_from_list(datatable_files, "PB_DT_BloodlessAbilityData", [])
@@ -954,18 +941,24 @@ class Main(QWidget):
         if self.radio_button_1.isChecked():
             config[10]["Value"]["Option1Value"] = True
             config[10]["Value"]["Option2Value"] = False
-        else:
+            config[10]["Value"]["Option3Value"] = False
+        elif self.radio_button_2.isChecked():
             config[10]["Value"]["Option1Value"] = False
             config[10]["Value"]["Option2Value"] = True
+            config[10]["Value"]["Option3Value"] = False
+        else:
+            config[10]["Value"]["Option1Value"] = False
+            config[10]["Value"]["Option2Value"] = False
+            config[10]["Value"]["Option3Value"] = True
 
     def radio_button_group_2_checked(self):
-        if self.radio_button_3.isChecked():
+        if self.radio_button_4.isChecked():
             self.level_box.setVisible(False)
             config[11]["Value"]["Option1Value"] = True
             config[11]["Value"]["Option2Value"] = False
             config[11]["Value"]["Option3Value"] = False
             self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2])
-        elif self.radio_button_4.isChecked():
+        elif self.radio_button_5.isChecked():
             self.level_box.setVisible(True)
             config[11]["Value"]["Option1Value"] = False
             config[11]["Value"]["Option2Value"] = True
@@ -1168,14 +1161,18 @@ class Main(QWidget):
         if config[8]["Value"]["Option1Value"]:
             rand_dialogue()
         
-        if config[9]["Value"]["Option1Value"]:
-            no_dishes_and_bullet()
-        
         if config[10]["Value"]["Option1Value"]:
             rename_difficulty("Normal", "None", "None")
-            change_scaling(1.0, 1.0)
+            no_level("Normal")
             normal_bomber()
             normal_bael()
+        elif config[10]["Value"]["Option2Value"]:
+            rename_difficulty("None", "Hard", "None")
+            no_level("Hard")
+        else:
+            rename_difficulty("None", "None", "Nightmare")
+            no_level("Nightmare")
+            no_dishes_and_bullet()
         
         if config[11]["Value"]["Option1Value"]:
             give_shortcut()
@@ -1215,7 +1212,7 @@ class Main(QWidget):
         if config[0]["Value"]["Option2Value"]:
             patch_list.append(write_patched_scenario)
         
-        if config[1]["Value"]["Option1Value"] or config[0]["Value"]["Option1Value"] or config[9]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
+        if config[1]["Value"]["Option1Value"] or config[0]["Value"]["Option1Value"] or config[10]["Value"]["Option3Value"] or config[11]["Value"]["Option1Value"]:
             patch_list.append(write_patched_item)
         else:
             write_list.append(write_item)
@@ -1233,19 +1230,13 @@ class Main(QWidget):
         else:
             write_list.append(write_weapon)
         
-        if config[5]["Value"]["Option1Value"] or config[5]["Value"]["Option2Value"] or config[11]["Value"]["Option2Value"]:
-            patch_list.append(write_patched_chara)
-        else:
-            write_list.append(write_chara)
+        patch_list.append(write_patched_chara)
         
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             patch_list.append(write_patched_effect)
-        else:
-            write_list.append(write_effect)
-        
-        if (config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]) or config[10]["Value"]["Option1Value"]:
             patch_list.append(write_patched_coordinate)
         else:
+            write_list.append(write_effect)
             write_list.append(write_coordinate)
         
         if self.string:
@@ -1264,16 +1255,16 @@ class Main(QWidget):
         if config[8]["Value"]["Option1Value"]:
             patch_list.append(write_patched_dialogue)
         
-        if config[9]["Value"]["Option2Value"]:
+        if config[9]["Value"]["Option1Value"]:
             write_list.append(write_bloodless)
         
+        patch_list.append(write_patched_system)
+        
         if config[10]["Value"]["Option1Value"]:
-            patch_list.append(write_patched_system)
             patch_list.append(write_patched_ballistic)
             patch_list.append(write_patched_bullet)
             patch_list.append(write_patched_collision)
         else:
-            write_list.append(write_system)
             write_list.append(write_ballistic)
             write_list.append(write_bullet)
             write_list.append(write_collision)
