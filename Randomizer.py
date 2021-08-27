@@ -223,10 +223,12 @@ class Main(QWidget):
         + "QLabel{border: 1px}"
         + "QComboBox{background-color: #21222e}"
         + "QMessageBox{background-color: #21222e}"
+        + "QDialog{background-color: #21222e}"
         + "QProgressDialog{background-color: #21222e}"
         + "QPushButton{background-color: #21222e}"
         + "QSpinBox{background-color: #21222e}"
         + "QLineEdit{background-color: #21222e}"
+        + "QMenu{background-color: #21222e}"
         + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: 18px}")
         self.string = ""
         
@@ -252,79 +254,79 @@ class Main(QWidget):
         box_1_grid = QGridLayout()
         self.box_1 = QGroupBox(re.sub(p, r"\1 \2", config[0]["Key"]))
         self.box_1.setLayout(box_1_grid)
-        grid.addWidget(self.box_1, 0, 1, 2, 1)
+        grid.addWidget(self.box_1, 0, 1, 2, 2)
 
         box_2_grid = QGridLayout()
         self.box_2 = QGroupBox(re.sub(p, r"\1 \2", config[1]["Key"]))
         self.box_2.setLayout(box_2_grid)
-        grid.addWidget(self.box_2, 2, 1, 1, 1)
+        grid.addWidget(self.box_2, 2, 1, 1, 2)
 
         box_3_grid = QGridLayout()
         self.box_3 = QGroupBox(re.sub(p, r"\1 \2", config[2]["Key"]))
         self.box_3.setLayout(box_3_grid)
-        grid.addWidget(self.box_3, 3, 1, 1, 1)
+        grid.addWidget(self.box_3, 3, 1, 1, 2)
 
         box_4_grid = QGridLayout()
         self.box_4 = QGroupBox(re.sub(p, r"\1 \2", config[3]["Key"]))
         self.box_4.setLayout(box_4_grid)
-        grid.addWidget(self.box_4, 4, 1, 1, 1)
+        grid.addWidget(self.box_4, 4, 1, 1, 2)
 
         box_5_grid = QGridLayout()
         self.box_5 = QGroupBox(re.sub(p, r"\1 \2", config[4]["Key"]))
         self.box_5.setLayout(box_5_grid)
-        grid.addWidget(self.box_5, 0, 2, 1, 1)
+        grid.addWidget(self.box_5, 0, 3, 1, 2)
 
         box_6_grid = QGridLayout()
         self.box_6 = QGroupBox(re.sub(p, r"\1 \2", config[5]["Key"]))
         self.box_6.setLayout(box_6_grid)
-        grid.addWidget(self.box_6, 1, 2, 1, 1)
+        grid.addWidget(self.box_6, 1, 3, 1, 2)
 
         box_7_grid = QGridLayout()
         self.box_7 = QGroupBox(re.sub(p, r"\1 \2", config[6]["Key"]))
         self.box_7.setLayout(box_7_grid)
-        grid.addWidget(self.box_7, 2, 2, 1, 1)
+        grid.addWidget(self.box_7, 2, 3, 1, 2)
 
         box_8_grid = QGridLayout()
         self.box_8 = QGroupBox(re.sub(p, r"\1 \2", config[7]["Key"]))
         self.box_8.setLayout(box_8_grid)
-        grid.addWidget(self.box_8, 3, 2, 1, 1)
+        grid.addWidget(self.box_8, 3, 3, 1, 2)
 
         box_9_grid = QGridLayout()
         self.box_9 = QGroupBox(re.sub(p, r"\1 \2", config[8]["Key"]))
         self.box_9.setLayout(box_9_grid)
-        grid.addWidget(self.box_9, 4, 2, 1, 1)
+        grid.addWidget(self.box_9, 4, 3, 1, 2)
 
         box_10_grid = QGridLayout()
         self.box_10 = QGroupBox(re.sub(p, r"\1 \2", config[9]["Key"]))
         self.box_10.setLayout(box_10_grid)
-        grid.addWidget(self.box_10, 5, 1, 1, 2)
+        grid.addWidget(self.box_10, 5, 1, 1, 4)
         
         box_11_grid = QGridLayout()
         box_11 = QGroupBox(re.sub(p, r"\1 \2", config[10]["Key"]))
         box_11.setLayout(box_11_grid)
-        grid.addWidget(box_11, 6, 1, 1, 1)
+        grid.addWidget(box_11, 6, 1, 1, 2)
         
         box_12_grid = QGridLayout()
         box_12 = QGroupBox("Presets")
         box_12.setLayout(box_12_grid)
-        grid.addWidget(box_12, 7, 1, 1, 1)
+        grid.addWidget(box_12, 7, 1, 1, 2)
         
         box_13_grid = QGridLayout()
         box_13 = QGroupBox(re.sub(p, r"\1 \2", config[11]["Key"]))
         box_13.setLayout(box_13_grid)
-        grid.addWidget(box_13, 6, 2, 1, 1)
+        grid.addWidget(box_13, 6, 3, 1, 2)
         
         box_14_grid = QGridLayout()
         box_14 = QGroupBox(re.sub(p, r"\1 \2", config[13]["Key"]))
         box_14.setLayout(box_14_grid)
         box_14.setFixedSize(324, 100)
-        grid.addWidget(box_14, 7, 2, 1, 1)
+        grid.addWidget(box_14, 7, 3, 1, 2)
         
         box_15_grid = QGridLayout()
         box_15 = QGroupBox()
         box_15.setLayout(box_15_grid)
         box_15.setFixedSize(550, 978)
-        grid.addWidget(box_15, 0, 3, 10, 1)
+        grid.addWidget(box_15, 0, 5, 10, 1)
         
         box_16_grid = QGridLayout()
         box_16 = QGroupBox()
@@ -617,14 +619,19 @@ class Main(QWidget):
         grid.addWidget(button_4, 8, 2, 1, 1)
 
         button_5 = QPushButton("Generate")
-        button_5.setToolTip("Make sure to have installed .NET Core Runtime 3.0.0 before using this\nprogram. Link on main mod page.")
+        button_5.setToolTip("Generate .pak file with current settings.")
         button_5.clicked.connect(self.button_5_clicked)
-        grid.addWidget(button_5, 9, 1, 1, 2)
+        grid.addWidget(button_5, 9, 1, 1, 4)
         
         button_6 = QPushButton("Auto Convert")
+        button_6.setToolTip("Convert all the .json files from the Data folder into .uasset automatically.\nOnly use this if you've made manual edits to those datatables and want\nto apply them to this mod.")
         button_6.clicked.connect(self.button_6_clicked)
-        grid.addWidget(button_6, 9, 3, 1, 1)
-        button_6.setVisible(False)
+        grid.addWidget(button_6, 8, 3, 1, 1)
+        
+        button_7 = QPushButton("Credits")
+        button_7.setToolTip("The people involved with this mod.")
+        button_7.clicked.connect(self.button_7_clicked)
+        grid.addWidget(button_7, 8, 4, 1, 1)
         
         #Window
         
@@ -1079,13 +1086,13 @@ class Main(QWidget):
     def button_3_clicked(self):
         box = QMessageBox(self)
         box.setWindowTitle("Recommended settings")
-        box.setText("Here are the recommended settings to pick in the game randomizer to get the best experience from this mod:\n\nGOAL: Defeat All Evil (I mean obviously)\n\nKEY ITEMS: Anywhere (shuffled is flawed due to the key shard placement being static)\n\nSAVE/WARP ROOMS: Unchanged (seriously, does anyone like to shuffle those ?)\n\nITEMS: Retain Type (guarantees a weapon in first chest and is required for the mod's item pool options to work)\n\nENEMY DROPS: Chaos (if you downloaded this mod you're probably in for the chaos anyways)\n\nCRAFTING: Unchanged (otherwise all the materials you pick up will be of no use)\n\nSHOPS: Unchanged (shuffled shop combined with random prices is completely busted and you want to make sure to have waystones for custom maps)\n\nQUESTS: Unchanged (the mod already takes care of randomizing the quest rewards based on the global item pool)")
+        box.setText("Here are the recommended settings to pick in the game randomizer to get the best experience from this mod:<br/><br/><span style=\"color: #f6b26b;\">GOAL</span>: Defeat All Evil (I mean obviously).<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed due to the key shard placement being static).<br/><br/><span style=\"color: #f6b26b;\">SAVE/WARP ROOMS</span>: Unchanged (seriously, does anyone like to shuffle those ?).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees a weapon in first chest and is required for the mod's item pool options to work).<br/><br/><span style=\"color: #f6b26b;\">ENEMY DROPS</span>: Chaos (if you downloaded this mod you're probably in for the chaos anyways).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (shuffled shop combined with random prices is completely busted and you want to make sure to have waystones for custom maps).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the quest rewards based on the global item pool).")
         box.exec()
 
     def button_4_clicked(self):
-        self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit//Custom", filter="*.json"))[0]
-        if self.path:
-            self.string = self.path.replace("/", "\\")
+        path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit//Custom", filter="*.json")[0]
+        if path:
+            self.string = path.replace("/", "\\")
             self.setWindowTitle("Randomizer (" + self.string + ")")
             self.add_to_list(ui_files, "icon_8bitCrown", [self.check_box_12])
             self.add_to_list(ui_files, "Map_Icon_Keyperson", [self.check_box_12])
@@ -1095,6 +1102,18 @@ class Main(QWidget):
     def button_5_clicked(self):
         self.setEnabled(False)
         QApplication.processEvents()
+        
+        if config[13]["Value"]["String"] and not os.path.isdir(config[13]["Value"]["String"]):
+            self.no_path()
+            self.setEnabled(True)
+            return
+        
+        try:
+            subprocess.check_call("Serializer\\UAsset2Json.exe", shell=True)
+        except subprocess.CalledProcessError as error:
+            self.install()
+            self.setEnabled(True)
+            return
         
         reset_drop_log()
         reset_item_log()
@@ -1303,13 +1322,66 @@ class Main(QWidget):
         self.worker.updateProgress.connect(self.setProgress)
         self.worker.start()
     
+    def button_7_clicked(self):
+        label1_image = QLabel()
+        label1_image.setPixmap(QPixmap("Data\\profile1.png"))
+        label1_text = QLabel()
+        label1_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
+        label1_text.setOpenExternalLinks(True)
+        label2_image = QLabel()
+        label2_image.setPixmap(QPixmap("Data\\profile2.png"))
+        label2_text = QLabel()
+        label2_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
+        label2_text.setOpenExternalLinks(True)
+        label3_image = QLabel()
+        label3_image.setPixmap(QPixmap("Data\\profile3.png"))
+        label3_text = QLabel()
+        label3_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#25c04e>Wiki</font></a>")
+        label3_text.setOpenExternalLinks(True)
+        label4_image = QLabel()
+        label4_image.setPixmap(QPixmap("Data\\profile4.png"))
+        label4_text = QLabel()
+        label4_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
+        label4_text.setOpenExternalLinks(True)
+        layout = QGridLayout()
+        layout.setSpacing(10)
+        layout.addWidget(label1_image, 0, 0, 1, 1)
+        layout.addWidget(label1_text, 0, 1, 1, 1)
+        layout.addWidget(label2_image, 1, 0, 1, 1)
+        layout.addWidget(label2_text, 1, 1, 1, 1)
+        layout.addWidget(label3_image, 2, 0, 1, 1)
+        layout.addWidget(label3_text, 2, 1, 1, 1)
+        layout.addWidget(label4_image, 3, 0, 1, 1)
+        layout.addWidget(label4_text, 3, 1, 1, 1)
+        box = QDialog(self)
+        box.setLayout(layout)
+        box.setWindowTitle("Credits")
+        box.exec()
+    
+    def install(self):
+        label = QLabel()
+        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Core 3.0 Preview 8</span> is currently not installed:<br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
+        label.setOpenExternalLinks(True)
+        layout = QVBoxLayout()
+        layout.addWidget(label)
+        box = QDialog(self)
+        box.setLayout(layout)
+        box.setWindowTitle("Install")
+        box.exec()
+    
+    def no_path(self):
+        box = QMessageBox(self)
+        box.setWindowTitle("Path")
+        box.setIcon(QMessageBox.Critical)
+        box.setText("Output path does not exist.")
+        box.exec()
+    
     def error(self):
         box = QMessageBox(self)
         box.setWindowTitle("Error")
         box.setIcon(QMessageBox.Critical)
         box.setText("MapEditor.exe is running, cannot overwrite.")
         box.exec()
-        sys.exit()
     
     def check_for_updates(self):
         if os.path.isfile("OldRandomizer.exe"):
@@ -1327,6 +1399,8 @@ class Main(QWidget):
             if choice == QMessageBox.Yes:
                 if "MapEditor.exe" in (i.name() for i in psutil.process_iter()):
                     self.error()
+                    self.setEnabled(True)
+                    return
                 
                 self.progressBar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
                 self.progressBar.setWindowTitle("Status")
