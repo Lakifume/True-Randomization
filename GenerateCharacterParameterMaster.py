@@ -77,7 +77,7 @@ for i in range(99):
 
 stat_int = -100.0
 for i in range(41):
-    for e in range(2**(int(abs(math.ceil(abs(stat_int)/25)-4)))):
+    for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
         stat_pool.append(stat_int)
     stat_int += 5.0
 
@@ -208,94 +208,94 @@ def no_level(difficulty):
             content[i]["Value"]["BloodlessModeHardEnemyLevel"] = 1
         i += 1
 
-def patch_level(array, position):
-    if content[position]["Key"] == "N3001_Armor":
-        content[position]["Value"]["DefaultEnemyLevel"] = content[38]["Value"]["DefaultEnemyLevel"]
-        stat_scale(position)
-    elif content[position]["Key"] == "N3098_Guard":
-        content[position]["Value"]["DefaultEnemyLevel"] = content[position-2]["Value"]["DefaultEnemyLevel"]
-        stat_scale(position)
-    elif content[position]["Key"][0:5] == "N1013" or content[position]["Key"] == "N1009_Bael":
+def patch_level(array, i):
+    if content[i]["Key"] == "N3001_Armor":
+        content[i]["Value"]["DefaultEnemyLevel"] = content[38]["Value"]["DefaultEnemyLevel"]
+        stat_scale(i)
+    elif content[i]["Key"] == "N3098_Guard":
+        content[i]["Value"]["DefaultEnemyLevel"] = content[i-2]["Value"]["DefaultEnemyLevel"]
+        stat_scale(i)
+    elif content[i]["Key"][0:5] == "N1013" or content[i]["Key"] == "N1009_Bael":
         if len(array) == 1:
-            content[position]["Value"]["DefaultEnemyLevel"] = random.choice(array)
+            content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
         else:
-            content[position]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
-        stat_scale(position)
-        if content[position]["Key"] == "N1013_Dominique":
-            create_log(position)
-    elif content[position]["Key"][0:5] == content[position-1]["Key"][0:5] and content[position]["Key"][0:5] != "N1011" or content[position]["Key"] == "JuckPod" or content[position]["Key"][0:5] == "N3125":
-        content[position]["Value"]["DefaultEnemyLevel"] = content[position-1]["Value"]["DefaultEnemyLevel"]
-        stat_scale(position)
-    elif content[position]["Key"] != "P1003" and content[position]["Key"] != "N1011_PL" and content[position]["Key"] != "N3049" and content[position]["Key"] != "N3050" and content[position]["Key"] != "N3068":
-        content[position]["Value"]["DefaultEnemyLevel"] = random.choice(array)
-        stat_scale(position)
-        create_log(position)
+            content[i]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
+        stat_scale(i)
+        if content[i]["Key"] == "N1013_Dominique":
+            create_log(i)
+    elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"] == "JuckPod" or content[i]["Key"][0:5] == "N3125":
+        content[i]["Value"]["DefaultEnemyLevel"] = content[i-1]["Value"]["DefaultEnemyLevel"]
+        stat_scale(i)
+    elif content[i]["Key"] != "P1003" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
+        content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
+        stat_scale(i)
+        create_log(i)
     
-    content[position]["Value"]["HardEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
-    content[position]["Value"]["NightmareEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
-    content[position]["Value"]["BloodlessModeDefaultEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
-    content[position]["Value"]["BloodlessModeHardEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
-    content[position]["Value"]["BloodlessModeNightmareEnemyLevel"] = content[position]["Value"]["DefaultEnemyLevel"]
+    content[i]["Value"]["HardEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
+    content[i]["Value"]["NightmareEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
+    content[i]["Value"]["BloodlessModeDefaultEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
+    content[i]["Value"]["BloodlessModeHardEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
+    content[i]["Value"]["BloodlessModeNightmareEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
 
-def stat_scale(position):
-    for i in second_stat:
-        stat_num = content[position]["Value"][i]
-        if content[position]["Value"]["DefaultEnemyLevel"] > content[position]["Value"]["HardEnemyLevel"]:
+def stat_scale(i):
+    for e in second_stat:
+        stat_num = content[i]["Value"][e]
+        if content[i]["Value"]["DefaultEnemyLevel"] > content[i]["Value"]["HardEnemyLevel"]:
             stat_num += 25.0
-        if content[position]["Value"]["DefaultEnemyLevel"] > (content[position]["Value"]["HardEnemyLevel"] + ((99 - content[position]["Value"]["HardEnemyLevel"]) / 2)):
+        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) / 2)):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
-        content[position]["Value"][i] = stat_num
+        content[i]["Value"][e] = stat_num
 
-def rand_stat(position):
-    if content[position]["Key"] == "N3015_HEAD" or content[position]["Key"] == "N1001_HEAD" or content[position]["Key"] == "N2001_HEAD":
-        for i in stat:
-            if content[position-1]["Value"][i] < -50:
-                content[position]["Value"][i] = -100
+def rand_stat(i):
+    if content[i]["Key"] == "N3015_HEAD" or content[i]["Key"] == "N1001_HEAD" or content[i]["Key"] == "N2001_HEAD":
+        for e in stat:
+            if content[i-1]["Value"][e] < -50:
+                content[i]["Value"][e] = -100
             else:
-                content[position]["Value"][i] = content[position-1]["Value"][i]-50
-    elif content[position]["Key"] == "N3001_Armor":
-        for i in stat:
-            content[position]["Value"][i] = content[38]["Value"][i]
-    elif content[position]["Key"] == "N1001_Tentacle":
-        for i in stat:
-            content[position]["Value"][i] = content[position-2]["Value"][i]
-    elif content[position]["Key"] == "N2001_ARMOR":
-        for i in stat:
-            if content[position-2]["Value"][i] > 50:
-                    content[position]["Value"][i] = 100
+                content[i]["Value"][e] = content[i-1]["Value"][e]-50
+    elif content[i]["Key"] == "N3001_Armor":
+        for e in stat:
+            content[i]["Value"][e] = content[38]["Value"][e]
+    elif content[i]["Key"] == "N1001_Tentacle":
+        for e in stat:
+            content[i]["Value"][e] = content[i-2]["Value"][e]
+    elif content[i]["Key"] == "N2001_ARMOR":
+        for e in stat:
+            if content[i-2]["Value"][e] > 50:
+                    content[i]["Value"][e] = 100
             else:
-                content[position]["Value"][i] = content[position-2]["Value"][i]+50
-    elif content[position]["Key"][0:5] == "N1013" and content[position]["Key"] != "N1013_Bael" or content[position]["Key"] == "N1009_Bael":
-        for i in stat:
-            content[position]["Value"][i] = content[168]["Value"][i]
-    elif content[position]["Key"][0:5] == content[position-1]["Key"][0:5] and content[position]["Key"][0:5] != "N1011" or content[position]["Key"][0:5] == "N3125":
-        for i in stat:
-            content[position]["Value"][i] = content[position-1]["Value"][i]
-    elif content[position]["Key"] != "P1003" and content[position]["Key"] != "JuckPod" and content[position]["Key"] != "N1011_PL" and content[position]["Key"] != "N3049" and content[position]["Key"] != "N3050" and content[position]["Key"] != "N3068":
-        for i in stat:
-            content[position]["Value"][i] = random.choice(stat_pool)
+                content[i]["Value"][e] = content[i-2]["Value"][e]+50
+    elif content[i]["Key"][0:5] == "N1013" and content[i]["Key"] != "N1013_Bael" or content[i]["Key"] == "N1009_Bael":
+        for e in stat:
+            content[i]["Value"][e] = content[168]["Value"][e]
+    elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"][0:5] == "N3125":
+        for e in stat:
+            content[i]["Value"][e] = content[i-1]["Value"][e]
+    elif content[i]["Key"] != "P1003" and content[i]["Key"] != "JuckPod" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
+        for e in stat:
+            content[i]["Value"][e] = random.choice(stat_pool)
 
-def create_log(position):
+def create_log(i):
     log_data = {}
-    log_data["Key"] = translation["Value"][content[position]["Key"]]
+    log_data["Key"] = translation["Value"][content[i]["Key"]]
     log_data["Value"] = {}
-    log_data["Value"]["Level"] = content[position]["Value"]["DefaultEnemyLevel"]
+    log_data["Value"]["Level"] = content[i]["Value"]["DefaultEnemyLevel"]
     log_data["Value"]["MainStats"] = {}
-    log_data["Value"]["MainStats"]["HP"] = int(((content[position]["Value"]["MaxHP99Enemy"] - content[position]["Value"]["MaxHP"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["MaxHP"])
-    log_data["Value"]["MainStats"]["STR"] = int(((content[position]["Value"]["STR99Enemy"] - content[position]["Value"]["STR"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["STR"])
-    log_data["Value"]["MainStats"]["INT"] = int(((content[position]["Value"]["INT99Enemy"] - content[position]["Value"]["INT"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["INT"])
-    log_data["Value"]["MainStats"]["CON"] = int(((content[position]["Value"]["CON99Enemy"] - content[position]["Value"]["CON"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["CON"])
-    log_data["Value"]["MainStats"]["MND"] = int(((content[position]["Value"]["MND99Enemy"] - content[position]["Value"]["MND"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["MND"])
-    log_data["Value"]["MainStats"]["LUC"] = int(((content[position]["Value"]["LUC99Enemy"] - content[position]["Value"]["LUC"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["LUC"])
-    log_data["Value"]["MainStats"]["EXP"] = int(((content[position]["Value"]["Experience99Enemy"] - content[position]["Value"]["Experience"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["Experience"])
-    log_data["Value"]["MainStats"]["AP"] = int(((content[position]["Value"]["ArtsExperience99Enemy"] - content[position]["Value"]["ArtsExperience"])/98)*(content[position]["Value"]["DefaultEnemyLevel"]-1) + content[position]["Value"]["ArtsExperience"])
+    log_data["Value"]["MainStats"]["HP"] = int(((content[i]["Value"]["MaxHP99Enemy"] - content[i]["Value"]["MaxHP"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["MaxHP"])
+    log_data["Value"]["MainStats"]["STR"] = int(((content[i]["Value"]["STR99Enemy"] - content[i]["Value"]["STR"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["STR"])
+    log_data["Value"]["MainStats"]["INT"] = int(((content[i]["Value"]["INT99Enemy"] - content[i]["Value"]["INT"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["INT"])
+    log_data["Value"]["MainStats"]["CON"] = int(((content[i]["Value"]["CON99Enemy"] - content[i]["Value"]["CON"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["CON"])
+    log_data["Value"]["MainStats"]["MND"] = int(((content[i]["Value"]["MND99Enemy"] - content[i]["Value"]["MND"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["MND"])
+    log_data["Value"]["MainStats"]["LUC"] = int(((content[i]["Value"]["LUC99Enemy"] - content[i]["Value"]["LUC"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["LUC"])
+    log_data["Value"]["MainStats"]["EXP"] = int(((content[i]["Value"]["Experience99Enemy"] - content[i]["Value"]["Experience"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["Experience"])
+    log_data["Value"]["MainStats"]["AP"] = int(((content[i]["Value"]["ArtsExperience99Enemy"] - content[i]["Value"]["ArtsExperience"])/98)*(content[i]["Value"]["DefaultEnemyLevel"]-1) + content[i]["Value"]["ArtsExperience"])
     log_data["Value"]["Resistances"] = {}
-    for i in stat:
-        log_data["Value"]["Resistances"][i] = int(content[position]["Value"][i])
-    for i in second_stat:
-        log_data["Value"]["Resistances"][i] = int(content[position]["Value"][i])
+    for e in stat:
+        log_data["Value"]["Resistances"][e] = int(content[i]["Value"][e])
+    for e in second_stat:
+        log_data["Value"]["Resistances"][e] = int(content[i]["Value"][e])
     log.append(log_data)
 
 def write_patched_chara():
