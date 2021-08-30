@@ -11,22 +11,129 @@ green_chest_type = []
 blue_chest_type = []
 enemy_type = []
 quest_type = []
+
 chest_index = []
 enemy_index = []
 quest_index = []
+
 enemy_req_number = []
 enemy_req_index = []
+
 coin = [1, 5, 10, 50, 100, 500, 1000]
 odd = [1, 1, 0]
+
 shard_list = []
 chest_skip_list = [
     "Treasurebox_SAN021(2)",
     "Treasurebox_KNG017(3)",
-    "Treasurebox_KNG020(2)",
     "Treasurebox_TWR019(2)",
     "Treasurebox_TWR019(3)",
     "Treasurebox_BIG006(3)",
     "Treasurebox_ICE013(2)",
+    "Wall_RVA011(2)"
+]
+chest_unused_list = [
+    "Treasurebox_SIP014(3)",
+    "Treasurebox_SIP021(2)",
+    "Treasurebox_ENT008(2)",
+    "Treasurebox_ENT011(3)",
+    "Treasurebox_ENT012(2)",
+    "Treasurebox_ENT015(2)",
+    "Treasurebox_SAN000(2)",
+    "Treasurebox_SAN000(3)",
+    "Treasurebox_SAN005(4)",
+    "Treasurebox_SAN005(5)",
+    "Treasurebox_SAN009(4)",
+    "Treasurebox_SAN015(2)",
+    "Treasurebox_SAN017(3)",
+    "Treasurebox_TWR000(3)",
+    "Treasurebox_TWR000(4)",
+    "Treasurebox_TWR006(2)",
+    "Treasurebox_TWR013(3)",
+    "Treasurebox_TWR015(2)",
+    "Treasurebox_TWR019(4)",
+    "Treasurebox_LIB001(3)",
+    "Treasurebox_LIB013(2)",
+    "Treasurebox_LIB018(2)",
+    "Treasurebox_LIB041(2)",
+    "Treasurebox_LIB042(2)",
+    "Treasurebox_KNG005(2)",
+    "Treasurebox_KNG018(2)",
+    "Treasurebox_KNG020(2)",
+    "Treasurebox_KNG021(3)",
+    "Treasurebox_KNG021(4)",
+    "Treasurebox_UGD002(2)",
+    "Treasurebox_UGD008(2)",
+    "Treasurebox_UGD012(2)",
+    "Treasurebox_UGD013(2)",
+    "Treasurebox_UGD013(3)",
+    "Treasurebox_UGD014(2)",
+    "Treasurebox_UGD015(2)",
+    "Treasurebox_UGD016(2)",
+    "Treasurebox_UGD017(2)",
+    "Treasurebox_UGD018(2)",
+    "Treasurebox_UGD019(2)",
+    "Treasurebox_UGD020(2)",
+    "Treasurebox_UGD022(2)",
+    "Treasurebox_UGD023(2)",
+    "Treasurebox_UGD026(2)",
+    "Treasurebox_UGD028(2)",
+    "Treasurebox_UGD029(2)",
+    "Treasurebox_UGD032(2)",
+    "Treasurebox_UGD033(2)",
+    "Treasurebox_UGD034(2)",
+    "Treasurebox_UGD035(2)",
+    "Treasurebox_UGD037(2)",
+    "Treasurebox_UGD039(2)",
+    "Treasurebox_UGD043(2)",
+    "Treasurebox_UGD045(2)",
+    "Treasurebox_UGD047(3)",
+    "Treasurebox_UGD048(3)",
+    "Treasurebox_UGD049(2)",
+    "Treasurebox_UGD055(2)",
+    "Treasurebox_UGD057(2)",
+    "Treasurebox_SND000(2)",
+    "Treasurebox_SND001(2)",
+    "Treasurebox_SND005(2)",
+    "Treasurebox_SND007(2)",
+    "Treasurebox_SND011(2)",
+    "Treasurebox_SND012(2)",
+    "Treasurebox_SND014(2)",
+    "Treasurebox_SND021(2)",
+    "Treasurebox_SND022(2)",
+    "Treasurebox_SND023(2)",
+    "Treasurebox_SND025(2)",
+    "Treasurebox_SND026(2)",
+    "Treasurebox_ARC001(2)",
+    "Treasurebox_ARC005(2)",
+    "Treasurebox_TAR000(2)",
+    "Treasurebox_TAR003(2)",
+    "Treasurebox_TAR004(2)",
+    "Treasurebox_TAR005(2)",
+    "Treasurebox_TAR008(2)",
+    "Treasurebox_TAR009(2)",
+    "Treasurebox_JPN000(2)",
+    "Treasurebox_JPN001(2)",
+    "Treasurebox_JPN003(2)",
+    "Treasurebox_JPN003(3)",
+    "Treasurebox_JPN006(2)",
+    "Treasurebox_JPN007(2)",
+    "Treasurebox_JPN008(2)",
+    "Treasurebox_JPN011(2)",
+    "Treasurebox_JPN012(2)",
+    "Treasurebox_JPN014(2)",
+    "Treasurebox_JPN016(2)",
+    "Treasurebox_JPN019(2)",
+    "Treasurebox_RVA000(2)",
+    "Treasurebox_RVA003(2)",
+    "Treasurebox_RVA003(3)",
+    "Treasurebox_RVA005(2)",
+    "Treasurebox_RVA005(3)",
+    "Treasurebox_RVA007(2)",
+    "Treasurebox_RVA008(2)",
+    "Treasurebox_RVA009(2)",
+    "Treasurebox_RVA013(2)",
+    "Treasurebox_RVA014(2)",
     "Treasurebox_BRM_A_FIRST",
     "Treasurebox_BRM_B_FIRST",
     "Treasurebox_BRM_A",
@@ -34,14 +141,15 @@ chest_skip_list = [
     "Treasurebox_OfflineChaos_A",
     "Treasurebox_OfflineChaos_B",
     "Treasurebox_OnlineChaos_A",
-    "Treasurebox_OnlineChaos_B",
-    "Wall_RVA011(2)"
+    "Treasurebox_OnlineChaos_B"
 ]
+room_unused_list = []
 enemy_skip_list = [
     "N1003_Shard",
     "N2001_Shard",
     "N2013_Shard"
 ]
+
 log = []
 
 #Content
@@ -73,6 +181,7 @@ with open("Data\\QuestMaster\\EnemyLocationInfo.json", "r") as file_reader:
 with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
+#CheckingRatio
 max_ratio = 0
 for i in chest_data:
     if i["Value"]["IsUnique"]:
@@ -80,6 +189,7 @@ for i in chest_data:
     if i["Value"]["Ratio"] > max_ratio:
         max_ratio = i["Value"]["Ratio"]
 
+#FillingLootTypes
 for i in chest_data:
     for e in range(i["Value"]["Ratio"]):
         chest_type.append(i["Key"])
@@ -95,10 +205,10 @@ for i in chest_data:
         for e in range(abs(i["Value"]["Ratio"] - (max_ratio + 1))):
             if i["Value"]["InQuest"]:
                 quest_type.append(i["Key"])
-
 for i in enemy_data:
     enemy_type.append(i["Key"])
 
+#CollectingChestIndexes
 i = 37
 while i <= 499:
     if item_content[i]["Key"] in chest_skip_list or item_content[i]["Value"]["ItemType"] == "EItemType::Upgrade":
@@ -108,19 +218,20 @@ while i <= 499:
     i += 1
 random.shuffle(chest_index)
 
+#CollectingEnemyIndexes
 i = 513
 while i <= 626:
-    if item_content[i]["Value"]["ShardRate"] == 0.0 or item_content[i]["Value"]["ShardRate"] == 100.0 and item_content[i]["Value"]["RareItemId"] == "None" and item_content[i]["Value"]["CommonItemId"] == "None" and item_content[i]["Value"]["RareIngredientId"] == "None" and item_content[i]["Value"]["CommonIngredientId"] == "None":
+    if item_content[i]["Value"]["ShardRate"] == 0.0 or item_content[i]["Value"]["ShardRate"] == 100.0:
         i += 1
         continue
     enemy_index.append(i)
     i += 1
 random.shuffle(enemy_index)
-
 for i in range(len(quest_content)):
     quest_index.append(i)
 random.shuffle(quest_index)
 
+#CollectingShardNames
 i = 500
 while i <= 626:
     if item_content[i]["Key"][0:5] == item_content[i-1]["Key"][0:5] or item_content[i]["Value"]["ShardRate"] == 0.0 or item_content[i]["Key"] in enemy_skip_list:
@@ -129,6 +240,7 @@ while i <= 626:
     shard_list.append(item_content[i]["Value"]["ShardId"])
     i += 1
 
+#PreparingLog
 log_data = {}
 log_data["Key"] = "ChestPool"
 log_data["Value"] = {}
@@ -147,6 +259,17 @@ log_data["Value"] = {}
 for i in chest_data:
     log_data["Value"][i["Key"]] = []
 log.append(log_data)
+
+def map_check(path):
+    with open(path, "r") as file_reader:
+        map_content = json.load(file_reader)
+    for i in map_content:
+        if not i["Value"]["AdjacentRoomName"] and not i["Key"] == "m09TRN_002" and not i["Value"]["OutOfMap"]:
+            room_unused_list.append(i["Key"][3:].replace("_", ""))
+    for i in chest_index:
+        for e in room_unused_list:
+            if e in item_content[i]["Key"]:
+                item_content[i]["Value"]["ItemType"] == "EItemType::Unused"
 
 def remove_infinite():
     while "Gebelsglasses" in chest_data[0]["Value"]["ItemPool"]:
@@ -205,7 +328,12 @@ def rand_pool():
     patch_chest_entry(chest_data[12]["Key"], 36)
     #ItemPool
     for i in chest_index:
+        #UnusedCheck
+        if item_content[i]["Value"]["ItemType"] == "EItemType::Unused":
+            continue
+        #Choice
         item_type = random.choice(chest_type)
+        #ChestColorCheck
         if "Treasurebox" in item_content[i]["Key"]:
             if not item_content[i]["Value"]["AreaChangeTreasureFlag"]:
                 while item_type == chest_data[8]["Key"]:
@@ -213,19 +341,23 @@ def rand_pool():
             if item_content[i]["Value"]["ItemType"] == "EItemType::Bullet" or item_content[i]["Value"]["ItemType"] == "EItemType::Coin" or item_content[i]["Value"]["ItemType"] == "EItemType::Consumable" or item_content[i]["Value"]["AreaChangeTreasureFlag"]:
                 while item_type == chest_data[9]["Key"]:
                     item_type = random.choice(chest_type)
+        #Patch
         patch_chest_entry(item_type, i)
-    #VolcanoWall
+    #VolcanoWallFix
     patch_chest_entry(chest_data[3]["Key"], 493)
     #EnemyPool
     for i in enemy_index:
+        #DullaHeadCheck
         if item_content[i]["Key"][0:5] == "N3090" or item_content[i]["Key"][0:5] == "N3099":
             item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateLow"])
         elif item_content[i]["Value"]["ShardRate"] != 100.0:
             item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateNormal"])
+        #DullaHeadCheck
         if item_content[i]["Key"][0:5] == "N3090" or item_content[i]["Key"][0:5] == "N3099":
             patch_enemy_entry(random.choice(enemy_type), "ItemRateLow", i)
         elif item_content[i]["Key"][0:5] != item_content[i-1]["Key"][0:5]:
             patch_enemy_entry(random.choice(enemy_type), "ItemRateNormal", i)
+    #DuplicateCheck
     for i in enemy_index:
         if item_content[i]["Key"][0:5] == item_content[i-1]["Key"][0:5]:
             item_content[i]["Value"]["RareItemId"] = item_content[i-1]["Value"]["RareItemId"]
@@ -688,6 +820,7 @@ def quest_req(normal, custom_map):
         i += 1
 
 def quest_reward():
+    #InvertListRatio
     for i in chest_data:
         if i["Value"]["IsUnique"]:
             continue
@@ -711,6 +844,7 @@ def quest_reward():
             for o in range(abs(ratio[e] - (max_ratio + 1))):
                 new_list.append(i["Value"]["ItemPool"][e])
         i["Value"]["ItemPool"] = new_list
+    #AssignRewards
     for i in quest_index:
         item_type = random.choice(quest_type)
         if item_type == chest_data[0]["Key"]:

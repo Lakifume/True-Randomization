@@ -1,3 +1,4 @@
+from GenerateArmorMaster import *
 from GenerateAttackParameter import *
 from GenerateBookMaster import *
 from GenerateCharacterParameterMaster import *
@@ -40,12 +41,12 @@ tweak_color = "#ff80bf"
 
 checkbox_list = []
 
-empty_preset = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-trial_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, False, False, False, True, True, True, True]
-race_preset = [True, True, True, True, False, True, True, True, False, True, True, True, True, False, False, False, True, True, False, True]
-meme_preset = [True, True, False, False, False, True, False, True, False, True, False, True, True, False, True, False, True, True, True, True]
-all_in_preset = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
-risk_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False]
+empty_preset = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+trial_preset = [True, True, False, False, True, True, True, True, True, True, True, True, False, False, False, True, True, True, True]
+race_preset = [True, True, True, True, False, True, True, True, False, True, True, True, False, False, False, True, True, False, True]
+meme_preset = [True, True, False, False, False, True, False, True, False, True, False, True, False, True, False, True, True, True, True]
+all_in_preset = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+risk_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False]
 
 preset_amount = len(os.listdir("MapEdit\\Custom"))
 
@@ -85,7 +86,7 @@ sound_files = [
 ]
 
 patch_list = []
-write_list = [write_master, write_ammunition, write_armor, write_arts, write_brv, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
+write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
 reset_list = [reset_master, reset_scenario, reset_system, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_brv, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
 json_list = []
 
@@ -420,19 +421,13 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_8)
 
         self.check_box_9 = QCheckBox(re.sub(p, r"\1 \2", config[4]["Value"]["Option1Id"]), self)
-        self.check_box_9.setToolTip("Randomize the power of the 8 weapons that\nare originally obtained via cheatcodes.")
+        self.check_box_9.setToolTip("Randomize the stats of the weapons, headgears and\naccessories that are originally obtained via cheatcodes.")
         self.check_box_9.stateChanged.connect(self.check_box_9_changed)
         box_5_grid.addWidget(self.check_box_9, 0, 0)
         checkbox_list.append(self.check_box_9)
 
-        self.check_box_19 = QCheckBox(re.sub(p, r"\1 \2", config[4]["Value"]["Option2Id"]), self)
-        self.check_box_19.setToolTip("Randomize the rate at which the cheat weapons'\nspecial effects occur.")
-        self.check_box_19.stateChanged.connect(self.check_box_19_changed)
-        box_5_grid.addWidget(self.check_box_19, 1, 0)
-        checkbox_list.append(self.check_box_19)
-
         self.check_box_10 = QCheckBox(re.sub(p, r"\1 \2", config[5]["Value"]["Option1Id"]), self)
-        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with \nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you an extra 300 HP at the start\nand reduce HP max ups by half in return.")
+        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you an extra 300 HP at the start\nand reduce HP max ups by half in return.")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
         box_6_grid.addWidget(self.check_box_10, 0, 0)
         checkbox_list.append(self.check_box_10)
@@ -566,8 +561,6 @@ class Main(QWidget):
             self.check_box_8.setChecked(True)
         if config[4]["Value"]["Option1Value"]:
             self.check_box_9.setChecked(True)
-        if config[4]["Value"]["Option2Value"]:
-            self.check_box_19.setChecked(True)
         if config[5]["Value"]["Option1Value"]:
             self.check_box_10.setChecked(True)
         if config[5]["Value"]["Option2Value"]:
@@ -814,23 +807,10 @@ class Main(QWidget):
         if self.check_box_9.isChecked():
             config[4]["Value"]["Option1Value"] = True
             self.check_box_9.setStyleSheet("color: " + weapon_color)
-            if self.check_box_19.isChecked():
-                self.box_5.setStyleSheet("color: " + weapon_color)
+            self.box_5.setStyleSheet("color: " + weapon_color)
         else:
             config[4]["Value"]["Option1Value"] = False
             self.check_box_9.setStyleSheet("color: #ffffff")
-            self.box_5.setStyleSheet("color: #ffffff")
-
-    def check_box_19_changed(self):
-        self.matches_preset()
-        if self.check_box_19.isChecked():
-            config[4]["Value"]["Option2Value"] = True
-            self.check_box_19.setStyleSheet("color: " + weapon_color)
-            if self.check_box_9.isChecked():
-                self.box_5.setStyleSheet("color: " + weapon_color)
-        else:
-            config[4]["Value"]["Option2Value"] = False
-            self.check_box_19.setStyleSheet("color: #ffffff")
             self.box_5.setStyleSheet("color: #ffffff")
 
     def check_box_10_changed(self):
@@ -1086,7 +1066,7 @@ class Main(QWidget):
     def button_3_clicked(self):
         box = QMessageBox(self)
         box.setWindowTitle("Recommended settings")
-        box.setText("Here are the recommended settings to pick in the game randomizer to get the best experience from this mod:<br/><br/><span style=\"color: #f6b26b;\">GOAL</span>: Defeat All Evil (I mean obviously).<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed due to the key shard placement being static).<br/><br/><span style=\"color: #f6b26b;\">SAVE/WARP ROOMS</span>: Unchanged (seriously, does anyone like to shuffle those ?).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees a weapon in first chest and is required for the mod's item pool options to work).<br/><br/><span style=\"color: #f6b26b;\">ENEMY DROPS</span>: Chaos (if you downloaded this mod you're probably in for the chaos anyways).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (shuffled shop combined with random prices is completely busted and you want to make sure to have waystones for custom maps).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the quest rewards based on the global item pool).")
+        box.setText("Here are the recommended settings to pick in the game randomizer to get the best experience from this mod:<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed due to the key shard placement being static).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees a weapon in first chest and is required for the mod's item pool options to work).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (shuffled shop combined with random prices can be completely busted and you want to make sure to have waystones for custom maps).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the quest rewards based on the global item pool).")
         box.exec()
 
     def button_4_clicked(self):
@@ -1120,6 +1100,7 @@ class Main(QWidget):
         reset_book_log()
         reset_shard_log()
         reset_weapon_log()
+        reset_armor_log()
         reset_chara_log()
         reset_map_log()
         
@@ -1128,6 +1109,8 @@ class Main(QWidget):
         if not self.string and config[6]["Value"]["Option1Value"]:
             if os.listdir("MapEdit\\Custom"):
                 self.string = "MapEdit\\Custom\\" + random.choice(os.listdir("MapEdit\\Custom"))
+        if self.string:
+            map_check(self.string)
         
         #Patch
 
@@ -1159,8 +1142,10 @@ class Main(QWidget):
             rand_shard(config[3]["Value"]["Option2Value"])
             write_shard_log()
         
-        if config[4]["Value"]["Option1Value"] or config[4]["Value"]["Option2Value"]:
-            rand_weapon(config[4]["Value"]["Option1Value"], config[4]["Value"]["Option2Value"])
+        if config[4]["Value"]["Option1Value"]:
+            rand_equip()
+            rand_weapon()
+            write_armor_log()
             write_weapon_log()
         
         if config[5]["Value"]["Option1Value"] or config[5]["Value"]["Option2Value"] or config[11]["Value"]["Option2Value"]:
@@ -1220,7 +1205,7 @@ class Main(QWidget):
         
         #Write
         
-        if config[0]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
+        if config[0]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"] or self.string:
             patch_list.append(write_patched_drop)
         else:
             write_list.append(write_drop)
@@ -1244,10 +1229,14 @@ class Main(QWidget):
         else:
             write_list.append(write_shard)
         
-        if config[4]["Value"]["Option1Value"] or config[4]["Value"]["Option2Value"]:
+        if config[4]["Value"]["Option1Value"]:
             patch_list.append(write_patched_weapon)
+            patch_list.append(write_patched_armor)
+            patch_list.append(write_patched_master)
         else:
             write_list.append(write_weapon)
+            write_list.append(write_armor)
+            write_list.append(write_master)
         
         patch_list.append(write_patched_chara)
         
@@ -1336,13 +1325,18 @@ class Main(QWidget):
         label3_image = QLabel()
         label3_image.setPixmap(QPixmap("Data\\profile3.png"))
         label3_text = QLabel()
-        label3_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#25c04e>Wiki</font></a>")
+        label3_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
         label3_text.setOpenExternalLinks(True)
         label4_image = QLabel()
         label4_image.setPixmap(QPixmap("Data\\profile4.png"))
         label4_text = QLabel()
-        label4_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
+        label4_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">BadmoonZ</span><br/>Randomizer researcher<br/><a href=\"https://github.com/BadmoonzZ/Bloodstained\"><font face=Cambria color=#25c04e>Github</font></a>")
         label4_text.setOpenExternalLinks(True)
+        label5_image = QLabel()
+        label5_image.setPixmap(QPixmap("Data\\profile5.png"))
+        label5_text = QLabel()
+        label5_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
+        label5_text.setOpenExternalLinks(True)
         layout = QGridLayout()
         layout.setSpacing(10)
         layout.addWidget(label1_image, 0, 0, 1, 1)
@@ -1353,6 +1347,8 @@ class Main(QWidget):
         layout.addWidget(label3_text, 2, 1, 1, 1)
         layout.addWidget(label4_image, 3, 0, 1, 1)
         layout.addWidget(label4_text, 3, 1, 1, 1)
+        layout.addWidget(label5_image, 4, 0, 1, 1)
+        layout.addWidget(label5_text, 4, 1, 1, 1)
         box = QDialog(self)
         box.setLayout(layout)
         box.setWindowTitle("Credits")

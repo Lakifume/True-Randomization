@@ -1,5 +1,6 @@
 import json
 import os
+import math
 import shutil
 import random
 
@@ -42,11 +43,10 @@ if data["Value"]["Min"] <= 100:
     i = data["Value"]["Min"]
     while i <= 100:
         percent_range.append(i)
-        percent_range_hold_type.append(i)
         i += 1
 
 if data["Value"]["Max"] > 100:
-    increase = round((data["Value"]["Max"]-100)/(100-data["Value"]["Min"]))
+    increase = math.ceil((data["Value"]["Max"]-100)/(100-data["Value"]["Min"]))
     i = 100 + increase
     while i <= data["Value"]["Max"]:
         percent_range.append(i)
@@ -72,18 +72,18 @@ def rand_shard(scale):
             if percent > 100 and (content[i]["Value"]["isKeepPush"] and content[i]["Value"]["isHoldType"] or content[i]["Key"] == "ChangeBunny") and content[i]["Key"] != "Healing":
                 percent += (percent-100)*4
             else:
-                percent += (percent-100)/2
+                percent += (percent-100)/4
         else:
             percent = random.choice(percent_range)
-        content[i]["Value"]["useMP"] = round(content[i]["Value"]["useMP"] * (percent/100)) + 0.0
+        content[i]["Value"]["useMP"] = int(content[i]["Value"]["useMP"] * (percent/100)) + 0.0
         if content[i]["Key"] == "LigaStreyma":
-            content[73]["Value"]["useMP"] = round(content[73]["Value"]["useMP"] * (percent/100)) + 0.0
+            content[73]["Value"]["useMP"] = int(content[73]["Value"]["useMP"] * (percent/100)) + 0.0
             if content[73]["Value"]["useMP"] <= 0.0:
                 content[73]["Value"]["useMP"] = 1.0
         if content[i]["Value"]["useMP"] <= 0.0:
             content[i]["Value"]["useMP"] = 1.0
             percent = 1.0
-        log_data["Value"]["CostPercentage"] = round(percent)
+        log_data["Value"]["CostPercentage"] = int(percent)
         log.append(log_data)
 
 def eye_max():
@@ -108,7 +108,7 @@ def reset_shard():
 
 def write_shard_log():
     with open("SpoilerLog\\Shard.json", "w") as file_writer:
-        file_writer.write(json.dumps(log, indent=2))
+        file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def reset_shard_log():
     if os.path.isfile("SpoilerLog\\Shard.json"):

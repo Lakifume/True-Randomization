@@ -6,14 +6,6 @@ import shutil
 with open("Data\\CoordinateParameter\\Content\\PB_DT_CoordinateParameter.json", "r") as file_reader:
     content = json.load(file_reader)
 
-def change_scaling(hard, nightmare):
-    content[7]["Value"]["Value"] = hard
-    content[9]["Value"]["Value"] = hard
-    content[10]["Value"]["Value"] = hard
-    content[12]["Value"]["Value"] = nightmare
-    content[14]["Value"]["Value"] = nightmare
-    content[15]["Value"]["Value"] = nightmare
-
 def bloodless_low_HP_growth():
     content[65]["Value"]["Value"] -= 10.0
 
