@@ -27,7 +27,7 @@ for i in range(76):
         for e in range(2**(abs(math.ceil(abs(stat_int)/5)-5))*10):
             stat_pool.append(stat_int)
     else:
-        for e in range(5580):
+        for e in range(9300):
             stat_pool.append(stat_int)
     stat_int += 1
 

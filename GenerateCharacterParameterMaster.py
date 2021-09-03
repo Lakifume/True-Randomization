@@ -7,7 +7,6 @@ import random
 below_25_range = []
 below_50_range = []
 chance_6_range = []
-chance_5_range = []
 chance_4_range = []
 chance_3_range = []
 chance_2_range = []
@@ -53,13 +52,6 @@ for i in range(99):
 
 for i in range(99):
     if i <= 49:
-        for e in range(4):
-            chance_5_range.append(i+1)
-    else:
-        chance_5_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
         for e in range(3):
             chance_4_range.append(i+1)
     else:
@@ -81,12 +73,17 @@ for i in range(41):
         stat_pool.append(stat_int)
     stat_int += 5.0
 
-def more_HP():
+def more_HPMP():
     content[5]["Value"]["MaxHP"] += 300
+    content[5]["Value"]["MaxMP"] += 150
     content[5]["Value"]["MaxHP99Enemy"] += 300
+    content[5]["Value"]["MaxMP99Enemy"] += 150
     content[6]["Value"]["MaxHP"] += 300
+    content[6]["Value"]["MaxMP"] += 150
     content[6]["Value"]["MaxHP99Enemy"] += 300
+    content[6]["Value"]["MaxMP99Enemy"] += 150
     content[10]["Value"]["MaxHP"] += 300
+    content[10]["Value"]["MaxMP"] += 150
 
 def rand_enemy(level, resist, custom, value):
     #NG+
@@ -97,8 +94,6 @@ def rand_enemy(level, resist, custom, value):
         below_50_range.append(value)
         chance_6_range.clear()
         chance_6_range.append(value)
-        chance_5_range.clear()
-        chance_5_range.append(value)
         chance_4_range.clear()
         chance_4_range.append(value)
         chance_3_range.clear()
@@ -107,8 +102,8 @@ def rand_enemy(level, resist, custom, value):
         chance_2_range.append(value)
     #MainCastleEnemies
     i = 12
-    while i <= 102:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+    while i <= 107:
+        if resist:
             rand_stat(i)
         if level:
             if content[i]["Key"][0:5] == "N3006":
@@ -118,18 +113,10 @@ def rand_enemy(level, resist, custom, value):
             else:
                 patch_level(chance_6_range, i)
         i += 1
-    #JapanEnemies
-    i = 103
-    while i <= 107:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
-            rand_stat(i)
-        if level:
-            patch_level(chance_5_range, i)
-        i += 1
     #DenEnemies
     i = 108
     while i <= 121:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+        if resist:
             rand_stat(i)
         if level:
             patch_level(chance_4_range, i)
@@ -137,7 +124,7 @@ def rand_enemy(level, resist, custom, value):
     #IceEnemies
     i = 122
     while i <= 129:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+        if resist:
             rand_stat(i)
         if level:
             patch_level(chance_3_range, i)
@@ -145,7 +132,7 @@ def rand_enemy(level, resist, custom, value):
     #BackerBosses
     i = 130
     while i <= 137:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+        if resist:
             rand_stat(i)
         if level:
             patch_level(chance_3_range, i)
@@ -153,7 +140,7 @@ def rand_enemy(level, resist, custom, value):
     #MainCastleBosses
     i = 138
     while i <= 156:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+        if resist:
             rand_stat(i)
         if level:
             if content[i]["Key"][0:5] == "N1001":
@@ -168,7 +155,7 @@ def rand_enemy(level, resist, custom, value):
     #EndgameBosses
     i = 157
     while i <= 177:
-        if resist and content[i]["Value"]["ZAN"] != 100.0:
+        if resist:
             rand_stat(i)
         if level:
             if content[i]["Key"] == "N1011":
@@ -181,32 +168,12 @@ def rand_enemy(level, resist, custom, value):
                 patch_level(chance_2_range, i)
         i += 1
     #Breeder
-    if resist and content[i]["Value"]["ZAN"] != 100.0:
+    if resist:
         rand_stat(185)
         rand_stat(186)
     if level:
         patch_level(chance_6_range, 185)
         patch_level(chance_6_range, 186)
-
-def no_level(difficulty):
-    i = 12
-    while i < len(content):
-        if difficulty == "Normal":
-            content[i]["Value"]["HardEnemyLevel"] = 1
-            content[i]["Value"]["NightmareEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeHardEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeNightmareEnemyLevel"] = 1
-        elif difficulty == "Hard":
-            content[i]["Value"]["DefaultEnemyLevel"] = 1
-            content[i]["Value"]["NightmareEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeDefaultEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeNightmareEnemyLevel"] = 1
-        else:
-            content[i]["Value"]["DefaultEnemyLevel"] = 1
-            content[i]["Value"]["HardEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeDefaultEnemyLevel"] = 1
-            content[i]["Value"]["BloodlessModeHardEnemyLevel"] = 1
-        i += 1
 
 def patch_level(array, i):
     if content[i]["Key"] == "N3001_Armor":
@@ -249,33 +216,34 @@ def stat_scale(i):
         content[i]["Value"][e] = stat_num
 
 def rand_stat(i):
-    if content[i]["Key"] == "N3015_HEAD" or content[i]["Key"] == "N1001_HEAD" or content[i]["Key"] == "N2001_HEAD":
-        for e in stat:
-            if content[i-1]["Value"][e] < -50:
-                content[i]["Value"][e] = -100
-            else:
-                content[i]["Value"][e] = content[i-1]["Value"][e]-50
-    elif content[i]["Key"] == "N3001_Armor":
-        for e in stat:
-            content[i]["Value"][e] = content[38]["Value"][e]
-    elif content[i]["Key"] == "N1001_Tentacle":
-        for e in stat:
-            content[i]["Value"][e] = content[i-2]["Value"][e]
-    elif content[i]["Key"] == "N2001_ARMOR":
-        for e in stat:
-            if content[i-2]["Value"][e] > 50:
-                    content[i]["Value"][e] = 100
-            else:
-                content[i]["Value"][e] = content[i-2]["Value"][e]+50
-    elif content[i]["Key"][0:5] == "N1013" and content[i]["Key"] != "N1013_Bael" or content[i]["Key"] == "N1009_Bael":
-        for e in stat:
-            content[i]["Value"][e] = content[168]["Value"][e]
-    elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"][0:5] == "N3125":
-        for e in stat:
-            content[i]["Value"][e] = content[i-1]["Value"][e]
-    elif content[i]["Key"] != "P1003" and content[i]["Key"] != "JuckPod" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
-        for e in stat:
-            content[i]["Value"][e] = random.choice(stat_pool)
+    if content[i]["Value"]["ZAN"] != 100.0:
+        if content[i]["Key"] == "N3015_HEAD" or content[i]["Key"] == "N1001_HEAD" or content[i]["Key"] == "N2001_HEAD":
+            for e in stat:
+                if content[i-1]["Value"][e] < -50:
+                    content[i]["Value"][e] = -100
+                else:
+                    content[i]["Value"][e] = content[i-1]["Value"][e]-50
+        elif content[i]["Key"] == "N3001_Armor":
+            for e in stat:
+                content[i]["Value"][e] = content[38]["Value"][e]
+        elif content[i]["Key"] == "N1001_Tentacle":
+            for e in stat:
+                content[i]["Value"][e] = content[i-2]["Value"][e]
+        elif content[i]["Key"] == "N2001_ARMOR":
+            for e in stat:
+                if content[i-2]["Value"][e] > 50:
+                        content[i]["Value"][e] = 100
+                else:
+                    content[i]["Value"][e] = content[i-2]["Value"][e]+50
+        elif content[i]["Key"][0:5] == "N1013" and content[i]["Key"] != "N1013_Bael" or content[i]["Key"] == "N1009_Bael":
+            for e in stat:
+                content[i]["Value"][e] = content[168]["Value"][e]
+        elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"][0:5] == "N3125":
+            for e in stat:
+                content[i]["Value"][e] = content[i-1]["Value"][e]
+        elif content[i]["Key"] != "P1003" and content[i]["Key"] != "JuckPod" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
+            for e in stat:
+                content[i]["Value"][e] = random.choice(stat_pool)
 
 def create_log(i):
     log_data = {}
@@ -307,6 +275,9 @@ def write_patched_chara():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CharacterParameterMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
     os.remove("Serializer\\PB_DT_CharacterParameterMaster.json")
+
+def write_chara():
+    shutil.copyfile("Serializer\\PB_DT_CharacterParameterMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
 
 def reset_chara():
     if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset"):

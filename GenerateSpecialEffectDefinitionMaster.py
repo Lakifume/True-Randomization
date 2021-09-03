@@ -6,8 +6,9 @@ import shutil
 with open("Data\\SpecialEffectDefinitionMaster\\Content\\PB_DT_SpecialEffectDefinitionMaster.json", "r") as file_reader:
     content = json.load(file_reader)
 
-def low_HP_growth():
+def low_HPMP_growth():
     content[105]["Value"]["Parameter01"] -= 10.0
+    content[106]["Value"]["Parameter01"] -= 5.0
 
 def write_patched_effect():
     with open("Serializer\\PB_DT_SpecialEffectDefinitionMaster.json", "w") as file_writer:

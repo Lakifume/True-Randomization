@@ -5,13 +5,11 @@ from GenerateCharacterParameterMaster import *
 from GenerateCoordinateParameter import *
 from GenerateDialogueTableItems import *
 from GenerateDropQuestMaster import *
-from GenerateItemMaster import *
 from GenerateMisc import *
 from GenerateRandomHue import *
 from GenerateRoomMaster import *
 from GenerateShardMaster import *
 from GenerateSpecialEffectDefinitionMaster import *
-from GenerateSystemStringTable import *
 from GenerateWeaponMaster import *
 from PySide6.QtCore import *
 from PySide6.QtGui import *
@@ -41,14 +39,134 @@ tweak_color = "#ff80bf"
 
 checkbox_list = []
 
-empty_preset = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
-trial_preset = [True, True, False, False, True, True, True, True, True, True, True, True, False, False, False, True, True, True, True]
-race_preset = [True, True, True, True, False, True, True, True, False, True, True, True, False, False, False, True, True, False, True]
-meme_preset = [True, True, False, False, False, True, False, True, False, True, False, True, False, True, False, True, True, True, True]
-all_in_preset = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
-risk_preset = [True, True, False, False, True, True, True, True, True, True, True, True, True, True, True, True, True, True, False]
+empty_preset = [
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False
+]
+trial_preset = [
+    True,
+    True,
+    False,
+    False,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    False,
+    False,
+    False,
+    True,
+    True,
+    True,
+    True
+]
+race_preset = [
+    True,
+    True,
+    True,
+    True,
+    False,
+    True,
+    True,
+    True,
+    False,
+    True,
+    True,
+    True,
+    False,
+    False,
+    False,
+    True,
+    True,
+    False,
+    True
+]
+meme_preset = [
+    True,
+    True,
+    False,
+    False,
+    False,
+    True,
+    False,
+    True,
+    False,
+    True,
+    False,
+    True,
+    False,
+    True,
+    False,
+    True,
+    True,
+    True,
+    True
+]
+all_in_preset = [
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True
+]
+risk_preset = [
+    True,
+    True,
+    False,
+    False,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    True,
+    False
+]
 
-preset_amount = len(os.listdir("MapEdit\\Custom"))
+map_num = len(os.listdir("MapEdit\\Custom"))
 
 datatable_files = [
     "PB_DT_AmmunitionMaster",
@@ -69,8 +187,7 @@ datatable_files = [
     "PB_DT_ShardMaster",
     "PB_DT_SpecialEffectDefinitionMaster",
     "PB_DT_WeaponMaster",
-    "PBMasterStringTable",
-    "PBSystemStringTable"
+    "PBMasterStringTable"
 ]
 ui_files = ["icon"]
 texture_files = [
@@ -87,7 +204,7 @@ sound_files = [
 
 patch_list = []
 write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
-reset_list = [reset_master, reset_scenario, reset_system, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_brv, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
+reset_list = [reset_master, reset_scenario, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_brv, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
 json_list = []
 
 #Config
@@ -208,7 +325,7 @@ class Convert(QThread):
             progress += 1
             self.updateProgress.emit(progress)
         
-        sys.exit()
+        writing()
 
 #GUI
 
@@ -427,7 +544,7 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_9)
 
         self.check_box_10 = QCheckBox(re.sub(p, r"\1 \2", config[5]["Value"]["Option1Id"]), self)
-        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you an extra 300 HP at the start\nand reduce HP max ups by half in return.")
+        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
         box_6_grid.addWidget(self.check_box_10, 0, 0)
         checkbox_list.append(self.check_box_10)
@@ -439,7 +556,7 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_11)
 
         self.check_box_12 = QCheckBox(re.sub(p, r"\1 \2", config[6]["Value"]["Option1Id"]), self)
-        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(preset_amount) + ").")
+        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").")
         self.check_box_12.stateChanged.connect(self.check_box_12_changed)
         box_7_grid.addWidget(self.check_box_12, 0, 0)
         checkbox_list.append(self.check_box_12)
@@ -479,11 +596,6 @@ class Main(QWidget):
         self.radio_button_2.setToolTip("Select the difficulty you'll be using in-game.")
         self.radio_button_2.toggled.connect(self.radio_button_group_1_checked)
         box_11_grid.addWidget(self.radio_button_2, 1, 0)
-        
-        self.radio_button_3 = QRadioButton(re.sub(p, r"\1 \2", config[10]["Value"]["Option3Id"]))
-        self.radio_button_3.setToolTip("Select the difficulty you'll be using in-game.")
-        self.radio_button_3.toggled.connect(self.radio_button_group_1_checked)
-        box_11_grid.addWidget(self.radio_button_3, 0, 1)
         
         self.radio_button_4 = QRadioButton(re.sub(p, r"\1 \2", config[11]["Value"]["Option1Id"]))
         self.radio_button_4.setToolTip("Select the game mode that this file is meant for.")
@@ -578,16 +690,14 @@ class Main(QWidget):
         
         if config[10]["Value"]["Option1Value"]:
             self.radio_button_1.setChecked(True)
-        elif config[10]["Value"]["Option2Value"]:
+        else:
             self.radio_button_2.setChecked(True)
-        elif config[10]["Value"]["Option3Value"]:
-            self.radio_button_3.setChecked(True)
         
         if config[11]["Value"]["Option1Value"]:
             self.radio_button_4.setChecked(True)
         elif config[11]["Value"]["Option2Value"]:
             self.radio_button_5.setChecked(True)
-        elif config[11]["Value"]["Option3Value"]:
+        else:
             self.radio_button_6.setChecked(True)
         
         self.matches_preset()
@@ -602,7 +712,7 @@ class Main(QWidget):
         #Buttons
         
         button_3 = QPushButton("Game Settings")
-        button_3.setToolTip("Recommended in-game settings.")
+        button_3.setToolTip("Required in-game settings.")
         button_3.clicked.connect(self.button_3_clicked)
         grid.addWidget(button_3, 8, 1, 1, 1)
 
@@ -660,7 +770,8 @@ class Main(QWidget):
             self.check_box_16.setEnabled(True)
             self.check_box_17.setEnabled(True)
             self.check_box_18.setEnabled(True)
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_4])
+            if not self.string:
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
         else:
             config[0]["Value"]["Option1Value"] = False
             self.check_box_1.setStyleSheet("color: #ffffff")
@@ -668,7 +779,8 @@ class Main(QWidget):
             self.check_box_16.setEnabled(False)
             self.check_box_17.setEnabled(False)
             self.check_box_18.setEnabled(False)
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.radio_button_4])
+            if not self.string:
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
 
     def check_box_2_changed(self):
         self.matches_preset()
@@ -677,13 +789,15 @@ class Main(QWidget):
             self.check_box_2.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_4])
+            if not self.string:
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_12, self.radio_button_4])
             self.add_to_list(datatable_files, "PBScenarioStringTable", [])
         else:
             config[0]["Value"]["Option2Value"] = False
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.radio_button_4])
+            if not self.string:
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_12, self.radio_button_4])
             self.remove_from_list(datatable_files, "PBScenarioStringTable", [])
 
     def check_box_16_changed(self):
@@ -844,6 +958,7 @@ class Main(QWidget):
             self.check_box_12.setStyleSheet("color: " + map_color)
             self.box_7.setStyleSheet("color: " + map_color)
             if not self.string:
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.radio_button_4])
                 self.add_to_list(ui_files, "icon_8bitCrown", [])
                 self.add_to_list(ui_files, "Map_Icon_Keyperson", [])
                 self.add_to_list(ui_files, "Map_Icon_RootBox", [])
@@ -853,6 +968,7 @@ class Main(QWidget):
             self.check_box_12.setStyleSheet("color: #ffffff")
             self.box_7.setStyleSheet("color: #ffffff")
             if not self.string:
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.radio_button_4])
                 self.remove_from_list(ui_files, "icon_8bitCrown", [])
                 self.remove_from_list(ui_files, "Map_Icon_Keyperson", [])
                 self.remove_from_list(ui_files, "Map_Icon_RootBox", [])
@@ -928,15 +1044,9 @@ class Main(QWidget):
         if self.radio_button_1.isChecked():
             config[10]["Value"]["Option1Value"] = True
             config[10]["Value"]["Option2Value"] = False
-            config[10]["Value"]["Option3Value"] = False
-        elif self.radio_button_2.isChecked():
-            config[10]["Value"]["Option1Value"] = False
-            config[10]["Value"]["Option2Value"] = True
-            config[10]["Value"]["Option3Value"] = False
         else:
             config[10]["Value"]["Option1Value"] = False
-            config[10]["Value"]["Option2Value"] = False
-            config[10]["Value"]["Option3Value"] = True
+            config[10]["Value"]["Option2Value"] = True
 
     def radio_button_group_2_checked(self):
         if self.radio_button_4.isChecked():
@@ -944,19 +1054,22 @@ class Main(QWidget):
             config[11]["Value"]["Option1Value"] = True
             config[11]["Value"]["Option2Value"] = False
             config[11]["Value"]["Option3Value"] = False
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2])
+            if not self.string:
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12])
         elif self.radio_button_5.isChecked():
             self.level_box.setVisible(True)
             config[11]["Value"]["Option1Value"] = False
             config[11]["Value"]["Option2Value"] = True
             config[11]["Value"]["Option3Value"] = False
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2])
+            if not self.string:
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12])
         else:
             self.level_box.setVisible(False)
             config[11]["Value"]["Option1Value"] = False
             config[11]["Value"]["Option2Value"] = False
             config[11]["Value"]["Option3Value"] = True
-            self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2])
+            if not self.string:
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12])
     
     def preset_drop_down_change(self, index):
         if index == 1:
@@ -983,40 +1096,51 @@ class Main(QWidget):
         for i in range(len(checkbox_list)):
             if not(empty_preset[i] and checkbox_list[i].isChecked() or not empty_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_1 = False
+        if is_preset_1:
+            self.preset_drop_down.setCurrentIndex(1)
+            return
+        
         is_preset_2 = True
         for i in range(len(checkbox_list)):
             if not(trial_preset[i] and checkbox_list[i].isChecked() or not trial_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_2 = False
+        if is_preset_2:
+            self.preset_drop_down.setCurrentIndex(2)
+            return
+        
         is_preset_3 = True
         for i in range(len(checkbox_list)):
             if not(race_preset[i] and checkbox_list[i].isChecked() or not race_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_3 = False
+        if is_preset_3:
+            self.preset_drop_down.setCurrentIndex(3)
+            return
+        
         is_preset_4 = True
         for i in range(len(checkbox_list)):
             if not(meme_preset[i] and checkbox_list[i].isChecked() or not meme_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_4 = False
+        if is_preset_4:
+            self.preset_drop_down.setCurrentIndex(4)
+            return
+        
         is_preset_5 = True
         for i in range(len(checkbox_list)):
             if not(all_in_preset[i] and checkbox_list[i].isChecked() or not all_in_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_5 = False
+        if is_preset_5:
+            self.preset_drop_down.setCurrentIndex(5)
+            return
+        
         is_preset_6 = True
         for i in range(len(checkbox_list)):
             if not(risk_preset[i] and checkbox_list[i].isChecked() or not risk_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_6 = False
-        if is_preset_1:
-            self.preset_drop_down.setCurrentIndex(1)
-        elif is_preset_2:
-            self.preset_drop_down.setCurrentIndex(2)
-        elif is_preset_3:
-            self.preset_drop_down.setCurrentIndex(3)
-        elif is_preset_4:
-            self.preset_drop_down.setCurrentIndex(4)
-        elif is_preset_5:
-            self.preset_drop_down.setCurrentIndex(5)
-        elif is_preset_6:
+        if is_preset_6:
             self.preset_drop_down.setCurrentIndex(6)
-        else:
-            self.preset_drop_down.setCurrentIndex(0)
+            return
+        
+        self.preset_drop_down.setCurrentIndex(0)
     
     def new_level(self):
         config[12]["Value"]["Level"] = self.level_box.value()
@@ -1065,8 +1189,8 @@ class Main(QWidget):
 
     def button_3_clicked(self):
         box = QMessageBox(self)
-        box.setWindowTitle("Recommended settings")
-        box.setText("Here are the recommended settings to pick in the game randomizer to get the best experience from this mod:<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed due to the key shard placement being static).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees a weapon in first chest and is required for the mod's item pool options to work).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (shuffled shop combined with random prices can be completely busted and you want to make sure to have waystones for custom maps).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the quest rewards based on the global item pool).")
+        box.setWindowTitle("Required settings")
+        box.setText("Here are the settings to pick in the game randomizer for this mod to function properly:<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed, use the mod's improved version instead).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees items to not end up in unused chests).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (the mod already takes care of randomizing the shop based on the global item pool).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the rewards based on the global item pool).")
         box.exec()
 
     def button_4_clicked(self):
@@ -1074,6 +1198,7 @@ class Main(QWidget):
         if path:
             self.string = path.replace("/", "\\")
             self.setWindowTitle("Randomizer (" + self.string + ")")
+            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12, self.radio_button_4])
             self.add_to_list(ui_files, "icon_8bitCrown", [self.check_box_12])
             self.add_to_list(ui_files, "Map_Icon_Keyperson", [self.check_box_12])
             self.add_to_list(ui_files, "Map_Icon_RootBox", [self.check_box_12])
@@ -1096,7 +1221,6 @@ class Main(QWidget):
             return
         
         reset_drop_log()
-        reset_item_log()
         reset_book_log()
         reset_shard_log()
         reset_weapon_log()
@@ -1117,8 +1241,9 @@ class Main(QWidget):
         if config[0]["Value"]["Option1Value"]:
             if config[0]["Value"]["Option5Value"]:
                 remove_infinite()
-            rand_pool()
-            quest_reward()
+            rand_item_pool()
+            rand_quest_pool()
+            rand_shop_pool()
             no_card()
             if not config[0]["Value"]["Option3Value"]:
                 chaos_key()
@@ -1127,12 +1252,11 @@ class Main(QWidget):
             write_drop_log()
         
         if config[0]["Value"]["Option2Value"]:
-            quest_req(config[10]["Value"]["Option1Value"], bool(self.string))
+            quest_req(config[10]["Value"]["Option2Value"], bool(self.string))
             req_string()
         
         if config[1]["Value"]["Option1Value"]:
-            rand_shop(config[1]["Value"]["Option2Value"])
-            write_item_log()
+            rand_shop_price(config[1]["Value"]["Option2Value"])
         
         if config[2]["Value"]["Option1Value"] or config[2]["Value"]["Option2Value"]:
             rand_book(config[2]["Value"]["Option1Value"], config[2]["Value"]["Option2Value"])
@@ -1154,11 +1278,13 @@ class Main(QWidget):
                 write_chara_log()
         
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
-            more_HP()
-            low_HP_growth()
-            bloodless_low_HP_growth()
+            more_HPMP()
+            low_HPMP_growth()
+            bloodless_low_HPMP_growth()
+            low_HPMP_cap()
         
         if self.string:
+            no_quest_icon()
             create_room_log(self.string)
             write_map_log()
         
@@ -1166,17 +1292,8 @@ class Main(QWidget):
             rand_dialogue()
         
         if config[10]["Value"]["Option1Value"]:
-            rename_difficulty("Normal", "None", "None")
-            no_level("Normal")
             normal_bomber()
             normal_bael()
-        elif config[10]["Value"]["Option2Value"]:
-            rename_difficulty("None", "Hard", "None")
-            no_level("Hard")
-        else:
-            rename_difficulty("None", "None", "Nightmare")
-            no_level("Nightmare")
-            no_dishes_and_bullet()
         
         if config[11]["Value"]["Option1Value"]:
             give_shortcut()
@@ -1210,13 +1327,13 @@ class Main(QWidget):
         else:
             write_list.append(write_drop)
         
-        if config[0]["Value"]["Option1Value"] or config[0]["Value"]["Option2Value"] or config[11]["Value"]["Option1Value"]:
+        if config[0]["Value"]["Option1Value"] or config[0]["Value"]["Option2Value"] or config[11]["Value"]["Option1Value"] or self.string:
             patch_list.append(write_patched_quest)
         
         if config[0]["Value"]["Option2Value"]:
             patch_list.append(write_patched_scenario)
         
-        if config[1]["Value"]["Option1Value"] or config[0]["Value"]["Option1Value"] or config[10]["Value"]["Option3Value"] or config[11]["Value"]["Option1Value"]:
+        if config[0]["Value"]["Option1Value"] or config[1]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
             patch_list.append(write_patched_item)
         else:
             write_list.append(write_item)
@@ -1238,7 +1355,10 @@ class Main(QWidget):
             write_list.append(write_armor)
             write_list.append(write_master)
         
-        patch_list.append(write_patched_chara)
+        if config[5]["Value"]["Option1Value"] or config[5]["Value"]["Option2Value"] or config[11]["Value"]["Option2Value"]:
+            patch_list.append(write_patched_chara)
+        else:
+            write_list.append(write_chara)
         
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             patch_list.append(write_patched_effect)
@@ -1265,8 +1385,6 @@ class Main(QWidget):
         
         if config[9]["Value"]["Option1Value"]:
             write_list.append(write_bloodless)
-        
-        patch_list.append(write_patched_system)
         
         if config[10]["Value"]["Option1Value"]:
             patch_list.append(write_patched_ballistic)
