@@ -69,7 +69,7 @@ for i in range(99):
 
 stat_int = -100.0
 for i in range(41):
-    for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
+    for e in range(4**(abs(math.ceil(abs(stat_int)/25)-4))):
         stat_pool.append(stat_int)
     stat_int += 5.0
 
@@ -209,7 +209,11 @@ def stat_scale(i):
         stat_num = content[i]["Value"][e]
         if content[i]["Value"]["DefaultEnemyLevel"] > content[i]["Value"]["HardEnemyLevel"]:
             stat_num += 25.0
-        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) / 2)):
+        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (1/4))):
+            stat_num += 25.0
+        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (2/4))):
+            stat_num += 25.0
+        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (3/4))):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0

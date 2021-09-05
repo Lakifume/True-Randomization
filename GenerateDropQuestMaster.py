@@ -211,14 +211,14 @@ with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
 for i in chest_data:
     for e in range(i["Value"]["ChestRatio"]):
         chest_type.append(i["Key"])
+        if i["Key"] != chest_data[11]["Key"]:
+            item_type_list.append(i["Value"]["ChestName"])
         if i["Value"]["ChestColor"] == "EChestColor::Green":
             green_chest_type.append(i["Key"])
         if i["Value"]["ChestColor"] == "EChestColor::Blue":
             blue_chest_type.append(i["Key"])
     for e in range(i["Value"]["QuestRatio"]):
         quest_type.append(i["Key"])
-    if i["Key"] != chest_data[11]["Key"]:
-        item_type_list.append(i["Value"]["ChestName"])
 for i in enemy_data:
     enemy_type.append(i["Key"])
 
@@ -855,40 +855,73 @@ def rand_quest_pool():
         item_type = random.choice(quest_type)
         if item_type == chest_data[0]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[0]["Value"]["ItemPool"], chest_data[0]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[1]["Key"]:
+            if chest_data[0]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[0]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[1]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[1]["Value"]["ItemPool"], chest_data[1]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[2]["Key"]:
+            if chest_data[1]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[1]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[2]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[2]["Value"]["ItemPool"], chest_data[2]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = max(chest_data[2]["Value"]["ItemQuantity"]) * 3
-        if item_type == chest_data[3]["Key"]:
+            if chest_data[2]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[2]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[3]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = "Money"
             quest_content[i]["Value"]["RewardNum01"] = any_pick(chest_data[3]["Value"]["ItemPool"], chest_data[3]["Value"]["IsUnique"], item_type)
-        if item_type == chest_data[4]["Key"]:
+        elif item_type == chest_data[4]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[4]["Value"]["ItemPool"], chest_data[4]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = max(chest_data[4]["Value"]["ItemQuantity"]) * 9
-        if item_type == chest_data[5]["Key"]:
+            if chest_data[4]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[4]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[5]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[5]["Value"]["ItemPool"], chest_data[5]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[6]["Key"]:
+            if chest_data[5]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[5]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[6]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[6]["Value"]["ItemPool"], chest_data[6]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[7]["Key"]:
+            if chest_data[6]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[6]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[7]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[7]["Value"]["ItemPool"], chest_data[7]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = max(chest_data[7]["Value"]["ItemQuantity"]) * 3
-        if item_type == chest_data[8]["Key"]:
+            if chest_data[7]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[7]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[8]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[8]["Value"]["ItemPool"], chest_data[8]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[9]["Key"]:
+            if chest_data[8]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[8]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[9]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[9]["Value"]["ItemPool"], chest_data[9]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
-        if item_type == chest_data[10]["Key"]:
+            if chest_data[9]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[9]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[10]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[10]["Value"]["ItemPool"], chest_data[10]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = max(chest_data[10]["Value"]["ItemQuantity"]) * 9
-        if item_type == chest_data[11]["Key"]:
+            if chest_data[10]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[10]["Value"]["ItemQuantity"]) * 3
+        elif item_type == chest_data[11]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[11]["Value"]["ItemPool"], chest_data[11]["Value"]["IsUnique"], item_type)
-            quest_content[i]["Value"]["RewardNum01"] = 1
+            if chest_data[11]["Value"]["IsUnique"]:
+                quest_content[i]["Value"]["RewardNum01"] = 1
+            else:
+                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[11]["Value"]["ItemQuantity"]) * 3
         log[2]["Value"][item_type].append(translation["Value"][quest_content[i]["Value"]["RewardItem01"]])
 
 def req_string():
