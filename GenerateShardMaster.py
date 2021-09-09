@@ -6,6 +6,13 @@ import random
 
 percent_range = []
 percent_range_hold_type = []
+special_list = [
+    "ChangeBunny",
+    "Voidlay",
+    "Chiselbalage",
+    "TissRosain",
+    "FoldingTurb"
+]
 skip_list = [
     "Bloodsteel",
     "SummonChair",
@@ -69,7 +76,7 @@ def rand_shard(scale):
         log_data["Value"] = {}
         log_data["Value"]["PowerPercentage"] = percent
         if scale:
-            if percent > 100 and (content[i]["Value"]["isKeepPush"] and content[i]["Value"]["isHoldType"] or content[i]["Key"] == "ChangeBunny") and content[i]["Key"] != "Healing":
+            if percent > 100 and content[i]["Key"] in special_list:
                 percent += (percent-100)*4
             else:
                 percent += (percent-100)/4

@@ -26,7 +26,7 @@ import subprocess
 import psutil
 from pathlib import Path
 
-item_color = "#ff8080"
+item_color = "#ff8080" 
 shop_color = "#ffff80"
 library_color = "#bf80ff"
 shard_color = "#80ffff"
@@ -1239,16 +1239,16 @@ class Main(QWidget):
         #Patch
 
         if config[0]["Value"]["Option1Value"]:
+            if not config[0]["Value"]["Option3Value"]:
+                chaos_key()
+            if not config[0]["Value"]["Option4Value"]:
+                chaos_shard()
             if config[0]["Value"]["Option5Value"]:
                 remove_infinite()
             rand_item_pool()
             rand_quest_pool()
             rand_shop_pool()
             no_card()
-            if not config[0]["Value"]["Option3Value"]:
-                chaos_key()
-            if not config[0]["Value"]["Option4Value"]:
-                chaos_shard()
             write_drop_log()
         
         if config[0]["Value"]["Option2Value"]:
