@@ -24,7 +24,6 @@ import requests
 import zipfile
 import subprocess
 import psutil
-from pathlib import Path
 
 item_color = "#ff8080" 
 shop_color = "#ffff80"
@@ -163,7 +162,7 @@ risk_preset = [
     True,
     True,
     True,
-    False
+    True
 ]
 
 map_num = len(os.listdir("MapEdit\\Custom"))
@@ -280,15 +279,6 @@ class Update(QThread):
                 self.updateProgress.emit(progress)
         
         self.progressBar.setLabelText("Extracting...")
-        
-        path = Path("").parent.absolute()
-        for i in os.listdir(path):
-            if i == "Randomizer.exe" or i == "True Randomization.zip":
-                continue
-            if os.path.isfile(i):
-                os.remove(i)
-            elif os.path.isdir(i):
-                shutil.rmtree(i)
         
         os.rename("Randomizer.exe", "OldRandomizer.exe")
         with zipfile.ZipFile("True Randomization.zip", "r") as zip_ref:
@@ -612,14 +602,14 @@ class Main(QWidget):
         self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
         box_13_grid.addWidget(self.radio_button_6, 0, 1)
         
-        if config[12]["Value"]["Level"] < 0x01:
-            config[12]["Value"]["Level"] = 0x01
-        if config[12]["Value"]["Level"] > 0xFF:
-            config[12]["Value"]["Level"] = 0xFF
+        if config[12]["Value"]["Level"] < 1:
+            config[12]["Value"]["Level"] = 1
+        if config[12]["Value"]["Level"] > 99:
+            config[12]["Value"]["Level"] = 99
         
         self.level_box = QSpinBox()
         self.level_box.setToolTip("Select the level value that you want to apply to\nall enemies.")
-        self.level_box.setRange(0x01, 0xFF)
+        self.level_box.setRange(1, 99)
         self.level_box.setValue(config[12]["Value"]["Level"])
         self.level_box.valueChanged.connect(self.new_level)
         self.level_box.setVisible(False)
@@ -628,7 +618,7 @@ class Main(QWidget):
         #DropDownLists
         
         self.preset_drop_down = QComboBox()
-        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: A good way to get started with this mod.\nRACE: Most fitting for one who seeks speed.\nMEME: Turn your brain off and annihilate everything.\nALL IN: A chaotic, challenging and safe way to play.\nRISK: May require glitches to complete, if beatable at all.")
+        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: A good way to get started with this mod.\nRACE: Most fitting for one who seeks speed.\nMEME: Turn your brain off and annihilate everything.\nALL IN: A chaotic, challenging and safe way to play.\nRISK: May require glitches to complete.")
         self.preset_drop_down.addItem("Custom")
         self.preset_drop_down.addItem("Empty")
         self.preset_drop_down.addItem("Trial")
@@ -1237,6 +1227,9 @@ class Main(QWidget):
             map_check(self.string)
         
         #Patch
+        
+        if config[11]["Value"]["Option1Value"]:
+            completion_chest_check()
 
         if config[0]["Value"]["Option1Value"]:
             if not config[0]["Value"]["Option3Value"]:

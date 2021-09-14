@@ -182,11 +182,12 @@ def patch_level(array, i):
     elif content[i]["Key"] == "N3098_Guard":
         content[i]["Value"]["DefaultEnemyLevel"] = content[i-2]["Value"]["DefaultEnemyLevel"]
         stat_scale(i)
+    elif content[i]["Key"] == "N1009_Enemy":
+        content[i]["Value"]["DefaultEnemyLevel"] = abs(random.choice(array) - 100)
+        stat_scale(i)
+        create_log(i)
     elif content[i]["Key"][0:5] == "N1013" or content[i]["Key"] == "N1009_Bael":
-        if len(array) == 1:
-            content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
-        else:
-            content[i]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
+        content[i]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
         stat_scale(i)
         if content[i]["Key"] == "N1013_Dominique":
             create_log(i)

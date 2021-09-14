@@ -8,7 +8,7 @@ def create_room_log(path):
     log_data = {}
     log_data["Key"] = "Map"
     log_data["Value"] = {}
-    log_data["Value"]["FileName"] = path.split("\\")[len(path.split("\\"))-1][:-5]
+    log_data["Value"]["FileName"] = path.split("\\")[-1][:-5]
     log.append(log_data)
 
 def write_patched_room(path):

@@ -41,7 +41,6 @@ thousand = []
 coin = [1, 5, 10, 50, 100, 500, 1000]
 odd = [1, 1, 0]
 
-shard_list = []
 chest_skip_list = [
     "Treasurebox_SAN021(2)",
     "Treasurebox_KNG017(3)",
@@ -122,6 +121,7 @@ chest_unused_list = [
     "Treasurebox_SND022(2)",
     "Treasurebox_SND023(2)",
     "Treasurebox_SND026(2)",
+    "Treasurebox_SND027(2)",
     "Treasurebox_ARC001(2)",
     "Treasurebox_ARC005(2)",
     "Treasurebox_TAR000(2)",
@@ -247,18 +247,12 @@ while i <= 626:
     enemy_index.append(i)
     i += 1
 random.shuffle(enemy_index)
+
+#CollectingQuestIndexes
+
 for i in range(len(quest_content)):
     quest_index.append(i)
 random.shuffle(quest_index)
-
-#CollectingShardNames
-i = 500
-while i <= 626:
-    if item_content[i]["Key"].split("_")[0] == item_content[i-1]["Key"].split("_")[0] or item_content[i]["Value"]["ShardRate"] == 0.0 or item_content[i]["Key"] in enemy_skip_list:
-        i += 1
-        continue
-    shard_list.append(item_content[i]["Value"]["ShardId"])
-    i += 1
 
 #CreatingPriceList
 i = 10
@@ -345,7 +339,27 @@ def map_check(path):
     for i in chest_index:
         for e in room_unused_list:
             if e in item_content[i]["Key"]:
-                item_content[i]["Value"]["ItemType"] == "EItemType::Unused"
+                item_content[i]["Value"]["RareItemId"] = "Medal019"
+                item_content[i]["Value"]["RareItemQuantity"] = 1
+                item_content[i]["Value"]["RareItemRate"] = 100
+                item_content[i]["Value"]["CommonItemId"] = "None"
+                item_content[i]["Value"]["CommonItemQuantity"] = 0
+                item_content[i]["Value"]["CommonRate"] = 0.0
+                item_content[i]["Value"]["RareIngredientId"] = "None"
+                item_content[i]["Value"]["RareIngredientQuantity"] = 0
+                item_content[i]["Value"]["RareIngredientRate"] = 0.0
+                item_content[i]["Value"]["CommonIngredientId"] = "None"
+                item_content[i]["Value"]["CommonIngredientQuantity"] = 0
+                item_content[i]["Value"]["CommonIngredientRate"] = 0.0
+                item_content[i]["Value"]["CoinType"] = "EDropCoin::None"
+                item_content[i]["Value"]["CoinOverride"] = 0
+                item_content[i]["Value"]["CoinRate"] = 0.0
+                item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
+                item_content[i]["Value"]["ItemType"] = "EItemType::Unused"
+
+def completion_chest_check():
+    item_content[69]["Value"]["RareItemId"] = "Medal019"
+    item_content[69]["Value"]["ItemType"] = "EItemType::Unused"
 
 def remove_infinite():
     while "Gebelsglasses" in chest_data[0]["Value"]["ItemPool"]:
@@ -390,9 +404,7 @@ def chaos_shard():
         if item_content[i]["Key"].split("_")[0] == item_content[i-1]["Key"].split("_")[0]:
             item_content[i]["Value"]["ShardId"] = item_content[i-1]["Value"]["ShardId"]
         else:
-            shard = random.choice(shard_list)
-            shard_list.remove(shard)
-            item_content[i]["Value"]["ShardId"] = shard
+            item_content[i]["Value"]["ShardId"] = any_pick(shard_data["Value"]["ItemPool"], True, "None")
         i += 1
 
 def rand_item_pool():
@@ -971,15 +983,6 @@ def req_string():
     string_content["Table"]["QST_Catering_Name20"] = item_translation["Value"][quest_content[48]["Value"]["Item01"]]
     string_content["Table"]["QST_Catering_Name21"] = item_translation["Value"][quest_content[55]["Value"]["Item01"]]
 
-def no_dishes():
-    i = 443
-    while i <= 509:
-        shop_content[i]["Value"]["max"] = 1
-        shop_content[i]["Value"]["buyPrice"] = 0
-        shop_content[i]["Value"]["sellPrice"] = 0
-        shop_skip_list.append(shop_content[i]["Key"])
-        i += 1
-
 def hair_app_shop():
     i = 521
     while i <= 532:
@@ -993,8 +996,6 @@ def no_card():
 
 def rand_shop_pool():
     invert_ratio()
-    if chest_data[5]["Value"]["ShopRatio"] == 0:
-        no_dishes()
     for i in chest_data:
         for e in shop_skip_list:
             while e in i["Value"]["ItemPool"]:
