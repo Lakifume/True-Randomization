@@ -1263,16 +1263,14 @@ class Main(QWidget):
         
         root = os.getcwd()
         os.chdir("OffSetter")
-        try:
-            subprocess.check_call("cmd /c OffSetter.exe m08TWR_019_Gimmick.umap.temp -n -r -m 0 0", shell=True)
-        except subprocess.CalledProcessError as error:
-            os.chdir(root)
+        os.system("cmd /c OffSetter.exe m08TWR_019_Gimmick.umap.temp -n -r -m 0 0")
+        os.chdir(root)
+        if os.path.isfile("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset"):
             os.remove("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset")
+        else:
             self.install_5()
             self.setEnabled(True)
             return
-        os.chdir(root)
-        os.remove("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset")
         
         #InitializeSpoilerLog
         
