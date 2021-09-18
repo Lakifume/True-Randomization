@@ -1,6 +1,8 @@
 from GenerateArmorMaster import *
 from GenerateAttackParameter import *
 from GenerateBookMaster import *
+from GenerateBloodlessAbilityData import *
+from GenerateBloodlessGimmickData import *
 from GenerateCharacterParameterMaster import *
 from GenerateCoordinateParameter import *
 from GenerateDialogueTableItems import *
@@ -34,11 +36,12 @@ enemy_color = "#80bfff"
 map_color = "#ffbf80"
 graphic_color = "#80ffbf"
 sound_color = "#ff80ff"
-tweak_color = "#ff80bf"
+extra_color = "#ff80bf"
 
 checkbox_list = []
 
 empty_preset = [
+    False,
     False,
     False,
     False,
@@ -78,7 +81,8 @@ trial_preset = [
     True,
     True,
     True,
-    True
+    False,
+    False
 ]
 race_preset = [
     True,
@@ -99,7 +103,8 @@ race_preset = [
     True,
     True,
     False,
-    True
+    False,
+    False
 ]
 meme_preset = [
     True,
@@ -120,7 +125,8 @@ meme_preset = [
     True,
     True,
     True,
-    True
+    False,
+    False
 ]
 all_in_preset = [
     True,
@@ -141,7 +147,8 @@ all_in_preset = [
     True,
     True,
     True,
-    True
+    False,
+    False
 ]
 risk_preset = [
     True,
@@ -162,9 +169,10 @@ risk_preset = [
     True,
     True,
     True,
-    True
+    False,
+    False
 ]
-
+    
 map_num = len(os.listdir("MapEdit\\Custom"))
 
 datatable_files = [
@@ -172,6 +180,7 @@ datatable_files = [
     "PB_DT_ArmorMaster",
     "PB_DT_ArtsCommandMaster",
     "PB_DT_BallisticMaster",
+    "PB_DT_BloodlessAbilityData",
     "PB_DT_BRVAttackDamage",
     "PB_DT_BulletMaster",
     "PB_DT_CharacterParameterMaster",
@@ -186,24 +195,27 @@ datatable_files = [
     "PB_DT_ShardMaster",
     "PB_DT_SpecialEffectDefinitionMaster",
     "PB_DT_WeaponMaster",
-    "PBMasterStringTable"
+    "PBMasterStringTable",
+    "~datatable"
 ]
-ui_files = ["icon"]
+ui_files = [
+    "~ui"
+]
 texture_files = [
     "m51_EBT_BG",
     "m51_EBT_BG_01",
     "m51_EBT_Block",
     "m51_EBT_Block_00",
     "m51_EBT_Block_01",
-    "m51_EBT_Door"
+    "m51_EBT_Door",
+    "~texture"
 ]
 sound_files = [
-    "ACT50_BRM"
+    "~sound"
 ]
 
 patch_list = []
-write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_icon, write_8bit, write_brm]
-reset_list = [reset_master, reset_scenario, reset_ammunition, reset_armor, reset_arts, reset_ballistic, reset_bloodless, reset_book, reset_brv, reset_bullet, reset_unique, reset_chara, reset_collision, reset_coordinate, reset_craft, reset_damage, reset_dialogue, reset_drop, reset_item, reset_quest, reset_room, reset_shard, reset_effect, reset_weapon, reset_miriam, reset_zangetsu, reset_map_icon, reset_icon, reset_crown_icon, reset_8bit, reset_brm]
+write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_8bit]
 json_list = []
 
 #Config
@@ -247,8 +259,13 @@ class Generate(QThread):
         progress += 1
         self.updateProgress.emit(progress)
         
-        for i in reset_list:
-            i()
+        #Reset
+        
+        for root, dirs, files in os.walk("UnrealPak\\Mod"):
+            for file in os.listdir(root):
+                file_path = os.path.join(root, file)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
         
         #Move
         
@@ -570,10 +587,16 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_15)
 
         self.check_box_21 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option1Id"]), self)
-        self.check_box_21.setToolTip("Give playable Bloodless all of her stat upgrades at the\nbeginning of the game. Abilities will still need to be collected.")
+        self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
         box_10_grid.addWidget(self.check_box_21, 0, 0)
         checkbox_list.append(self.check_box_21)
+        
+        self.check_box_22 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option2Id"]), self)
+        self.check_box_22.setToolTip("Shuffle abilities and upgrades between themselves.")
+        self.check_box_22.stateChanged.connect(self.check_box_22_changed)
+        box_10_grid.addWidget(self.check_box_22, 1, 0)
+        checkbox_list.append(self.check_box_22)
 
         #RadioButtons
         
@@ -677,6 +700,11 @@ class Main(QWidget):
             self.check_box_15.setChecked(True)
         if config[9]["Value"]["Option1Value"]:
             self.check_box_21.setChecked(True)
+        else:
+            self.check_box_21_changed()
+            self.check_box_22.setEnabled(False)
+        if config[9]["Value"]["Option2Value"]:
+            self.check_box_22.setChecked(True)
         
         if config[10]["Value"]["Option1Value"]:
             self.radio_button_1.setChecked(True)
@@ -1021,14 +1049,31 @@ class Main(QWidget):
         self.matches_preset()
         if self.check_box_21.isChecked():
             config[9]["Value"]["Option1Value"] = True
-            self.check_box_21.setStyleSheet("color: " + tweak_color)
-            self.box_10.setStyleSheet("color: " + tweak_color)
-            self.add_to_list(datatable_files, "PB_DT_BloodlessAbilityData", [])
+            self.check_box_21.setStyleSheet("color: " + extra_color)
+            if self.check_box_22.isChecked():
+                self.box_10.setStyleSheet("color: " + extra_color)
+            self.check_box_22.setEnabled(True)
+            self.remove_from_list(ui_files, "icon", [])
+            self.remove_from_list(sound_files, "ACT50_BRM", [])
         else:
             config[9]["Value"]["Option1Value"] = False
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
-            self.remove_from_list(datatable_files, "PB_DT_BloodlessAbilityData", [])
+            self.check_box_22.setEnabled(False)
+            self.add_to_list(ui_files, "icon", [])
+            self.add_to_list(sound_files, "ACT50_BRM", [])
+    
+    def check_box_22_changed(self):
+        self.matches_preset()
+        if self.check_box_22.isChecked():
+            config[9]["Value"]["Option2Value"] = True
+            self.check_box_22.setStyleSheet("color: " + extra_color)
+            if self.check_box_21.isChecked():
+                self.box_10.setStyleSheet("color: " + extra_color)
+        else:
+            config[9]["Value"]["Option2Value"] = False
+            self.check_box_22.setStyleSheet("color: #ffffff")
+            self.box_10.setStyleSheet("color: #ffffff")
 
     def radio_button_group_1_checked(self):
         if self.radio_button_1.isChecked():
@@ -1170,8 +1215,8 @@ class Main(QWidget):
             string = "Modified Sound:\n\n"
             label = self.sound_label
         list.sort()
-        for i in list:
-            string += i + "\n"
+        for i in range(len(list) - 1):
+            string += list[i] + "\n"
         label.setText(string)
     
     def setProgress(self, progress):
@@ -1198,25 +1243,46 @@ class Main(QWidget):
         self.setEnabled(False)
         QApplication.processEvents()
         
+        #CheckIfPathExists
+        
         if config[13]["Value"]["String"] and not os.path.isdir(config[13]["Value"]["String"]):
             self.no_path()
             self.setEnabled(True)
             return
         
+        #CheckSerializerInstallRequirement
+        
         try:
             subprocess.check_call("Serializer\\UAsset2Json.exe", shell=True)
         except subprocess.CalledProcessError as error:
-            self.install()
+            self.install_3()
             self.setEnabled(True)
             return
         
-        reset_drop_log()
-        reset_book_log()
-        reset_shard_log()
-        reset_weapon_log()
-        reset_armor_log()
-        reset_chara_log()
-        reset_map_log()
+        #CheckOffSetterInstallRequirement
+        
+        root = os.getcwd()
+        os.chdir("OffSetter")
+        try:
+            subprocess.check_call("cmd /c OffSetter.exe m08TWR_019_Gimmick.umap.temp -n -r -m 0 0", shell=True)
+        except subprocess.CalledProcessError as error:
+            os.chdir(root)
+            os.remove("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset")
+            self.install_5()
+            self.setEnabled(True)
+            return
+        os.chdir(root)
+        os.remove("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset")
+        
+        #InitializeSpoilerLog
+        
+        if not os.path.isdir("SpoilerLog"):
+            os.makedirs("SpoilerLog")
+        
+        for file in os.listdir("SpoilerLog"):
+            file_path = os.path.join("SpoilerLog", file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
         
         #Map
         
@@ -1275,6 +1341,7 @@ class Main(QWidget):
             low_HPMP_growth()
             bloodless_low_HPMP_growth()
             low_HPMP_cap()
+            bloodless_all_upgrades()
         
         if self.string:
             no_quest_icon()
@@ -1283,6 +1350,12 @@ class Main(QWidget):
         
         if config[8]["Value"]["Option1Value"]:
             rand_dialogue()
+        
+        if config[9]["Value"]["Option1Value"]:
+            if not config[9]["Value"]["Option2Value"]:
+                chaos_candle()
+            candle_shuffle()
+            write_gimmick_log()
         
         if config[10]["Value"]["Option1Value"]:
             normal_bomber()
@@ -1356,9 +1429,11 @@ class Main(QWidget):
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             patch_list.append(write_patched_effect)
             patch_list.append(write_patched_coordinate)
+            patch_list.append(write_patched_bloodless)
         else:
             write_list.append(write_effect)
             write_list.append(write_coordinate)
+            write_list.append(write_bloodless)
         
         if self.string:
             patch_list.append(write_patched_room)
@@ -1377,7 +1452,10 @@ class Main(QWidget):
             patch_list.append(write_patched_dialogue)
         
         if config[9]["Value"]["Option1Value"]:
-            write_list.append(write_bloodless)
+            patch_list.append(write_patched_gimmick)
+        else:
+            write_list.append(write_icon)
+            write_list.append(write_brm)
         
         if config[10]["Value"]["Option1Value"]:
             patch_list.append(write_patched_ballistic)
@@ -1465,9 +1543,20 @@ class Main(QWidget):
         box.setWindowTitle("Credits")
         box.exec()
     
-    def install(self):
+    def install_3(self):
         label = QLabel()
-        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Core 3.0 Preview 8</span> is currently not installed:<br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
+        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Core 3.0 Preview 8</span> is currently not installed, it is required for datatable conversion:<br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
+        label.setOpenExternalLinks(True)
+        layout = QVBoxLayout()
+        layout.addWidget(label)
+        box = QDialog(self)
+        box.setLayout(layout)
+        box.setWindowTitle("Install")
+        box.exec()
+    
+    def install_5(self):
+        label = QLabel()
+        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Runtime 5.0</span> is currently not installed, it is required for umap offsetting:<br/><a href=\"https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-5.0.10-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-5.0.10-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
         label.setOpenExternalLinks(True)
         layout = QVBoxLayout()
         layout.addWidget(label)

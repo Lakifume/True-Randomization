@@ -109,14 +109,6 @@ def write_patched_shard():
 def write_shard():
     shutil.copyfile("Serializer\\PB_DT_ShardMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
 
-def reset_shard():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
-
 def write_shard_log():
     with open("SpoilerLog\\Shard.json", "w") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
-
-def reset_shard_log():
-    if os.path.isfile("SpoilerLog\\Shard.json"):
-        os.remove("SpoilerLog\\Shard.json")

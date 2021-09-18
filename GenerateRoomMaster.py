@@ -31,26 +31,6 @@ def write_map_icon():
     shutil.copyfile("Serializer\\Map_Icon_RootBox.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_RootBox.uasset")
     shutil.copyfile("Serializer\\Map_StartingPoint.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset")
 
-def reset_room():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_RoomMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_RoomMaster.uasset")
-
-def reset_crown_icon():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\K2C\\icon_8bitCrown.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\K2C\\icon_8bitCrown.uasset")
-
-def reset_map_icon():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_Keyperson.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_Keyperson.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_RootBox.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_RootBox.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset")
-
 def write_map_log():
     with open("SpoilerLog\\Map.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
-
-def reset_map_log():
-    if os.path.isfile("SpoilerLog\\Map.json"):
-        os.remove("SpoilerLog\\Map.json")

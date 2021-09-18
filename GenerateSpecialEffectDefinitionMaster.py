@@ -22,7 +22,3 @@ def write_patched_effect():
 
 def write_effect():
     shutil.copyfile("Serializer\\PB_DT_SpecialEffectDefinitionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset")
-
-def reset_effect():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset")

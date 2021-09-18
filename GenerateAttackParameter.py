@@ -131,15 +131,3 @@ def write_patched_collision():
 
 def write_collision():
     shutil.copyfile("Serializer\\PB_DT_CollisionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
-
-def reset_ballistic():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
-
-def reset_bullet():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
-
-def reset_collision():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")

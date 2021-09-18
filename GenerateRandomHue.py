@@ -17,23 +17,3 @@ def write_zangetsu():
     shutil.copyfile("Data\\Hue\\Zangetsu\\" + zangetsu_hue + "\\T_N1011_weapon_color.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_weapon_color.uasset")
     shutil.copyfile("Data\\Hue\\Zangetsu\\" + zangetsu_hue + "\\T_Tknife05_Base.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Item\\Weapon\\Tknife\\Tknife05\\Texture\\T_Tknife05_Base.uasset")
     shutil.copyfile("Data\\Hue\\Zangetsu\\" + zangetsu_hue + "\\Face_Zangetsu.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0001\\Face_Zangetsu.uasset")
-
-def reset_miriam():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\P0000\\Texture\\Body\\T_Body01_01_Color.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\P0000\\Texture\\Body\\T_Body01_01_Color.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\P0000\\Texture\\T_Pl01_Cloth_Bace.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\P0000\\Texture\\T_Pl01_Cloth_Bace.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0000\\Face_Miriam.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0000\\Face_Miriam.uasset")
-
-def reset_zangetsu():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_body_color.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_body_color.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_face_color.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_face_color.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_weapon_color.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture\\T_N1011_weapon_color.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Item\\Weapon\\Tknife\\Tknife05\\Texture\\T_Tknife05_Base.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Item\\Weapon\\Tknife\\Tknife05\\Texture\\T_Tknife05_Base.uasset")
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0001\\Face_Zangetsu.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0001\\Face_Zangetsu.uasset")

@@ -111,18 +111,6 @@ def write_patched_master():
 def write_master():
     shutil.copyfile("Serializer\\PBMasterStringTable.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset")
 
-def reset_armor():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset")
-
-def reset_master():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset")
-
 def write_armor_log():
     with open("SpoilerLog\\Equipment.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
-
-def reset_armor_log():
-    if os.path.isfile("SpoilerLog\\Equipment.json"):
-        os.remove("SpoilerLog\\Equipment.json")

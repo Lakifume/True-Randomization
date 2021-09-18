@@ -1131,22 +1131,6 @@ def write_patched_item():
 def write_item():
     shutil.copyfile("Serializer\\PB_DT_ItemMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
 
-def reset_drop():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
-
-def reset_quest():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_QuestMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_QuestMaster.uasset")
-
-def reset_scenario():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBScenarioStringTable.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBScenarioStringTable.uasset")
-
-def reset_item():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
-
 def write_drop_log():
     for i in chest_data:
         log[0]["Value"][i["Key"]] = list(dict.fromkeys(log[0]["Value"][i["Key"]]))
@@ -1166,7 +1150,3 @@ def write_drop_log():
     log[4]["Value"]["White"].sort()
     with open("SpoilerLog\\Item.json", "w") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
-
-def reset_drop_log():
-    if os.path.isfile("SpoilerLog\\Item.json"):
-        os.remove("SpoilerLog\\Item.json")

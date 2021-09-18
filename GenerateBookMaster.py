@@ -73,14 +73,6 @@ def write_patched_book():
     shutil.move("Serializer\\PB_DT_BookMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset")
     os.remove("Serializer\\PB_DT_BookMaster.json")
 
-def reset_book():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset")
-
 def write_book_log():
     with open("SpoilerLog\\Library.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
-
-def reset_book_log():
-    if os.path.isfile("SpoilerLog\\Library.json"):
-        os.remove("SpoilerLog\\Library.json")

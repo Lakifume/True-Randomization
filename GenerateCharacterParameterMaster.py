@@ -284,14 +284,6 @@ def write_patched_chara():
 def write_chara():
     shutil.copyfile("Serializer\\PB_DT_CharacterParameterMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
 
-def reset_chara():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
-
 def write_chara_log():
     with open("SpoilerLog\\Enemy.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
-
-def reset_chara_log():
-    if os.path.isfile("SpoilerLog\\Enemy.json"):
-        os.remove("SpoilerLog\\Enemy.json")

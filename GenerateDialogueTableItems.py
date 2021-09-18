@@ -108,7 +108,3 @@ def write_patched_dialogue():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_DialogueTableItems.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DialogueTableItems.uasset")
     os.remove("Serializer\\PB_DT_DialogueTableItems.json")
-
-def reset_dialogue():
-    if os.path.isfile("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DialogueTableItems.uasset"):
-        os.remove("UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DialogueTableItems.uasset")
