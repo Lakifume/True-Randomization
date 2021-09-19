@@ -636,6 +636,7 @@ class Main(QMainWindow):
         for i in self.content:
             data = self.convert_json_to_room(i)
             group_list = []
+            can_move = True
             
             if data.area == "EAreaID::None":
                 fill = QColor(area_color[18])
@@ -655,12 +656,8 @@ class Main(QMainWindow):
                 for o in e["Value"]["RoomId"]:
                     if data.name == o:
                         group_list = e["Value"]["RoomId"]
+                        can_move = e["Value"]["CanMove"]
                         break
-                        
-            if group_list == connected_room[3]["Value"]["RoomId"] or group_list == connected_room[25]["Value"]["RoomId"]:
-                can_move = False
-            else:
-                can_move = True
             
             if data.room_type == "ERoomType::Load" or data.name == "m01SIP_022" or data.name == "m02VIL_000" or data.name == "m02VIL_099" or data.name == "m02VIL(101)" or data.name == "m18ICE_020":
                 fill.setAlpha(127.5)
