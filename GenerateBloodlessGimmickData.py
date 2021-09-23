@@ -3,6 +3,26 @@ import random
 import os
 import shutil
 
+name_to_bytes = {
+    "BLD_ABILITY_HIGH_JUMP": 0xF88EE791,
+    "BLD_ABILITY_WATER_PROTECT": 0xBEFC43E4,
+    "BLD_ABILITY_BLOOD_STEAL": 0x6B9D1150,
+    "BLD_ABILITY_SOUL_STEAL": 0x30ACAABB,
+    "BLD_ABILITY_FLOATING_UP": 0xBF87C09B,
+    "BLD_ABILITY_UMBRELLA_CHARGE": 0x67F2A701,
+    "BLD_ABILITY_GUILLOTINE_UMBRELLA": 0x39496830,
+    "BLD_ABILITY_UMBRELLA_TOSS": 0x9A976254,
+    "BLD_ABILITY_SCARLET_THRUST": 0x4587613E,
+    "BLD_ABILITY_BLOOD_PILLAR": 0x7FD58409,
+    "BLD_ABILITY_SCARLET_CYCLONE": 0x81F4B8C2,
+    "BLD_ABILITY_BLOOD_RAIN": 0xC3868757,
+    "BLD_ABILITY_STR_UP": 0xB597F158,
+    "BLD_ABILITY_INT_UP": 0x5CE882B5,
+    "BLD_ABILITY_CON_UP": 0x94E5C7FA,
+    "BLD_ABILITY_MND_UP": 0x2AC44315,
+    "BLD_ABILITY_LCK_UP": 0x4EC0F311,
+    "BLD_ABILITY_MP_REGEN_UP": 0x1C8A6604
+}
 candle_to_offset = {
     "m01SIP_000": 49224,
     "m01SIP_007": 24690,
@@ -56,17 +76,6 @@ candle_to_offset = {
     "m88BKR_002": 31679,
     "m88BKR_003": 37387,
     "m88BKR_004": 27103,
-}
-length_to_char = {
-    "18": ",",
-    "21": "/",
-    "22": "0",
-    "23": "1",
-    "24": "2",
-    "25": "3",
-    "26": "4",
-    "27": "5",
-    "31": "9",
 }
 portal_ban = [
     "m10BIG_002",
@@ -199,6 +208,7 @@ def any_pick(item_array):
     return item
 
 def write_patched_gimmick():
+    print("mXXXXX_XXX_Gimmick.umap")
     offset = 0
     new_length = 0
     old_length = 0
@@ -233,11 +243,18 @@ def write_patched_gimmick():
                 inputfile.seek(offset + 1)
                 offset += inputfile.read().find(str.encode("EPBBloodlessAbilityType::")) + 25 + 1
             
+            #CopyingStartOfFile
+            
             inputfile.seek(0)
             outfile.write(inputfile.read(offset))
+            
+            #ChangingNameMap
+            
             outfile.write(str.encode(i["Key"].replace(")", "").split("(")[0]))
             
-            old_length = inputfile.read().find((0).to_bytes(1, "big"))
+            #CopyingEndOfFile
+            
+            old_length = inputfile.read().find((0).to_bytes(1, "little"))
             if "m08TWR_019" in file_name and tower_check == 1:
                 old_length_tower = old_length
             inputfile.seek(offset + old_length)
@@ -246,20 +263,44 @@ def write_patched_gimmick():
         #PatchingNums
         
         with open("OffSetter\\" + file_name + output_suffix, "r+b") as file:
-            file.seek(offset - 29)
             new_length = len(i["Key"].replace(")", "").split("(")[0])
             if "m08TWR_019" in file_name and tower_check == 1:
                 new_length_tower = new_length
-            file.write(str.encode(length_to_char[str(new_length)]))
+            
+            #WorldTileInfoOffset
+            
+            file.seek(0xB1)
+            if "m08TWR_019" in file_name and tower_check == 2:
+                new_num = int.from_bytes(file.read(2), "little") + (new_length_tower - old_length_tower) + (new_length - old_length)
+                file.seek(0xB1)
+                file.write(new_num.to_bytes(2, "little"))
+            elif not "m08TWR_019" in file_name and not "m51EBT_000" in file_name:
+                new_num = int.from_bytes(file.read(2), "little") + (new_length - old_length)
+                file.seek(0xB1)
+                file.write(new_num.to_bytes(2, "little"))
+            
+            #NameMapLengthOffset
+            
+            file.seek(offset - 29)
+            new_num = int.from_bytes(file.read(2), "little") + (new_length - old_length)
+            file.seek(offset - 29)
+            file.write(new_num.to_bytes(2, "little"))
+            
+            #NameMapExtraBytes
+            
+            file.seek(offset + new_length + 1)
+            file.write(name_to_bytes[i["Key"].replace(")", "").split("(")[0]].to_bytes(4, "big"))
+            
+            #InstNumber
             
             if "m08TWR_019" in file_name and tower_check == 2:
                 file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length_tower - old_length_tower) + (new_length - old_length) + 12)
             else:
                 file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length - old_length) + 12)
             if len(i["Key"].replace(")", "").split("(")) == 1:
-                file.write((0).to_bytes(1, "big"))
+                file.write((0).to_bytes(1, "little"))
             else:
-                file.write(int(i["Key"].replace(")", "").split("(")[1]).to_bytes(1, "big"))
+                file.write(int(i["Key"].replace(")", "").split("(")[1]).to_bytes(1, "little"))
         
         #OffsetFix
         
@@ -277,6 +318,7 @@ def write_patched_gimmick():
             os.chdir(root)
             shutil.move("OffSetter\\" + file_name, "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT" + file_name[1:3] + "_" + file_name[3:6] + "\\Level\\" + file_name)
             os.remove("OffSetter\\" + file_name + ".offset")
+    print("Done")
 
 def write_gimmick_log():
     with open("SpoilerLog\\Bloodless.json", "w") as file_writer:

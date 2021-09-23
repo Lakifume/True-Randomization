@@ -6,7 +6,7 @@ from GenerateBloodlessGimmickData import *
 from GenerateCharacterParameterMaster import *
 from GenerateCoordinateParameter import *
 from GenerateDialogueTableItems import *
-from GenerateDropQuestMaster import *
+from GenerateDropRateMaster import *
 from GenerateMisc import *
 from GenerateRandomHue import *
 from GenerateRoomMaster import *
@@ -190,6 +190,7 @@ datatable_files = [
     "PB_DT_CraftMaster",
     "PB_DT_DamageMaster",
     "PB_DT_DropRateMaster",
+    "PB_DT_EnchantParameterType",
     "PB_DT_ItemMaster",
     "PB_DT_RoomMaster",
     "PB_DT_ShardMaster",
@@ -215,7 +216,7 @@ sound_files = [
 ]
 
 patch_list = []
-write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_8bit]
+write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_enchant, write_8bit]
 json_list = []
 
 #Config
@@ -224,6 +225,10 @@ with open("Data\\config.json", "r") as file_reader:
     config = json.load(file_reader)
 
 def writing():
+    with open("Data\\config.json", "w") as file_writer:
+        file_writer.write(json.dumps(config, indent=2))
+
+def writing_and_exit():
     with open("Data\\config.json", "w") as file_writer:
         file_writer.write(json.dumps(config, indent=2))
     sys.exit()
@@ -241,6 +246,7 @@ class Generate(QThread):
         
         #Serializer
         
+        print("")
         for i in patch_list:
             if i == write_patched_room:
                 i(self.string)
@@ -248,9 +254,11 @@ class Generate(QThread):
                 i()
             progress += 1
             self.updateProgress.emit(progress)
+            if i != write_patched_gimmick:
+                print("")
 
         #UnrealPak
-
+        
         root = os.getcwd()
         os.chdir("UnrealPak")
         os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress Randomizer")
@@ -274,7 +282,7 @@ class Generate(QThread):
         else:
             shutil.move("UnrealPak\\Randomizer.pak", "Randomizer.pak")
         
-        writing()
+        writing_and_exit()
 
 class Update(QThread):
     updateProgress = Signal(int)
@@ -332,7 +340,7 @@ class Convert(QThread):
             progress += 1
             self.updateProgress.emit(progress)
         
-        writing()
+        writing_and_exit()
 
 #GUI
 
@@ -344,7 +352,7 @@ class Main(QWidget):
         self.check_for_updates()
 
     def initUI(self):
-        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: 18px}"
+        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Size"]*18)) + "px}"
         + "QLabel{border: 1px}"
         + "QComboBox{background-color: #21222e}"
         + "QMessageBox{background-color: #21222e}"
@@ -354,22 +362,21 @@ class Main(QWidget):
         + "QSpinBox{background-color: #21222e}"
         + "QLineEdit{background-color: #21222e}"
         + "QMenu{background-color: #21222e}"
-        + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: 18px}")
+        + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Size"]*18)) + "px}")
         self.string = ""
         
         #MainLayout
         
         grid = QGridLayout()
-        grid.setSpacing(10)
+        grid.setSpacing(config[14]["Value"]["Size"]*10)
 
         #Label
 
-        artwork = QPixmap("Data\\artwork.png")
         label = QLabel()
         label.setStyleSheet("border: 1px solid white")
-        label.setPixmap(artwork)
+        label.setPixmap(QPixmap("Data\\artwork.png"))
         label.setScaledContents(True)
-        label.setFixedSize(550, 978)
+        label.setFixedSize(config[14]["Value"]["Size"]*550, config[14]["Value"]["Size"]*978)
         grid.addWidget(label, 0, 0, 10, 1)
         
         #Groupboxes
@@ -444,13 +451,12 @@ class Main(QWidget):
         box_14_grid = QGridLayout()
         box_14 = QGroupBox(re.sub(p, r"\1 \2", config[13]["Key"]))
         box_14.setLayout(box_14_grid)
-        box_14.setFixedSize(324, 100)
         grid.addWidget(box_14, 7, 3, 1, 2)
         
         box_15_grid = QGridLayout()
         box_15 = QGroupBox()
         box_15.setLayout(box_15_grid)
-        box_15.setFixedSize(550, 978)
+        box_15.setFixedSize(config[14]["Value"]["Size"]*550, config[14]["Value"]["Size"]*978)
         grid.addWidget(box_15, 0, 5, 10, 1)
         
         box_16_grid = QGridLayout()
@@ -503,7 +509,7 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_17)
 
         self.check_box_18 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option5Id"]), self)
-        self.check_box_18.setToolTip("Guarantee these 2 items to not appear in the item pool.\nUseful for runs that favor magic and bullet management.")
+        self.check_box_18.setToolTip("Guarantee Gebel's Glasses and Recycle to not appear in the item\npool. Useful for runs that favor magic and bullet management.")
         self.check_box_18.stateChanged.connect(self.check_box_18_changed)
         box_16_grid.addWidget(self.check_box_18, 2, 0)
         checkbox_list.append(self.check_box_18)
@@ -652,6 +658,27 @@ class Main(QWidget):
         self.preset_drop_down.currentIndexChanged.connect(self.preset_drop_down_change)
         box_12_grid.addWidget(self.preset_drop_down, 0, 0)
         
+        #Settings
+        
+        self.setting_layout = QGridLayout()
+        
+        setting_box_grid = QGridLayout()
+        setting_box = QGroupBox(re.sub(p, r"\1 \2", config[14]["Key"]))
+        setting_box.setLayout(setting_box_grid)
+        self.setting_layout.addWidget(setting_box, 0, 0, 1, 3)
+        
+        self.size_drop_down = QComboBox()
+        self.size_drop_down.addItem("0.7")
+        self.size_drop_down.addItem("0.8")
+        self.size_drop_down.addItem("0.9")
+        self.size_drop_down.addItem("1.0")
+        self.size_drop_down.currentIndexChanged.connect(self.size_drop_down_change)
+        setting_box_grid.addWidget(self.size_drop_down, 0, 0)
+        
+        setting_button = QPushButton("Apply")
+        setting_button.clicked.connect(self.setting_button_clicked)
+        self.setting_layout.addWidget(setting_button, 1, 1, 1, 1)
+        
         #InitCheckboxes
         
         if config[0]["Value"]["Option1Value"]:
@@ -718,6 +745,15 @@ class Main(QWidget):
         else:
             self.radio_button_6.setChecked(True)
         
+        if config[14]["Value"]["Size"] == 0.7:
+            self.size_drop_down.setCurrentIndex(0)
+        elif config[14]["Value"]["Size"] == 0.8:
+            self.size_drop_down.setCurrentIndex(1)
+        elif config[14]["Value"]["Size"] == 0.9:
+            self.size_drop_down.setCurrentIndex(2)
+        else:
+            self.size_drop_down.setCurrentIndex(3)
+        
         self.matches_preset()
         
         #TextField
@@ -729,13 +765,13 @@ class Main(QWidget):
 
         #Buttons
         
-        button_3 = QPushButton("Game Settings")
-        button_3.setToolTip("Required in-game settings.")
+        button_3 = QPushButton("Settings")
+        button_3.setToolTip("Interface Settings.")
         button_3.clicked.connect(self.button_3_clicked)
         grid.addWidget(button_3, 8, 1, 1, 1)
 
         button_4 = QPushButton("Pick Map")
-        button_4.setToolTip("Manually pick a custom map to play on (overrides the random map selection)")
+        button_4.setToolTip("Manually pick a custom map to play on (overrides the random map selection).")
         button_4.clicked.connect(self.button_4_clicked)
         grid.addWidget(button_4, 8, 2, 1, 1)
 
@@ -757,7 +793,7 @@ class Main(QWidget):
         #Window
         
         self.setLayout(grid)
-        self.setFixedSize(1800, 1000)
+        self.setFixedSize(config[14]["Value"]["Size"]*1800, config[14]["Value"]["Size"]*1000)
         self.setWindowTitle("Randomizer")
         self.setWindowIcon(QIcon("Data\\icon.png"))
         
@@ -1125,7 +1161,17 @@ class Main(QWidget):
         elif index == 6:
             for i in range(len(checkbox_list)):
                 checkbox_list[i].setChecked(risk_preset[i])
-    
+
+    def size_drop_down_change(self, index):
+        if index == 0:
+            config[14]["Value"]["Size"] = 0.7
+        elif index == 1:
+            config[14]["Value"]["Size"] = 0.8
+        elif index == 2:
+            config[14]["Value"]["Size"] = 0.9
+        elif index == 3:
+            config[14]["Value"]["Size"] = 1.0
+
     def matches_preset(self):
         is_preset_1 = True
         for i in range(len(checkbox_list)):
@@ -1221,12 +1267,17 @@ class Main(QWidget):
     
     def setProgress(self, progress):
         self.progressBar.setValue(progress)
-
+    
+    def setting_button_clicked(self):
+        writing()
+        os.execl(sys.executable, sys.executable, *sys.argv)
+    
     def button_3_clicked(self):
-        box = QMessageBox(self)
-        box.setWindowTitle("Required settings")
-        box.setText("Here are the settings to pick in the game randomizer for this mod to function properly:<br/><br/><span style=\"color: #f6b26b;\">KEY ITEMS</span>: Anywhere (shuffled is flawed, use the mod's improved version instead).<br/><br/><span style=\"color: #f6b26b;\">ITEMS</span>: Retain Type (guarantees items to not end up in unused chests).<br/><br/><span style=\"color: #f6b26b;\">CRAFTING</span>: Unchanged (otherwise all the materials you pick up will be of no use).<br/><br/><span style=\"color: #f6b26b;\">SHOPS</span>: Unchanged (the mod already takes care of randomizing the shop based on the global item pool).<br/><br/><span style=\"color: #f6b26b;\">QUESTS</span>: Unchanged (the mod already takes care of randomizing the rewards based on the global item pool).")
+        box = QDialog(self)
+        box.setLayout(self.setting_layout)
+        box.setWindowTitle("Settings")
         box.exec()
+        self.size_drop_down.setCurrentIndex(3)
 
     def button_4_clicked(self):
         path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit//Custom", filter="*.json")[0]
@@ -1287,14 +1338,14 @@ class Main(QWidget):
         if not self.string and config[6]["Value"]["Option1Value"]:
             if os.listdir("MapEdit\\Custom"):
                 self.string = "MapEdit\\Custom\\" + random.choice(os.listdir("MapEdit\\Custom"))
-        if self.string:
-            map_check(self.string)
         
         #Patch
         
         if config[11]["Value"]["Option1Value"]:
-            completion_chest_check()
-
+            unused_chest_check()
+            if self.string:
+                unused_room_check(self.string)
+        
         if config[0]["Value"]["Option1Value"]:
             if not config[0]["Value"]["Option3Value"]:
                 chaos_key()
@@ -1386,7 +1437,7 @@ class Main(QWidget):
         
         #Write
         
-        if config[0]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"] or self.string:
+        if config[0]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
             patch_list.append(write_patched_drop)
         else:
             write_list.append(write_drop)
@@ -1464,6 +1515,9 @@ class Main(QWidget):
             write_list.append(write_bullet)
             write_list.append(write_collision)
         
+        if config[11]["Value"]["Option1Value"]:
+            write_list.append(write_options)
+        
         for i in write_list:
             i()
         
@@ -1501,26 +1555,36 @@ class Main(QWidget):
     def button_7_clicked(self):
         label1_image = QLabel()
         label1_image.setPixmap(QPixmap("Data\\profile1.png"))
+        label1_image.setScaledContents(True)
+        label1_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
         label1_text = QLabel()
         label1_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
         label1_text.setOpenExternalLinks(True)
         label2_image = QLabel()
         label2_image.setPixmap(QPixmap("Data\\profile2.png"))
+        label2_image.setScaledContents(True)
+        label2_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
         label2_text = QLabel()
         label2_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
         label2_text.setOpenExternalLinks(True)
         label3_image = QLabel()
         label3_image.setPixmap(QPixmap("Data\\profile3.png"))
+        label3_image.setScaledContents(True)
+        label3_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
         label3_text = QLabel()
         label3_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
         label3_text.setOpenExternalLinks(True)
         label4_image = QLabel()
         label4_image.setPixmap(QPixmap("Data\\profile4.png"))
+        label4_image.setScaledContents(True)
+        label4_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
         label4_text = QLabel()
         label4_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">BadmoonZ</span><br/>Randomizer researcher<br/><a href=\"https://github.com/BadmoonzZ/Bloodstained\"><font face=Cambria color=#25c04e>Github</font></a>")
         label4_text.setOpenExternalLinks(True)
         label5_image = QLabel()
         label5_image.setPixmap(QPixmap("Data\\profile5.png"))
+        label5_image.setScaledContents(True)
+        label5_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
         label5_text = QLabel()
         label5_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
         label5_text.setOpenExternalLinks(True)
@@ -1543,7 +1607,7 @@ class Main(QWidget):
     
     def install_3(self):
         label = QLabel()
-        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Core 3.0 Preview 8</span> is currently not installed, it is required for datatable conversion:<br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
+        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Runtime 3.0 Preview 8</span> is currently not installed, it is required for datatable conversion:<br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/thank-you/dotnet-runtime-3.0.0-preview8-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
         label.setOpenExternalLinks(True)
         layout = QVBoxLayout()
         layout.addWidget(label)
@@ -1588,7 +1652,12 @@ class Main(QWidget):
         for i in config:
             if i["Key"] == "Version":
                 tag = i["Value"]["Tag"]
-        if api["tag_name"] != tag:
+        try:
+            latest_tag = api["tag_name"]
+        except KeyError:
+            self.setEnabled(True)
+            return
+        if latest_tag != tag:
             choice = QMessageBox.question(self, "Auto Updater", "New version found:\n\n" + api["body"] + "\n\nUpdate ?", QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.Yes:
                 if "MapEditor.exe" in (i.name() for i in psutil.process_iter()):
@@ -1612,7 +1681,7 @@ class Main(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    app.aboutToQuit.connect(writing)
+    app.aboutToQuit.connect(writing_and_exit)
     main = Main()
     sys.exit(app.exec())
 

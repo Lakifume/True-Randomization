@@ -19,6 +19,9 @@ def write_craft():
 def write_damage():
     shutil.copyfile("Serializer\\PB_DT_DamageMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DamageMaster.uasset")
 
+def write_enchant():
+    shutil.copyfile("Serializer\\PB_DT_EnchantParameterType.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_EnchantParameterType.uasset")
+
 def write_icon():
     shutil.copyfile("Serializer\\icon.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\UI_Pause\\Menu\\MainMenu\\Asset\\icon.uasset")
 
@@ -32,3 +35,6 @@ def write_8bit():
 
 def write_brm():
     shutil.copyfile("Serializer\\ACT50_BRM.awb", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Sound\\bgm\\ACT50_BRM.awb")
+
+def write_options():
+    shutil.copyfile("Serializer\\RandomizerOptions.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Title\\RandomizerMode\\RandomizerOptions.uasset")
