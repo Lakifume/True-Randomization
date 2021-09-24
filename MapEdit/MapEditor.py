@@ -11,7 +11,27 @@ OUTLINE = 3
 
 KEY_METADATA = 1
 
-area_color = ["#000080", "#9a6324", "#999999", "#a4cc3b", "#c6c087", "#f58231", "#911eb4", "#469990", "#1717e5", "#800000", "#4363d8", "#e5cb17", "#808000", "#3cb44b", "#f032e6", "#000000", "#e6194b", "#3ec7e6", "#666666"]
+area_color = [
+    "#000080",
+    "#9a6324",
+    "#999999",
+    "#a4cc3b",
+    "#c6c087",
+    "#f58231",
+    "#911eb4",
+    "#469990",
+    "#1717e5",
+    "#800000",
+    "#4363d8",
+    "#e5cb17",
+    "#808000",
+    "#3cb44b",
+    "#f032e6",
+    "#000000",
+    "#e6194b",
+    "#3ec7e6",
+    "#666666"
+]
 music_id = []
 music_name = []
 play_id = []
@@ -1092,25 +1112,22 @@ class Main(QMainWindow):
                 offsetX_2 = e["Value"]["OffsetX"]
                 offsetZ_2 = e["Value"]["OffsetZ"]
                 #Adjacent
-                if offsetX_1 <= offsetX_2 <= round(offsetX_1 + 12.6 * width_1, 1) and offsetZ_1 <= offsetZ_2 <= round(offsetZ_1 + 7.2 * height_1, 1) or offsetX_1 >= offsetX_2 >= round(offsetX_1 - 12.6 * width_2, 1) and offsetZ_1 <= offsetZ_2 <= round(offsetZ_1 + 7.2 * height_1, 1) or offsetX_1 >= offsetX_2 >= round(offsetX_1 - 12.6 * width_2, 1) and offsetZ_1 >= offsetZ_2 >= round(offsetZ_1 - 7.2 * height_2, 1) or offsetX_1 <= offsetX_2 <= round(offsetX_1 + 12.6 * width_1, 1) and offsetZ_1 >= offsetZ_2 >= round(offsetZ_1 - 7.2 * height_2, 1):
-                    #NoDiagonals
-                    if not (offsetX_2 == round(offsetX_1 + 12.6 * width_1, 1) and offsetZ_2 == round(offsetZ_1 + 7.2 * height_1, 1) or offsetX_2 == round(offsetX_1 - 12.6 * width_2, 1) and offsetZ_2 == round(offsetZ_1 + 7.2 * height_1, 1) or offsetX_2 == round(offsetX_1 - 12.6 * width_2, 1) and offsetZ_2 == round(offsetZ_1 - 7.2 * height_2, 1) or offsetX_2 == round(offsetX_1 + 12.6 * width_1, 1) and offsetZ_2 == round(offsetZ_1 - 7.2 * height_2, 1)):
-                        #NoOverlapping
-                        if not (offsetX_1 == offsetX_2 and offsetZ_1 == offsetZ_2):
-                            #TransitionFix
-                            if not (type_2 == "ERoomType::Load" and area_2 != area_1 and e["Value"]["SameRoom"] != "None" and e["Key"] != "m02VIL(1201)" and e["Value"]["SameRoom"] != "m03ENT(1201)"):
-                                #VillageTransitionFix
-                                if e["Value"]["SameRoom"] != "m02VIL(1201)" and e["Key"] != "m03ENT(1201)":
-                                    adj_rooms.append(e["Key"])
+                if self.left_check(i, e) or self.bottom_check(i, e) or self.right_check(i, e) or self.top_check(i, e):
+                    #TransitionFix
+                    if not (type_2 == "ERoomType::Load" and area_2 != area_1 and e["Value"]["SameRoom"] != "None" and e["Key"] != "m02VIL(1201)" and e["Value"]["SameRoom"] != "m03ENT(1201)"):
+                        #VillageTransitionFix
+                        if e["Value"]["SameRoom"] != "m02VIL(1201)" and e["Key"] != "m03ENT(1201)":
+                            adj_rooms.append(e["Key"])
             i["Value"]["AdjacentRoomName"].clear()
             for e in adj_rooms:
                 i["Value"]["AdjacentRoomName"].append(e)
         #VeparFix
         if "m02VIL_001" in self.content[22]["Value"]["AdjacentRoomName"]:
             self.content[22]["Value"]["AdjacentRoomName"].remove("m02VIL_001")
-            self.content[22]["Value"]["AdjacentRoomName"].append("m02VIL_000")
         if "m01SIP_022" in self.content[32]["Value"]["AdjacentRoomName"]:
             self.content[32]["Value"]["AdjacentRoomName"].remove("m01SIP_022")
+        if not "m02VIL_000" in self.content[22]["Value"]["AdjacentRoomName"]:
+            self.content[22]["Value"]["AdjacentRoomName"].append("m02VIL_000")
         #TowerFix
         if "m08TWR_017" in self.content[228]["Value"]["AdjacentRoomName"]:
             self.content[228]["Value"]["AdjacentRoomName"].remove("m08TWR_017")
@@ -1120,14 +1137,18 @@ class Main(QMainWindow):
             self.content[234]["Value"]["AdjacentRoomName"].remove("m08TWR_018")
         if "m08TWR_019" in self.content[241]["Value"]["AdjacentRoomName"]:
             self.content[241]["Value"]["AdjacentRoomName"].remove("m08TWR_019")
-        if "m08TWR_001" in self.content[244]["Value"]["AdjacentRoomName"]:
-            self.content[244]["Value"]["AdjacentRoomName"].remove("m08TWR_001")
-        if "m08TWR_001" in self.content[245]["Value"]["AdjacentRoomName"]:
-            self.content[245]["Value"]["AdjacentRoomName"].remove("m08TWR_001")
-        if "m08TWR_007" in self.content[245]["Value"]["AdjacentRoomName"]:
-            self.content[245]["Value"]["AdjacentRoomName"].remove("m08TWR_007")
-        if "m08TWR_014" in self.content[246]["Value"]["AdjacentRoomName"]:
-            self.content[246]["Value"]["AdjacentRoomName"].remove("m08TWR_014")
+    
+    def left_check(self, i, e):
+        return bool(i["Value"]["OffsetX"] > e["Value"]["OffsetX"] >= round(i["Value"]["OffsetX"] - 12.6 * e["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
+    
+    def bottom_check(self, i, e):
+        return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and i["Value"]["OffsetZ"] > e["Value"]["OffsetZ"] >= round(i["Value"]["OffsetZ"] - 7.2 * e["Value"]["AreaHeightSize"], 1))
+    
+    def right_check(self, i, e):
+        return bool(i["Value"]["OffsetX"] < e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * i["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
+    
+    def top_check(self, i, e):
+        return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and i["Value"]["OffsetZ"] < e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * i["Value"]["AreaHeightSize"], 1))
 
 def main():
     app = QApplication(sys.argv)
