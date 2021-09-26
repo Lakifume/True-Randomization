@@ -6,6 +6,26 @@ import os
 import shutil
 from random import randrange
 
+room_to_area = {
+    "SIP": "m01",
+    "VIL": "m02",
+    "ENT": "m03",
+    "GDN": "m04",
+    "SAN": "m05",
+    "KNG": "m06",
+    "LIB": "m07",
+    "TWR": "m08",
+    "TRN": "m09",
+    "BIG": "m10",
+    "UGD": "m11",
+    "SND": "m12",
+    "ARC": "m13",
+    "TAR": "m14",
+    "JPN": "m15",
+    "RVA": "m17",
+    "ICE": "m18"
+}
+
 chest_type = []
 green_chest_type = []
 blue_chest_type = []
@@ -209,8 +229,27 @@ shop_skip_list = [
     "DiscountCard",
     "MonarchCrown"
 ]
+shard_color = [
+    "Red",
+    "Blue",
+    "Purple",
+    "Yellow",
+    "Green",
+    "White",
+]
+key_items = [
+    "Swordsman",
+    "Silverbromide",
+    "BreastplateofAguilar",
+    "Keyofbacker1",
+    "Keyofbacker2",
+    "Keyofbacker3",
+    "Keyofbacker4",
+]
 
-log = []
+pool_log = []
+shard_log = []
+key_log = []
 
 #Content
 with open("Data\\DropRateMaster\\Content\\PB_DT_DropRateMaster.json", "r") as file_reader:
@@ -252,10 +291,9 @@ with open("Data\\ShardMaster\\Color.json", "r") as file_reader:
 
 #FillingLootTypes
 for i in chest_data:
+    item_type_list.append(i["Value"]["ChestName"])
     for e in range(i["Value"]["ChestRatio"]):
         chest_type.append(i["Key"])
-        if i["Key"] != chest_data[11]["Key"]:
-            item_type_list.append(i["Value"]["ChestName"])
         if i["Value"]["ChestColor"] == "EChestColor::Green":
             green_chest_type.append(i["Key"])
         if i["Value"]["ChestColor"] == "EChestColor::Blue":
@@ -264,6 +302,11 @@ for i in chest_data:
         quest_type.append(i["Key"])
 for i in enemy_data:
     enemy_type.append(i["Key"])
+
+#FixingItemTypeList
+item_type_list = list(dict.fromkeys(item_type_list))
+item_type_list.remove(chest_data[10]["Value"]["ChestName"])
+item_type_list.remove(chest_data[11]["Value"]["ChestName"])
 
 #CollectingChestIndexes
 i = 37
@@ -325,41 +368,45 @@ for i in shop_content:
     if i["Value"]["buyPrice"] == 0:
         shop_skip_list.append(i["Key"])
 
-#PreparingLog
+#PoolLog
 log_data = {}
 log_data["Key"] = "ChestPool"
 log_data["Value"] = {}
 for i in chest_data:
     log_data["Value"][i["Key"]] = []
-log.append(log_data)
+pool_log.append(log_data)
 log_data = {}
 log_data["Key"] = "EnemyPool"
 log_data["Value"] = {}
 for i in enemy_data:
     log_data["Value"][i["Key"]] = []
-log.append(log_data)
+pool_log.append(log_data)
 log_data = {}
 log_data["Key"] = "QuestPool"
 log_data["Value"] = {}
 for i in chest_data:
     log_data["Value"][i["Key"]] = []
-log.append(log_data)
+pool_log.append(log_data)
 log_data = {}
 log_data["Key"] = "ShopPool"
 log_data["Value"] = {}
 for i in chest_data:
     log_data["Value"][i["Key"]] = []
-log.append(log_data)
-log_data = {}
-log_data["Key"] = "ShardPool"
-log_data["Value"] = {}
-log_data["Value"]["Red"] = []
-log_data["Value"]["Blue"] = []
-log_data["Value"]["Purple"] = []
-log_data["Value"]["Yellow"] = []
-log_data["Value"]["Green"] = []
-log_data["Value"]["White"] = []
-log.append(log_data)
+pool_log.append(log_data)
+#ShardLog
+for i in shard_color:
+    log_data = {}
+    log_data["Key"] = i
+    log_data["Value"] = {}
+    log_data["Value"]["ShardList"] = []
+    shard_log.append(log_data)
+#KeyLog
+for i in key_items:
+    log_data = {}
+    log_data["Key"] = item_translation["Value"][i]
+    log_data["Value"] = {}
+    log_data["Value"]["RoomList"] = []
+    key_log.append(log_data)
 
 def unused_chest_check():
     for i in item_content:
@@ -425,12 +472,12 @@ def give_map_help(item):
 
 def chaos_key():
     item_content[11]["Value"]["ItemType"] = chest_data[11]["Value"]["ChestName"]
-    item_content[157]["Value"]["ItemType"] = random.choice(item_type_list)
-    item_content[194]["Value"]["ItemType"] = random.choice(item_type_list)
-    item_content[195]["Value"]["ItemType"] = random.choice(item_type_list)
-    item_content[234]["Value"]["ItemType"] = random.choice(item_type_list)
-    item_content[418]["Value"]["ItemType"] = random.choice(item_type_list)
-    item_content[445]["Value"]["ItemType"] = random.choice(item_type_list)
+    item_content[157]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
+    item_content[194]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
+    item_content[195]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
+    item_content[234]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
+    item_content[418]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
+    item_content[445]["Value"]["ItemType"] = any_pick(item_type_list, True, "None")
 
 def chaos_shard():
     i = 500
@@ -443,6 +490,37 @@ def chaos_shard():
         else:
             item_content[i]["Value"]["ShardId"] = any_pick(shard_data["Value"]["ItemPool"], True, "None")
         i += 1
+
+def add_room_step_1(i):
+    add_room_step_2(i, 11)
+    add_room_step_2(i, 194)
+    add_room_step_2(i, 195)
+    add_room_step_2(i, 157)
+    add_room_step_2(i, 445)
+    add_room_step_2(i, 418)
+    add_room_step_2(i, 234)
+
+def add_room_step_2(i, key_index):
+    if item_content[i]["Value"]["ItemType"] == item_content[key_index]["Value"]["ItemType"]:
+        for e in key_log:
+            if e["Key"] == item_translation["Value"][item_content[key_index]["Value"]["RareItemId"]]:
+                if i == 7:
+                    e["Value"]["RoomList"].append("m02VIL_005")
+                elif i == 11:
+                    e["Value"]["RoomList"].append("m15JPN_016")
+                elif i == 455:
+                    e["Value"]["RoomList"].append("m01SIP_003")
+                elif i == 456:
+                    e["Value"]["RoomList"].append("m10BIG_011")
+                elif i == 457:
+                    e["Value"]["RoomList"].append("m08TWR_019")
+                elif i == 458:
+                    e["Value"]["RoomList"].append("m08TWR_016")
+                elif i == 621 or i == 622:
+                    e["Value"]["RoomList"].append("m88BKR_004")
+                else:
+                    room = room_to_area[item_content[i]["Key"].split("_")[1].split("(")[0][:3]] + item_content[i]["Key"].split("_")[1].split("(")[0][:3] + "_" + item_content[i]["Key"].split("_")[1].split("(")[0][3:]
+                    e["Value"]["RoomList"].append(room)
 
 def rand_item_pool():
     #JohannesMats
@@ -502,8 +580,19 @@ def rand_item_pool():
         if item_content[i]["Key"].split("_")[0] == item_content[i-1]["Key"].split("_")[0] or item_content[i]["Value"]["ShardRate"] == 0.0:
             i += 1
             continue
-        log[4]["Value"][color["Value"][item_content[i]["Value"]["ShardId"]].split("::")[-1]].append(enemy_translation["Value"][item_content[i]["Key"].split("_")[0]])
+        for e in shard_log:
+            if e["Key"] == color["Value"][item_content[i]["Value"]["ShardId"]].split("::")[-1]:
+                e["Value"]["ShardList"].append(enemy_translation["Value"][item_content[i]["Key"].split("_")[0]])
         i += 1
+    #KeyLocation
+    add_room_step_1(7)
+    add_room_step_1(11)
+    i = 36
+    while i <= 499:
+        add_room_step_1(i)
+        i += 1
+    add_room_step_1(621)
+    add_room_step_1(622)
 
 def patch_chest_entry(item_type, i):
     if item_type == chest_data[0]["Key"]:
@@ -525,7 +614,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[0]["Value"]["ChestName"]
         if chest_data[0]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[1]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[1]["Value"]["ItemPool"], chest_data[1]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[1]["Value"]["ItemQuantity"])
@@ -545,7 +634,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[1]["Value"]["ChestName"]
         if chest_data[1]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[2]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[2]["Value"]["ItemPool"], chest_data[2]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[2]["Value"]["ItemQuantity"])
@@ -565,7 +654,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[2]["Value"]["ChestName"]
         if chest_data[2]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[3]["Key"]:
         item_content[i]["Value"]["RareItemId"] = "None"
         item_content[i]["Value"]["RareItemQuantity"] = 0
@@ -585,7 +674,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[3]["Value"]["ChestName"]
         if chest_data[3]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_content[i]["Value"]["CoinOverride"])
+            pool_log[0]["Value"][item_type].append(item_content[i]["Value"]["CoinOverride"])
     elif item_type == chest_data[4]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], False, item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[4]["Value"]["ItemQuantity"])
@@ -605,10 +694,10 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = True
         item_content[i]["Value"]["ItemType"] = chest_data[4]["Value"]["ChestName"]
         if chest_data[4]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
     elif item_type == chest_data[5]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[5]["Value"]["ItemPool"], chest_data[5]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[5]["Value"]["ItemQuantity"])
@@ -628,7 +717,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[5]["Value"]["ChestName"]
         if chest_data[5]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[6]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[6]["Value"]["ItemPool"], chest_data[6]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[6]["Value"]["ItemQuantity"])
@@ -648,7 +737,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[6]["Value"]["ChestName"]
         if chest_data[6]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[7]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[7]["Value"]["ItemPool"], chest_data[7]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[7]["Value"]["ItemQuantity"])
@@ -668,7 +757,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[7]["Value"]["ChestName"]
         if chest_data[7]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[8]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[8]["Value"]["ItemPool"], chest_data[8]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[8]["Value"]["ItemQuantity"])
@@ -688,7 +777,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[8]["Value"]["ChestName"]
         if chest_data[8]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[9]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[9]["Value"]["ItemPool"], chest_data[9]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[9]["Value"]["ItemQuantity"])
@@ -708,7 +797,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[9]["Value"]["ChestName"]
         if chest_data[9]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     elif item_type == chest_data[10]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[10]["Value"]["ItemPool"], False, item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[10]["Value"]["ItemQuantity"])
@@ -728,10 +817,10 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = True
         item_content[i]["Value"]["ItemType"] = chest_data[10]["Value"]["ChestName"]
         if chest_data[10]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
     elif item_type == chest_data[11]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[11]["Value"]["ItemPool"], chest_data[11]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[11]["Value"]["ItemQuantity"])
@@ -751,7 +840,7 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
         item_content[i]["Value"]["ItemType"] = chest_data[11]["Value"]["ChestName"]
         if chest_data[11]["Value"]["IsUnique"]:
-            log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+            pool_log[0]["Value"][item_type].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
     
 def patch_enemy_entry(item_type, item_rate, i):
     if item_type == enemy_data[0]["Key"]:
@@ -760,7 +849,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+                pool_log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
@@ -770,7 +859,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
+                pool_log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
@@ -780,7 +869,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
+                pool_log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
@@ -790,7 +879,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
+                pool_log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -802,7 +891,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+                pool_log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
@@ -812,7 +901,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
+                pool_log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
@@ -822,7 +911,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
+                pool_log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
@@ -832,7 +921,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
+                pool_log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -844,7 +933,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
+                pool_log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareItemId"]])
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
@@ -854,7 +943,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[0]["Value"][item_rate])
             if enemy_data[0]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
+                pool_log[1]["Value"][enemy_data[0]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonItemId"]])
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
@@ -864,7 +953,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
             if enemy_data[1]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
+                pool_log[1]["Value"][enemy_data[1]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["RareIngredientId"]])
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
@@ -874,7 +963,7 @@ def patch_enemy_entry(item_type, item_rate, i):
             item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
             item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
             if enemy_data[2]["Value"]["IsUnique"]:
-                log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
+                pool_log[1]["Value"][enemy_data[2]["Key"]].append(item_translation["Value"][item_content[i]["Value"]["CommonIngredientId"]])
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -999,7 +1088,7 @@ def rand_quest_pool():
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
                 quest_content[i]["Value"]["RewardNum01"] = max(chest_data[11]["Value"]["ItemQuantity"]) * 3
-        log[2]["Value"][item_type].append(item_translation["Value"][quest_content[i]["Value"]["RewardItem01"]])
+        pool_log[2]["Value"][item_type].append(item_translation["Value"][quest_content[i]["Value"]["RewardItem01"]])
 
 def req_string():
     string_content["Table"]["QST_Catering_Name01"] = item_translation["Value"][quest_content[35]["Value"]["Item01"]]
@@ -1057,7 +1146,7 @@ def rand_shop_pool():
             elif e["Value"]["ItemType"] == i["Value"]["ShopName"]:
                 e["Value"]["Producted"] = "None"
         for e in chosen:
-            log[3]["Value"][i["Key"]].append(item_translation["Value"][e])
+            pool_log[3]["Value"][i["Key"]].append(item_translation["Value"][e])
 
 def rand_shop_price(scale):
     for i in shop_content:
@@ -1172,22 +1261,55 @@ def write_patched_item():
 def write_item():
     shutil.copyfile("Serializer\\PB_DT_ItemMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
 
-def write_drop_log():
+def write_drop_pool_log():
     for i in chest_data:
-        log[0]["Value"][i["Key"]] = list(dict.fromkeys(log[0]["Value"][i["Key"]]))
-        log[0]["Value"][i["Key"]].sort()
-        log[2]["Value"][i["Key"]] = list(dict.fromkeys(log[2]["Value"][i["Key"]]))
-        log[2]["Value"][i["Key"]].sort()
-        log[3]["Value"][i["Key"]] = list(dict.fromkeys(log[3]["Value"][i["Key"]]))
-        log[3]["Value"][i["Key"]].sort()
+        pool_log[0]["Value"][i["Key"]] = list(dict.fromkeys(pool_log[0]["Value"][i["Key"]]))
+        pool_log[0]["Value"][i["Key"]].sort()
+        pool_log[2]["Value"][i["Key"]] = list(dict.fromkeys(pool_log[2]["Value"][i["Key"]]))
+        pool_log[2]["Value"][i["Key"]].sort()
+        pool_log[3]["Value"][i["Key"]] = list(dict.fromkeys(pool_log[3]["Value"][i["Key"]]))
+        pool_log[3]["Value"][i["Key"]].sort()
     for i in enemy_data:
-        log[1]["Value"][i["Key"]] = list(dict.fromkeys(log[1]["Value"][i["Key"]]))
-        log[1]["Value"][i["Key"]].sort()
-    log[4]["Value"]["Red"].sort()
-    log[4]["Value"]["Blue"].sort()
-    log[4]["Value"]["Purple"].sort()
-    log[4]["Value"]["Yellow"].sort()
-    log[4]["Value"]["Green"].sort()
-    log[4]["Value"]["White"].sort()
-    with open("SpoilerLog\\Item.json", "w") as file_writer:
-        file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
+        pool_log[1]["Value"][i["Key"]] = list(dict.fromkeys(pool_log[1]["Value"][i["Key"]]))
+        pool_log[1]["Value"][i["Key"]].sort()
+    with open("SpoilerLog\\ItemPool.json", "w") as file_writer:
+        file_writer.write(json.dumps(pool_log, ensure_ascii=False, indent=2))
+
+def write_drop_shard_log():
+    for i in shard_log:
+        i["Value"]["ShardList"].sort()
+    with open("SpoilerLog\\ShardColor.json", "w") as file_writer:
+        file_writer.write(json.dumps(shard_log, ensure_ascii=False, indent=2))
+
+def write_drop_key_log():
+    #ZangetsutoLogic
+    i = 0
+    while i < len(key_log[0]["Value"]["RoomList"]):
+        if "m10BIG" in key_log[0]["Value"]["RoomList"][i] or "m18ICE" in key_log[0]["Value"]["RoomList"][i]:
+            key_log[0]["Value"]["RoomList"].pop(i)
+            continue
+        i += 1
+    #SilverBromideLogic
+    i = 0
+    while i < len(key_log[1]["Value"]["RoomList"]):
+        if "m09TRN" in key_log[1]["Value"]["RoomList"][i] or "m13ARC" in key_log[1]["Value"]["RoomList"][i]:
+            key_log[1]["Value"]["RoomList"].pop(i)
+            continue
+        i += 1
+    #CarpenterKeyLogic
+    i = 0
+    while i < len(key_log[3]["Value"]["RoomList"]):
+        if "m88BKR" in key_log[3]["Value"]["RoomList"][i]:
+            key_log[3]["Value"]["RoomList"].pop(i)
+            continue
+        i += 1
+    #ZangetsutoMisc
+    if "m15JPN_016" in key_log[0]["Value"]["RoomList"]:
+        key_log[0]["Value"]["RoomList"].remove("m15JPN_016")
+    if not "m03ENT_020" in key_log[0]["Value"]["RoomList"]:
+        key_log[0]["Value"]["RoomList"].append("m03ENT_020")
+    
+    for i in key_log:
+        i["Value"]["RoomList"].sort()
+    with open("MapEdit\\Key\\Key.json", "w") as file_writer:
+        file_writer.write(json.dumps(key_log, ensure_ascii=False, indent=2))

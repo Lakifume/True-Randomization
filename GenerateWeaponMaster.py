@@ -48,5 +48,5 @@ def write_weapon():
     shutil.copyfile("Serializer\\PB_DT_WeaponMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
 
 def write_weapon_log():
-    with open("SpoilerLog\\Weapon.json", "w") as file_writer:
+    with open("SpoilerLog\\CheatWeaponStats.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))

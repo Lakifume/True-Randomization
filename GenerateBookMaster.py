@@ -74,5 +74,5 @@ def write_patched_book():
     os.remove("Serializer\\PB_DT_BookMaster.json")
 
 def write_book_log():
-    with open("SpoilerLog\\Library.json", "w") as file_writer:
+    with open("SpoilerLog\\LibraryTomes.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))

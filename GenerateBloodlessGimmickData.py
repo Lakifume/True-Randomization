@@ -114,6 +114,7 @@ ability_room = []
 ability_type = []
 upgrade_room = []
 upgrade_type = []
+json_placeholder = []
 log = []
 
 with open("Data\\BloodlessAbilityData\\BloodlessAbility.json", "r") as file_reader:
@@ -121,6 +122,9 @@ with open("Data\\BloodlessAbilityData\\BloodlessAbility.json", "r") as file_read
 
 with open("Data\\BloodlessAbilityData\\BloodlessUpgrade.json", "r") as file_reader:
     upgrade = json.load(file_reader)
+
+with open("Data\\BloodlessAbilityData\\Translation.json", "r") as file_reader:
+    translation = json.load(file_reader)
 
 for i in ability:
     ability_type.append(i["Key"])
@@ -190,14 +194,14 @@ def candle_shuffle():
             entry["Value"]["RoomId"] = bloodsteal_location
         else:
             entry["Value"]["RoomId"] = any_pick(ability_room)
-        log.append(entry)
+        json_placeholder.append(entry)
     
     for i in upgrade_type:
         entry = {}
         entry["Key"] = i
         entry["Value"] = {}
         entry["Value"]["RoomId"] = any_pick(upgrade_room)
-        log.append(entry)
+        json_placeholder.append(entry)
 
 def any_pick(item_array):
     item = random.choice(item_array)
@@ -215,8 +219,9 @@ def write_patched_gimmick():
     new_length_tower = 0
     old_length_tower = 0
     tower_check = 0
-    for i in log:
+    for i in json_placeholder:
         file_name = i["Value"]["RoomId"].replace(")", "").split("(")[0] + "_Gimmick.umap"
+        ability_id = i["Key"].replace(")", "").split("(")
         
         #TowerCheck
         
@@ -250,7 +255,7 @@ def write_patched_gimmick():
             
             #ChangingNameMap
             
-            outfile.write(str.encode(i["Key"].replace(")", "").split("(")[0]))
+            outfile.write(str.encode(ability_id[0]))
             
             #CopyingEndOfFile
             
@@ -263,7 +268,7 @@ def write_patched_gimmick():
         #PatchingNums
         
         with open("OffSetter\\" + file_name + output_suffix, "r+b") as file:
-            new_length = len(i["Key"].replace(")", "").split("(")[0])
+            new_length = len(ability_id[0])
             if "m08TWR_019" in file_name and tower_check == 1:
                 new_length_tower = new_length
             
@@ -289,7 +294,7 @@ def write_patched_gimmick():
             #NameMapExtraBytes
             
             file.seek(offset + new_length + 1)
-            file.write(name_to_bytes[i["Key"].replace(")", "").split("(")[0]].to_bytes(4, "big"))
+            file.write(name_to_bytes[ability_id[0]].to_bytes(4, "big"))
             
             #InstNumber
             
@@ -297,10 +302,10 @@ def write_patched_gimmick():
                 file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length_tower - old_length_tower) + (new_length - old_length) + 12)
             else:
                 file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length - old_length) + 12)
-            if len(i["Key"].replace(")", "").split("(")) == 1:
+            if len(ability_id) == 1:
                 file.write((0).to_bytes(1, "little"))
             else:
-                file.write(int(i["Key"].replace(")", "").split("(")[1]).to_bytes(1, "little"))
+                file.write(int(ability_id[1]).to_bytes(1, "little"))
         
         #OffsetFix
         
@@ -320,6 +325,24 @@ def write_patched_gimmick():
             os.remove("OffSetter\\" + file_name + ".offset")
     print("Done")
 
+def create_gimmick_log():
+    candle_type = []
+    for i in json_placeholder:
+        if not i["Key"].replace(")", "").split("(")[0] in candle_type:
+            candle_type.append(i["Key"].replace(")", "").split("(")[0])
+    for i in candle_type:
+        log_data = {}
+        log_data["Key"] = translation["Value"][i]
+        log_data["Value"] = {}
+        log_data["Value"]["RoomList"] = []
+        log.append(log_data)
+    for i in json_placeholder:
+        for e in log:
+            if e["Key"] == translation["Value"][i["Key"].replace(")", "").split("(")[0]]:
+                e["Value"]["RoomList"].append(i["Value"]["RoomId"].replace(")", "").split("(")[0])
+
 def write_gimmick_log():
-    with open("SpoilerLog\\Bloodless.json", "w") as file_writer:
+    for i in log:
+        i["Value"]["RoomList"].sort()
+    with open("MapEdit\\Key\\Key.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))

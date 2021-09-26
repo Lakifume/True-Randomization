@@ -39,6 +39,40 @@ sound_color = "#ff80ff"
 extra_color = "#ff80bf"
 
 checkbox_list = []
+mod_directory = [
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\N1011\\Texture",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Character\\P0000\\Texture\\Body",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Character",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT01_SIP\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT02_VIL\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT03_ENT\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT04_GDN\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT05_SAN\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT06_KNG\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT07_LIB\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT08_TWR\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT10_BIG\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT11_UGD\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT12_SND\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT13_ARC\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT14_TAR\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT15_JPN\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT17_RVA\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT51_EBT\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT51_EBT\\Texture",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT88_BKR\\Level",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Item\\Weapon\\Tknife\\Tknife05\\Texture",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Sound\\bgm",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0000",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\HUD\\HUD_asset\\StateGauge\\0001",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\K2C",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Title\\RandomizerMode",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\UI_Pause\\Menu\\MainMenu\\Asset",
+    "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable"
+]
 
 empty_preset = [
     False,
@@ -233,16 +267,19 @@ def writing_and_exit():
         file_writer.write(json.dumps(config, indent=2))
     sys.exit()
 
+class Signaller(QObject):
+    progress = Signal(int)
+    finished = Signal()
+
 class Generate(QThread):
-    updateProgress = Signal(int)
-    
     def __init__(self, string):
         QThread.__init__(self)
+        self.signaller = Signaller()
         self.string = string
 
     def run(self):
-        progress = 0
-        self.updateProgress.emit(progress)
+        current = 0
+        self.signaller.progress.emit(current)
         
         #Serializer
         
@@ -252,8 +289,8 @@ class Generate(QThread):
                 i(self.string)
             else:
                 i()
-            progress += 1
-            self.updateProgress.emit(progress)
+            current += 1
+            self.signaller.progress.emit(current)
             if i != write_patched_gimmick:
                 print("")
 
@@ -264,8 +301,8 @@ class Generate(QThread):
         os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress Randomizer")
         os.chdir(root)
         
-        progress += 1
-        self.updateProgress.emit(progress)
+        current += 1
+        self.signaller.progress.emit(current)
         
         #Reset
         
@@ -282,28 +319,27 @@ class Generate(QThread):
         else:
             shutil.move("UnrealPak\\Randomizer.pak", "Randomizer.pak")
         
-        writing_and_exit()
+        self.signaller.finished.emit()
 
 class Update(QThread):
-    updateProgress = Signal(int)
-    
-    def __init__(self, progressBar, api):
+    def __init__(self, progress_bar, api):
         QThread.__init__(self)
-        self.progressBar = progressBar
+        self.signaller = Signaller()
+        self.progress_bar = progress_bar
         self.api = api
 
     def run(self):
-        progress = 0
-        self.updateProgress.emit(progress)
+        current = 0
+        self.signaller.progress.emit(current)
         
         with open("True Randomization.zip", "wb") as file_writer:
             url = requests.get(self.api["assets"][0]["browser_download_url"], stream=True)
             for data in url.iter_content(chunk_size=4096):
                 file_writer.write(data)
-                progress += len(data)
-                self.updateProgress.emit(progress)
+                current += len(data)
+                self.signaller.progress.emit(current)
         
-        self.progressBar.setLabelText("Extracting...")
+        self.progress_bar.setLabelText("Extracting...")
         
         os.rename("Randomizer.exe", "OldRandomizer.exe")
         with zipfile.ZipFile("True Randomization.zip", "r") as zip_ref:
@@ -314,14 +350,13 @@ class Update(QThread):
         sys.exit()
 
 class Convert(QThread):
-    updateProgress = Signal(int)
-    
     def __init__(self):
         QThread.__init__(self)
+        self.signaller = Signaller()
 
     def run(self):
-        progress = 0
-        self.updateProgress.emit(progress)
+        current = 0
+        self.signaller.progress.emit(current)
         
         for i in json_list:
             if i == "PB_DT_RoomMaster":
@@ -337,10 +372,10 @@ class Convert(QThread):
             os.rename(i + ".bin", i + ".uasset")
             os.remove(i + ".json")
             os.chdir(root)
-            progress += 1
-            self.updateProgress.emit(progress)
+            current += 1
+            self.signaller.progress.emit(current)
         
-        writing_and_exit()
+        self.signaller.finished.emit()
 
 #GUI
 
@@ -352,6 +387,9 @@ class Main(QWidget):
         self.check_for_updates()
 
     def initUI(self):
+        if config[14]["Value"]["Size"] != 0.7 and config[14]["Value"]["Size"] != 0.8 and config[14]["Value"]["Size"] != 0.9:
+            config[14]["Value"]["Size"] = 1.0
+        
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Size"]*18)) + "px}"
         + "QLabel{border: 1px}"
         + "QComboBox{background-color: #21222e}"
@@ -751,7 +789,7 @@ class Main(QWidget):
             self.size_drop_down.setCurrentIndex(1)
         elif config[14]["Value"]["Size"] == 0.9:
             self.size_drop_down.setCurrentIndex(2)
-        else:
+        elif config[14]["Value"]["Size"] == 1.0:
             self.size_drop_down.setCurrentIndex(3)
         
         self.matches_preset()
@@ -1110,7 +1148,7 @@ class Main(QWidget):
             config[9]["Value"]["Option2Value"] = False
             self.check_box_22.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
-
+    
     def radio_button_group_1_checked(self):
         if self.radio_button_1.isChecked():
             config[10]["Value"]["Option1Value"] = True
@@ -1265,8 +1303,19 @@ class Main(QWidget):
             string += list[i] + "\n"
         label.setText(string)
     
-    def setProgress(self, progress):
-        self.progressBar.setValue(progress)
+    def set_progress(self, progress):
+        self.progress_bar.setValue(progress)
+    
+    def seed_finished(self):
+        if config[11]["Value"]["Option1Value"]:
+            box = QMessageBox(self)
+            box.setWindowTitle("Done")
+            box.setText("Pak file generated !\n\nMake sure to leave the in-game settings at default for this to work properly.")
+            box.exec()
+        writing_and_exit()
+    
+    def convert_finished(self):
+        self.setEnabled(True)
     
     def setting_button_clicked(self):
         writing()
@@ -1323,13 +1372,25 @@ class Main(QWidget):
             self.setEnabled(True)
             return
         
+        #InitializeModDirectory
+        
+        if not os.path.isdir("UnrealPak\\Mod"):
+            for i in mod_directory:
+                os.makedirs(i)
+        
         #InitializeSpoilerLog
         
         if not os.path.isdir("SpoilerLog"):
             os.makedirs("SpoilerLog")
+        if not os.path.isdir("MapEdit\\Key"):
+            os.makedirs("MapEdit\\Key")
         
         for file in os.listdir("SpoilerLog"):
             file_path = os.path.join("SpoilerLog", file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        for file in os.listdir("MapEdit\\Key"):
+            file_path = os.path.join("MapEdit\\Key", file)
             if os.path.isfile(file_path):
                 os.remove(file_path)
         
@@ -1357,7 +1418,9 @@ class Main(QWidget):
             rand_quest_pool()
             rand_shop_pool()
             no_card()
-            write_drop_log()
+            write_drop_pool_log()
+            write_drop_shard_log()
+            write_drop_key_log()
         
         if config[0]["Value"]["Option2Value"]:
             quest_req(config[10]["Value"]["Option2Value"], bool(self.string))
@@ -1404,6 +1467,7 @@ class Main(QWidget):
             if not config[9]["Value"]["Option2Value"]:
                 chaos_candle()
             candle_shuffle()
+            create_gimmick_log()
             write_gimmick_log()
         
         if config[10]["Value"]["Option1Value"]:
@@ -1523,14 +1587,13 @@ class Main(QWidget):
         
         #Process
         
-        self.progressBar = QProgressDialog("Generating...", None, 0, len(patch_list) + 1, self)
-        self.progressBar.setWindowTitle("Status")
-        self.progressBar.setWindowModality(Qt.WindowModal)
-        self.progressBar.setAutoClose(False)
-        self.progressBar.setAutoReset(False)
+        self.progress_bar = QProgressDialog("Generating...", None, 0, len(patch_list) + 1, self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
         
         self.worker = Generate(self.string)
-        self.worker.updateProgress.connect(self.setProgress)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(self.seed_finished)
         self.worker.start()
     
     def button_6_clicked(self):
@@ -1542,14 +1605,13 @@ class Main(QWidget):
                 json_list.append(os.listdir("Data\\" + i + "\\Content")[0][:-5])
         json_list.append(os.listdir("MapEdit\\Data\\Content")[0][:-5])
         
-        self.progressBar = QProgressDialog("Converting...", None, 0, len(json_list), self)
-        self.progressBar.setWindowTitle("Status")
-        self.progressBar.setWindowModality(Qt.WindowModal)
-        self.progressBar.setAutoClose(False)
-        self.progressBar.setAutoReset(False)
+        self.progress_bar = QProgressDialog("Converting...", None, 0, len(json_list), self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
         
         self.worker = Convert()
-        self.worker.updateProgress.connect(self.setProgress)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(self.convert_finished)
         self.worker.start()
     
     def button_7_clicked(self):
@@ -1629,7 +1691,7 @@ class Main(QWidget):
     
     def no_path(self):
         box = QMessageBox(self)
-        box.setWindowTitle("Path")
+        box.setWindowTitle("Error")
         box.setIcon(QMessageBox.Critical)
         box.setText("Output path does not exist.")
         box.exec()
@@ -1665,14 +1727,14 @@ class Main(QWidget):
                     self.setEnabled(True)
                     return
                 
-                self.progressBar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
-                self.progressBar.setWindowTitle("Status")
-                self.progressBar.setWindowModality(Qt.WindowModal)
-                self.progressBar.setAutoClose(False)
-                self.progressBar.setAutoReset(False)
+                self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
+                self.progress_bar.setWindowTitle("Status")
+                self.progress_bar.setWindowModality(Qt.WindowModal)
+                self.progress_bar.setAutoClose(False)
+                self.progress_bar.setAutoReset(False)
                 
-                self.worker = Update(self.progressBar, api)
-                self.worker.updateProgress.connect(self.setProgress)
+                self.worker = Update(self.progress_bar, api)
+                self.worker.signaller.progress.connect(self.set_progress)
                 self.worker.start()
             else:
                 self.setEnabled(True)

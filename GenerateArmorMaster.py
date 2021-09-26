@@ -112,5 +112,5 @@ def write_master():
     shutil.copyfile("Serializer\\PBMasterStringTable.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset")
 
 def write_armor_log():
-    with open("SpoilerLog\\Equipment.json", "w") as file_writer:
+    with open("SpoilerLog\\CheatEquipmentStats.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))

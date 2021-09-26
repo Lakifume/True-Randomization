@@ -110,5 +110,5 @@ def write_shard():
     shutil.copyfile("Serializer\\PB_DT_ShardMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
 
 def write_shard_log():
-    with open("SpoilerLog\\Shard.json", "w") as file_writer:
+    with open("SpoilerLog\\ShardPower.json", "w") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
