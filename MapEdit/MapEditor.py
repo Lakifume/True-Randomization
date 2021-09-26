@@ -32,6 +32,7 @@ area_color = [
     "#3ec7e6",
     "#666666"
 ]
+
 music_id = []
 music_name = []
 play_id = []
@@ -105,19 +106,21 @@ class Void:
         self.z_block = z_block
         
 class RoomItem(QGraphicsRectItem):
-    def __init__(self, data, outline, fill, can_move, group_list, room_list, metadata=None, parent=None):
+    def __init__(self, data, outline, fill, opacity, can_move, group_list, room_list, metadata=None, parent=None):
         super().__init__(0, 0, data.width, data.height, parent)
         self.setPos(data.offset_x, data.offset_z)
         self.setData(KEY_METADATA, metadata)
         self.setCursor(Qt.PointingHandCursor)
         
         self.data = data
+        self.fill = fill
+        self.opacity = opacity
         self.can_move = can_move
         self.group_list = group_list
         self.room_list = room_list
         
         self.setPen(outline)
-        self.setBrush(fill)
+        self.setBrush(QColor(fill[:1] + opacity + fill[1:]))
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
@@ -141,7 +144,7 @@ class RoomItem(QGraphicsRectItem):
     def apply_round(self, item):
         x = round(item.pos().x() / TILEWIDTH) * TILEWIDTH
         y = round(item.pos().y() / TILEHEIGHT) * TILEHEIGHT
-        if self.data.name == "m09TRN_002" and y < 0 and restrictions:
+        if item.data.name == "m09TRN_002" and y < 0 and restrictions:
             item.setPos(x, 0)
         else:
             item.setPos(x, y)
@@ -161,6 +164,7 @@ class Main(QMainWindow):
         + "QMessageBox{background-color: #21222e}"
         + "QDialog{background-color: #21222e}"
         + "QPushButton{background-color: #21222e}"
+        + "QListWidget{background-color: #21222e}"
         + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: 18px}")
         
         #Graphics
@@ -179,36 +183,37 @@ class Main(QMainWindow):
         #Menu
         
         bar = self.menuBar()
-        file = bar.addMenu("File")
-        edit = bar.addMenu("Edit")
+        file_bar = bar.addMenu("File")
+        edit_bar = bar.addMenu("Edit")
         view_bar = bar.addMenu("View")
-        help = bar.addMenu("Help")
+        tool_bar = bar.addMenu("Tools")
+        help_bar = bar.addMenu("Help")
 
         open = QAction("Open", self)
         open.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
         open.triggered.connect(self.open_file)
-        file.addAction(open)
+        file_bar.addAction(open)
 
         self.save = QAction("Save", self)
         self.save.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_S))
         self.save.triggered.connect(self.save_file)
-        file.addAction(self.save)
+        file_bar.addAction(self.save)
 
         save_as = QAction("Save as", self)
         save_as.setShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_S))
         save_as.triggered.connect(self.save_file_as)
-        file.addAction(save_as)
+        file_bar.addAction(save_as)
 
         reset = QAction("Reset", self)
         reset.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_R))
         reset.triggered.connect(self.reset)
-        file.addAction(reset)
+        file_bar.addAction(reset)
         
         self.use_restr = QAction("Use restrictions", self, checkable = True)
         self.use_restr.setShortcut(QKeySequence(Qt.Key_1))
         self.use_restr.triggered.connect(self.use_restr_action)
         self.use_restr.setChecked(True)
-        edit.addAction(self.use_restr)
+        edit_bar.addAction(self.use_restr)
         
         self.show_out = QAction("Show hidden rooms", self, checkable = True)
         self.show_out.setShortcut(QKeySequence(Qt.Key_2))
@@ -220,17 +225,27 @@ class Main(QMainWindow):
         self.show_name.triggered.connect(self.show_name_action)
         view_bar.addAction(self.show_name)
         
+        self.room_search = QAction("Room Search", self, checkable = True)
+        self.room_search.setShortcut(QKeySequence(Qt.Key_4))
+        self.room_search.triggered.connect(self.room_search_action)
+        tool_bar.addAction(self.room_search)
+        
+        self.key_location = QAction("Key Locations", self, checkable = True)
+        self.key_location.setShortcut(QKeySequence(Qt.Key_5))
+        self.key_location.triggered.connect(self.key_location_action)
+        tool_bar.addAction(self.key_location)
+        
         how_to = QAction("How to use", self)
         how_to.triggered.connect(self.how_to)
-        help.addAction(how_to)
+        help_bar.addAction(how_to)
         
         guidelines = QAction("Map guidelines", self)
         guidelines.triggered.connect(self.guidelines)
-        help.addAction(guidelines)
+        help_bar.addAction(guidelines)
         
         restrictions = QAction("Boss restrictions", self)
         restrictions.triggered.connect(self.restrictions)
-        help.addAction(restrictions)
+        help_bar.addAction(restrictions)
         
         #Buttons
         
@@ -296,33 +311,52 @@ class Main(QMainWindow):
         self.lock_label = QLabel()
         self.lock_label.setPixmap(QPixmap("Data\\lock_icon.png"))
         
-        self.loading_label = QLabel()
-        self.loading_label.setPixmap(QPixmap("Data\\loading_icon.png"))
-        
         #DropDownLists
+        
+        self.key_drop_down = QComboBox()
+        self.key_drop_down.currentIndexChanged.connect(self.key_drop_down_change)
+        self.key_drop_down.setVisible(False)
+        retain = self.key_drop_down.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.key_drop_down.setSizePolicy(retain)
         
         self.music_drop_down = QComboBox()
         self.music_drop_down.addItems(music_name)
         self.music_drop_down.currentIndexChanged.connect(self.music_drop_down_change)
         self.music_drop_down.setVisible(False)
+        retain = self.music_drop_down.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.music_drop_down.setSizePolicy(retain)
         
         self.play_drop_down = QComboBox()
         self.play_drop_down.addItems(play_name)
         self.play_drop_down.currentIndexChanged.connect(self.play_drop_down_change)
         self.play_drop_down.setVisible(False)
+        retain = self.play_drop_down.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.play_drop_down.setSizePolicy(retain)
+        
+        #ListWidgets
+        
+        self.room_search_list = QListWidget()
+        self.room_search_list.itemClicked.connect(self.room_search_list_change)
+        self.room_search_list.setVisible(False)
+        retain = self.room_search_list.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.room_search_list.setSizePolicy(retain)
         
         #Layouts
         
         hbox_top = QHBoxLayout()
         hbox_top.addWidget(self.lock_label)
+        hbox_top.addWidget(self.key_drop_down)
         hbox_top.addStretch(1)
         hbox_top.addWidget(self.music_drop_down)
         hbox_top.addWidget(self.play_drop_down)
         
         hbox_center = QHBoxLayout()
         hbox_center.addStretch(1)
-        hbox_center.addWidget(self.loading_label)
-        hbox_center.addStretch(1)
+        hbox_center.addWidget(self.room_search_list)
         
         hbox_bottom = QHBoxLayout()
         hbox_bottom.addWidget(reverse)
@@ -338,9 +372,7 @@ class Main(QMainWindow):
         
         vbox = QVBoxLayout()
         vbox.addLayout(hbox_top)
-        vbox.addStretch(1)
         vbox.addLayout(hbox_center)
-        vbox.addStretch(1)
         vbox.addLayout(hbox_bottom)
         
         #Window
@@ -405,10 +437,13 @@ class Main(QMainWindow):
     def show_out_action(self):
         for i in self.room_list:
             if i.data.out_of_map:
+                item = self.room_search_list.findItems(i.data.name, Qt.MatchExactly)[0]
                 if self.show_out.isChecked():
                     i.setVisible(True)
+                    item.setFlags(item.flags() | Qt.ItemIsSelectable)
                 else:
                     i.setVisible(False)
+                    item.setFlags(item.flags() & ~Qt.ItemIsSelectable)
     
     def show_name_action(self):
         for i in self.room_list:
@@ -424,7 +459,43 @@ class Main(QMainWindow):
                         e.setVisible(False)
                     if type(e) == QGraphicsPixmapItem:
                         e.setVisible(True)
-
+    
+    def key_location_action(self):
+        if self.key_location.isChecked():
+            try:
+                with open("Key\\Key.json", "r") as file_reader:
+                    self.key_log = json.load(file_reader)
+            except FileNotFoundError:
+                box = QMessageBox(self)
+                box.setWindowTitle("Error")
+                box.setIcon(QMessageBox.Critical)
+                box.setText("No key log found.")
+                box.exec()
+                self.key_location.setChecked(False)
+                return
+            self.room_search.setChecked(False)
+            self.room_search_action()
+            self.key_drop_down.clear()
+            for i in self.key_log:
+                self.key_drop_down.addItem(i["Key"])
+            self.key_drop_down.setCurrentIndex(0)
+            self.key_drop_down_change(0)
+            self.key_drop_down.setVisible(True)
+        else:
+            self.key_drop_down_change(0)
+            self.key_drop_down.setVisible(False)
+    
+    def room_search_action(self):
+        if self.room_search.isChecked():
+            self.key_location.setChecked(False)
+            self.key_location_action()
+            self.room_search_list.setCurrentItem(self.room_search_list.item(0))
+            self.room_search_list_change(self.room_search_list.item(0))
+            self.room_search_list.setVisible(True)
+        else:
+            self.room_search_list_change(self.room_search_list.item(0))
+            self.room_search_list.setVisible(False)
+    
     def how_to(self):
         box = QMessageBox(self)
         box.setWindowTitle("How to use")
@@ -526,6 +597,19 @@ class Main(QMainWindow):
         else:
             self.zoom_out.setEnabled(True)
     
+    def key_drop_down_change(self, index):
+        for i in self.room_list:
+            if not self.key_location.isChecked() or i.data.name in self.key_log[index]["Value"]["RoomList"]:
+                i.setBrush(QColor(i.fill[:1] + i.opacity + i.fill[1:]))
+                for e in i.childItems():
+                    if type(e) == QGraphicsRectItem:
+                        e.setBrush(QColor(i.fill))
+            else:
+                i.setBrush(QColor("#000000"))
+                for e in i.childItems():
+                    if type(e) == QGraphicsRectItem:
+                        e.setBrush(QColor("#000000"))
+    
     def music_drop_down_change(self, index):
         for i in self.scene.selectedItems():
             i.data.music = music_id[index]
@@ -533,6 +617,19 @@ class Main(QMainWindow):
     def play_drop_down_change(self, index):
         for i in self.scene.selectedItems():
             i.data.play = play_id[index]
+    
+    def room_search_list_change(self, item):
+        for i in self.room_list:
+            if not self.room_search.isChecked() or i.data.name == item.text():
+                i.setBrush(QColor(i.fill[:1] + i.opacity + i.fill[1:]))
+                for e in i.childItems():
+                    if type(e) == QGraphicsRectItem:
+                        e.setBrush(QColor(i.fill))
+            else:
+                i.setBrush(QColor("#000000"))
+                for e in i.childItems():
+                    if type(e) == QGraphicsRectItem:
+                        e.setBrush(QColor("#000000"))
     
     def change_title(self, suffix):
         self.setWindowTitle("Map Editor" + self.title_string + suffix)
@@ -558,23 +655,26 @@ class Main(QMainWindow):
     
     def load_from_json(self, filename):
         self.unsaved = True
-        self.loading_label.setVisible(True)
         
         self.scene.clear()
+        QApplication.processEvents()
+        
+        self.room_search_list.clear()
         self.room_list = []
         self.change_title("")
-        
-        QApplication.processEvents()
         
         with open(filename, "r") as file_reader:
             self.content = json.load(file_reader)
         self.draw_map()
         self.use_restr_action()
         self.show_name_action()
+        if self.key_location.isChecked():
+            self.key_location_action()
+        if self.room_search.isChecked():
+            self.room_search_action()
         self.selection_event()
         
         self.unsaved = False
-        self.loading_label.setVisible(False)
         QApplication.processEvents()
         
         self.show_out_action()
@@ -657,11 +757,17 @@ class Main(QMainWindow):
             data = self.convert_json_to_room(i)
             group_list = []
             can_move = True
+            self.room_search_list.addItem(data.name)
+            
+            if data.width == 0:
+                data.width = TILEWIDTH/2
+            if data.height == 0:
+                data.height = TILEHEIGHT/2
             
             if data.area == "EAreaID::None":
-                fill = QColor(area_color[18])
+                fill = area_color[18]
             else:
-                fill = QColor(area_color[int(data.area[10:12]) - 1])
+                fill = area_color[int(data.area[10:12]) - 1]
             
             outline = QPen("#ffffff")
             outline.setWidth(OUTLINE)
@@ -680,379 +786,389 @@ class Main(QMainWindow):
                         break
             
             if data.room_type == "ERoomType::Load" or data.name == "m01SIP_022" or data.name == "m02VIL_000" or data.name == "m02VIL_099" or data.name == "m02VIL(101)" or data.name == "m18ICE_020":
-                fill.setAlpha(127.5)
+                opacity = "80"
+            else:
+                opacity = "ff"
             
-            room = RoomItem(data, outline, fill, can_move, self.convert_group_to_index(group_list), self.room_list)
+            room = RoomItem(data, outline, fill, opacity, can_move, self.convert_group_to_index(group_list), self.room_list)
             self.scene.addItem(room)
             self.room_list.append(room)
             
-            fill.setAlpha(255)
             outline.setColor("#00000000")
             
-            if data.width != 0:
-                
-                #IgnoreDirection
-                
-                rect = self.scene.addRect(0, 0, 2, data.height - 3, outline, QColor("#555555"))
-                rect.setPos(1.5, 1.5)
-                rect.setParentItem(room)
+            #IgnoreDirection
+            
+            if not data.out_of_map:
+                pen = QPen("#555555")
+                pen.setWidth(2)
+                line = self.scene.addLine(2.5, 2.5, 2.5, data.height - 2.5)
+                line.setPen(pen)
+                line.setParentItem(room)
                 if data.consider_left:
-                    rect.setVisible(False)
-                rect = self.scene.addRect(0, 0, 2, data.height - 3, outline, QColor("#555555"))
-                rect.setPos(data.width - 3.5, 1.5)
-                rect.setParentItem(room)
+                    line.setVisible(False)
+                line = self.scene.addLine(data.width - 2.5, 2.5, data.width - 2.5, data.height - 2.5)
+                line.setPen(pen)
+                line.setParentItem(room)
                 if data.consider_right:
-                    rect.setVisible(False)
-                rect = self.scene.addRect(0, 0, data.width - 3, 2, outline, QColor("#555555"))
-                rect.setPos(1.5, data.height - 3.5)
-                rect.setParentItem(room)
+                    line.setVisible(False)
+                line = self.scene.addLine(2.5, data.height - 2.5, data.width - 2.5, data.height - 2.5)
+                line.setPen(pen)
+                line.setParentItem(room)
                 if data.consider_top:
-                    rect.setVisible(False)
-                rect = self.scene.addRect(0, 0, data.width - 3, 2, outline, QColor("#555555"))
-                rect.setPos(1.5, 1.5)
-                rect.setParentItem(room)
+                    line.setVisible(False)
+                line = self.scene.addLine(2.5, 2.5, data.width - 2.5, 2.5)
+                line.setPen(pen)
+                line.setParentItem(room)
                 if data.consider_bottom:
-                    rect.setVisible(False)
-                
-                #Icons
-                
-                if data.room_type == "ERoomType::Save":
-                    icon = self.scene.addPixmap(QPixmap("Data\\save.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.room_type == "ERoomType::Warp":
-                    icon = self.scene.addPixmap(QPixmap("Data\\warp.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name in boss_room["Value"]["RoomId"]:
-                    icon = self.scene.addPixmap(QPixmap("Data\\boss.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    if data.name == data.name == "m07LIB_011":
-                        icon.setPos(data.width/2 - 6, data.height - 1.5)
-                    else:
-                        icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if int(data.name[1:3]) == 88:
-                    icon = self.scene.addPixmap(QPixmap("Data\\key.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m01SIP_000":
-                    icon = self.scene.addPixmap(QPixmap("Data\\start.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m04GDN_001" or data.name == "m10BIG_000":
-                    icon = self.scene.addPixmap(QPixmap("Data\\portal.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m05SAN_006":
-                    icon = self.scene.addPixmap(QPixmap("Data\\barber.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m06KNG_021":
-                    icon = self.scene.addPixmap(QPixmap("Data\\8bit.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_009":
-                    icon = self.scene.addPixmap(QPixmap("Data\\book.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                
-                #Key
-                
-                if data.name == "m03ENT_020" or data.name == "m05SAN_021" or data.name == "m08TWR_019" or data.name == "m15JPN_016" or data.name == "m18ICE_013":
-                    icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(TILEWIDTH/2 - 6, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m06KNG_017":
-                    icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m08TWR_019":
-                    icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT*2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m10BIG_006":
-                    icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(TILEWIDTH*3 + 6, data.height - 1.5)
-                    icon.setParentItem(room)
-                
-                #Shard
-                
-                if data.name == "m02VIL_005" or data.name == "m03ENT_021" or data.name == "m05SAN_000" or data.name == "m11UGD_047" or data.name == "m12SND_026" or data.name == "m13ARC_004":
-                    icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m17RVA_008":
-                    icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(TILEWIDTH/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_011":
-                    icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                
-                #Wall
-                
-                if data.name == "m01SIP_017":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(1.5, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m03ENT_000":
-                    icon = self.scene.addPixmap(QPixmap("Data\\spike_opening.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT*13 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m03ENT_007":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 13.5, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m05SAN_003":
-                    icon = self.scene.addPixmap(QPixmap("Data\\wall_horizontal.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT*8 + 6)
-                    icon.setParentItem(room)
-                if data.name == "m05SAN_017":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 1, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m05SAN_019" or data.name == "m07LIB_005":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width -18.5, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                    if data.name == "m05SAN_019":
-                        icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                        icon.setTransform(QTransform.fromScale(1, -1))
-                        icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
-                        icon.setParentItem(room)
-                if data.name == "m05SAN_021" or data.name == "m07LIB_023":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 13.5, data.height - TILEHEIGHT*2 - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m06KNG_013":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 13.5, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m06KNG_015" or data.name == "m07LIB_029":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_up.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
+                    line.setVisible(False)
+            
+            #Icons
+            
+            if data.room_type == "ERoomType::Save":
+                icon = self.scene.addPixmap(QPixmap("Data\\save.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.room_type == "ERoomType::Warp":
+                icon = self.scene.addPixmap(QPixmap("Data\\warp.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name in boss_room["Value"]["RoomId"]:
+                icon = self.scene.addPixmap(QPixmap("Data\\boss.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                if data.name == data.name == "m07LIB_011":
                     icon.setPos(data.width/2 - 6, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_006" or data.name == "m11UGD_045":
-                    icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_008" or data.name == "m07LIB_014" or data.name == "m11UGD_016" or data.name == "m18ICE_016":
-                    icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 8.5, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_021":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m07LIB_035" or data.name == "m11UGD_056":
-                    icon = self.scene.addPixmap(QPixmap("Data\\opening.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT*3 - 9)
-                    icon.setParentItem(room)
-                if data.name == "m08TWR_009":
+                else:
+                    icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if int(data.name[1:3]) == 88:
+                icon = self.scene.addPixmap(QPixmap("Data\\key.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m01SIP_000":
+                icon = self.scene.addPixmap(QPixmap("Data\\start.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m04GDN_001" or data.name == "m10BIG_000":
+                icon = self.scene.addPixmap(QPixmap("Data\\portal.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m05SAN_006":
+                icon = self.scene.addPixmap(QPixmap("Data\\barber.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m06KNG_021":
+                icon = self.scene.addPixmap(QPixmap("Data\\8bit.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_009":
+                icon = self.scene.addPixmap(QPixmap("Data\\book.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            
+            #Key
+            
+            if data.name == "m03ENT_020" or data.name == "m05SAN_021" or data.name == "m08TWR_019" or data.name == "m15JPN_016" or data.name == "m18ICE_013":
+                icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(TILEWIDTH/2 - 6, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m06KNG_017":
+                icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m08TWR_019":
+                icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT*2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m10BIG_006":
+                icon = self.scene.addPixmap(QPixmap("Data\\chest.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(TILEWIDTH*3 + 6, data.height - 1.5)
+                icon.setParentItem(room)
+            
+            #Shard
+            
+            if data.name == "m02VIL_005" or data.name == "m03ENT_021" or data.name == "m05SAN_000" or data.name == "m11UGD_047" or data.name == "m12SND_026" or data.name == "m13ARC_004":
+                icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m17RVA_008":
+                icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(TILEWIDTH/2 - 6, data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_011":
+                icon = self.scene.addPixmap(QPixmap("Data\\shard.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            
+            #Wall
+            
+            if data.name == "m01SIP_017":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(1.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m03ENT_000":
+                icon = self.scene.addPixmap(QPixmap("Data\\spike_opening.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT*13 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m03ENT_007":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 13.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m05SAN_003":
+                icon = self.scene.addPixmap(QPixmap("Data\\wall_horizontal.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT*8 + 6)
+                icon.setParentItem(room)
+            if data.name == "m05SAN_017":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 1, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m05SAN_019" or data.name == "m07LIB_005":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width -18.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+                if data.name == "m05SAN_019":
                     icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 11.5, TILEHEIGHT*11 - 1.5)
+                    icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
                     icon.setParentItem(room)
-                if data.name == "m11UGD_015":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 11, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m11UGD_046":
-                    icon = self.scene.addPixmap(QPixmap("Data\\hole_left.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(1.5, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m11UGD_056":
-                    icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 8.5, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m15JPN_010" or data.name == "m17RVA_005":
-                    icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 13.5, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m17RVA_003":
-                    icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole_right.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width - 13.5, data.height - 1.5)
-                    icon.setParentItem(room)
-                if data.name == "m18ICE_015":
-                    icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
-                
-                #Water
-                
-                if data.name == "m11UGD_021" or data.name == "m11UGD_022" or data.name == "m11UGD_023" or data.name == "m11UGD_024" or data.name == "m11UGD_025" or data.name == "m11UGD_026" or data.name == "m11UGD_044" or data.name == "m11UGD_045":
-                    for e in range(round(data.width/TILEWIDTH)):
-                        for o in range(round(data.height/TILEHEIGHT)):
-                            icon = self.scene.addPixmap(QPixmap("Data\\bubble.png"))
-                            icon.setTransform(QTransform.fromScale(1, -1))
-                            icon.setPos(e*TILEWIDTH + 6, o*TILEHEIGHT + 13.5)
-                            icon.setParentItem(room)
-                if data.name == "m11UGD_005" or data.name == "m11UGD_036":
-                    for e in range(round(data.width/TILEWIDTH)):
-                        icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
+            if data.name == "m05SAN_021" or data.name == "m07LIB_023":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 13.5, data.height - TILEHEIGHT*2 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m06KNG_013":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 13.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m06KNG_015" or data.name == "m07LIB_029":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_up.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_006" or data.name == "m11UGD_045":
+                icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_008" or data.name == "m07LIB_014" or data.name == "m11UGD_016" or data.name == "m18ICE_016":
+                icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 8.5, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_021":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m07LIB_035" or data.name == "m11UGD_056":
+                icon = self.scene.addPixmap(QPixmap("Data\\opening.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT*3 - 9)
+                icon.setParentItem(room)
+            if data.name == "m08TWR_009":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 11.5, TILEHEIGHT*11 - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m11UGD_015":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 11, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m11UGD_046":
+                icon = self.scene.addPixmap(QPixmap("Data\\hole_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(1.5, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m11UGD_056":
+                icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 8.5, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m15JPN_010" or data.name == "m17RVA_005":
+                icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 13.5, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m17RVA_003":
+                icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole_right.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width - 13.5, data.height - 1.5)
+                icon.setParentItem(room)
+            if data.name == "m18ICE_015":
+                icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(data.width/2 - 6, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            
+            #Water
+            
+            if data.name == "m11UGD_021" or data.name == "m11UGD_022" or data.name == "m11UGD_023" or data.name == "m11UGD_024" or data.name == "m11UGD_025" or data.name == "m11UGD_026" or data.name == "m11UGD_044" or data.name == "m11UGD_045":
+                for e in range(round(data.width/TILEWIDTH)):
+                    for o in range(round(data.height/TILEHEIGHT)):
+                        icon = self.scene.addPixmap(QPixmap("Data\\bubble.png"))
                         icon.setTransform(QTransform.fromScale(1, -1))
-                        icon.setPos(e*TILEWIDTH + 6, 20.5)
+                        icon.setPos(e*TILEWIDTH + 6, o*TILEHEIGHT + 13.5)
                         icon.setParentItem(room)
-                if data.name == "m11UGD_019" or data.name == "m11UGD_040":
-                    for e in range(round(data.width/TILEWIDTH)):
-                        icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
-                        icon.setTransform(QTransform.fromScale(1, -1))
-                        icon.setPos(e*TILEWIDTH + 6, 28.5)
-                        icon.setParentItem(room)
-                if data.name == "m11UGD_042" or data.name == "m11UGD_046":
-                    for e in range(round(data.width/TILEWIDTH)):
-                        icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
-                        icon.setTransform(QTransform.fromScale(1, -1))
-                        icon.setPos(e*TILEWIDTH + 6, 43.5)
-                        icon.setParentItem(room)
-                if data.name == "m11UGD_043":
-                    for e in range(round(data.width/TILEWIDTH)-1):
-                        icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
-                        icon.setTransform(QTransform.fromScale(1, -1))
-                        icon.setPos(e*TILEWIDTH + 6, 13.5)
-                        icon.setParentItem(room)
-                
-                #NoTraverse
-                
-                for e in data.no_traverse:
-                    if data.name == "m11UGD_013":
-                        void = self.scene.addRect(e.x_block*TILEWIDTH + 1.5, (e.z_block + 2)*TILEHEIGHT + 1.5, TILEWIDTH - 3, TILEHEIGHT - 3, outline, QColor("#000000"))
-                    elif data.name == "m11UGD_031":
-                        void = self.scene.addRect(e.x_block*TILEWIDTH + 1.5, (e.z_block + 3)*TILEHEIGHT + 1.5, TILEWIDTH - 3, TILEHEIGHT - 3, outline, QColor("#000000"))
-                    else:
-                        void = self.scene.addRect(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT + 1.5, TILEWIDTH - 3, TILEHEIGHT - 3, outline, QColor("#000000"))
-                    void.setParentItem(room)
-                    
-                #Doors
+            if data.name == "m11UGD_005" or data.name == "m11UGD_036":
+                for e in range(round(data.width/TILEWIDTH)):
+                    icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e*TILEWIDTH + 6, 20.5)
+                    icon.setParentItem(room)
+            if data.name == "m11UGD_019" or data.name == "m11UGD_040":
+                for e in range(round(data.width/TILEWIDTH)):
+                    icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e*TILEWIDTH + 6, 28.5)
+                    icon.setParentItem(room)
+            if data.name == "m11UGD_042" or data.name == "m11UGD_046":
+                for e in range(round(data.width/TILEWIDTH)):
+                    icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e*TILEWIDTH + 6, 43.5)
+                    icon.setParentItem(room)
+            if data.name == "m11UGD_043":
+                for e in range(round(data.width/TILEWIDTH)-1):
+                    icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e*TILEWIDTH + 6, 13.5)
+                    icon.setParentItem(room)
+            
+            #NoTraverse
+            
+            for e in data.no_traverse:
+                if data.name == "m11UGD_013":
+                    icon = self.scene.addPixmap(QPixmap("Data\\void.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e.x_block*TILEWIDTH + 0.5, (e.z_block + 3)*TILEHEIGHT + 4.5)
+                elif data.name == "m11UGD_031":
+                    icon = self.scene.addPixmap(QPixmap("Data\\void.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e.x_block*TILEWIDTH + 0.5, (e.z_block + 4)*TILEHEIGHT + 4.5)
+                else:
+                    icon = self.scene.addPixmap(QPixmap("Data\\void.png"))
+                    icon.setTransform(QTransform.fromScale(1, -1))
+                    icon.setPos(e.x_block*TILEWIDTH + 0.5, (e.z_block + 1)*TILEHEIGHT + 4.5)
+                icon.setParentItem(room)
+            
+            #Doors
+            
+            if not data.out_of_map:
                 for e in data.door_flag:
                     if e.direction_part == Direction.LEFT or (data.room_type == "ERoomType::Save" or data.room_type == "ERoomType::Warp") and len(data.door_flag) == 1:
-                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                         door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
                         door.setParentItem(room)
                         if e.direction_part != Direction.LEFT:
                             door.setVisible(False)
                     if e.direction_part == Direction.BOTTOM:
-                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
                         door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.RIGHT or (data.room_type == "ERoomType::Save" or data.room_type == "ERoomType::Warp") and len(data.door_flag) == 1:
-                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                         door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
                         door.setParentItem(room)
                         if e.direction_part != Direction.RIGHT:
                             door.setVisible(False)
                     if e.direction_part == Direction.TOP:
-                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
                         door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.LEFT_BOTTOM:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
                         else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.RIGHT_BOTTOM:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
                         else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.LEFT_TOP:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
                         else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.RIGHT_TOP:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
                         else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, fill)
+                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.TOP_LEFT:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                         else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.TOP_RIGHT:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                         else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(QColor(fill)))
                             door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.BOTTOM_RIGHT:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
                         else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                     if e.direction_part == Direction.BOTTOM_LEFT:
                         if data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT - 1.5)
                         else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, fill)
+                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
                             door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT - 1.5)
                         door.setParentItem(room)
                 
-                #Text
-                
-                text = self.scene.addText(data.name.replace('_', '').replace('(', '').replace(')', ''), "Impact")
-                text.setDefaultTextColor(QColor("#ffffff"))
-                text.setTransform(QTransform.fromScale(0.25, -0.5))
-                text.setPos(data.width/2 - text.document().size().width()/8, data.height/2 + TILEHEIGHT/2 - 0.5)
-                text.setParentItem(room)
+            #Text
+            
+            text = self.scene.addText(data.name.replace('_', '').replace('(', '').replace(')', ''), "Impact")
+            text.setDefaultTextColor(QColor("#ffffff"))
+            text.setTransform(QTransform.fromScale(0.25, -0.5))
+            text.setPos(data.width/2 - text.document().size().width()/8, data.height/2 + TILEHEIGHT/2 - 0.5)
+            text.setParentItem(room)
 
     def update_offsets(self):
         for i in range(615):
