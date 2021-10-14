@@ -5,10 +5,11 @@ import shutil
 log = []
 
 def create_room_log(path):
+    name, extension = os.path.splitext(path)
     log_data = {}
     log_data["Key"] = "Map"
     log_data["Value"] = {}
-    log_data["Value"]["FileName"] = path.split("\\")[-1][:-5]
+    log_data["Value"]["FileName"] = name
     log.append(log_data)
 
 def write_patched_room(path):
@@ -24,12 +25,12 @@ def write_room():
     shutil.copyfile("Serializer\\PB_DT_RoomMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_RoomMaster.uasset")
 
 def write_crown_icon():
-    shutil.copyfile("Serializer\\icon_8bitCrown.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\K2C\\icon_8bitCrown.uasset")
+    shutil.copyfile("Serializer\\Uasset\\icon_8bitCrown.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\K2C\\icon_8bitCrown.uasset")
 
 def write_map_icon():
-    shutil.copyfile("Serializer\\Map_Icon_Keyperson.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_Keyperson.uasset")
-    shutil.copyfile("Serializer\\Map_Icon_RootBox.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_RootBox.uasset")
-    shutil.copyfile("Serializer\\Map_StartingPoint.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset")
+    shutil.copyfile("Serializer\\Uasset\\Map_Icon_Keyperson.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_Keyperson.uasset")
+    shutil.copyfile("Serializer\\Uasset\\Map_Icon_RootBox.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_Icon_RootBox.uasset")
+    shutil.copyfile("Serializer\\Uasset\\Map_StartingPoint.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\UI\\Map\\Texture\\Map_StartingPoint.uasset")
 
 def write_map_log():
     with open("SpoilerLog\\Map.json", "w") as file_writer:

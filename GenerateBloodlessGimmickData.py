@@ -3,80 +3,6 @@ import random
 import os
 import shutil
 
-name_to_bytes = {
-    "BLD_ABILITY_HIGH_JUMP": 0xF88EE791,
-    "BLD_ABILITY_WATER_PROTECT": 0xBEFC43E4,
-    "BLD_ABILITY_BLOOD_STEAL": 0x6B9D1150,
-    "BLD_ABILITY_SOUL_STEAL": 0x30ACAABB,
-    "BLD_ABILITY_FLOATING_UP": 0xBF87C09B,
-    "BLD_ABILITY_UMBRELLA_CHARGE": 0x67F2A701,
-    "BLD_ABILITY_GUILLOTINE_UMBRELLA": 0x39496830,
-    "BLD_ABILITY_UMBRELLA_TOSS": 0x9A976254,
-    "BLD_ABILITY_SCARLET_THRUST": 0x4587613E,
-    "BLD_ABILITY_BLOOD_PILLAR": 0x7FD58409,
-    "BLD_ABILITY_SCARLET_CYCLONE": 0x81F4B8C2,
-    "BLD_ABILITY_BLOOD_RAIN": 0xC3868757,
-    "BLD_ABILITY_STR_UP": 0xB597F158,
-    "BLD_ABILITY_INT_UP": 0x5CE882B5,
-    "BLD_ABILITY_CON_UP": 0x94E5C7FA,
-    "BLD_ABILITY_MND_UP": 0x2AC44315,
-    "BLD_ABILITY_LCK_UP": 0x4EC0F311,
-    "BLD_ABILITY_MP_REGEN_UP": 0x1C8A6604
-}
-candle_to_offset = {
-    "m01SIP_000": 49224,
-    "m01SIP_007": 24690,
-    "m01SIP_026": 21441,
-    "m02VIL_004": 32424,
-    "m02VIL_005": 29277,
-    "m03ENT_024": 40518,
-    "m04GDN_004": 20046,
-    "m05SAN_003": 187124,
-    "m05SAN_006": 16177,
-    "m05SAN_011": 18897,
-    "m05SAN_014": 28990,
-    "m05SAN_016": 95486,
-    "m05SAN_021": 100682,
-    "m06KNG_022": 20212,
-    "m07LIB_009": 32434,
-    "m07LIB_012": 42204,
-    "m07LIB_030": 26595,
-    "m07LIB_040": 26395,
-    "m07LIB_041": 24590,
-    "m07LIB_042": 27173,
-    "m08TWR_018": 324529,
-    "m08TWR_019(1)": 162246,
-    "m08TWR_019(2)": 160160,
-    "m10BIG_002": 27960,
-    "m10BIG_010": 20510,
-    "m10BIG_014": 20465,
-    "m10BIG_015": 42012,
-    "m11UGD_010": 26683,
-    "m11UGD_015": 28764,
-    "m11UGD_030": 31364,
-    "m11UGD_038": 82010,
-    "m11UGD_048": 20251,
-    "m11UGD_049": 16469,
-    "m11UGD_050": 20245,
-    "m11UGD_051": 36920,
-    "m12SND_003": 27037,
-    "m12SND_024": 27307,
-    "m12SND_026": 24599,
-    "m13ARC_006": 80678,
-    "m14TAR_002": 32608,
-    "m14TAR_006": 40071,
-    "m15JPN_005": 30828,
-    "m15JPN_017": 35501,
-    "m15JPN_018": 20245,
-    "m17RVA_004": 20212,
-    "m17RVA_007": 21332,
-    "m17RVA_015": 20508,
-    "m51EBT_000": 46738,
-    "m88BKR_001": 44461,
-    "m88BKR_002": 31679,
-    "m88BKR_003": 37387,
-    "m88BKR_004": 27103,
-}
 portal_ban = [
     "m10BIG_002",
     "m10BIG_010",
@@ -186,11 +112,11 @@ def candle_shuffle():
         entry = {}
         entry["Key"] = i
         entry["Value"] = {}
-        if i == "BLD_ABILITY_HIGH_JUMP":
+        if i == "BLD_ABILITY_HIGH_JUMP(0)":
             entry["Value"]["RoomId"] = highjump_location
-        elif i == "BLD_ABILITY_WATER_PROTECT":
+        elif i == "BLD_ABILITY_WATER_PROTECT(0)":
             entry["Value"]["RoomId"] = waterprotect_location
-        elif i == "BLD_ABILITY_BLOOD_STEAL":
+        elif i == "BLD_ABILITY_BLOOD_STEAL(0)":
             entry["Value"]["RoomId"] = bloodsteal_location
         else:
             entry["Value"]["RoomId"] = any_pick(ability_room)
@@ -212,117 +138,56 @@ def any_pick(item_array):
     return item
 
 def write_patched_gimmick():
+    #Start
     print("mXXXXX_XXX_Gimmick.umap")
-    offset = 0
-    new_length = 0
-    old_length = 0
-    new_length_tower = 0
-    old_length_tower = 0
     tower_check = 0
     for i in json_placeholder:
-        file_name = i["Value"]["RoomId"].replace(")", "").split("(")[0] + "_Gimmick.umap"
-        ability_id = i["Key"].replace(")", "").split("(")
-        
+        #RoomToFile
+        file_name = i["Value"]["RoomId"].replace(")", "").split("(")[0] + "_Gimmick"
         #TowerCheck
+        if i["Value"]["RoomId"] == "m08TWR_019(1)":
+            search = "EPBBloodlessAbilityType::BLD_ABILITY_BLOOD_STEAL"
+        elif i["Value"]["RoomId"] == "m08TWR_019(2)":
+            search = "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP"
+        else:
+            search = "EPBBloodlessAbilityType::"
+        #ReadJson
+        if "m08TWR_019" in file_name and tower_check == 1:
+            with open("UAssetGUI\\" + file_name + ".json", "r", encoding="utf-8") as file_reader:
+                content = json.load(file_reader)
+        else:
+            with open("UAssetGUI\\Json\\" + file_name + ".json", "r", encoding="utf-8") as file_reader:
+                content = json.load(file_reader)
+        #PatchJson
+        for e in content["Exports"]:
+            try:
+                if search in e["Data"][1]["Value"]:
+                    e["Data"][1]["Value"] = "EPBBloodlessAbilityType::" + i["Key"]
+            except TypeError:
+                continue
+            except IndexError:
+                continue
+        for e in range(len(content["NameMap"])):
+            if search in content["NameMap"][e]:
+                content["NameMap"][e] = "EPBBloodlessAbilityType::" + i["Key"][:-3]
+        #WriteJson
+        with open("UAssetGUI\\" + file_name + ".json", "w") as file_writer:
+            file_writer.write(json.dumps(content))
         
+        if not ("m08TWR_019" in file_name and tower_check == 0):
+            #CommandFromJson
+            root = os.getcwd()
+            os.chdir("UAssetGUI")
+            os.system("cmd /c UAssetGUI.exe fromjson " + file_name + ".json " + file_name + ".umap")
+            os.chdir(root)
+            #Move
+            shutil.move("UAssetGUI\\" + file_name + ".umap", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT" + file_name[1:3] + "_" + file_name[3:6] + "\\Level\\" + file_name + ".umap")
+            #Delete
+            os.remove("UAssetGUI\\" + file_name + ".json")
+        #TowerCheck
         if "m08TWR_019" in file_name:
             tower_check += 1
-            if tower_check == 1:
-                folder_name = "OffSetter\\Umap\\"
-                input_suffix = ""
-                output_suffix = ".temp"
-            elif tower_check == 2:
-                folder_name = "OffSetter\\"
-                input_suffix = ".temp"
-                output_suffix = ""
-        else:
-            folder_name = "OffSetter\\Umap\\"
-            input_suffix = ""
-            output_suffix = ""
-        
-        #ChangingAbilityId
-        
-        with open(folder_name + file_name + input_suffix, "rb") as inputfile, open("OffSetter\\" + file_name + output_suffix, "wb") as outfile:
-            offset = inputfile.read().find(str.encode("EPBBloodlessAbilityType::")) + 25
-            if i["Value"]["RoomId"] == "m08TWR_019(2)":
-                inputfile.seek(offset + 1)
-                offset += inputfile.read().find(str.encode("EPBBloodlessAbilityType::")) + 25 + 1
-            
-            #CopyingStartOfFile
-            
-            inputfile.seek(0)
-            outfile.write(inputfile.read(offset))
-            
-            #ChangingNameMap
-            
-            outfile.write(str.encode(ability_id[0]))
-            
-            #CopyingEndOfFile
-            
-            old_length = inputfile.read().find((0).to_bytes(1, "little"))
-            if "m08TWR_019" in file_name and tower_check == 1:
-                old_length_tower = old_length
-            inputfile.seek(offset + old_length)
-            outfile.write(inputfile.read())
-        
-        #PatchingNums
-        
-        with open("OffSetter\\" + file_name + output_suffix, "r+b") as file:
-            new_length = len(ability_id[0])
-            if "m08TWR_019" in file_name and tower_check == 1:
-                new_length_tower = new_length
-            
-            #WorldTileInfoOffset
-            
-            file.seek(0xB1)
-            if "m08TWR_019" in file_name and tower_check == 2:
-                new_num = int.from_bytes(file.read(2), "little") + (new_length_tower - old_length_tower) + (new_length - old_length)
-                file.seek(0xB1)
-                file.write(new_num.to_bytes(2, "little"))
-            elif not "m08TWR_019" in file_name and not "m51EBT_000" in file_name:
-                new_num = int.from_bytes(file.read(2), "little") + (new_length - old_length)
-                file.seek(0xB1)
-                file.write(new_num.to_bytes(2, "little"))
-            
-            #NameMapLengthOffset
-            
-            file.seek(offset - 29)
-            new_num = int.from_bytes(file.read(2), "little") + (new_length - old_length)
-            file.seek(offset - 29)
-            file.write(new_num.to_bytes(2, "little"))
-            
-            #NameMapExtraBytes
-            
-            file.seek(offset + new_length + 1)
-            file.write(name_to_bytes[ability_id[0]].to_bytes(4, "big"))
-            
-            #InstNumber
-            
-            if "m08TWR_019" in file_name and tower_check == 2:
-                file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length_tower - old_length_tower) + (new_length - old_length) + 12)
-            else:
-                file.seek(candle_to_offset[i["Value"]["RoomId"]] + (new_length - old_length) + 12)
-            if len(ability_id) == 1:
-                file.write((0).to_bytes(1, "little"))
-            else:
-                file.write(int(ability_id[1]).to_bytes(1, "little"))
-        
-        #OffsetFix
-        
-        if "m08TWR_019" in file_name and tower_check == 2:
-            root = os.getcwd()
-            os.chdir("OffSetter")
-            os.system("cmd /c OffSetter.exe " + file_name + " -n -r -m " + str((new_length_tower - old_length_tower) + (new_length - old_length)) + " 0")
-            os.chdir(root)
-            shutil.move("OffSetter\\" + file_name, "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT" + file_name[1:3] + "_" + file_name[3:6] + "\\Level\\" + file_name)
-            os.remove("OffSetter\\" + file_name + ".offset")
-        elif not "m08TWR_019" in file_name:
-            root = os.getcwd()
-            os.chdir("OffSetter")
-            os.system("cmd /c OffSetter.exe " + file_name + " -n -r -m " + str(new_length - old_length) + " 0")
-            os.chdir(root)
-            shutil.move("OffSetter\\" + file_name, "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\Environment\\ACT" + file_name[1:3] + "_" + file_name[3:6] + "\\Level\\" + file_name)
-            os.remove("OffSetter\\" + file_name + ".offset")
+    #Done
     print("Done")
 
 def create_gimmick_log():
@@ -344,5 +209,17 @@ def create_gimmick_log():
 def write_gimmick_log():
     for i in log:
         i["Value"]["RoomList"].sort()
-    with open("MapEdit\\Key\\Key.json", "w") as file_writer:
+    with open("MapEdit\\Key\\KeyLocation.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+
+def convert_to_json():
+    for i in os.listdir("UAssetGUI\\Umap"):
+        shutil.copyfile("UAssetGUI\\Umap\\" + i, "UAssetGUI\\" + i)
+        
+        root = os.getcwd()
+        os.chdir("UAssetGUI")
+        os.system("cmd /c UAssetGUI.exe tojson " + i + " " + i[:-5] + ".json 514")
+        os.chdir(root)
+        
+        shutil.move("UAssetGUI\\" + i[:-5] + ".json", "UAssetGUI\\Json\\" + i[:-5] + ".json")
+        os.remove("UAssetGUI\\" + i)

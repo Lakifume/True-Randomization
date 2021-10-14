@@ -82,8 +82,6 @@ def more_HPMP():
     content[6]["Value"]["MaxMP"] += 150
     content[6]["Value"]["MaxHP99Enemy"] += 300
     content[6]["Value"]["MaxMP99Enemy"] += 150
-    content[10]["Value"]["MaxHP"] += 300
-    content[10]["Value"]["MaxMP"] += 150
 
 def rand_enemy(level, resist, custom, value):
     #NG+
@@ -112,6 +110,7 @@ def rand_enemy(level, resist, custom, value):
                 patch_level(chance_2_range, i)
             else:
                 patch_level(chance_6_range, i)
+        create_log(i)
         i += 1
     #DenEnemies
     i = 108
@@ -120,6 +119,7 @@ def rand_enemy(level, resist, custom, value):
             rand_stat(i)
         if level:
             patch_level(chance_4_range, i)
+        create_log(i)
         i += 1
     #IceEnemies
     i = 122
@@ -128,6 +128,7 @@ def rand_enemy(level, resist, custom, value):
             rand_stat(i)
         if level:
             patch_level(chance_3_range, i)
+        create_log(i)
         i += 1
     #BackerBosses
     i = 130
@@ -136,6 +137,7 @@ def rand_enemy(level, resist, custom, value):
             rand_stat(i)
         if level:
             patch_level(chance_3_range, i)
+        create_log(i)
         i += 1
     #MainCastleBosses
     i = 138
@@ -151,6 +153,7 @@ def rand_enemy(level, resist, custom, value):
                 patch_level(chance_3_range, i)
             else:
                 patch_level(chance_6_range, i)
+        create_log(i)
         i += 1
     #EndgameBosses
     i = 157
@@ -162,10 +165,11 @@ def rand_enemy(level, resist, custom, value):
                 patch_level(below_50_range, i)
             elif content[i]["Key"] == "N1004":
                 patch_level(chance_4_range, i)
-            elif content[i]["Key"] == "N1008" or content[i]["Key"] == "N1011_STRONG":
+            elif content[i]["Key"] == "N1008" or content[i]["Key"] == "N1011_STRONG" or content[i]["Key"] == "N1011_COOP":
                 patch_level(chance_3_range, i)
             else:
                 patch_level(chance_2_range, i)
+        create_log(i)
         i += 1
     #Breeder
     if resist:
@@ -174,30 +178,22 @@ def rand_enemy(level, resist, custom, value):
     if level:
         patch_level(chance_6_range, 185)
         patch_level(chance_6_range, 186)
+    create_log(185)
 
 def patch_level(array, i):
     if content[i]["Key"] == "N3001_Armor":
         content[i]["Value"]["DefaultEnemyLevel"] = content[38]["Value"]["DefaultEnemyLevel"]
-        stat_scale(i)
     elif content[i]["Key"] == "N3098_Guard":
         content[i]["Value"]["DefaultEnemyLevel"] = content[i-2]["Value"]["DefaultEnemyLevel"]
-        stat_scale(i)
     elif content[i]["Key"] == "N1009_Enemy":
         content[i]["Value"]["DefaultEnemyLevel"] = abs(random.choice(array) - 100)
-        stat_scale(i)
-        create_log(i)
     elif content[i]["Key"][0:5] == "N1013" or content[i]["Key"] == "N1009_Bael":
         content[i]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
-        stat_scale(i)
-        if content[i]["Key"] == "N1013_Dominique":
-            create_log(i)
     elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"] == "JuckPod" or content[i]["Key"][0:5] == "N3125":
         content[i]["Value"]["DefaultEnemyLevel"] = content[i-1]["Value"]["DefaultEnemyLevel"]
-        stat_scale(i)
     elif content[i]["Key"] != "P1003" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
         content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
-        stat_scale(i)
-        create_log(i)
+    stat_scale(i)
     
     content[i]["Value"]["HardEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
     content[i]["Value"]["NightmareEnemyLevel"] = content[i]["Value"]["DefaultEnemyLevel"]
@@ -208,13 +204,20 @@ def patch_level(array, i):
 def stat_scale(i):
     for e in second_stat:
         stat_num = content[i]["Value"][e]
+        #BossStoneCheck
+        if e == "STO" and content[i]["Value"]["StoneType"] == "EPBStoneType::Boss":
+            continue
+        #Loss
+        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"]:
+            stat_num -= 25.0
+        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"] * 0.5:
+            stat_num -= 25.0
+        if stat_num < 0.0:
+            stat_num = 0.0
+        #Gain
         if content[i]["Value"]["DefaultEnemyLevel"] > content[i]["Value"]["HardEnemyLevel"]:
             stat_num += 25.0
-        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (1/4))):
-            stat_num += 25.0
-        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (2/4))):
-            stat_num += 25.0
-        if content[i]["Value"]["DefaultEnemyLevel"] > (content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * (3/4))):
+        if content[i]["Value"]["DefaultEnemyLevel"] > content[i]["Value"]["HardEnemyLevel"] + ((99 - content[i]["Value"]["HardEnemyLevel"]) * 0.5):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
@@ -251,8 +254,11 @@ def rand_stat(i):
                 content[i]["Value"][e] = random.choice(stat_pool)
 
 def create_log(i):
-    log_data = {}
-    log_data["Key"] = translation["Value"][content[i]["Key"]]
+    try:
+        log_data = {}
+        log_data["Key"] = translation["Value"][content[i]["Key"]]
+    except KeyError:
+        return
     log_data["Value"] = {}
     log_data["Value"]["Level"] = content[i]["Value"]["DefaultEnemyLevel"]
     log_data["Value"]["MainStats"] = {}

@@ -1,10 +1,10 @@
 from GenerateArmorMaster import *
 from GenerateAttackParameter import *
 from GenerateBookMaster import *
-from GenerateBloodlessAbilityData import *
 from GenerateBloodlessGimmickData import *
 from GenerateCharacterParameterMaster import *
 from GenerateCoordinateParameter import *
+from GenerateCraftMaster import *
 from GenerateDialogueTableItems import *
 from GenerateDropRateMaster import *
 from GenerateMisc import *
@@ -26,6 +26,7 @@ import requests
 import zipfile
 import subprocess
 import psutil
+import glob
 
 item_color = "#ff8080" 
 shop_color = "#ffff80"
@@ -92,15 +93,11 @@ empty_preset = [
     False,
     False,
     False,
-    False,
-    False,
     False
 ]
 trial_preset = [
     True,
     True,
-    False,
-    False,
     True,
     True,
     True,
@@ -108,15 +105,15 @@ trial_preset = [
     True,
     True,
     True,
-    True,
-    False,
-    False,
-    False,
     True,
     True,
     True,
     False,
-    False
+    False,
+    False,
+    True,
+    True,
+    True
 ]
 race_preset = [
     True,
@@ -136,16 +133,12 @@ race_preset = [
     False,
     True,
     True,
-    False,
-    False,
     False
 ]
 meme_preset = [
     True,
     True,
-    False,
-    False,
-    False,
+    True,
     True,
     False,
     True,
@@ -157,38 +150,14 @@ meme_preset = [
     True,
     False,
     True,
-    True,
-    True,
     False,
-    False
-]
-all_in_preset = [
     True,
     True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    True,
-    False,
-    False
+    True
 ]
 risk_preset = [
     True,
     True,
-    False,
-    False,
     True,
     True,
     True,
@@ -203,8 +172,8 @@ risk_preset = [
     True,
     True,
     True,
-    False,
-    False
+    True,
+    True
 ]
     
 map_num = len(os.listdir("MapEdit\\Custom"))
@@ -250,7 +219,7 @@ sound_files = [
 ]
 
 patch_list = []
-write_list = [write_ammunition, write_arts, write_brv, write_unique, write_craft, write_damage, write_enchant, write_8bit]
+write_list = [write_ammunition, write_arts, write_bloodless, write_brv, write_unique, write_damage, write_enchant, write_8bit, write_ent]
 json_list = []
 
 #Config
@@ -291,7 +260,7 @@ class Generate(QThread):
                 i()
             current += 1
             self.signaller.progress.emit(current)
-            if i != write_patched_gimmick:
+            if i != write_patched_gimmick and i != write_patched_candle:
                 print("")
 
         #UnrealPak
@@ -360,14 +329,17 @@ class Convert(QThread):
         
         for i in json_list:
             if i == "PB_DT_RoomMaster":
-                shutil.copyfile("MapEdit\\Data\\Content\\" + i + ".json", "Serializer\\" + i + ".json")
+                shutil.copyfile("MapEdit\\Data\\RoomMaster\\Content\\" + i + ".json", "Serializer\\" + i + ".json")
             elif "_" in i:
                 shutil.copyfile("Data\\" + i[6:] + "\\Content\\" + i + ".json", "Serializer\\" + i + ".json")
             else:
                 shutil.copyfile("Data\\" + i[2:] + "\\Content\\" + i + ".json", "Serializer\\" + i + ".json")
             root = os.getcwd()
             os.chdir("Serializer")
-            os.system("cmd /c UAsset2Json.exe -tobin " + i + ".json")
+            if i == "PB_DT_RoomMaster":
+                os.system("cmd /c UAsset2Json.exe -tobin -force " + i + ".json")
+            else:
+                os.system("cmd /c UAsset2Json.exe -tobin " + i + ".json")
             os.remove(i + ".uasset")
             os.rename(i + ".bin", i + ".uasset")
             os.remove(i + ".json")
@@ -497,11 +469,6 @@ class Main(QWidget):
         box_15.setFixedSize(config[14]["Value"]["Size"]*550, config[14]["Value"]["Size"]*978)
         grid.addWidget(box_15, 0, 5, 10, 1)
         
-        box_16_grid = QGridLayout()
-        box_16 = QGroupBox()
-        box_16.setLayout(box_16_grid)
-        box_1_grid.addWidget(box_16, 2, 0, 3, 1)
-        
         #TextLabel
         
         self.datatable_label = QLabel(self)
@@ -523,33 +490,33 @@ class Main(QWidget):
         #Checkboxes
 
         self.check_box_1 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option1Id"]), self)
-        self.check_box_1.setToolTip("The primary purpose of this mod. Everything you pick up will\nbe 100% random. Say goodbye to the endless sea of fried fish.")
+        self.check_box_1.setToolTip("Randomize all items and shards found in the overworld, now with\nnew improved logic. Everything you pick up will be 100% random\nso say goodbye to the endless sea of fried fish.")
         self.check_box_1.stateChanged.connect(self.check_box_1_changed)
         box_1_grid.addWidget(self.check_box_1, 0, 0)
         checkbox_list.append(self.check_box_1)
 
         self.check_box_2 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option2Id"]), self)
-        self.check_box_2.setToolTip("Randomize the requirements for Susie, Abigail and Lindsay's quests.\nBenjamin will still ask you for waystones.")
+        self.check_box_2.setToolTip("Randomize all items sold at the shop.")
         self.check_box_2.stateChanged.connect(self.check_box_2_changed)
         box_1_grid.addWidget(self.check_box_2, 1, 0)
         checkbox_list.append(self.check_box_2)
 
         self.check_box_16 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option3Id"]), self)
-        self.check_box_16.setToolTip("Shuffle key items between themselves.")
+        self.check_box_16.setToolTip("Randomize all quest rewards.")
         self.check_box_16.stateChanged.connect(self.check_box_16_changed)
-        box_16_grid.addWidget(self.check_box_16, 0, 0)
+        box_1_grid.addWidget(self.check_box_16, 2, 0)
         checkbox_list.append(self.check_box_16)
 
         self.check_box_17 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option4Id"]), self)
-        self.check_box_17.setToolTip("Shuffle shard colors between themselves.")
+        self.check_box_17.setToolTip("Randomize the requirements for Susie, Abigail and Lindsay's quests.\nBenjamin will still ask you for waystones.")
         self.check_box_17.stateChanged.connect(self.check_box_17_changed)
-        box_16_grid.addWidget(self.check_box_17, 1, 0)
+        box_1_grid.addWidget(self.check_box_17, 3, 0)
         checkbox_list.append(self.check_box_17)
 
         self.check_box_18 = QCheckBox(re.sub(p, r"\1 \2", config[0]["Value"]["Option5Id"]), self)
-        self.check_box_18.setToolTip("Guarantee Gebel's Glasses and Recycle to not appear in the item\npool. Useful for runs that favor magic and bullet management.")
+        self.check_box_18.setToolTip("Guarantee Gebel's Glasses and Recycle Hat to never appear.\nUseful for runs that favor magic and bullet management.")
         self.check_box_18.stateChanged.connect(self.check_box_18_changed)
-        box_16_grid.addWidget(self.check_box_18, 2, 0)
+        box_1_grid.addWidget(self.check_box_18, 4, 0)
         checkbox_list.append(self.check_box_18)
 
         self.check_box_3 = QCheckBox(re.sub(p, r"\1 \2", config[1]["Value"]["Option1Id"]), self)
@@ -634,13 +601,11 @@ class Main(QWidget):
         self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
         box_10_grid.addWidget(self.check_box_21, 0, 0)
-        checkbox_list.append(self.check_box_21)
         
         self.check_box_22 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option2Id"]), self)
-        self.check_box_22.setToolTip("Shuffle abilities and upgrades between themselves.")
+        self.check_box_22.setToolTip("Only shuffle abilities and upgrades between themselves.")
         self.check_box_22.stateChanged.connect(self.check_box_22_changed)
         box_10_grid.addWidget(self.check_box_22, 1, 0)
-        checkbox_list.append(self.check_box_22)
 
         #RadioButtons
         
@@ -685,13 +650,12 @@ class Main(QWidget):
         #DropDownLists
         
         self.preset_drop_down = QComboBox()
-        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: A good way to get started with this mod.\nRACE: Most fitting for one who seeks speed.\nMEME: Turn your brain off and annihilate everything.\nALL IN: A chaotic, challenging and safe way to play.\nRISK: May require glitches to complete.")
+        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: To get started with this mod.\nRACE: Most fitting for a King of Speed.\nMEME: Time to break the game.\nRISK: Chaos awaits !")
         self.preset_drop_down.addItem("Custom")
         self.preset_drop_down.addItem("Empty")
         self.preset_drop_down.addItem("Trial")
         self.preset_drop_down.addItem("Race")
         self.preset_drop_down.addItem("Meme")
-        self.preset_drop_down.addItem("All in")
         self.preset_drop_down.addItem("Risk")
         self.preset_drop_down.currentIndexChanged.connect(self.preset_drop_down_change)
         box_12_grid.addWidget(self.preset_drop_down, 0, 0)
@@ -703,7 +667,7 @@ class Main(QWidget):
         setting_box_grid = QGridLayout()
         setting_box = QGroupBox(re.sub(p, r"\1 \2", config[14]["Key"]))
         setting_box.setLayout(setting_box_grid)
-        self.setting_layout.addWidget(setting_box, 0, 0, 1, 3)
+        self.setting_layout.addWidget(setting_box, 0, 0, 1, 1)
         
         self.size_drop_down = QComboBox()
         self.size_drop_down.addItem("0.7")
@@ -711,20 +675,16 @@ class Main(QWidget):
         self.size_drop_down.addItem("0.9")
         self.size_drop_down.addItem("1.0")
         self.size_drop_down.currentIndexChanged.connect(self.size_drop_down_change)
-        setting_box_grid.addWidget(self.size_drop_down, 0, 0)
+        setting_box_grid.addWidget(self.size_drop_down, 0, 0, 1, 1)
         
         setting_button = QPushButton("Apply")
         setting_button.clicked.connect(self.setting_button_clicked)
-        self.setting_layout.addWidget(setting_button, 1, 1, 1, 1)
+        self.setting_layout.addWidget(setting_button, 1, 0, 1, 1)
         
         #InitCheckboxes
         
         if config[0]["Value"]["Option1Value"]:
             self.check_box_1.setChecked(True)
-        else:
-            self.check_box_16.setEnabled(False)
-            self.check_box_17.setEnabled(False)
-            self.check_box_18.setEnabled(False)
         if config[0]["Value"]["Option2Value"]:
             self.check_box_2.setChecked(True)
         if config[0]["Value"]["Option3Value"]:
@@ -735,8 +695,6 @@ class Main(QWidget):
             self.check_box_18.setChecked(True)
         if config[1]["Value"]["Option1Value"]:
             self.check_box_3.setChecked(True)
-        else:
-            self.check_box_4.setEnabled(False)
         if config[1]["Value"]["Option2Value"]:
             self.check_box_4.setChecked(True)
         if config[2]["Value"]["Option1Value"]:
@@ -745,8 +703,6 @@ class Main(QWidget):
             self.check_box_6.setChecked(True)
         if config[3]["Value"]["Option1Value"]:
             self.check_box_7.setChecked(True)
-        else:
-            self.check_box_8.setEnabled(False)
         if config[3]["Value"]["Option2Value"]:
             self.check_box_8.setChecked(True)
         if config[4]["Value"]["Option1Value"]:
@@ -767,7 +723,6 @@ class Main(QWidget):
             self.check_box_21.setChecked(True)
         else:
             self.check_box_21_changed()
-            self.check_box_22.setEnabled(False)
         if config[9]["Value"]["Option2Value"]:
             self.check_box_22.setChecked(True)
         
@@ -859,18 +814,12 @@ class Main(QWidget):
             self.check_box_1.setStyleSheet("color: " + item_color)
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            self.check_box_16.setEnabled(True)
-            self.check_box_17.setEnabled(True)
-            self.check_box_18.setEnabled(True)
             if not self.string:
                 self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
         else:
             config[0]["Value"]["Option1Value"] = False
             self.check_box_1.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-            self.check_box_16.setEnabled(False)
-            self.check_box_17.setEnabled(False)
-            self.check_box_18.setEnabled(False)
             if not self.string:
                 self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
 
@@ -935,12 +884,11 @@ class Main(QWidget):
             self.check_box_3.setStyleSheet("color: " + shop_color)
             if self.check_box_4.isChecked():
                 self.box_2.setStyleSheet("color: " + shop_color)
-            self.check_box_4.setEnabled(True)
         else:
             config[1]["Value"]["Option1Value"] = False
             self.check_box_3.setStyleSheet("color: #ffffff")
             self.box_2.setStyleSheet("color: #ffffff")
-            self.check_box_4.setEnabled(False)
+            self.check_box_4.setChecked(False)
 
     def check_box_4_changed(self):
         self.matches_preset()
@@ -949,6 +897,7 @@ class Main(QWidget):
             self.check_box_4.setStyleSheet("color: " + shop_color)
             if self.check_box_3.isChecked():
                 self.box_2.setStyleSheet("color: " + shop_color)
+            self.check_box_3.setChecked(True)
         else:
             config[1]["Value"]["Option2Value"] = False
             self.check_box_4.setStyleSheet("color: #ffffff")
@@ -989,12 +938,11 @@ class Main(QWidget):
             self.check_box_7.setStyleSheet("color: " + shard_color)
             if self.check_box_8.isChecked():
                 self.box_4.setStyleSheet("color: " + shard_color)
-            self.check_box_8.setEnabled(True)
         else:
             config[3]["Value"]["Option1Value"] = False
             self.check_box_7.setStyleSheet("color: #ffffff")
             self.box_4.setStyleSheet("color: #ffffff")
-            self.check_box_8.setEnabled(False)
+            self.check_box_8.setChecked(False)
 
     def check_box_8_changed(self):
         self.matches_preset()
@@ -1003,6 +951,7 @@ class Main(QWidget):
             self.check_box_8.setStyleSheet("color: " + shard_color)
             if self.check_box_7.isChecked():
                 self.box_4.setStyleSheet("color: " + shard_color)
+            self.check_box_7.setChecked(True)
         else:
             config[3]["Value"]["Option2Value"] = False
             self.check_box_8.setStyleSheet("color: #ffffff")
@@ -1126,14 +1075,16 @@ class Main(QWidget):
             self.check_box_21.setStyleSheet("color: " + extra_color)
             if self.check_box_22.isChecked():
                 self.box_10.setStyleSheet("color: " + extra_color)
-            self.check_box_22.setEnabled(True)
+            self.uncheck_checkboxes()
+            self.disable_checkboxes()
             self.remove_from_list(ui_files, "icon", [])
             self.remove_from_list(sound_files, "ACT50_BRM", [])
         else:
             config[9]["Value"]["Option1Value"] = False
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
-            self.check_box_22.setEnabled(False)
+            self.check_box_22.setChecked(False)
+            self.enable_checkboxes()
             self.add_to_list(ui_files, "icon", [])
             self.add_to_list(sound_files, "ACT50_BRM", [])
     
@@ -1144,6 +1095,7 @@ class Main(QWidget):
             self.check_box_22.setStyleSheet("color: " + extra_color)
             if self.check_box_21.isChecked():
                 self.box_10.setStyleSheet("color: " + extra_color)
+            self.check_box_21.setChecked(True)
         else:
             config[9]["Value"]["Option2Value"] = False
             self.check_box_22.setStyleSheet("color: #ffffff")
@@ -1195,9 +1147,6 @@ class Main(QWidget):
                 checkbox_list[i].setChecked(meme_preset[i])
         elif index == 5:
             for i in range(len(checkbox_list)):
-                checkbox_list[i].setChecked(all_in_preset[i])
-        elif index == 6:
-            for i in range(len(checkbox_list)):
                 checkbox_list[i].setChecked(risk_preset[i])
 
     def size_drop_down_change(self, index):
@@ -1245,21 +1194,73 @@ class Main(QWidget):
         
         is_preset_5 = True
         for i in range(len(checkbox_list)):
-            if not(all_in_preset[i] and checkbox_list[i].isChecked() or not all_in_preset[i] and not checkbox_list[i].isChecked()):
+            if not(risk_preset[i] and checkbox_list[i].isChecked() or not risk_preset[i] and not checkbox_list[i].isChecked()):
                 is_preset_5 = False
         if is_preset_5:
             self.preset_drop_down.setCurrentIndex(5)
             return
         
-        is_preset_6 = True
-        for i in range(len(checkbox_list)):
-            if not(risk_preset[i] and checkbox_list[i].isChecked() or not risk_preset[i] and not checkbox_list[i].isChecked()):
-                is_preset_6 = False
-        if is_preset_6:
-            self.preset_drop_down.setCurrentIndex(6)
-            return
-        
         self.preset_drop_down.setCurrentIndex(0)
+    
+    def enable_checkboxes(self):
+        self.check_box_1.setEnabled(True)
+        self.check_box_2.setEnabled(True)
+        self.check_box_16.setEnabled(True)
+        self.check_box_17.setEnabled(True)
+        self.check_box_18.setEnabled(True)
+        self.check_box_3.setEnabled(True)
+        self.check_box_4.setEnabled(True)
+        self.check_box_5.setEnabled(True)
+        self.check_box_6.setEnabled(True)
+        self.check_box_7.setEnabled(True)
+        self.check_box_8.setEnabled(True)
+        self.check_box_9.setEnabled(True)
+        self.check_box_10.setEnabled(True)
+        self.check_box_11.setEnabled(True)
+        self.check_box_12.setEnabled(True)
+        self.check_box_13.setEnabled(True)
+        self.check_box_14.setEnabled(True)
+        self.check_box_15.setEnabled(True)
+    
+    def disable_checkboxes(self):
+        self.check_box_1.setEnabled(False)
+        self.check_box_2.setEnabled(False)
+        self.check_box_16.setEnabled(False)
+        self.check_box_17.setEnabled(False)
+        self.check_box_18.setEnabled(False)
+        self.check_box_3.setEnabled(False)
+        self.check_box_4.setEnabled(False)
+        self.check_box_5.setEnabled(False)
+        self.check_box_6.setEnabled(False)
+        self.check_box_7.setEnabled(False)
+        self.check_box_8.setEnabled(False)
+        self.check_box_9.setEnabled(False)
+        self.check_box_10.setEnabled(False)
+        self.check_box_11.setEnabled(False)
+        self.check_box_12.setEnabled(False)
+        self.check_box_13.setEnabled(False)
+        self.check_box_14.setEnabled(False)
+        self.check_box_15.setEnabled(False)
+    
+    def uncheck_checkboxes(self):
+        self.check_box_1.setChecked(False)
+        self.check_box_2.setChecked(False)
+        self.check_box_16.setChecked(False)
+        self.check_box_17.setChecked(False)
+        self.check_box_18.setChecked(False)
+        self.check_box_3.setChecked(False)
+        self.check_box_4.setChecked(False)
+        self.check_box_5.setChecked(False)
+        self.check_box_6.setChecked(False)
+        self.check_box_7.setChecked(False)
+        self.check_box_8.setChecked(False)
+        self.check_box_9.setChecked(False)
+        self.check_box_10.setChecked(False)
+        self.check_box_11.setChecked(False)
+        self.check_box_12.setChecked(False)
+        self.check_box_13.setChecked(False)
+        self.check_box_14.setChecked(False)
+        self.check_box_15.setChecked(False)
     
     def new_level(self):
         config[12]["Value"]["Level"] = self.level_box.value()
@@ -1310,7 +1311,7 @@ class Main(QWidget):
         if config[11]["Value"]["Option1Value"]:
             box = QMessageBox(self)
             box.setWindowTitle("Done")
-            box.setText("Pak file generated !\n\nMake sure to leave the in-game settings at default for this to work properly.")
+            box.setText("Pak file generated !\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work !")
             box.exec()
         writing_and_exit()
     
@@ -1359,19 +1360,6 @@ class Main(QWidget):
             self.setEnabled(True)
             return
         
-        #CheckOffSetterInstallRequirement
-        
-        root = os.getcwd()
-        os.chdir("OffSetter")
-        os.system("cmd /c OffSetter.exe m08TWR_019_Gimmick.umap.temp -n -r -m 0 0")
-        os.chdir(root)
-        if os.path.isfile("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset"):
-            os.remove("OffSetter\\m08TWR_019_Gimmick.umap.temp.offset")
-        else:
-            self.install_5()
-            self.setEnabled(True)
-            return
-        
         #InitializeModDirectory
         
         if not os.path.isdir("UnrealPak\\Mod"):
@@ -1397,33 +1385,36 @@ class Main(QWidget):
         #Map
         
         if not self.string and config[6]["Value"]["Option1Value"]:
-            if os.listdir("MapEdit\\Custom"):
-                self.string = "MapEdit\\Custom\\" + random.choice(os.listdir("MapEdit\\Custom"))
+            if glob.glob("MapEdit\\Custom\\*.json"):
+                self.string = random.choice(glob.glob("MapEdit\\Custom\\*.json"))
         
         #Patch
         
-        if config[11]["Value"]["Option1Value"]:
-            unused_chest_check()
-            if self.string:
-                unused_room_check(self.string)
+        if self.string:
+            unused_room_check(self.string)
+            load_custom_logic(self.string)
+        
+        if config[10]["Value"]["Option2Value"]:
+            hard_enemy_logic()
+        
+        if config[0]["Value"]["Option5Value"]:
+            remove_infinite()
         
         if config[0]["Value"]["Option1Value"]:
-            if not config[0]["Value"]["Option3Value"]:
-                chaos_key()
-            if not config[0]["Value"]["Option4Value"]:
-                chaos_shard()
-            if config[0]["Value"]["Option5Value"]:
-                remove_infinite()
+            rand_key_placement()
+            rand_shard_placement()
             rand_item_pool()
+            write_key_item_log()
+            write_key_shard_log()
+        
+        if config[0]["Value"]["Option3Value"]:
             rand_quest_pool()
-            rand_shop_pool()
-            no_card()
-            write_drop_pool_log()
-            write_drop_shard_log()
-            write_drop_key_log()
         
         if config[0]["Value"]["Option2Value"]:
-            quest_req(config[10]["Value"]["Option2Value"], bool(self.string))
+            rand_shop_pool()
+        
+        if config[0]["Value"]["Option2Value"]:
+            quest_req()
             req_string()
         
         if config[1]["Value"]["Option1Value"]:
@@ -1451,9 +1442,7 @@ class Main(QWidget):
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             more_HPMP()
             low_HPMP_growth()
-            bloodless_low_HPMP_growth()
             low_HPMP_cap()
-            bloodless_all_upgrades()
         
         if self.string:
             no_quest_icon()
@@ -1480,39 +1469,28 @@ class Main(QWidget):
             eye_max()
             all_quest()
             hair_app_shop()
-            if self.string[-7:-5] == "_J":
-                give_map_help("Doublejump")
-            elif self.string[-7:-5] == "_I":
-                give_map_help("Invert")
-            elif self.string[-7:-5] == "_S":
-                give_map_help("Deepsinker")
-            elif self.string[-7:-5] == "_H":
-                give_map_help("HighJump")
-            elif self.string[-7:-5] == "_R":
-                give_map_help("Reflectionray")
-            elif self.string[-7:-5] == "_D":
-                give_map_help("Dimensionshift")
-            elif self.string[-7:-5] == "_A":
-                give_map_help("Accelerator")
-            elif self.string[-7:-5] == "_C":
-                give_map_help("Bookofthechampion")
-            elif self.string[-7:-5] == "_Z":
-                give_map_help("Swordsman")
+            no_card()
         
         #Write
+        
+        if config[0]["Value"]["Option1Value"]:
+            patch_list.append(write_patched_craft)
+            patch_list.append(write_patched_candle)
+        else:
+            write_list.append(write_craft)
         
         if config[0]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
             patch_list.append(write_patched_drop)
         else:
             write_list.append(write_drop)
         
-        if config[0]["Value"]["Option1Value"] or config[0]["Value"]["Option2Value"] or config[11]["Value"]["Option1Value"] or self.string:
+        if config[0]["Value"]["Option3Value"] or config[0]["Value"]["Option4Value"] or config[11]["Value"]["Option1Value"] or self.string:
             patch_list.append(write_patched_quest)
         
-        if config[0]["Value"]["Option2Value"]:
+        if config[0]["Value"]["Option4Value"]:
             patch_list.append(write_patched_scenario)
         
-        if config[0]["Value"]["Option1Value"] or config[1]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
+        if config[0]["Value"]["Option2Value"] or config[1]["Value"]["Option1Value"] or config[11]["Value"]["Option1Value"]:
             patch_list.append(write_patched_item)
         else:
             write_list.append(write_item)
@@ -1542,11 +1520,9 @@ class Main(QWidget):
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             patch_list.append(write_patched_effect)
             patch_list.append(write_patched_coordinate)
-            patch_list.append(write_patched_bloodless)
         else:
             write_list.append(write_effect)
             write_list.append(write_coordinate)
-            write_list.append(write_bloodless)
         
         if self.string:
             patch_list.append(write_patched_room)
@@ -1579,9 +1555,6 @@ class Main(QWidget):
             write_list.append(write_bullet)
             write_list.append(write_collision)
         
-        if config[11]["Value"]["Option1Value"]:
-            write_list.append(write_options)
-        
         for i in write_list:
             i()
         
@@ -1603,7 +1576,7 @@ class Main(QWidget):
         for i in os.listdir("Data"):
             if os.path.isdir("Data\\" + i) and i != "Hue":
                 json_list.append(os.listdir("Data\\" + i + "\\Content")[0][:-5])
-        json_list.append(os.listdir("MapEdit\\Data\\Content")[0][:-5])
+        json_list.append("PB_DT_RoomMaster")
         
         self.progress_bar = QProgressDialog("Converting...", None, 0, len(json_list), self)
         self.progress_bar.setWindowTitle("Status")
@@ -1650,6 +1623,20 @@ class Main(QWidget):
         label5_text = QLabel()
         label5_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
         label5_text.setOpenExternalLinks(True)
+        label6_image = QLabel()
+        label6_image.setPixmap(QPixmap("Data\\profile6.png"))
+        label6_image.setScaledContents(True)
+        label6_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label6_text = QLabel()
+        label6_text.setText("<span style=\"font-weight: bold; color: #ffa9a8;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#ffa9a8>Github</font></a>")
+        label6_text.setOpenExternalLinks(True)
+        label7_image = QLabel()
+        label7_image.setPixmap(QPixmap("Data\\profile7.png"))
+        label7_image.setScaledContents(True)
+        label7_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label7_text = QLabel()
+        label7_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
+        label7_text.setOpenExternalLinks(True)
         layout = QGridLayout()
         layout.setSpacing(10)
         layout.addWidget(label1_image, 0, 0, 1, 1)
@@ -1660,8 +1647,12 @@ class Main(QWidget):
         layout.addWidget(label3_text, 2, 1, 1, 1)
         layout.addWidget(label4_image, 3, 0, 1, 1)
         layout.addWidget(label4_text, 3, 1, 1, 1)
-        layout.addWidget(label5_image, 4, 0, 1, 1)
-        layout.addWidget(label5_text, 4, 1, 1, 1)
+        layout.addWidget(label6_image, 4, 0, 1, 1)
+        layout.addWidget(label6_text, 4, 1, 1, 1)
+        layout.addWidget(label7_image, 5, 0, 1, 1)
+        layout.addWidget(label7_text, 5, 1, 1, 1)
+        layout.addWidget(label5_image, 6, 0, 1, 1)
+        layout.addWidget(label5_text, 6, 1, 1, 1)
         box = QDialog(self)
         box.setLayout(layout)
         box.setWindowTitle("Credits")
@@ -1678,22 +1669,11 @@ class Main(QWidget):
         box.setWindowTitle("Install")
         box.exec()
     
-    def install_5(self):
-        label = QLabel()
-        label.setText("<span style=\"font-weight: bold; color: #e06666;\">.NET Runtime 5.0</span> is currently not installed, it is required for umap offsetting:<br/><a href=\"https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-5.0.10-windows-x64-installer\"><font face=Cambria color=#f6b26b>64bit Installer</font></a><br/><a href=\"https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-5.0.10-windows-x86-installer\"><font face=Cambria color=#f6b26b>32bit Installer</font></a>")
-        label.setOpenExternalLinks(True)
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        box = QDialog(self)
-        box.setLayout(layout)
-        box.setWindowTitle("Install")
-        box.exec()
-    
     def no_path(self):
         box = QMessageBox(self)
         box.setWindowTitle("Error")
         box.setIcon(QMessageBox.Critical)
-        box.setText("Output path does not exist.")
+        box.setText("Output path invalid.")
         box.exec()
     
     def error(self):

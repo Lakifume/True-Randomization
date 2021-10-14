@@ -6,10 +6,6 @@ import shutil
 with open("Data\\CoordinateParameter\\Content\\PB_DT_CoordinateParameter.json", "r") as file_reader:
     content = json.load(file_reader)
 
-def bloodless_low_HPMP_growth():
-    content[65]["Value"]["Value"] -= 10.0
-    content[66]["Value"]["Value"] -= 5.0
-
 def low_HPMP_cap():
     content[130]["Value"]["Value"] -= 300.0
     content[131]["Value"]["Value"] -= 150.0
