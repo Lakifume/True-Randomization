@@ -789,16 +789,10 @@ class Main(QMainWindow):
     
     def key_drop_down_change(self, index):
         for i in self.room_list:
-            try:
-                if i.room_data.name == self.key_log[index]["Value"]["Room"]:
-                    self.reveal_room(i)
-                else:
-                    self.fill_room(i, "#000000")
-            except KeyError:
-                if i.room_data.name in self.key_log[index]["Value"]["RoomList"]:
-                    self.reveal_room(i)
-                else:
-                    self.fill_room(i, "#000000")
+            if i.room_data.name in self.key_log[index]["Value"]["RoomList"]:
+                self.reveal_room(i)
+            else:
+                self.fill_room(i, "#000000")
     
     def room_search_list_change(self, item):
         for i in self.room_list:
@@ -1647,6 +1641,11 @@ class Main(QMainWindow):
                 icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 13.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
+            if room_data.name == "m03ENT_013":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
             if room_data.name == "m05SAN_003":
                 icon = self.scene.addPixmap(QPixmap("Data\\wall_horizontal.png"))
