@@ -321,8 +321,7 @@ shop_skip_list = [
     "MonarchCrown"
 ]
 
-key_log = []
-shard_log = []
+log = []
 
 #Content
 with open("Data\\DropRateMaster\\Content\\PB_DT_DropRateMaster.json", "r") as file_reader:
@@ -344,8 +343,8 @@ with open("Data\\ShardMaster\\Content\\PB_DT_ShardMaster.json", "r") as file_rea
 with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.logic", "r") as file_reader:
     logic_data = json.load(file_reader)
 
-with open("Data\\DropRateMaster\\EnemyLocationInfo.json", "r") as file_reader:
-    enemy_info = json.load(file_reader)
+with open("Data\\DropRateMaster\\EnemyLocation.json", "r") as file_reader:
+    enemy_location = json.load(file_reader)
 
 with open("Data\\DropRateMaster\\Chest.json", "r") as file_reader:
     chest_data = json.load(file_reader)
@@ -399,7 +398,6 @@ while i <= 626:
 random.shuffle(enemy_index)
 
 #CollectingQuestIndexes
-
 for i in range(len(quest_content)):
     quest_index.append(i)
 random.shuffle(quest_index)
@@ -444,21 +442,6 @@ for i in shop_content:
     if i["Value"]["buyPrice"] == 0:
         shop_skip_list.append(i["Key"])
 
-#KeyLog
-for i in key_items:
-    log_data = {}
-    log_data["Key"] = item_translation["Value"][i]
-    log_data["Value"] = {}
-    log_data["Value"]["Room"] = []
-    key_log.append(log_data)
-#ShardLog
-for i in key_shards:
-    log_data = {}
-    log_data["Key"] = shard_translation["Value"][i]
-    log_data["Value"] = {}
-    log_data["Value"]["Enemy"] = []
-    shard_log.append(log_data)
-
 def unused_room_check(path):
     room_unused_list = []
     with open(path, "r") as file_reader:
@@ -478,7 +461,7 @@ def load_custom_logic(path):
             logic_data = json.load(file_reader)
 
 def hard_enemy_logic():
-    for i in enemy_info:
+    for i in enemy_location:
         for e in i["Value"]["HardModeRooms"]:
             i["Value"]["NormalModeRooms"].append(e)
 
@@ -513,7 +496,7 @@ def give_eye():
     item_content[6]["Value"]["CommonRate"] = 100.0
 
 def key_logic():
-    #CheckingIfAnItemHasNoRequirement
+    #FillingListWithAllRoomNames
     for i in logic_data:
         all_rooms.append(i["Key"])
     #StartLogic
@@ -572,10 +555,9 @@ def key_logic():
         for i in requirement_to_gate[chosen_item]:
             previous_gate.append(i)
     #AppendInfoToLogs
-    fill_key_log()
     room_to_chest()
     room_to_enemy()
-    fill_shard_log()
+    fill_log()
 
 def previous_in_nearest(previous_gate, nearest_gate):
     if not nearest_gate:
@@ -600,6 +582,11 @@ def chest_to_room(chest):
         except KeyError:
             return None
 
+def enemy_to_room(enemy):
+    for i in enemy_location:
+        if i["Key"] == enemy:
+            return i["Value"]["NormalModeRooms"]
+    
 def logic_choice(chosen_item, room_list):
     #RemovingKeyFromList
     while chosen_item in all_keys:
@@ -639,7 +626,7 @@ def room_chest_check(room):
     return False
 
 def room_enemy_check(room):
-    for i in enemy_info:
+    for i in enemy_location:
         #CheckingIfEnemyHasShardSlotAndIsInRoom
         if not i["Key"] in enemy_skip_list and i["Value"]["HasShard"] and room in i["Value"]["NormalModeRooms"]:
             #CheckingIfEnemyIsntInAlreadyAssignedRoom
@@ -671,7 +658,7 @@ def room_to_enemy():
     for i in range(len(key_shards)):
         #GatheringPossibleEnemyChoices
         possible_enemy = []
-        for e in enemy_info:
+        for e in enemy_location:
             if not e["Key"] in enemy_skip_list and e["Value"]["HasShard"] and ordered_key_shards_location[i] in e["Value"]["NormalModeRooms"]:
                 possible_enemy.append(e["Key"])
         #CheckingIfEnemyIsntAlreadyTaken
@@ -683,13 +670,21 @@ def room_to_enemy():
             if key_shards_location[e] == ordered_key_shards_location[i]:
                 key_shards_location[e] = chosen_enemy
 
-def fill_key_log():
+def fill_log():
     for i in range(len(key_items)):
-        key_log[i]["Value"]["Room"] = key_items_location[i]
-
-def fill_shard_log():
+        log_data = {}
+        log_data["Key"] = item_translation["Value"][key_items[i]]
+        log_data["Value"] = {}
+        log_data["Value"]["Container"] = key_items_location[i]
+        log_data["Value"]["RoomList"] = chest_to_room(key_items_location[i])
+        log.append(log_data)
     for i in range(len(key_shards)):
-        shard_log[i]["Value"]["Enemy"] = enemy_translation["Value"][key_shards_location[i]]
+        log_data = {}
+        log_data["Key"] = shard_translation["Value"][key_shards[i]]
+        log_data["Value"] = {}
+        log_data["Value"]["Container"] = enemy_translation["Value"][key_shards_location[i]]
+        log_data["Value"]["RoomList"] = enemy_to_room(key_shards_location[i])
+        log.append(log_data)
 
 def rand_key_placement():
     key_logic()
@@ -1133,18 +1128,18 @@ def all_quest():
 
 def quest_req():
     #EnemyQuests
-    for i in range(len(enemy_info)):
-        if enemy_info[i]["Key"][0] != "N" or enemy_info[i]["Key"] == "N2013":
+    for i in range(len(enemy_location)):
+        if enemy_location[i]["Key"][0] != "N" or enemy_location[i]["Key"] == "N2013":
             continue
         enemy_req_number.append(i)
     for i in range(19):
         enemy_req_index.append(any_pick(enemy_req_number, True, "None"))
     enemy_req_index.sort()
     for i in range(19):
-        quest_content[i]["Value"]["Enemy01"] = enemy_info[enemy_req_index[i]]["Key"]
-        quest_content[i]["Value"]["EnemyNum01"] = len(enemy_info[enemy_req_index[i]]["Value"]["NormalModeRooms"])
+        quest_content[i]["Value"]["Enemy01"] = enemy_location[enemy_req_index[i]]["Key"]
+        quest_content[i]["Value"]["EnemyNum01"] = len(enemy_location[enemy_req_index[i]]["Value"]["NormalModeRooms"])
         enemy_room = ""
-        for e in enemy_info[enemy_req_index[i]]["Value"]["NormalModeRooms"]:
+        for e in enemy_location[enemy_req_index[i]]["Value"]["NormalModeRooms"]:
             enemy_room += e + ","
         quest_content[i]["Value"]["EnemySpawnLocations"] = enemy_room[:-1]
     #Memento Quests
@@ -1267,7 +1262,7 @@ def hair_app_shop():
         shop_content[i]["Value"]["Producted"] = "Event_01_001_0000"
         i += 1
 
-def no_card():
+def no_card_shop():
     shop_content[561]["Value"]["buyPrice"] = 0
     shop_content[561]["Value"]["sellPrice"] = 0
 
@@ -1360,7 +1355,7 @@ def invert_ratio():
         i["Value"]["ItemPool"] = new_list
 
 def candle_process(shard, candle):
-    for i in enemy_info:
+    for i in enemy_location:
         if i["Key"] == candle:
             filelist = i["Value"]["NormalModeRooms"]
     for i in shard_content:
@@ -1454,10 +1449,6 @@ def write_patched_candle():
         i += 1
     print("Done")
 
-def write_key_item_log():
+def write_drop_log():
     with open("MapEdit\\Key\\KeyLocation.json", "w") as file_writer:
-        file_writer.write(json.dumps(key_log, ensure_ascii=False, indent=2))
-
-def write_key_shard_log():
-    with open("SpoilerLog\\ShardLocation.json", "w") as file_writer:
-        file_writer.write(json.dumps(shard_log, ensure_ascii=False, indent=2))
+        file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))

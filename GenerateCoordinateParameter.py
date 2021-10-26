@@ -6,9 +6,10 @@ import shutil
 with open("Data\\CoordinateParameter\\Content\\PB_DT_CoordinateParameter.json", "r") as file_reader:
     content = json.load(file_reader)
 
-def low_HPMP_cap():
-    content[130]["Value"]["Value"] -= 300.0
-    content[131]["Value"]["Value"] -= 150.0
+def no_upgrade_cap():
+    content[130]["Value"]["Value"] = 9999.0
+    content[131]["Value"]["Value"] = 9999.0
+    content[3]["Value"]["Value"] = 999.0
 
 def write_patched_coordinate():
     with open("Serializer\\PB_DT_CoordinateParameter.json", "w") as file_writer:

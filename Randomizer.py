@@ -3,8 +3,8 @@ from GenerateAttackParameter import *
 from GenerateBookMaster import *
 from GenerateBloodlessGimmickData import *
 from GenerateCharacterParameterMaster import *
-from GenerateCoordinateParameter import *
 from GenerateCraftMaster import *
+from GenerateCoordinateParameter import *
 from GenerateDialogueTableItems import *
 from GenerateDropRateMaster import *
 from GenerateMisc import *
@@ -93,6 +93,7 @@ empty_preset = [
     False,
     False,
     False,
+    False,
     False
 ]
 trial_preset = [
@@ -113,7 +114,8 @@ trial_preset = [
     False,
     True,
     True,
-    True
+    True,
+    False
 ]
 race_preset = [
     True,
@@ -133,6 +135,7 @@ race_preset = [
     False,
     True,
     True,
+    False,
     False
 ]
 meme_preset = [
@@ -153,7 +156,8 @@ meme_preset = [
     False,
     True,
     True,
-    True
+    True,
+    False
 ]
 risk_preset = [
     True,
@@ -173,10 +177,32 @@ risk_preset = [
     True,
     True,
     True,
+    True,
+    False
+]
+blood_preset = [
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    False,
+    True,
+    True,
+    False,
     True
 ]
     
-map_num = len(os.listdir("MapEdit\\Custom"))
+map_num = len(glob.glob("MapEdit\\Custom\\*.json"))
 
 datatable_files = [
     "PB_DT_AmmunitionMaster",
@@ -283,8 +309,8 @@ class Generate(QThread):
         
         #Move
         
-        if config[13]["Value"]["String"]:
-            shutil.move("UnrealPak\\Randomizer.pak", config[13]["Value"]["String"] + "\\Randomizer.pak")
+        if config[13]["Value"]["Value"]:
+            shutil.move("UnrealPak\\Randomizer.pak", config[13]["Value"]["Value"] + "\\Randomizer.pak")
         else:
             shutil.move("UnrealPak\\Randomizer.pak", "Randomizer.pak")
         
@@ -359,10 +385,10 @@ class Main(QWidget):
         self.check_for_updates()
 
     def initUI(self):
-        if config[14]["Value"]["Size"] != 0.7 and config[14]["Value"]["Size"] != 0.8 and config[14]["Value"]["Size"] != 0.9:
-            config[14]["Value"]["Size"] = 1.0
+        if config[14]["Value"]["Value"] != 0.8 and config[14]["Value"]["Value"] != 0.9:
+            config[14]["Value"]["Value"] = 1.0
         
-        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Size"]*18)) + "px}"
+        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Value"]*18)) + "px}"
         + "QLabel{border: 1px}"
         + "QComboBox{background-color: #21222e}"
         + "QMessageBox{background-color: #21222e}"
@@ -372,13 +398,13 @@ class Main(QWidget):
         + "QSpinBox{background-color: #21222e}"
         + "QLineEdit{background-color: #21222e}"
         + "QMenu{background-color: #21222e}"
-        + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Size"]*18)) + "px}")
+        + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config[14]["Value"]["Value"]*18)) + "px}")
         self.string = ""
         
         #MainLayout
         
         grid = QGridLayout()
-        grid.setSpacing(config[14]["Value"]["Size"]*10)
+        grid.setSpacing(config[14]["Value"]["Value"]*10)
 
         #Label
 
@@ -386,7 +412,7 @@ class Main(QWidget):
         label.setStyleSheet("border: 1px solid white")
         label.setPixmap(QPixmap("Data\\artwork.png"))
         label.setScaledContents(True)
-        label.setFixedSize(config[14]["Value"]["Size"]*550, config[14]["Value"]["Size"]*978)
+        label.setFixedSize(config[14]["Value"]["Value"]*550, config[14]["Value"]["Value"]*978)
         grid.addWidget(label, 0, 0, 10, 1)
         
         #Groupboxes
@@ -416,12 +442,12 @@ class Main(QWidget):
         box_5_grid = QGridLayout()
         self.box_5 = QGroupBox(re.sub(p, r"\1 \2", config[4]["Key"]))
         self.box_5.setLayout(box_5_grid)
-        grid.addWidget(self.box_5, 0, 3, 1, 2)
+        grid.addWidget(self.box_5, 5, 1, 1, 2)
 
         box_6_grid = QGridLayout()
         self.box_6 = QGroupBox(re.sub(p, r"\1 \2", config[5]["Key"]))
         self.box_6.setLayout(box_6_grid)
-        grid.addWidget(self.box_6, 1, 3, 1, 2)
+        grid.addWidget(self.box_6, 0, 3, 2, 2)
 
         box_7_grid = QGridLayout()
         self.box_7 = QGroupBox(re.sub(p, r"\1 \2", config[6]["Key"]))
@@ -437,11 +463,15 @@ class Main(QWidget):
         self.box_9 = QGroupBox(re.sub(p, r"\1 \2", config[8]["Key"]))
         self.box_9.setLayout(box_9_grid)
         grid.addWidget(self.box_9, 4, 3, 1, 2)
-
-        box_10_grid = QGridLayout()
+        
+        box_10_left = QVBoxLayout()
+        box_10_right = QVBoxLayout()
+        box_10_box = QHBoxLayout()
+        box_10_box.addLayout(box_10_left)
+        box_10_box.addLayout(box_10_right)
         self.box_10 = QGroupBox(re.sub(p, r"\1 \2", config[9]["Key"]))
-        self.box_10.setLayout(box_10_grid)
-        grid.addWidget(self.box_10, 5, 1, 1, 4)
+        self.box_10.setLayout(box_10_box)
+        grid.addWidget(self.box_10, 5, 3, 1, 2)
         
         box_11_grid = QGridLayout()
         box_11 = QGroupBox(re.sub(p, r"\1 \2", config[10]["Key"]))
@@ -466,7 +496,7 @@ class Main(QWidget):
         box_15_grid = QGridLayout()
         box_15 = QGroupBox()
         box_15.setLayout(box_15_grid)
-        box_15.setFixedSize(config[14]["Value"]["Size"]*550, config[14]["Value"]["Size"]*978)
+        box_15.setFixedSize(config[14]["Value"]["Value"]*550, config[14]["Value"]["Value"]*978)
         grid.addWidget(box_15, 0, 5, 10, 1)
         
         #TextLabel
@@ -562,19 +592,19 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_9)
 
         self.check_box_10 = QCheckBox(re.sub(p, r"\1 \2", config[5]["Value"]["Option1Id"]), self)
-        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.")
+        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.\nWARNING: Not recommended for Bloodless mode !")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
         box_6_grid.addWidget(self.check_box_10, 0, 0)
         checkbox_list.append(self.check_box_10)
 
         self.check_box_11 = QCheckBox(re.sub(p, r"\1 \2", config[5]["Value"]["Option2Id"]), self)
-        self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.")
+        self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.\nWARNING: Not recommended for Bloodless mode !")
         self.check_box_11.stateChanged.connect(self.check_box_11_changed)
         box_6_grid.addWidget(self.check_box_11, 1, 0)
         checkbox_list.append(self.check_box_11)
 
         self.check_box_12 = QCheckBox(re.sub(p, r"\1 \2", config[6]["Value"]["Option1Id"]), self)
-        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").")
+        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").\nWARNING: Not recommended for Bloodless mode !")
         self.check_box_12.stateChanged.connect(self.check_box_12_changed)
         box_7_grid.addWidget(self.check_box_12, 0, 0)
         checkbox_list.append(self.check_box_12)
@@ -600,14 +630,22 @@ class Main(QWidget):
         self.check_box_21 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option1Id"]), self)
         self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
-        box_10_grid.addWidget(self.check_box_21, 0, 0)
+        box_10_left.addWidget(self.check_box_21)
+        checkbox_list.append(self.check_box_21)
         
-        self.check_box_22 = QCheckBox(re.sub(p, r"\1 \2", config[9]["Value"]["Option2Id"]), self)
-        self.check_box_22.setToolTip("Only shuffle abilities and upgrades between themselves.")
-        self.check_box_22.stateChanged.connect(self.check_box_22_changed)
-        box_10_grid.addWidget(self.check_box_22, 1, 0)
-
         #RadioButtons
+        
+        self.radio_button_7 = QRadioButton(re.sub(p, r"\1 \2", config[9]["Value"]["Option2Id"]))
+        self.radio_button_7.setToolTip("Shuffle every candle at random.")
+        self.radio_button_7.toggled.connect(self.radio_button_group_3_checked)
+        self.radio_button_7.setVisible(False)
+        box_10_right.addWidget(self.radio_button_7)
+        
+        self.radio_button_8 = QRadioButton(re.sub(p, r"\1 \2", config[9]["Value"]["Option3Id"]))
+        self.radio_button_8.setToolTip("Shuffle abilities and upgrades between themselves only.")
+        self.radio_button_8.toggled.connect(self.radio_button_group_3_checked)
+        self.radio_button_8.setVisible(False)
+        box_10_right.addWidget(self.radio_button_8)
         
         self.radio_button_1 = QRadioButton(re.sub(p, r"\1 \2", config[10]["Value"]["Option1Id"]))
         self.radio_button_1.setToolTip("Select the difficulty you'll be using in-game.")
@@ -634,15 +672,15 @@ class Main(QWidget):
         self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
         box_13_grid.addWidget(self.radio_button_6, 0, 1)
         
-        if config[12]["Value"]["Level"] < 1:
-            config[12]["Value"]["Level"] = 1
-        if config[12]["Value"]["Level"] > 99:
-            config[12]["Value"]["Level"] = 99
+        if config[12]["Value"]["Value"] < 1:
+            config[12]["Value"]["Value"] = 1
+        if config[12]["Value"]["Value"] > 99:
+            config[12]["Value"]["Value"] = 99
         
         self.level_box = QSpinBox()
         self.level_box.setToolTip("Select the level value that you want to apply to\nall enemies.")
         self.level_box.setRange(1, 99)
-        self.level_box.setValue(config[12]["Value"]["Level"])
+        self.level_box.setValue(config[12]["Value"]["Value"])
         self.level_box.valueChanged.connect(self.new_level)
         self.level_box.setVisible(False)
         box_13_grid.addWidget(self.level_box, 1, 1)
@@ -650,13 +688,14 @@ class Main(QWidget):
         #DropDownLists
         
         self.preset_drop_down = QComboBox()
-        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: To get started with this mod.\nRACE: Most fitting for a King of Speed.\nMEME: Time to break the game.\nRISK: Chaos awaits !")
+        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: To get started with this mod.\nRACE: Most fitting for a King of Speed.\nMEME: Time to break the game.\nRISK: Chaos awaits !\nBLOOD: She needs more blood.")
         self.preset_drop_down.addItem("Custom")
         self.preset_drop_down.addItem("Empty")
         self.preset_drop_down.addItem("Trial")
         self.preset_drop_down.addItem("Race")
         self.preset_drop_down.addItem("Meme")
         self.preset_drop_down.addItem("Risk")
+        self.preset_drop_down.addItem("Blood")
         self.preset_drop_down.currentIndexChanged.connect(self.preset_drop_down_change)
         box_12_grid.addWidget(self.preset_drop_down, 0, 0)
         
@@ -670,7 +709,6 @@ class Main(QWidget):
         self.setting_layout.addWidget(setting_box, 0, 0, 1, 1)
         
         self.size_drop_down = QComboBox()
-        self.size_drop_down.addItem("0.7")
         self.size_drop_down.addItem("0.8")
         self.size_drop_down.addItem("0.9")
         self.size_drop_down.addItem("1.0")
@@ -721,10 +759,11 @@ class Main(QWidget):
             self.check_box_15.setChecked(True)
         if config[9]["Value"]["Option1Value"]:
             self.check_box_21.setChecked(True)
-        else:
-            self.check_box_21_changed()
+        
         if config[9]["Value"]["Option2Value"]:
-            self.check_box_22.setChecked(True)
+            self.radio_button_7.setChecked(True)
+        else:
+            self.radio_button_8.setChecked(True)
         
         if config[10]["Value"]["Option1Value"]:
             self.radio_button_1.setChecked(True)
@@ -738,20 +777,18 @@ class Main(QWidget):
         else:
             self.radio_button_6.setChecked(True)
         
-        if config[14]["Value"]["Size"] == 0.7:
+        if config[14]["Value"]["Value"] == 0.8:
             self.size_drop_down.setCurrentIndex(0)
-        elif config[14]["Value"]["Size"] == 0.8:
+        elif config[14]["Value"]["Value"] == 0.9:
             self.size_drop_down.setCurrentIndex(1)
-        elif config[14]["Value"]["Size"] == 0.9:
+        elif config[14]["Value"]["Value"] == 1.0:
             self.size_drop_down.setCurrentIndex(2)
-        elif config[14]["Value"]["Size"] == 1.0:
-            self.size_drop_down.setCurrentIndex(3)
         
         self.matches_preset()
         
         #TextField
 
-        text_field = QLineEdit(config[13]["Value"]["String"], self)
+        text_field = QLineEdit(config[13]["Value"]["Value"], self)
         text_field.setToolTip("Use this field to link the path to your ~mods directory for a direct\ninstall.")
         text_field.textChanged[str].connect(self.new_text)
         box_14_grid.addWidget(text_field, 0, 0)
@@ -786,7 +823,7 @@ class Main(QWidget):
         #Window
         
         self.setLayout(grid)
-        self.setFixedSize(config[14]["Value"]["Size"]*1800, config[14]["Value"]["Size"]*1000)
+        self.setFixedSize(config[14]["Value"]["Value"]*1800, config[14]["Value"]["Value"]*1000)
         self.setWindowTitle("Randomizer")
         self.setWindowIcon(QIcon("Data\\icon.png"))
         
@@ -816,6 +853,8 @@ class Main(QWidget):
                 self.box_1.setStyleSheet("color: " + item_color)
             if not self.string:
                 self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
+            self.check_box_21.setChecked(False)
+            self.radio_button_4.setChecked(True)
         else:
             config[0]["Value"]["Option1Value"] = False
             self.check_box_1.setStyleSheet("color: #ffffff")
@@ -833,6 +872,8 @@ class Main(QWidget):
             if not self.string:
                 self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_12, self.radio_button_4])
             self.add_to_list(datatable_files, "PBScenarioStringTable", [])
+            self.check_box_21.setChecked(False)
+            self.radio_button_4.setChecked(True)
         else:
             config[0]["Value"]["Option2Value"] = False
             self.check_box_2.setStyleSheet("color: #ffffff")
@@ -848,6 +889,8 @@ class Main(QWidget):
             self.check_box_16.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            self.check_box_21.setChecked(False)
+            self.radio_button_4.setChecked(True)
         else:
             config[0]["Value"]["Option3Value"] = False
             self.check_box_16.setStyleSheet("color: #ffffff")
@@ -860,6 +903,8 @@ class Main(QWidget):
             self.check_box_17.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            self.check_box_21.setChecked(False)
+            self.radio_button_4.setChecked(True)
         else:
             config[0]["Value"]["Option4Value"] = False
             self.check_box_17.setStyleSheet("color: #ffffff")
@@ -872,6 +917,8 @@ class Main(QWidget):
             self.check_box_18.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            self.check_box_21.setChecked(False)
+            self.radio_button_4.setChecked(True)
         else:
             config[0]["Value"]["Option5Value"] = False
             self.check_box_18.setStyleSheet("color: #ffffff")
@@ -1073,33 +1120,33 @@ class Main(QWidget):
         if self.check_box_21.isChecked():
             config[9]["Value"]["Option1Value"] = True
             self.check_box_21.setStyleSheet("color: " + extra_color)
-            if self.check_box_22.isChecked():
-                self.box_10.setStyleSheet("color: " + extra_color)
-            self.uncheck_checkboxes()
-            self.disable_checkboxes()
+            self.box_10.setStyleSheet("color: " + extra_color)
             self.remove_from_list(ui_files, "icon", [])
             self.remove_from_list(sound_files, "ACT50_BRM", [])
+            self.radio_button_7.setVisible(True)
+            self.radio_button_8.setVisible(True)
+            self.check_box_1.setChecked(False)
+            self.check_box_2.setChecked(False)
+            self.check_box_16.setChecked(False)
+            self.check_box_17.setChecked(False)
+            self.check_box_18.setChecked(False)
+            self.radio_button_6.setChecked(True)
         else:
             config[9]["Value"]["Option1Value"] = False
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
-            self.check_box_22.setChecked(False)
-            self.enable_checkboxes()
             self.add_to_list(ui_files, "icon", [])
             self.add_to_list(sound_files, "ACT50_BRM", [])
+            self.radio_button_7.setVisible(False)
+            self.radio_button_8.setVisible(False)
     
-    def check_box_22_changed(self):
-        self.matches_preset()
-        if self.check_box_22.isChecked():
+    def radio_button_group_3_checked(self):
+        if self.radio_button_7.isChecked():
             config[9]["Value"]["Option2Value"] = True
-            self.check_box_22.setStyleSheet("color: " + extra_color)
-            if self.check_box_21.isChecked():
-                self.box_10.setStyleSheet("color: " + extra_color)
-            self.check_box_21.setChecked(True)
+            config[9]["Value"]["Option3Value"] = False
         else:
             config[9]["Value"]["Option2Value"] = False
-            self.check_box_22.setStyleSheet("color: #ffffff")
-            self.box_10.setStyleSheet("color: #ffffff")
+            config[9]["Value"]["Option3Value"] = True
     
     def radio_button_group_1_checked(self):
         if self.radio_button_1.isChecked():
@@ -1148,16 +1195,17 @@ class Main(QWidget):
         elif index == 5:
             for i in range(len(checkbox_list)):
                 checkbox_list[i].setChecked(risk_preset[i])
+        elif index == 6:
+            for i in range(len(checkbox_list)):
+                checkbox_list[i].setChecked(blood_preset[i])
 
     def size_drop_down_change(self, index):
         if index == 0:
-            config[14]["Value"]["Size"] = 0.7
+            config[14]["Value"]["Value"] = 0.8
         elif index == 1:
-            config[14]["Value"]["Size"] = 0.8
+            config[14]["Value"]["Value"] = 0.9
         elif index == 2:
-            config[14]["Value"]["Size"] = 0.9
-        elif index == 3:
-            config[14]["Value"]["Size"] = 1.0
+            config[14]["Value"]["Value"] = 1.0
 
     def matches_preset(self):
         is_preset_1 = True
@@ -1200,73 +1248,21 @@ class Main(QWidget):
             self.preset_drop_down.setCurrentIndex(5)
             return
         
+        is_preset_6 = True
+        for i in range(len(checkbox_list)):
+            if not(blood_preset[i] and checkbox_list[i].isChecked() or not blood_preset[i] and not checkbox_list[i].isChecked()):
+                is_preset_6 = False
+        if is_preset_6:
+            self.preset_drop_down.setCurrentIndex(6)
+            return
+        
         self.preset_drop_down.setCurrentIndex(0)
     
-    def enable_checkboxes(self):
-        self.check_box_1.setEnabled(True)
-        self.check_box_2.setEnabled(True)
-        self.check_box_16.setEnabled(True)
-        self.check_box_17.setEnabled(True)
-        self.check_box_18.setEnabled(True)
-        self.check_box_3.setEnabled(True)
-        self.check_box_4.setEnabled(True)
-        self.check_box_5.setEnabled(True)
-        self.check_box_6.setEnabled(True)
-        self.check_box_7.setEnabled(True)
-        self.check_box_8.setEnabled(True)
-        self.check_box_9.setEnabled(True)
-        self.check_box_10.setEnabled(True)
-        self.check_box_11.setEnabled(True)
-        self.check_box_12.setEnabled(True)
-        self.check_box_13.setEnabled(True)
-        self.check_box_14.setEnabled(True)
-        self.check_box_15.setEnabled(True)
-    
-    def disable_checkboxes(self):
-        self.check_box_1.setEnabled(False)
-        self.check_box_2.setEnabled(False)
-        self.check_box_16.setEnabled(False)
-        self.check_box_17.setEnabled(False)
-        self.check_box_18.setEnabled(False)
-        self.check_box_3.setEnabled(False)
-        self.check_box_4.setEnabled(False)
-        self.check_box_5.setEnabled(False)
-        self.check_box_6.setEnabled(False)
-        self.check_box_7.setEnabled(False)
-        self.check_box_8.setEnabled(False)
-        self.check_box_9.setEnabled(False)
-        self.check_box_10.setEnabled(False)
-        self.check_box_11.setEnabled(False)
-        self.check_box_12.setEnabled(False)
-        self.check_box_13.setEnabled(False)
-        self.check_box_14.setEnabled(False)
-        self.check_box_15.setEnabled(False)
-    
-    def uncheck_checkboxes(self):
-        self.check_box_1.setChecked(False)
-        self.check_box_2.setChecked(False)
-        self.check_box_16.setChecked(False)
-        self.check_box_17.setChecked(False)
-        self.check_box_18.setChecked(False)
-        self.check_box_3.setChecked(False)
-        self.check_box_4.setChecked(False)
-        self.check_box_5.setChecked(False)
-        self.check_box_6.setChecked(False)
-        self.check_box_7.setChecked(False)
-        self.check_box_8.setChecked(False)
-        self.check_box_9.setChecked(False)
-        self.check_box_10.setChecked(False)
-        self.check_box_11.setChecked(False)
-        self.check_box_12.setChecked(False)
-        self.check_box_13.setChecked(False)
-        self.check_box_14.setChecked(False)
-        self.check_box_15.setChecked(False)
-    
     def new_level(self):
-        config[12]["Value"]["Level"] = self.level_box.value()
+        config[12]["Value"]["Value"] = self.level_box.value()
     
     def new_text(self, text):
-        config[13]["Value"]["String"] = text
+        config[13]["Value"]["Value"] = text
     
     def add_to_list(self, list, file, checkboxes):
         change = True
@@ -1346,7 +1342,7 @@ class Main(QWidget):
         
         #CheckIfPathExists
         
-        if config[13]["Value"]["String"] and not os.path.isdir(config[13]["Value"]["String"]):
+        if config[13]["Value"]["Value"] and not os.path.isdir(config[13]["Value"]["Value"]):
             self.no_path()
             self.setEnabled(True)
             return
@@ -1404,8 +1400,7 @@ class Main(QWidget):
             rand_key_placement()
             rand_shard_placement()
             rand_item_pool()
-            write_key_item_log()
-            write_key_shard_log()
+            write_drop_log()
         
         if config[0]["Value"]["Option3Value"]:
             rand_quest_pool()
@@ -1435,14 +1430,13 @@ class Main(QWidget):
             write_weapon_log()
         
         if config[5]["Value"]["Option1Value"] or config[5]["Value"]["Option2Value"] or config[11]["Value"]["Option2Value"]:
-            rand_enemy(config[5]["Value"]["Option1Value"] or config[11]["Value"]["Option2Value"], config[5]["Value"]["Option2Value"], config[11]["Value"]["Option2Value"], config[12]["Value"]["Level"])
+            rand_enemy(config[5]["Value"]["Option1Value"] or config[11]["Value"]["Option2Value"], config[5]["Value"]["Option2Value"], config[11]["Value"]["Option2Value"], config[12]["Value"]["Value"])
             if config[5]["Value"]["Option2Value"] or not config[11]["Value"]["Option2Value"]:
                 write_chara_log()
         
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             more_HPMP()
             low_HPMP_growth()
-            low_HPMP_cap()
         
         if self.string:
             no_quest_icon()
@@ -1453,7 +1447,7 @@ class Main(QWidget):
             rand_dialogue()
         
         if config[9]["Value"]["Option1Value"]:
-            if not config[9]["Value"]["Option2Value"]:
+            if config[9]["Value"]["Option2Value"]:
                 chaos_candle()
             candle_shuffle()
             create_gimmick_log()
@@ -1469,7 +1463,8 @@ class Main(QWidget):
             eye_max()
             all_quest()
             hair_app_shop()
-            no_card()
+            no_card_shop()
+            no_upgrade_cap()
         
         #Write
         
@@ -1519,10 +1514,8 @@ class Main(QWidget):
         
         if config[5]["Value"]["Option1Value"] and not config[11]["Value"]["Option2Value"]:
             patch_list.append(write_patched_effect)
-            patch_list.append(write_patched_coordinate)
         else:
             write_list.append(write_effect)
-            write_list.append(write_coordinate)
         
         if self.string:
             patch_list.append(write_patched_room)
@@ -1554,6 +1547,11 @@ class Main(QWidget):
             write_list.append(write_ballistic)
             write_list.append(write_bullet)
             write_list.append(write_collision)
+        
+        if config[11]["Value"]["Option1Value"]:
+            patch_list.append(write_patched_coordinate)
+        else:
+            write_list.append(write_coordinate)
         
         for i in write_list:
             i()
@@ -1591,49 +1589,49 @@ class Main(QWidget):
         label1_image = QLabel()
         label1_image.setPixmap(QPixmap("Data\\profile1.png"))
         label1_image.setScaledContents(True)
-        label1_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label1_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label1_text = QLabel()
         label1_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
         label1_text.setOpenExternalLinks(True)
         label2_image = QLabel()
         label2_image.setPixmap(QPixmap("Data\\profile2.png"))
         label2_image.setScaledContents(True)
-        label2_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label2_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label2_text = QLabel()
         label2_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
         label2_text.setOpenExternalLinks(True)
         label3_image = QLabel()
         label3_image.setPixmap(QPixmap("Data\\profile3.png"))
         label3_image.setScaledContents(True)
-        label3_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label3_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label3_text = QLabel()
         label3_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
         label3_text.setOpenExternalLinks(True)
         label4_image = QLabel()
         label4_image.setPixmap(QPixmap("Data\\profile4.png"))
         label4_image.setScaledContents(True)
-        label4_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label4_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label4_text = QLabel()
         label4_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">BadmoonZ</span><br/>Randomizer researcher<br/><a href=\"https://github.com/BadmoonzZ/Bloodstained\"><font face=Cambria color=#25c04e>Github</font></a>")
         label4_text.setOpenExternalLinks(True)
         label5_image = QLabel()
         label5_image.setPixmap(QPixmap("Data\\profile5.png"))
         label5_image.setScaledContents(True)
-        label5_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label5_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label5_text = QLabel()
         label5_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
         label5_text.setOpenExternalLinks(True)
         label6_image = QLabel()
         label6_image.setPixmap(QPixmap("Data\\profile6.png"))
         label6_image.setScaledContents(True)
-        label6_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label6_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label6_text = QLabel()
         label6_text.setText("<span style=\"font-weight: bold; color: #ffa9a8;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#ffa9a8>Github</font></a>")
         label6_text.setOpenExternalLinks(True)
         label7_image = QLabel()
         label7_image.setPixmap(QPixmap("Data\\profile7.png"))
         label7_image.setScaledContents(True)
-        label7_image.setFixedSize(config[14]["Value"]["Size"]*60, config[14]["Value"]["Size"]*60)
+        label7_image.setFixedSize(config[14]["Value"]["Value"]*60, config[14]["Value"]["Value"]*60)
         label7_text = QLabel()
         label7_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
         label7_text.setOpenExternalLinks(True)
@@ -1693,7 +1691,7 @@ class Main(QWidget):
             return
         for i in config:
             if i["Key"] == "Version":
-                tag = i["Value"]["Tag"]
+                tag = i["Value"]["Value"]
         try:
             latest_tag = api["tag_name"]
         except KeyError:
@@ -1707,7 +1705,7 @@ class Main(QWidget):
                     self.setEnabled(True)
                     return
                 
-                self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
+                self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["Value"], self)
                 self.progress_bar.setWindowTitle("Status")
                 self.progress_bar.setWindowModality(Qt.WindowModal)
                 self.progress_bar.setAutoClose(False)

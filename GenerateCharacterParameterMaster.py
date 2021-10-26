@@ -69,7 +69,7 @@ for i in range(99):
 
 stat_int = -100.0
 for i in range(41):
-    for e in range(4**(abs(math.ceil(abs(stat_int)/25)-4))):
+    for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
         stat_pool.append(stat_int)
     stat_int += 5.0
 

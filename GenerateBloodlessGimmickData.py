@@ -173,7 +173,7 @@ def write_patched_gimmick():
         #WriteJson
         with open("UAssetGUI\\" + file_name + ".json", "w") as file_writer:
             file_writer.write(json.dumps(content))
-        
+        #UAssetGUI
         if not ("m08TWR_019" in file_name and tower_check == 0):
             #CommandFromJson
             root = os.getcwd()

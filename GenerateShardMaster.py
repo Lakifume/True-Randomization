@@ -94,7 +94,8 @@ def rand_shard(scale):
         log.append(log_data)
 
 def eye_max():
-    content[114]["Value"]["minGradeValue"] = content[114]["Value"]["maxGradeValue"]
+    content[114]["Value"]["minGradeValue"] = 100.0
+    content[114]["Value"]["maxGradeValue"] = 100.0
 
 def write_patched_shard():
     with open("Serializer\\PB_DT_ShardMaster.json", "w") as file_writer:
