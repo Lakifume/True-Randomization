@@ -38,10 +38,14 @@ music_id = []
 music_name = []
 play_id = []
 play_name = []
+
+assign_list = []
+
 restrictions = False
+search_mode = False
 logic_mode = False
 assign_mode = False
-assign_list = []
+key_mode = False
 
 with open("Data\\RoomMaster\\BossRooms.json", "r") as file_reader:
     boss_room = json.load(file_reader)
@@ -154,7 +158,7 @@ class RoomItem(QGraphicsRectItem):
         super().mousePressEvent(event)
         #NormalModeSelection
         for i in self.scene().selectedItems():
-            if restrictions and not logic_mode:
+            if restrictions and not search_mode and not logic_mode and not key_mode:
                 for e in i.group_list:
                     self.room_list[e].setSelected(True)
         #AssignModeSelection
@@ -603,12 +607,16 @@ class Main(QMainWindow):
                         e.setVisible(True)
     
     def room_search_action(self):
+        global search_mode
         if self.room_search.isChecked():
+            search_mode = True
             #OtherToolDisable
             self.logic_editor.setChecked(False)
             self.logic_editor_action()
             self.key_location.setChecked(False)
             self.key_location_action()
+            #MenuOptionDisable
+            self.use_restr.setEnabled(False)
             #Initiate
             self.disable_buttons()
             for i in self.room_list:
@@ -618,7 +626,9 @@ class Main(QMainWindow):
             self.room_search_list_change(self.room_search_list.item(0))
             self.room_search_list.setVisible(True)
         else:
+            search_mode = False
             self.enable_buttons()
+            self.use_restr.setEnabled(True)
             self.room_search_list.setVisible(False)
             self.reset_room()
     
@@ -626,13 +636,15 @@ class Main(QMainWindow):
         global logic_mode
         if self.logic_editor.isChecked():
             logic_mode = True
-            self.show_out.setChecked(False)
-            self.show_out.setEnabled(False)
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
             self.key_location.setChecked(False)
             self.key_location_action()
+            #MenuOptionDisable
+            self.use_restr.setEnabled(False)
+            self.show_out.setChecked(False)
+            self.show_out.setEnabled(False)
             #Initiate
             self.disable_buttons()
             for i in self.room_list:
@@ -644,14 +656,16 @@ class Main(QMainWindow):
             self.gate_box.setVisible(True)
         else:
             logic_mode = False
-            self.show_out.setEnabled(True)
             self.enable_buttons()
+            self.use_restr.setEnabled(True)
+            self.show_out.setEnabled(True)
             self.assign_mode.setChecked(False)
             self.assign_mode_action()
             self.gate_box.setVisible(False)
             self.reset_room()
     
     def key_location_action(self):
+        global key_mode
         if self.key_location.isChecked():
             try:
                 with open("Key\\KeyLocation.json", "r") as file_reader:
@@ -664,11 +678,14 @@ class Main(QMainWindow):
                 box.exec()
                 self.key_location.setChecked(False)
                 return
+            key_mode = True
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
             self.logic_editor.setChecked(False)
             self.logic_editor_action()
+            #MenuOptionDisable
+            self.use_restr.setEnabled(False)
             #FillDropDown
             self.key_drop_down.clear()
             for i in self.key_log:
@@ -682,7 +699,9 @@ class Main(QMainWindow):
             self.key_drop_down_change(0)
             self.key_drop_down.setVisible(True)
         else:
+            key_mode = False
             self.enable_buttons()
+            self.use_restr.setEnabled(True)
             self.key_drop_down.setVisible(False)
             self.reset_room()
     
