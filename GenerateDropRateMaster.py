@@ -495,6 +495,11 @@ def give_eye():
     item_content[6]["Value"]["CommonItemQuantity"] = 1
     item_content[6]["Value"]["CommonRate"] = 100.0
 
+def give_extra(shard):
+    item_content[6]["Value"]["RareIngredientId"] = shard
+    item_content[6]["Value"]["RareIngredientQuantity"] = 1
+    item_content[6]["Value"]["RareIngredientRate"] = 100.0
+
 def key_logic():
     #FillingListWithAllRoomNames
     for i in logic_data:
@@ -783,6 +788,8 @@ def patch_key_item_entry(item, chest):
     
 def patch_key_shard_entry(shard, enemy):
     for i in item_content:
+        if i["Value"]["ShardRate"] == 0.0:
+            continue
         if i["Key"].split("_")[0] == enemy:
             i["Value"]["ShardId"] = shard
 

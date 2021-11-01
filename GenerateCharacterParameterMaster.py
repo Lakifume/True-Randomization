@@ -10,7 +10,14 @@ chance_6_range = []
 chance_4_range = []
 chance_3_range = []
 chance_2_range = []
+
+stat_int_min = -100
+stat_int_max = 100
+stat_int_step = 25
+stat_int_factor = 2
+stat_int_increment = 5
 stat_pool = []
+
 stat = [
     "ZAN",
     "DAG",
@@ -27,6 +34,34 @@ second_stat = [
     "STO",
     "SLO"
 ]
+
+zangetsu_exp = [
+    34,
+    34,
+    0,
+    106,
+    0,
+    178,
+    274,
+    274,
+    394,
+    0,
+    0,
+    538,
+    706,
+    0,
+    898,
+    0,
+    1114,
+    1354,
+    1618,
+    2218,
+    2554,
+    0,
+    58,
+    1906
+]
+
 log = []
 
 #Content
@@ -67,21 +102,57 @@ for i in range(99):
 for i in range(99):
     chance_2_range.append(i+1)
 
-stat_int = -100.0
-for i in range(41):
-    for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
-        stat_pool.append(stat_int)
-    stat_int += 5.0
-
+stat_int = stat_int_min
+for i in range(math.ceil(abs(stat_int_min)/stat_int_increment) + math.ceil(stat_int_max/stat_int_increment) + 1):
+    if stat_int < 0:
+        for e in range(stat_int_factor**(abs(math.ceil(abs(stat_int)/stat_int_step)-math.ceil(abs(stat_int_min)/stat_int_step)))):
+            stat_pool.append(stat_int + 0.0)
+    else:
+        for e in range(stat_int_factor**(abs(math.ceil(stat_int/stat_int_step)-math.ceil(stat_int_max/stat_int_step)))):
+            stat_pool.append(stat_int + 0.0)
+    stat_int += stat_int_increment
+#print(stat_pool)
 def more_HPMP():
-    content[5]["Value"]["MaxHP"] += 300
-    content[5]["Value"]["MaxMP"] += 150
-    content[5]["Value"]["MaxHP99Enemy"] += 300
-    content[5]["Value"]["MaxMP99Enemy"] += 150
-    content[6]["Value"]["MaxHP"] += 300
-    content[6]["Value"]["MaxMP"] += 150
-    content[6]["Value"]["MaxHP99Enemy"] += 300
-    content[6]["Value"]["MaxMP99Enemy"] += 150
+    content[5]["Value"]["MaxHP"] += 300.0
+    content[5]["Value"]["MaxMP"] += 150.0
+    content[5]["Value"]["MaxHP99Enemy"] += 300.0
+    content[5]["Value"]["MaxMP99Enemy"] += 150.0
+    content[6]["Value"]["MaxHP"] += 300.0
+    content[6]["Value"]["MaxMP"] += 150.0
+    content[6]["Value"]["MaxHP99Enemy"] += 300.0
+    content[6]["Value"]["MaxMP99Enemy"] += 150.0
+
+def zangetsu_progress():
+    #Enemies
+    i = 12
+    while i <= 137:
+        content[i]["Value"]["Experience99Enemy"] = 0
+        content[i]["Value"]["Experience"] = 0
+        i += 1
+    #Bosses
+    i = 138
+    while i <= 161:
+        content[i]["Value"]["Experience99Enemy"] = zangetsu_exp[i-138]
+        content[i]["Value"]["Experience"] = zangetsu_exp[i-138]
+        i += 1
+    #Rest
+    i = 162
+    while i <= 188:
+        content[i]["Value"]["Experience99Enemy"] = 0
+        content[i]["Value"]["Experience"] = 0
+        i += 1
+
+def zangetsu_no_stats():
+    content[6]["Value"]["STR"] = 0.0
+    content[6]["Value"]["INT"] = 0.0
+    content[6]["Value"]["CON"] = 0.0
+    content[6]["Value"]["MND"] = 0.0
+    content[6]["Value"]["LUC"] = 0.0
+    content[6]["Value"]["STR99Enemy"] = 0.0
+    content[6]["Value"]["INT99Enemy"] = 0.0
+    content[6]["Value"]["CON99Enemy"] = 0.0
+    content[6]["Value"]["MND99Enemy"] = 0.0
+    content[6]["Value"]["LUC99Enemy"] = 0.0
 
 def rand_enemy(level, resist, custom, value):
     #NG+

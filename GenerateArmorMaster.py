@@ -4,6 +4,12 @@ import os
 import shutil
 import random
 
+stat_int_min = -50
+stat_int_max = 25
+stat_int_step = 5
+stat_int_chance = 6
+stat_int_factor = 2
+stat_int_increment = 1
 stat_pool = []
 log = []
 
@@ -18,18 +24,23 @@ with open("Data\\MasterStringTable\\Content\\PBMasterStringTable.json", "r") as 
 with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
-stat_int = -50
-for i in range(76):
+stat_int = stat_int_min
+stat_int_difference = math.ceil(abs(stat_int_min)/stat_int_max)
+stat_int_step_neg = stat_int_step*stat_int_difference
+for i in range(abs(stat_int_min) + stat_int_max + 1):
     if stat_int < 0:
-        for e in range(2**(abs(math.ceil(abs(stat_int)/10)-5))):
+        for e in range(stat_int_factor**(abs(math.ceil(abs(stat_int)/stat_int_step_neg)-math.ceil(abs(stat_int_min)/stat_int_step_neg)))):
             stat_pool.append(stat_int)
     elif stat_int > 0:
-        for e in range(2**(abs(math.ceil(abs(stat_int)/5)-5))*10):
+        for e in range(stat_int_factor**(abs(math.ceil(stat_int/stat_int_step)-math.ceil(stat_int_max/stat_int_step)))*(stat_int_difference*(stat_int_chance-1))):
             stat_pool.append(stat_int)
-    else:
-        for e in range(9300):
-            stat_pool.append(stat_int)
-    stat_int += 1
+    stat_int += stat_int_increment
+for i in range(len(stat_pool)*(stat_int_chance-1)):
+    stat_pool.append(0)
+#print(stat_pool)
+def zangetsu_black_belt():
+    armor_content[109]["Value"]["STR"] = 0
+    armor_content[109]["Value"]["CON"] = 0
 
 def rand_equip():
     i = 37
