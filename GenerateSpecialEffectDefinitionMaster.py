@@ -9,6 +9,7 @@ with open("Data\\SpecialEffectDefinitionMaster\\Content\\PB_DT_SpecialEffectDefi
 def low_HPMP_growth():
     content[105]["Value"]["Parameter01"] -= 10.0
     content[106]["Value"]["Parameter01"] -= 5.0
+    debug("low_HPMP_growth()")
 
 def write_patched_effect():
     with open("Serializer\\PB_DT_SpecialEffectDefinitionMaster.json", "w") as file_writer:
@@ -19,6 +20,13 @@ def write_patched_effect():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_SpecialEffectDefinitionMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset")
     os.remove("Serializer\\PB_DT_SpecialEffectDefinitionMaster.json")
+    debug("write_patched_effect()")
 
 def write_effect():
     shutil.copyfile("Serializer\\PB_DT_SpecialEffectDefinitionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset")
+    debug("write_effect()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

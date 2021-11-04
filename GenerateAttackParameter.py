@@ -18,6 +18,8 @@ def normal_bomber():
     
     collision_content[537]["Value"]["R00"] = 4.0
     collision_content[537]["Value"]["R01"] = 4.0
+    
+    debug("normal_bomber()")
 
 def normal_bael():
     ballistic_content[73]["Value"]["InitialSpeed"] = 12.0
@@ -92,6 +94,8 @@ def normal_bael():
     
     collision_content[746]["Value"]["R00"] = 2.0
     collision_content[746]["Value"]["R01"] = 6.0
+    
+    debug("normal_bael()")
 
 def write_patched_ballistic():
     with open("Serializer\\PB_DT_BallisticMaster.json", "w") as file_writer:
@@ -102,9 +106,11 @@ def write_patched_ballistic():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_BallisticMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
     os.remove("Serializer\\PB_DT_BallisticMaster.json")
+    debug("write_patched_ballistic()")
 
 def write_ballistic():
     shutil.copyfile("Serializer\\PB_DT_BallisticMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BallisticMaster.uasset")
+    debug("write_ballistic()")
 
 def write_patched_bullet():
     with open("Serializer\\PB_DT_BulletMaster.json", "w") as file_writer:
@@ -115,9 +121,11 @@ def write_patched_bullet():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_BulletMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
     os.remove("Serializer\\PB_DT_BulletMaster.json")
+    debug("write_patched_bullet()")
     
 def write_bullet():
     shutil.copyfile("Serializer\\PB_DT_BulletMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BulletMaster.uasset")
+    debug("write_bullet()")
 
 def write_patched_collision():
     with open("Serializer\\PB_DT_CollisionMaster.json", "w") as file_writer:
@@ -128,6 +136,13 @@ def write_patched_collision():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CollisionMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
     os.remove("Serializer\\PB_DT_CollisionMaster.json")
+    debug("write_patched_collision()")
 
 def write_collision():
     shutil.copyfile("Serializer\\PB_DT_CollisionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CollisionMaster.uasset")
+    debug("write_collision()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

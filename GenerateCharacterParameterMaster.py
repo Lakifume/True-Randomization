@@ -10,12 +10,6 @@ chance_6_range = []
 chance_4_range = []
 chance_3_range = []
 chance_2_range = []
-
-stat_int_min = -100
-stat_int_max = 100
-stat_int_step = 25
-stat_int_factor = 2
-stat_int_increment = 5
 stat_pool = []
 
 stat = [
@@ -102,16 +96,13 @@ for i in range(99):
 for i in range(99):
     chance_2_range.append(i+1)
 
-stat_int = stat_int_min
-for i in range(math.ceil(abs(stat_int_min)/stat_int_increment) + math.ceil(stat_int_max/stat_int_increment) + 1):
-    if stat_int < 0:
-        for e in range(stat_int_factor**(abs(math.ceil(abs(stat_int)/stat_int_step)-math.ceil(abs(stat_int_min)/stat_int_step)))):
-            stat_pool.append(stat_int + 0.0)
-    else:
-        for e in range(stat_int_factor**(abs(math.ceil(stat_int/stat_int_step)-math.ceil(stat_int_max/stat_int_step)))):
-            stat_pool.append(stat_int + 0.0)
-    stat_int += stat_int_increment
+stat_int = -100
+for i in range(int(100/5)*2 + 1):
+    for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
+        stat_pool.append(stat_int + 0.0)
+    stat_int += 5
 #print(stat_pool)
+
 def more_HPMP():
     content[5]["Value"]["MaxHP"] += 300.0
     content[5]["Value"]["MaxMP"] += 150.0
@@ -121,6 +112,7 @@ def more_HPMP():
     content[6]["Value"]["MaxMP"] += 150.0
     content[6]["Value"]["MaxHP99Enemy"] += 300.0
     content[6]["Value"]["MaxMP99Enemy"] += 150.0
+    debug("more_HPMP()")
 
 def zangetsu_progress():
     #Enemies
@@ -141,6 +133,7 @@ def zangetsu_progress():
         content[i]["Value"]["Experience99Enemy"] = 0
         content[i]["Value"]["Experience"] = 0
         i += 1
+    debug("zangetsu_progress()")
 
 def zangetsu_no_stats():
     content[6]["Value"]["STR"] = 0.0
@@ -153,6 +146,7 @@ def zangetsu_no_stats():
     content[6]["Value"]["CON99Enemy"] = 0.0
     content[6]["Value"]["MND99Enemy"] = 0.0
     content[6]["Value"]["LUC99Enemy"] = 0.0
+    debug("write_chara_log()")
 
 def rand_enemy(level, resist, custom, value):
     #NG+
@@ -250,6 +244,7 @@ def rand_enemy(level, resist, custom, value):
         patch_level(chance_6_range, 185)
         patch_level(chance_6_range, 186)
     create_log(185)
+    debug("rand_enemy(" + str(level) + ", " + str(resist) + ", " + str(custom) + ", " + str(value) + ")")
 
 def patch_level(array, i):
     if content[i]["Key"] == "N3001_Armor":
@@ -357,10 +352,18 @@ def write_patched_chara():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CharacterParameterMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
     os.remove("Serializer\\PB_DT_CharacterParameterMaster.json")
+    debug("write_patched_chara()")
 
 def write_chara():
     shutil.copyfile("Serializer\\PB_DT_CharacterParameterMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Enemy\\PB_DT_CharacterParameterMaster.uasset")
+    debug("write_chara()")
 
 def write_chara_log():
     with open("SpoilerLog\\EnemyProperties.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+    debug("write_chara_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

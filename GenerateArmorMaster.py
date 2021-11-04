@@ -4,12 +4,6 @@ import os
 import shutil
 import random
 
-stat_int_min = -50
-stat_int_max = 25
-stat_int_step = 5
-stat_int_chance = 6
-stat_int_factor = 2
-stat_int_increment = 1
 stat_pool = []
 log = []
 
@@ -24,23 +18,23 @@ with open("Data\\MasterStringTable\\Content\\PBMasterStringTable.json", "r") as 
 with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
-stat_int = stat_int_min
-stat_int_difference = math.ceil(abs(stat_int_min)/stat_int_max)
-stat_int_step_neg = stat_int_step*stat_int_difference
-for i in range(abs(stat_int_min) + stat_int_max + 1):
+stat_int = -50
+for i in range(50 + 25 + 1):
     if stat_int < 0:
-        for e in range(stat_int_factor**(abs(math.ceil(abs(stat_int)/stat_int_step_neg)-math.ceil(abs(stat_int_min)/stat_int_step_neg)))):
+        for e in range(2**(abs(math.ceil(abs(stat_int)/10)-5))):
             stat_pool.append(stat_int)
     elif stat_int > 0:
-        for e in range(stat_int_factor**(abs(math.ceil(stat_int/stat_int_step)-math.ceil(stat_int_max/stat_int_step)))*(stat_int_difference*(stat_int_chance-1))):
+        for e in range(2**(abs(math.ceil(stat_int/5)-5))*10):
             stat_pool.append(stat_int)
-    stat_int += stat_int_increment
-for i in range(len(stat_pool)*(stat_int_chance-1)):
+    stat_int += 1
+for i in range(len(stat_pool)*5):
     stat_pool.append(0)
 #print(stat_pool)
+
 def zangetsu_black_belt():
     armor_content[109]["Value"]["STR"] = 0
     armor_content[109]["Value"]["CON"] = 0
+    debug("zangetsu_black_belt()")
 
 def rand_equip():
     i = 37
@@ -95,6 +89,7 @@ def rand_equip():
             log_data["Value"]["LUC"] = armor_content[i]["Value"]["LUC"]
             log.append(log_data)
         i += 1
+    debug("rand_equip()")
 
 def write_patched_armor():
     with open("Serializer\\PB_DT_ArmorMaster.json", "w") as file_writer:
@@ -105,9 +100,11 @@ def write_patched_armor():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_ArmorMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset")
     os.remove("Serializer\\PB_DT_ArmorMaster.json")
+    debug("write_patched_armor()")
 
 def write_armor():
     shutil.copyfile("Serializer\\PB_DT_ArmorMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ArmorMaster.uasset")
+    debug("write_armor()")
 
 def write_patched_master():
     with open("Serializer\\PBMasterStringTable.json", "w") as file_writer:
@@ -118,10 +115,18 @@ def write_patched_master():
     os.chdir(root)
     shutil.move("Serializer\\PBMasterStringTable.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset")
     os.remove("Serializer\\PBMasterStringTable.json")
+    debug("write_patched_master()")
 
 def write_master():
     shutil.copyfile("Serializer\\PBMasterStringTable.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBMasterStringTable.uasset")
+    debug("write_master()")
 
 def write_armor_log():
     with open("SpoilerLog\\CheatEquipmentStats.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+    debug("write_armor_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

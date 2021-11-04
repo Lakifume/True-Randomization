@@ -74,6 +74,7 @@ def chaos_candle():
         upgrade_room.append(i["Value"]["RoomId"])
     for i in upgrade:
         ability_room.append(i["Value"]["RoomId"])
+    debug("chaos_candle()")
 
 def candle_shuffle():
     #HighJump
@@ -128,6 +129,8 @@ def candle_shuffle():
         entry["Value"] = {}
         entry["Value"]["RoomId"] = any_pick(upgrade_room)
         json_placeholder.append(entry)
+    
+    debug("candle_shuffle()")
 
 def any_pick(item_array):
     item = random.choice(item_array)
@@ -189,6 +192,7 @@ def write_patched_gimmick():
             tower_check += 1
     #Done
     print("Done")
+    debug("write_patched_gimmick()")
 
 def create_gimmick_log():
     candle_type = []
@@ -205,12 +209,14 @@ def create_gimmick_log():
         for e in log:
             if e["Key"] == translation["Value"][i["Key"].replace(")", "").split("(")[0]]:
                 e["Value"]["RoomList"].append(i["Value"]["RoomId"].replace(")", "").split("(")[0])
+    debug("create_gimmick_log()")
 
 def write_gimmick_log():
     for i in log:
         i["Value"]["RoomList"].sort()
     with open("MapEdit\\Key\\KeyLocation.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+    debug("write_gimmick_log()")
 
 def convert_to_json():
     for i in os.listdir("UAssetGUI\\Umap"):
@@ -223,3 +229,8 @@ def convert_to_json():
         
         shutil.move("UAssetGUI\\" + i[:-5] + ".json", "UAssetGUI\\Json\\" + i[:-5] + ".json")
         os.remove("UAssetGUI\\" + i)
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

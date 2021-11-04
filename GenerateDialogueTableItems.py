@@ -93,6 +93,7 @@ def rand_dialogue():
             content[i]["Value"]["EventID"] = any_pick(Todd)
         elif content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Coachman" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Coachman":
             content[i]["Value"]["EventID"] = any_pick(Coachman)
+    debug("rand_dialogue()")
 
 def any_pick(array):
     item = random.choice(array)
@@ -108,3 +109,9 @@ def write_patched_dialogue():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_DialogueTableItems.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DialogueTableItems.uasset")
     os.remove("Serializer\\PB_DT_DialogueTableItems.json")
+    debug("write_patched_dialogue()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

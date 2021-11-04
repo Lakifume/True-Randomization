@@ -33,6 +33,7 @@ def rand_weapon():
             log_data["Value"]["SpecialEffectRate"] = "None"
         log.append(log_data)
         i += 1
+    debug("rand_weapon()")
 
 def write_patched_weapon():
     with open("Serializer\\PB_DT_WeaponMaster.json", "w") as file_writer:
@@ -43,10 +44,18 @@ def write_patched_weapon():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_WeaponMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
     os.remove("Serializer\\PB_DT_WeaponMaster.json")
+    debug("write_patched_weapon()")
 
 def write_weapon():
     shutil.copyfile("Serializer\\PB_DT_WeaponMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_WeaponMaster.uasset")
+    debug("write_weapon()")
 
 def write_weapon_log():
     with open("SpoilerLog\\CheatWeaponStats.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+    debug("write_weapon_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

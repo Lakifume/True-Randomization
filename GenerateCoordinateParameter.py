@@ -13,6 +13,7 @@ def no_upgrade_cap():
     coord_content[130]["Value"]["Value"] = 9999.0
     coord_content[131]["Value"]["Value"] = 9999.0
     coord_content[3]["Value"]["Value"] = 999.0
+    debug("no_upgrade_cap()")
 
 def zangetsu_growth(nightmare):
     if nightmare:
@@ -29,16 +30,19 @@ def zangetsu_growth(nightmare):
         coord_content[55]["Value"]["Value"] = 3.0
         coord_content[56]["Value"]["Value"] = 2.9
         coord_content[57]["Value"]["Value"] = 1.5
+    debug("zangetsu_growth(" + str(nightmare) + ")")
 
 def nightmare_damage():
     coord_content[7]["Value"]["Value"] = 3.0
     coord_content[9]["Value"]["Value"] = 3.0
     coord_content[10]["Value"]["Value"] = 3.0
+    debug("nightmare_damage()")
 
 def rename_difficulty(normal, hard, nightmare):
     string_content["Table"]["SYS_SEN_Difficulty_Normal"] = normal
     string_content["Table"]["SYS_SEN_Difficulty_Hard"] = hard
     string_content["Table"]["SYS_SEN_Difficulty_Nightmare"] = nightmare
+    debug("rename_difficulty(" + normal + ", " + hard + ", " + nightmare + ")")
 
 def write_patched_coordinate():
     with open("Serializer\\PB_DT_CoordinateParameter.json", "w") as file_writer:
@@ -49,9 +53,11 @@ def write_patched_coordinate():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CoordinateParameter.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CoordinateParameter.uasset")
     os.remove("Serializer\\PB_DT_CoordinateParameter.json")
+    debug("write_patched_coordinate()")
 
 def write_coordinate():
     shutil.copyfile("Serializer\\PB_DT_CoordinateParameter.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CoordinateParameter.uasset")
+    debug("write_coordinate()")
 
 def write_patched_system():
     with open("Serializer\\PBSystemStringTable.json", "w") as file_writer:
@@ -62,3 +68,9 @@ def write_patched_system():
     os.chdir(root)
     shutil.move("Serializer\\PBSystemStringTable.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBSystemStringTable.uasset")
     os.remove("Serializer\\PBSystemStringTable.json")
+    debug("write_patched_system()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

@@ -452,6 +452,7 @@ def unused_room_check(path):
     for i in item_content:
         if chest_to_room(i["Key"]) in room_unused_list:
             chest_unused_list.append(i["Key"])
+    debug("unused_room_check(" + path + ")")
 
 def load_custom_logic(path):
     global logic_data
@@ -459,11 +460,13 @@ def load_custom_logic(path):
     if os.path.isfile(name + ".logic"):
         with open(name + ".logic", "r") as file_reader:
             logic_data = json.load(file_reader)
+    debug("load_custom_logic(" + path + ")")
 
 def hard_enemy_logic():
     for i in enemy_location:
         for e in i["Value"]["HardModeRooms"]:
             i["Value"]["NormalModeRooms"].append(e)
+    debug("hard_enemy_logic()")
 
 def remove_infinite():
     #ByDefault
@@ -484,21 +487,31 @@ def remove_infinite():
         chest_data[6]["Value"]["ItemPool"].remove("Recyclehat")
     while "Recyclehat" in item_req_data[0]["Value"]["ItemPool"]:
         item_req_data[0]["Value"]["ItemPool"].remove("Recyclehat")
+    debug("remove_infinite()")
 
 def give_shortcut():
     item_content[6]["Value"]["RareItemId"] = "Shortcut"
     item_content[6]["Value"]["RareItemQuantity"] = 7
     item_content[6]["Value"]["RareItemRate"] = 100.0
-
+    while "Shortcut" in shard_data["Value"]["ItemPool"]:
+        shard_data["Value"]["ItemPool"].remove("Shortcut")
+    debug("give_shortcut()")
+    
 def give_eye():
     item_content[6]["Value"]["CommonItemId"] = "SkilledDetectiveeye"
     item_content[6]["Value"]["CommonItemQuantity"] = 1
     item_content[6]["Value"]["CommonRate"] = 100.0
+    while "Detectiveeye" in shard_data["Value"]["ItemPool"]:
+        shard_data["Value"]["ItemPool"].remove("Detectiveeye")
+    debug("give_eye()")
 
 def give_extra(shard):
     item_content[6]["Value"]["RareIngredientId"] = shard
     item_content[6]["Value"]["RareIngredientQuantity"] = 1
     item_content[6]["Value"]["RareIngredientRate"] = 100.0
+    while shard in shard_data["Value"]["ItemPool"]:
+        shard_data["Value"]["ItemPool"].remove(shard)
+    debug("give_extra(" + shard + ")")
 
 def key_logic():
     #FillingListWithAllRoomNames
@@ -699,6 +712,7 @@ def rand_key_placement():
     #KeyShards
     for i in range(len(key_shards)):
         patch_key_shard_entry(key_shards[i], key_shards_location[i])
+    debug("rand_key_placement()")
 
 def rand_shard_placement():
     i = 500
@@ -711,6 +725,7 @@ def rand_shard_placement():
         else:
             item_content[i]["Value"]["ShardId"] = any_pick(shard_data["Value"]["ItemPool"], True, "None")
         i += 1
+    debug("rand_shard_placement()")
 
 def rand_item_pool():
     #JohannesMats
@@ -738,7 +753,7 @@ def rand_item_pool():
         else:
             patch_enemy_entry(random.choice(enemy_type), "ItemRateNormal", i)
         #ShardRate
-        if item_content[i]["Value"]["ShardRate"] == 100.0:
+        if item_content[i]["Value"]["ShardRate"] == 100.0 and item_content[i]["Key"] != "N3005_FireCannon_Shard":
             continue
         if item_content[i]["Key"].split("_")[0] == "N3090" or item_content[i]["Key"].split("_")[0] == "N3099":
             item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateLow"])
@@ -765,6 +780,7 @@ def rand_item_pool():
     patch_chest_entry(random.choice(green_chest_type), 621)
     #CarpenterChest2
     patch_chest_entry(random.choice(green_chest_type), 622)
+    debug("rand_item_pool()")
 
 def patch_key_item_entry(item, chest):
     for i in range(len(item_content)):
@@ -1132,6 +1148,7 @@ def all_quest():
         quest_content[i]["Value"]["NeedAreaID"] = "None"
         quest_content[i]["Value"]["NeedItemID"] = "None"
         quest_content[i]["Value"]["NeedBossID"] = "None"
+    debug("all_quest()")
 
 def quest_req():
     #EnemyQuests
@@ -1159,10 +1176,12 @@ def quest_req():
     while i <= 55:
         quest_content[i]["Value"]["Item01"] = any_pick(item_req_data[1]["Value"]["ItemPool"], True, "None")
         i += 1
+    debug("quest_req()")
 
 def no_quest_icon():
     for i in range(20):
         quest_content[i]["Value"]["EnemySpawnLocations"] = "none"
+    debug("no_quest_icon()")
 
 def rand_quest_pool():
     invert_ratio()
@@ -1238,6 +1257,7 @@ def rand_quest_pool():
             else:
                 quest_content[i]["Value"]["RewardNum01"] = max(chest_data[12]["Value"]["ItemQuantity"]) * 3
     invert_ratio()
+    debug("rand_quest_pool()")
 
 def req_string():
     string_content["Table"]["QST_Catering_Name01"] = item_translation["Value"][quest_content[35]["Value"]["Item01"]]
@@ -1261,6 +1281,7 @@ def req_string():
     string_content["Table"]["QST_Catering_Name19"] = item_translation["Value"][quest_content[43]["Value"]["Item01"]]
     string_content["Table"]["QST_Catering_Name20"] = item_translation["Value"][quest_content[48]["Value"]["Item01"]]
     string_content["Table"]["QST_Catering_Name21"] = item_translation["Value"][quest_content[55]["Value"]["Item01"]]
+    debug("req_string()")
 
 def hair_app_shop():
     i = 521
@@ -1268,10 +1289,12 @@ def hair_app_shop():
         shop_content[i]["Value"]["buyPrice"] = 100
         shop_content[i]["Value"]["Producted"] = "Event_01_001_0000"
         i += 1
+    debug("hair_app_shop()")
 
 def no_card_shop():
     shop_content[561]["Value"]["buyPrice"] = 0
     shop_content[561]["Value"]["sellPrice"] = 0
+    debug("no_card_shop()")
 
 def rand_shop_pool():
     for i in chest_data:
@@ -1293,6 +1316,7 @@ def rand_shop_pool():
                 events.remove(e["Value"]["Producted"])
             elif e["Value"]["ItemType"] == i["Value"]["ShopName"]:
                 e["Value"]["Producted"] = "None"
+    debug("rand_shop_pool()")
 
 def rand_shop_price(scale):
     for i in shop_content:
@@ -1317,6 +1341,7 @@ def rand_shop_price(scale):
                 if chosen >= 10000:
                     chosen += random.choice(thousand)
         i["Value"]["sellPrice"] = round(chosen/10)
+    debug("rand_shop_price(" + str(scale) + ")")
 
 def any_pick(item_array, remove, item_type):
     item = random.choice(item_array)
@@ -1411,9 +1436,11 @@ def write_patched_drop():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_DropRateMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
     os.remove("Serializer\\PB_DT_DropRateMaster.json")
+    debug("write_patched_drop()")
 
 def write_drop():
     shutil.copyfile("Serializer\\PB_DT_DropRateMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_DropRateMaster.uasset")
+    debug("write_drop()")
 
 def write_patched_quest():
     with open("Serializer\\PB_DT_QuestMaster.json", "w") as file_writer:
@@ -1424,6 +1451,7 @@ def write_patched_quest():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_QuestMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_QuestMaster.uasset")
     os.remove("Serializer\\PB_DT_QuestMaster.json")
+    debug("write_patched_quest()")
 
 def write_patched_scenario():
     with open("Serializer\\PBScenarioStringTable.json", "w") as file_writer:
@@ -1434,6 +1462,7 @@ def write_patched_scenario():
     os.chdir(root)
     shutil.move("Serializer\\PBScenarioStringTable.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\L10N\\en\\Core\\StringTable\\PBScenarioStringTable.uasset")
     os.remove("Serializer\\PBScenarioStringTable.json")
+    debug("write_patched_scenario()")
 
 def write_patched_item():
     with open("Serializer\\PB_DT_ItemMaster.json", "w") as file_writer:
@@ -1444,9 +1473,11 @@ def write_patched_item():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_ItemMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
     os.remove("Serializer\\PB_DT_ItemMaster.json")
+    debug("write_patched_item()")
 
 def write_item():
     shutil.copyfile("Serializer\\PB_DT_ItemMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Item\\PB_DT_ItemMaster.uasset")
+    debug("write_item()")
 
 def write_patched_candle():
     print("mXXXXX_XXX_Gimmick.umap")
@@ -1455,7 +1486,14 @@ def write_patched_candle():
         candle_process(item_content[i]["Value"]["ShardId"], item_content[i]["Key"].split("_")[0])
         i += 1
     print("Done")
+    debug("write_patched_candle()")
 
 def write_drop_log():
     with open("MapEdit\\Key\\KeyLocation.json", "w") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
+    debug("write_drop_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

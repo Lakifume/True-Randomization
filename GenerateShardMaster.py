@@ -4,9 +4,6 @@ import math
 import shutil
 import random
 
-stat_int_min = 33
-stat_int_max = 500
-stat_int_increment = 1
 stat_pool = []
 
 cost_denominator = 4
@@ -49,15 +46,16 @@ with open("Data\\ShardMaster\\Content\\PB_DT_ShardMaster.json", "r") as file_rea
 with open("Data\\ShardMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
-stat_int = stat_int_min
-for i in range(stat_int_max - stat_int_min + 1):
+stat_int = 33
+for i in range(500 - 33 + 1):
     if stat_int <= 100:
-        for e in range(math.ceil((stat_int_max-100)/(100-stat_int_min))):
+        for e in range(math.ceil((500-100)/(100-33))):
             stat_pool.append(stat_int)
     else:
         stat_pool.append(stat_int)
-    stat_int += stat_int_increment
+    stat_int += 1
 #print(stat_pool)
+
 def rand_shard(scale):
     for i in range(79):
         if content[i]["Key"] in skip_list:
@@ -89,10 +87,12 @@ def rand_shard(scale):
             stat_num = 1.0
         log_data["Value"]["CostPercentage"] = int(stat_num)
         log.append(log_data)
+    debug("rand_shard(" + str(scale) + ")")
 
 def eye_max():
     content[114]["Value"]["minGradeValue"] = 100.0
     content[114]["Value"]["maxGradeValue"] = 100.0
+    debug("eye_max()")
 
 def write_patched_shard():
     with open("Serializer\\PB_DT_ShardMaster.json", "w") as file_writer:
@@ -103,10 +103,18 @@ def write_patched_shard():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_ShardMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
     os.remove("Serializer\\PB_DT_ShardMaster.json")
+    debug("write_patched_shard()")
 
 def write_shard():
     shutil.copyfile("Serializer\\PB_DT_ShardMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_ShardMaster.uasset")
+    debug("write_shard()")
 
 def write_shard_log():
     with open("SpoilerLog\\ShardPower.json", "w") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
+    debug("write_shard_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

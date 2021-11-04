@@ -252,6 +252,10 @@ texture_files = [
 sound_files = [
     "~sound"
 ]
+umap_files = [
+    "mXXXXX_XXX_Gimmick",
+    "~other"
+]
 
 patch_list = [write_patched_system]
 write_list = [write_ammunition, write_arts, write_bloodless, write_brv, write_unique, write_damage, write_enchant, write_8bit, write_ent]
@@ -528,9 +532,13 @@ class Main(QWidget):
         box_14.setLayout(box_14_grid)
         grid.addWidget(box_14, 8, 3, 1, 2)
         
-        box_15_grid = QGridLayout()
+        box_15_left = QVBoxLayout()
+        box_15_right = QVBoxLayout()
+        box_15_box = QHBoxLayout()
+        box_15_box.addLayout(box_15_left)
+        box_15_box.addLayout(box_15_right)
         box_15 = QGroupBox()
-        box_15.setLayout(box_15_grid)
+        box_15.setLayout(box_15_box)
         box_15.setFixedSize(config.getfloat("Misc", "fWindowSize")*550, config.getfloat("Misc", "fWindowSize")*978)
         grid.addWidget(box_15, 0, 5, 10, 1)
         
@@ -538,19 +546,23 @@ class Main(QWidget):
         
         self.datatable_label = QLabel(self)
         self.label_change(datatable_files)
-        box_15_grid.addWidget(self.datatable_label, 0, 0)
+        box_15_left.addWidget(self.datatable_label)
         
         self.ui_label = QLabel(self)
         self.label_change(ui_files)
-        box_15_grid.addWidget(self.ui_label, 1, 0)
+        box_15_left.addWidget(self.ui_label)
         
         self.texture_label = QLabel(self)
         self.label_change(texture_files)
-        box_15_grid.addWidget(self.texture_label, 0, 1)
+        box_15_right.addWidget(self.texture_label)
         
         self.sound_label = QLabel(self)
         self.label_change(sound_files)
-        box_15_grid.addWidget(self.sound_label, 1, 1)
+        box_15_right.addWidget(self.sound_label)
+        
+        self.umap_label = QLabel(self)
+        self.label_change(umap_files)
+        box_15_right.addWidget(self.umap_label)
 
         #Checkboxes
 
@@ -772,7 +784,7 @@ class Main(QWidget):
         self.radio_button_14.toggled.connect(self.radio_button_group_6_checked)
         box_17_grid.addWidget(self.radio_button_14, 0, 0)
         
-        self.radio_button_5 = QRadioButton("CustomNG+")
+        self.radio_button_5 = QRadioButton("Custom NG+")
         self.radio_button_5.setToolTip("Play through your NG+ files with a chosen level\nvalue for all enemies.")
         self.radio_button_5.toggled.connect(self.radio_button_group_6_checked)
         box_17_grid.addWidget(self.radio_button_5, 1, 0)
@@ -788,6 +800,7 @@ class Main(QWidget):
             config.set("Misc", "iCustomLevel", "99")
         
         self.level_box = QSpinBox()
+        self.level_box.setToolTip("Level of all enemies.")
         self.level_box.setRange(1, 99)
         self.level_box.setValue(config.getint("Misc", "iCustomLevel"))
         self.level_box.valueChanged.connect(self.new_level)
@@ -976,16 +989,12 @@ class Main(QWidget):
             self.check_box_1.setStyleSheet("color: " + item_color)
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            if not self.string:
-                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
             #CheckRandomizer
             self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bOverworldPool", "false")
             self.check_box_1.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-            if not self.string:
-                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_2, self.check_box_12, self.radio_button_4])
 
     def check_box_2_changed(self):
         self.matches_preset()
@@ -994,18 +1003,12 @@ class Main(QWidget):
             self.check_box_2.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            if not self.string:
-                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_12, self.radio_button_4])
-            self.add_to_list(datatable_files, "PBScenarioStringTable", [])
             #CheckRandomizer
             self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bShopPool", "false")
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-            if not self.string:
-                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_12, self.radio_button_4])
-            self.remove_from_list(datatable_files, "PBScenarioStringTable", [])
 
     def check_box_16_changed(self):
         self.matches_preset()
@@ -1028,12 +1031,14 @@ class Main(QWidget):
             self.check_box_17.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            self.add_to_list(datatable_files, "PBScenarioStringTable", [])
             #CheckRandomizer
             self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bQuestRequirements", "false")
             self.check_box_17.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+            self.remove_from_list(datatable_files, "PBScenarioStringTable", [])
 
     def check_box_18_changed(self):
         self.matches_preset()
@@ -1167,7 +1172,7 @@ class Main(QWidget):
             self.check_box_12.setStyleSheet("color: " + map_color)
             self.box_7.setStyleSheet("color: " + map_color)
             if not self.string:
-                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.radio_button_4])
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.radio_button_4])
                 self.add_to_list(ui_files, "icon_8bitCrown", [])
                 self.add_to_list(ui_files, "Map_Icon_Keyperson", [])
                 self.add_to_list(ui_files, "Map_Icon_RootBox", [])
@@ -1177,7 +1182,7 @@ class Main(QWidget):
             self.check_box_12.setStyleSheet("color: #ffffff")
             self.box_7.setStyleSheet("color: #ffffff")
             if not self.string:
-                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.radio_button_4])
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.radio_button_4])
                 self.remove_from_list(ui_files, "icon_8bitCrown", [])
                 self.remove_from_list(ui_files, "Map_Icon_Keyperson", [])
                 self.remove_from_list(ui_files, "Map_Icon_RootBox", [])
@@ -1303,7 +1308,7 @@ class Main(QWidget):
             config.set("GameMode", "bRandomizer", "true")
             config.set("GameMode", "bStory", "false")
             if not self.string:
-                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12])
+                self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_12])
             #UncheckExtra
             self.check_box_21.setChecked(False)
             self.check_box_22.setChecked(False)
@@ -1313,7 +1318,7 @@ class Main(QWidget):
             config.set("GameMode", "bRandomizer", "false")
             config.set("GameMode", "bStory", "true")
             if not self.string:
-                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12])
+                self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_12])
             #UncheckItem
             self.check_box_1.setChecked(False)
             self.check_box_2.setChecked(False)
@@ -1465,6 +1470,9 @@ class Main(QWidget):
         elif list == sound_files:
             string = "Modified Sound:\n\n"
             label = self.sound_label
+        elif list == umap_files:
+            string = "Modified Umap:\n\n"
+            label = self.umap_label
         list.sort()
         for i in range(len(list) - 1):
             string += list[i] + "\n"
@@ -1474,11 +1482,13 @@ class Main(QWidget):
         self.progress_bar.setValue(progress)
     
     def seed_finished(self):
+        box = QMessageBox(self)
+        box.setWindowTitle("Done")
         if config.getboolean("GameMode", "bRandomizer"):
-            box = QMessageBox(self)
-            box.setWindowTitle("Done")
             box.setText("Pak file generated !\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work !")
-            box.exec()
+        else:
+            box.setText("Pak file generated !")
+        box.exec()
         writing_and_exit()
     
     def convert_finished(self):
@@ -1499,7 +1509,7 @@ class Main(QWidget):
         if path:
             self.string = path.replace("/", "\\")
             self.setWindowTitle("Randomizer (" + self.string + ")")
-            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_1, self.check_box_2, self.check_box_12, self.radio_button_4])
+            self.add_to_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_12, self.radio_button_4])
             self.add_to_list(ui_files, "icon_8bitCrown", [self.check_box_12])
             self.add_to_list(ui_files, "Map_Icon_Keyperson", [self.check_box_12])
             self.add_to_list(ui_files, "Map_Icon_RootBox", [self.check_box_12])
@@ -1547,6 +1557,8 @@ class Main(QWidget):
             if os.path.isfile(file_path):
                 os.remove(file_path)
         
+        open("SpoilerLog\\~debug.txt", "a").close()
+        
         #Map
         
         if not self.string and config.getboolean("MapRandomization", "bRoomLayout"):
@@ -1555,81 +1567,16 @@ class Main(QWidget):
         
         #Patch
         
-        if self.string:
-            unused_room_check(self.string)
-            load_custom_logic(self.string)
-        
-        if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
-            hard_enemy_logic()
-        
-        if config.getboolean("ItemRandomization", "bRemoveInfinites"):
-            remove_infinite()
-        
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            rand_key_placement()
-            rand_shard_placement()
-            rand_item_pool()
-            write_drop_log()
-        
-        if config.getboolean("ItemRandomization", "bQuestPool"):
-            rand_quest_pool()
-        
-        if config.getboolean("ItemRandomization", "bShopPool"):
-            rand_shop_pool()
-        
-        if config.getboolean("ItemRandomization", "bQuestRequirements"):
-            quest_req()
-            req_string()
-        
-        if config.getboolean("ShopRandomization", "bItemCostAndSellingPrice"):
-            rand_shop_price(config.getboolean("ShopRandomization", "bScaleSellingPriceWithCost"))
-        
-        if config.getboolean("LibraryRandomization", "bMapRequirements") or config.getboolean("LibraryRandomization", "bTomeAppearance"):
-            rand_book(config.getboolean("LibraryRandomization", "bMapRequirements"), config.getboolean("LibraryRandomization", "bTomeAppearance"))
-            write_book_log()
-        
-        if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
-            rand_shard(config.getboolean("ShardRandomization", "bScaleMagicCostWithPower"))
-            write_shard_log()
-        
-        if config.getboolean("EquipmentRandomization", "bCheatGearStats"):
-            rand_equip()
-            rand_weapon()
-            write_armor_log()
-            write_weapon_log()
-        
-        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("SpecialMode", "bCustom"):
-            rand_enemy(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("SpecialMode", "bCustom"), config.getboolean("EnemyRandomization", "bEnemyTolerances"), config.getboolean("SpecialMode", "bCustom"), config.getint("Misc", "iCustomLevel"))
-            if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
-                write_chara_log()
-        
-        if config.getboolean("EnemyRandomization", "bEnemyLevels") and not config.getboolean("SpecialMode", "bCustom"):
-            more_HPMP()
-            low_HPMP_growth()
-        
-        if self.string:
-            no_quest_icon()
-            create_room_log(self.string)
-            write_map_log()
-        
-        if config.getboolean("SoundRandomization", "bDialogues"):
-            rand_dialogue()
-        
-        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            if config.getboolean("ExtraRandomization", "bBloodlessFull"):
-                chaos_candle()
-            candle_shuffle()
-            create_gimmick_log()
-            write_gimmick_log()
-        
         if config.getboolean("GameDifficulty", "bNormal"):
+            rename_difficulty("Normal", "???", "???")
             normal_bomber()
             normal_bael()
-            rename_difficulty("Normal", "???", "???")
         elif config.getboolean("GameDifficulty", "bHard"):
             rename_difficulty("???", "Hard", "???")
+            hard_enemy_logic()
         elif config.getboolean("GameDifficulty", "bNightmare"):
             rename_difficulty("???", "???", "Nightmare")
+            hard_enemy_logic()
         
         if config.getboolean("GameMode", "bRandomizer"):
             give_shortcut()
@@ -1653,7 +1600,92 @@ class Main(QWidget):
             zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             zangetsu_black_belt()
         
+        if self.string:
+            unused_room_check(self.string)
+            load_custom_logic(self.string)
+            create_room_log(self.string)
+            write_map_log()
+        
+        if config.getboolean("ItemRandomization", "bRemoveInfinites"):
+            remove_infinite()
+        
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            rand_key_placement()
+            rand_shard_placement()
+            rand_item_pool()
+            write_drop_log()
+        
+        if config.getboolean("ItemRandomization", "bQuestPool"):
+            rand_quest_pool()
+        
+        if config.getboolean("ItemRandomization", "bShopPool"):
+            rand_shop_pool()
+        
+        if config.getboolean("ItemRandomization", "bQuestRequirements"):
+            quest_req()
+            req_string()
+        
+        if self.string:
+            no_quest_icon()
+        
+        if config.getboolean("ShopRandomization", "bItemCostAndSellingPrice"):
+            rand_shop_price(config.getboolean("ShopRandomization", "bScaleSellingPriceWithCost"))
+        
+        if config.getboolean("LibraryRandomization", "bMapRequirements") or config.getboolean("LibraryRandomization", "bTomeAppearance"):
+            rand_book(config.getboolean("LibraryRandomization", "bMapRequirements"), config.getboolean("LibraryRandomization", "bTomeAppearance"))
+            write_book_log()
+        
+        if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
+            rand_shard(config.getboolean("ShardRandomization", "bScaleMagicCostWithPower"))
+            write_shard_log()
+        
+        if config.getboolean("EquipmentRandomization", "bCheatGearStats"):
+            rand_equip()
+            write_armor_log()
+            rand_weapon()
+            write_weapon_log()
+        
+        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("SpecialMode", "bCustom"):
+            rand_enemy(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("SpecialMode", "bCustom"), config.getboolean("EnemyRandomization", "bEnemyTolerances"), config.getboolean("SpecialMode", "bCustom"), config.getint("Misc", "iCustomLevel"))
+            if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
+                write_chara_log()
+        
+        if config.getboolean("EnemyRandomization", "bEnemyLevels") and not config.getboolean("SpecialMode", "bCustom"):
+            more_HPMP()
+            low_HPMP_growth()
+        
+        if config.getboolean("SoundRandomization", "bDialogues"):
+            rand_dialogue()
+        
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            if config.getboolean("ExtraRandomization", "bBloodlessFull"):
+                chaos_candle()
+            candle_shuffle()
+            create_gimmick_log()
+            write_gimmick_log()
+        
         #Write
+        
+        if config.getboolean("GameDifficulty", "bNormal"):
+            patch_list.append(write_patched_ballistic)
+            patch_list.append(write_patched_bullet)
+            patch_list.append(write_patched_collision)
+        else:
+            write_list.append(write_ballistic)
+            write_list.append(write_bullet)
+            write_list.append(write_collision)
+        
+        if config.getboolean("GameMode", "bRandomizer") or config.getboolean("SpecialMode", "bProgressive"):
+            patch_list.append(write_patched_coordinate)
+        else:
+            write_list.append(write_coordinate)
+        
+        if self.string:
+            patch_list.append(write_patched_room)
+            write_list.append(write_crown_icon)
+            write_list.append(write_map_icon)
+        else:
+            write_list.append(write_room)
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             patch_list.append(write_patched_craft)
@@ -1709,13 +1741,6 @@ class Main(QWidget):
         else:
             write_list.append(write_effect)
         
-        if self.string:
-            patch_list.append(write_patched_room)
-            write_list.append(write_crown_icon)
-            write_list.append(write_map_icon)
-        else:
-            write_list.append(write_room)
-        
         if config.getboolean("GraphicRandomization", "bMiriamColor"):
             write_list.append(write_miriam)
         
@@ -1727,20 +1752,6 @@ class Main(QWidget):
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             patch_list.append(write_patched_gimmick)
-        
-        if config.getboolean("GameDifficulty", "bNormal"):
-            patch_list.append(write_patched_ballistic)
-            patch_list.append(write_patched_bullet)
-            patch_list.append(write_patched_collision)
-        else:
-            write_list.append(write_ballistic)
-            write_list.append(write_bullet)
-            write_list.append(write_collision)
-        
-        if config.getboolean("GameMode", "bRandomizer") or config.getboolean("SpecialMode", "bProgressive"):
-            patch_list.append(write_patched_coordinate)
-        else:
-            write_list.append(write_coordinate)
         
         if not config.getboolean("ExtraRandomization", "bBloodlessCandles") and not config.getboolean("SpecialMode", "bProgressive"):
             write_list.append(write_icon)

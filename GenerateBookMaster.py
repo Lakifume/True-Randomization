@@ -50,6 +50,7 @@ def rand_book(req, appear):
         log_data["Value"]["IsAvailable"] = content[i]["Value"]["IslibraryBook"]
         log.append(log_data)
         i += 1
+    debug("rand_book(" + str(req) + ", " + str(appear) + ")")
 
 def any_pick(array):
     item = random.choice(array)
@@ -72,10 +73,18 @@ def write_patched_book():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_BookMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset")
     os.remove("Serializer\\PB_DT_BookMaster.json")
+    debug("write_patched_book()")
 
 def write_book():
     shutil.copyfile("Serializer\\PB_DT_BookMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BookMaster.uasset")
+    debug("write_book()")
 
 def write_book_log():
     with open("SpoilerLog\\LibraryTomes.json", "w") as file_writer:
         file_writer.write(json.dumps(log, indent=2))
+    debug("write_book_log()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()

@@ -11,6 +11,7 @@ def no_shard_craft():
     while i <= 356:
         content[i]["Value"]["Type"] = "ECraftType::None"
         i += 1
+    debug("no_shard_craft()")
 
 def write_patched_craft():
     with open("Serializer\\PB_DT_CraftMaster.json", "w") as file_writer:
@@ -21,6 +22,13 @@ def write_patched_craft():
     os.chdir(root)
     shutil.move("Serializer\\PB_DT_CraftMaster.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CraftMaster.uasset")
     os.remove("Serializer\\PB_DT_CraftMaster.json")
+    debug("write_patched_craft()")
 
 def write_craft():
     shutil.copyfile("Serializer\\PB_DT_CraftMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CraftMaster.uasset")
+    debug("write_craft()")
+
+def debug(line):
+    file = open("SpoilerLog\\~debug.txt", "a")
+    file.write("FUN " + line + "\n")
+    file.close()
