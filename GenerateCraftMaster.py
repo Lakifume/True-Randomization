@@ -15,7 +15,7 @@ def no_shard_craft():
 
 def write_patched_craft():
     with open("Serializer\\PB_DT_CraftMaster.json", "w") as file_writer:
-        file_writer.write(json.dumps(content, indent=2))
+        file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
     root = os.getcwd()
     os.chdir("Serializer")
     os.system("cmd /c UAsset2Json.exe -tobin PB_DT_CraftMaster.json")

@@ -13,87 +13,103 @@ with open("Data\\CollisionMaster\\Content\\PB_DT_CollisionMaster.json", "r") as 
     collision_content = json.load(file_reader)
 
 def normal_bomber():
-    bullet_content[559]["Value"]["BeginEffectBeginScale"] = 2.0
-    bullet_content[559]["Value"]["BeginEffectEndScale"] = 2.0
+    bullet_content[559]["Value"]["BeginEffectBeginScale"] /= 2.0
+    bullet_content[559]["Value"]["BeginEffectEndScale"] /= 2.0
     
-    collision_content[537]["Value"]["R00"] = 4.0
-    collision_content[537]["Value"]["R01"] = 4.0
+    collision_content[537]["Value"]["R00"] /= 2.0
+    collision_content[537]["Value"]["R01"] /= 2.0
     
     debug("normal_bomber()")
 
 def normal_bael():
-    ballistic_content[73]["Value"]["InitialSpeed"] = 12.0
-    ballistic_content[317]["Value"]["InitialSpeed"] = 5.0
-    ballistic_content[320]["Value"]["InitialSpeed"] = 5.0
+    #LightRay
+    ballistic_content[73]["Value"]["InitialSpeed"] /= 2.0
+    #TracerRay
+    ballistic_content[317]["Value"]["InitialSpeed"] /= 6.0
+    #RingLasers
+    ballistic_content[320]["Value"]["InitialSpeed"] /= 9.0
     
-    bullet_content[783]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[783]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[783]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[783]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[783]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[783]["Value"]["EndEffectEndScale"] = 1.0
+    #FlameSkull
+    bullet_content[783]["Value"]["EffectBeginScale"] /= 2.5
+    bullet_content[783]["Value"]["EffectEndScale"] /= 2.5
+    bullet_content[783]["Value"]["BeginEffectBeginScale"] /= 2.5
+    bullet_content[783]["Value"]["BeginEffectEndScale"] /= 2.5
+    bullet_content[783]["Value"]["EndEffectBeginScale"] /= 2.5
+    bullet_content[783]["Value"]["EndEffectEndScale"] /= 2.5
     
-    bullet_content[787]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[787]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[787]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[787]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[787]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[787]["Value"]["EndEffectEndScale"] = 1.0
+    #Bubbles
+    bullet_content[787]["Value"]["EffectBeginScale"] /= 1.5
+    bullet_content[787]["Value"]["EffectEndScale"] /= 1.5
+    bullet_content[787]["Value"]["BeginEffectBeginScale"] /= 1.5
+    bullet_content[787]["Value"]["BeginEffectEndScale"] /= 1.5
+    bullet_content[787]["Value"]["EndEffectBeginScale"] /= 1.5
+    bullet_content[787]["Value"]["EndEffectEndScale"] /= 1.5
     
-    bullet_content[789]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[789]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[789]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[789]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[789]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[789]["Value"]["EndEffectEndScale"] = 1.0
+    #RingLasers
+    bullet_content[789]["Value"]["EffectBeginScale"] /= 2.0
+    bullet_content[789]["Value"]["EffectEndScale"] /= 2.0
+    bullet_content[789]["Value"]["BeginEffectBeginScale"] /= 2.0
+    bullet_content[789]["Value"]["BeginEffectEndScale"] /= 2.0
+    bullet_content[789]["Value"]["EndEffectBeginScale"] /= 2.0
+    bullet_content[789]["Value"]["EndEffectEndScale"] /= 2.0
     
-    bullet_content[790]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[790]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[790]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[790]["Value"]["EndEffectEndScale"] = 1.0
+    #Screech
+    bullet_content[790]["Value"]["EffectBeginScale"] /= 2.0
+    bullet_content[790]["Value"]["EffectEndScale"] /= 2.0
+    bullet_content[790]["Value"]["EndEffectBeginScale"] /= 2.0
+    bullet_content[790]["Value"]["EndEffectEndScale"] /= 2.0
     
-    bullet_content[792]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[792]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[792]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[792]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[792]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[792]["Value"]["EndEffectEndScale"] = 1.0
+    #FlameSkullExplosion
+    bullet_content[792]["Value"]["EffectBeginScale"] /= 2.5
+    bullet_content[792]["Value"]["EffectEndScale"] /= 2.5
+    bullet_content[792]["Value"]["BeginEffectBeginScale"] /= 2.5
+    bullet_content[792]["Value"]["BeginEffectEndScale"] /= 2.5
+    bullet_content[792]["Value"]["EndEffectBeginScale"] /= 2.5
+    bullet_content[792]["Value"]["EndEffectEndScale"] /= 2.5
     
-    bullet_content[793]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[793]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[793]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[793]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[793]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[793]["Value"]["EndEffectEndScale"] = 1.0
+    #FlameSkullDestroyed
+    bullet_content[793]["Value"]["EffectBeginScale"] /= 2.5
+    bullet_content[793]["Value"]["EffectEndScale"] /= 2.5
+    bullet_content[793]["Value"]["BeginEffectBeginScale"] /= 2.5
+    bullet_content[793]["Value"]["BeginEffectEndScale"] /= 2.5
+    bullet_content[793]["Value"]["EndEffectBeginScale"] /= 2.5
+    bullet_content[793]["Value"]["EndEffectEndScale"] /= 2.5
     
-    bullet_content[794]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[794]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[794]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[794]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[794]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[794]["Value"]["EndEffectEndScale"] = 1.0
+    #BubblesDestroyed
+    bullet_content[794]["Value"]["EffectBeginScale"] /= 1.5
+    bullet_content[794]["Value"]["EffectEndScale"] /= 1.5
+    bullet_content[794]["Value"]["BeginEffectBeginScale"] /= 1.5
+    bullet_content[794]["Value"]["BeginEffectEndScale"] /= 1.5
+    bullet_content[794]["Value"]["EndEffectBeginScale"] /= 1.5
+    bullet_content[794]["Value"]["EndEffectEndScale"] /= 1.5
     
-    bullet_content[797]["Value"]["EffectBeginScale"] = 1.0
-    bullet_content[797]["Value"]["EffectEndScale"] = 1.0
-    bullet_content[797]["Value"]["BeginEffectBeginScale"] = 1.0
-    bullet_content[797]["Value"]["BeginEffectEndScale"] = 1.0
-    bullet_content[797]["Value"]["EndEffectBeginScale"] = 1.0
-    bullet_content[797]["Value"]["EndEffectEndScale"] = 1.0
+    #RingLasersImpact
+    bullet_content[797]["Value"]["EffectBeginScale"] /= 2.0
+    bullet_content[797]["Value"]["EffectEndScale"] /= 2.0
+    bullet_content[797]["Value"]["BeginEffectBeginScale"] /= 2.0
+    bullet_content[797]["Value"]["BeginEffectEndScale"] /= 2.0
+    bullet_content[797]["Value"]["EndEffectBeginScale"] /= 2.0
+    bullet_content[797]["Value"]["EndEffectEndScale"] /= 2.0
     
-    collision_content[738]["Value"]["R00"] = 0.3
-    collision_content[738]["Value"]["R01"] = 0.3
+    #FlameSkull
+    collision_content[738]["Value"]["R00"] /= 2.5
+    collision_content[738]["Value"]["R01"] /= 2.5
     
-    collision_content[739]["Value"]["R00"] = 1.0
-    collision_content[739]["Value"]["R01"] = 1.0
+    #FlameSkullExplosion
+    collision_content[739]["Value"]["R00"] /= 2.5
+    collision_content[739]["Value"]["R01"] /= 2.5
     
-    collision_content[743]["Value"]["R00"] = 0.45
-    collision_content[743]["Value"]["R01"] = 0.45
+    #Bubbles
+    collision_content[743]["Value"]["R00"] /= 1.5
+    collision_content[743]["Value"]["R01"] /= 1.5
     
-    collision_content[745]["Value"]["R00"] = 0.4
-    collision_content[745]["Value"]["R01"] = 0.9
+    #RingLasers
+    collision_content[745]["Value"]["R00"] /= 2.0
+    collision_content[745]["Value"]["R01"] /= 2.0
     
-    collision_content[746]["Value"]["R00"] = 2.0
-    collision_content[746]["Value"]["R01"] = 6.0
+    #Screech
+    collision_content[746]["Value"]["R00"] /= 2.0
+    collision_content[746]["Value"]["R01"] /= 2.0
     
     debug("normal_bael()")
 
