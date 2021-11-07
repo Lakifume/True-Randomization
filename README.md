@@ -13,7 +13,7 @@ Steps:
 * open cmd in the folder that contains the .py files
 * input "pyinstaller.exe --onefile --noconsole --icon=[Bloodstained/Map].ico [Randomizer/MapEditor].py"
 
-##FAQ
+## FAQ
 
 Why is picking seed 17791 required ?
 * since the game randomizer provides no option to not shuffle the item containers the only way for a mod to apply its custom logic is by mapping out a specific seed to then adapt item placement based on that
