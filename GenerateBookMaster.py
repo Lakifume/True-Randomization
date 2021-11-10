@@ -16,12 +16,11 @@ with open("Data\\BookMaster\\Content\\PB_DT_BookMaster.json", "r") as file_reade
 with open("Data\\DropRateMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
-for i in range(7):
-    for e in range(3):
-        completion.append(10+i*10)
+for i in range(21):
+    completion.append(i*5)
 
 for i in range(21):
-    if i % 3 == 0:
+    if i % 2 == 0:
         is_tome.append(True)
     else:
         is_tome.append(False)
@@ -43,12 +42,12 @@ def rand_book(req, appear):
         i += 1
     i = 1
     while i <= 21:
-        log_data = {}
-        log_data["Key"] = translation["Value"][content[i]["Key"]]
-        log_data["Value"] = {}
-        log_data["Value"]["MapRequirement"] = content[i]["Value"]["RoomTraverseThreshold"]
-        log_data["Value"]["IsAvailable"] = content[i]["Value"]["IslibraryBook"]
-        log.append(log_data)
+        if content[i]["Value"]["IslibraryBook"]:
+            log_data = {}
+            log_data["Key"] = translation["Value"][content[i]["Key"]]
+            log_data["Value"] = {}
+            log_data["Value"]["MapRequirement"] = content[i]["Value"]["RoomTraverseThreshold"]
+            log.append(log_data)
         i += 1
     debug("rand_book(" + str(req) + ", " + str(appear) + ")")
 

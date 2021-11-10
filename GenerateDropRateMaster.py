@@ -466,6 +466,11 @@ def hard_enemy_logic():
     for i in enemy_location:
         for e in i["Value"]["HardModeRooms"]:
             i["Value"]["NormalModeRooms"].append(e)
+        if i["Key"] == "N3090":
+            i["Value"]["NormalModeRooms"].remove("m07LIB_029")
+            i["Value"]["NormalModeRooms"].remove("m08TWR_005")
+            i["Value"]["NormalModeRooms"].remove("m08TWR_013")
+            i["Value"]["NormalModeRooms"].remove("m11UGD_013")
     debug("hard_enemy_logic()")
 
 def remove_infinite():
@@ -710,6 +715,8 @@ def rand_key_placement():
     for i in range(len(key_items)):
         patch_key_item_entry(key_items[i], key_items_location[i])
     #KeyShards
+    for i in item_content:
+        i["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::None"
     for i in range(len(key_shards)):
         patch_key_shard_entry(key_shards[i], key_shards_location[i])
     debug("rand_key_placement()")
@@ -749,16 +756,19 @@ def rand_item_pool():
         if item_content[i]["Value"]["ShardRate"] == 0.0 or item_content[i]["Key"].split("_")[0] == item_content[i-1]["Key"].split("_")[0]:
             continue
         if item_content[i]["Key"].split("_")[0] == "N3090" or item_content[i]["Key"].split("_")[0] == "N3099":
-            patch_enemy_entry(random.choice(enemy_type), "ItemRateLow", i)
+            patch_enemy_entry(random.choice(enemy_type), 0.5, i)
         else:
-            patch_enemy_entry(random.choice(enemy_type), "ItemRateNormal", i)
+            patch_enemy_entry(random.choice(enemy_type), 1.0, i)
         #ShardRate
-        if item_content[i]["Value"]["ShardRate"] == 100.0 and item_content[i]["Key"] != "N3005_FireCannon_Shard":
+        if item_content[i]["Value"]["ShardRate"] == 100.0:
             continue
+        item_content[i]["Value"]["ShardRate"] = shard_data["Value"]["ItemRate"]
         if item_content[i]["Key"].split("_")[0] == "N3090" or item_content[i]["Key"].split("_")[0] == "N3099":
-            item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateLow"])
-        else:
-            item_content[i]["Value"]["ShardRate"] = random.choice(shard_data["Value"]["ItemRateNormal"])
+            item_content[i]["Value"]["ShardRate"] /= 2
+        if item_content[i]["Value"]["DropSpecialFlags"] == "EDropSpecialFlag::DropShardOnce":
+            item_content[i]["Value"]["ShardRate"] *= 3
+    #FireCannonShardFix
+    item_content[516]["Value"]["ShardRate"] = item_content[515]["Value"]["ShardRate"]
     #DuplicateCheck
     for i in enemy_index:
         if "Treasure" in item_content[i]["Key"]:
@@ -803,11 +813,14 @@ def patch_key_item_entry(item, chest):
             item_content[seed_convert(i)]["Value"]["AreaChangeTreasureFlag"] = False
     
 def patch_key_shard_entry(shard, enemy):
-    for i in item_content:
-        if i["Value"]["ShardRate"] == 0.0:
-            continue
-        if i["Key"].split("_")[0] == enemy:
-            i["Value"]["ShardId"] = shard
+    for i in range(len(item_content)):
+        if item_content[i]["Key"].split("_")[0] == enemy:
+            if item_content[i]["Key"].split("_")[0] == item_content[i-1]["Key"].split("_")[0]:
+                item_content[i]["Value"]["ShardId"] = "None"
+                item_content[i]["Value"]["ShardRate"] = 0.0
+            else:
+                item_content[i]["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
+                item_content[i]["Value"]["ShardId"] = shard
 
 def patch_chest_entry(item_type, i):
     if item_content[i]["Key"] in key_items_location:
@@ -815,8 +828,8 @@ def patch_chest_entry(item_type, i):
     i = seed_convert(i)
     if item_type == chest_data[0]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[0]["Value"]["ItemPool"], chest_data[0]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[0]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[0]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[0]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[0]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -832,8 +845,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[1]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[1]["Value"]["ItemPool"], chest_data[1]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[1]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[1]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[1]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[1]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -849,8 +862,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[2]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[2]["Value"]["ItemPool"], chest_data[2]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[2]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[2]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[2]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[2]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -879,29 +892,29 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["CommonIngredientRate"] = 0.0
         item_content[i]["Value"]["CoinOverride"] = any_pick(chest_data[3]["Value"]["ItemPool"], chest_data[3]["Value"]["IsUnique"], item_type)
         item_content[i]["Value"]["CoinType"] = "EDropCoin::D2000"
-        item_content[i]["Value"]["CoinRate"] = random.choice(chest_data[3]["Value"]["ItemRate"])
+        item_content[i]["Value"]["CoinRate"] = chest_data[3]["Value"]["ItemRate"]
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[4]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[4]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[4]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[4]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[4]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["CommonItemQuantity"] = random.choice(chest_data[4]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["CommonRate"] = random.choice(chest_data[4]["Value"]["ItemRate"])
+        item_content[i]["Value"]["CommonItemQuantity"] = chest_data[4]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["CommonRate"] = chest_data[4]["Value"]["ItemRate"]
         item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(chest_data[4]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareIngredientRate"] = random.choice(chest_data[4]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareIngredientQuantity"] = chest_data[4]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareIngredientRate"] = chest_data[4]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(chest_data[4]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["CommonIngredientRate"] = random.choice(chest_data[4]["Value"]["ItemRate"])
+        item_content[i]["Value"]["CommonIngredientQuantity"] = chest_data[4]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["CommonIngredientRate"] = chest_data[4]["Value"]["ItemRate"]
         item_content[i]["Value"]["CoinOverride"] = random.choice(coin)
         item_content[i]["Value"]["CoinType"] = "EDropCoin::D" + str(item_content[i]["Value"]["CoinOverride"])
         item_content[i]["Value"]["CoinRate"] = 0.0
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = True
     elif item_type == chest_data[5]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[5]["Value"]["ItemPool"], chest_data[5]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[5]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[5]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[5]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[5]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -917,8 +930,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[6]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[6]["Value"]["ItemPool"], chest_data[6]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[6]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[6]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[6]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[6]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -934,8 +947,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[7]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[7]["Value"]["ItemPool"], chest_data[7]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[7]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[7]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[7]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[7]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -951,8 +964,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[8]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[8]["Value"]["ItemPool"], chest_data[8]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[8]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[8]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[8]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[8]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -968,8 +981,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[9]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[9]["Value"]["ItemPool"], chest_data[9]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[9]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[9]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[9]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[9]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -985,25 +998,25 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[10]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[10]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[10]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[10]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[10]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[10]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[10]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["CommonItemQuantity"] = random.choice(chest_data[10]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["CommonRate"] = random.choice(chest_data[10]["Value"]["ItemRate"])
+        item_content[i]["Value"]["CommonItemQuantity"] = chest_data[10]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["CommonRate"] = chest_data[10]["Value"]["ItemRate"]
         item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[10]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(chest_data[10]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareIngredientRate"] = random.choice(chest_data[10]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareIngredientQuantity"] = chest_data[10]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareIngredientRate"] = chest_data[10]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[10]["Value"]["ItemPool"], False, item_type)
-        item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(chest_data[10]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["CommonIngredientRate"] = random.choice(chest_data[10]["Value"]["ItemRate"])
+        item_content[i]["Value"]["CommonIngredientQuantity"] = chest_data[10]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["CommonIngredientRate"] = chest_data[10]["Value"]["ItemRate"]
         item_content[i]["Value"]["CoinOverride"] = random.choice(coin)
         item_content[i]["Value"]["CoinType"] = "EDropCoin::D" + str(item_content[i]["Value"]["CoinOverride"])
         item_content[i]["Value"]["CoinRate"] = 0.0
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = True
     elif item_type == chest_data[11]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[11]["Value"]["ItemPool"], chest_data[11]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[11]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[11]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[11]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[11]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -1019,8 +1032,8 @@ def patch_chest_entry(item_type, i):
         item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
     elif item_type == chest_data[12]["Key"]:
         item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[12]["Value"]["ItemPool"], chest_data[12]["Value"]["IsUnique"], item_type)
-        item_content[i]["Value"]["RareItemQuantity"] = random.choice(chest_data[12]["Value"]["ItemQuantity"])
-        item_content[i]["Value"]["RareItemRate"] = random.choice(chest_data[12]["Value"]["ItemRate"])
+        item_content[i]["Value"]["RareItemQuantity"] = chest_data[12]["Value"]["ItemQuantity"]
+        item_content[i]["Value"]["RareItemRate"] = chest_data[12]["Value"]["ItemRate"]
         item_content[i]["Value"]["CommonItemId"] = "None"
         item_content[i]["Value"]["CommonItemQuantity"] = 0
         item_content[i]["Value"]["CommonRate"] = 0.0
@@ -1039,32 +1052,32 @@ def patch_enemy_entry(item_type, item_rate, i):
     if item_type == enemy_data[0]["Key"]:
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[0]["Value"][item_rate])
+            item_content[i]["Value"]["RareItemQuantity"] = enemy_data[0]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareItemRate"] = enemy_data[0]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
             item_content[i]["Value"]["RareItemRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[10]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[10]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[1]["Value"][item_rate])
+            item_content[i]["Value"]["CommonItemQuantity"] = enemy_data[1]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonRate"] = enemy_data[1]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
             item_content[i]["Value"]["CommonRate"] = 0.0
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
+            item_content[i]["Value"]["RareIngredientQuantity"] = enemy_data[2]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareIngredientRate"] = enemy_data[2]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
             item_content[i]["Value"]["RareIngredientRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
+            item_content[i]["Value"]["CommonIngredientQuantity"] = enemy_data[0]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonIngredientRate"] = enemy_data[0]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -1072,32 +1085,32 @@ def patch_enemy_entry(item_type, item_rate, i):
     elif item_type == enemy_data[1]["Key"]:
         if random.choice(odd) == 1 and chest_data[10]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[10]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[1]["Value"][item_rate])
+            item_content[i]["Value"]["RareItemQuantity"] = enemy_data[1]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareItemRate"] = enemy_data[1]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
             item_content[i]["Value"]["RareItemRate"] = 0.0
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[2]["Value"][item_rate])
+            item_content[i]["Value"]["CommonItemQuantity"] = enemy_data[2]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonRate"] = enemy_data[2]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
             item_content[i]["Value"]["CommonRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[0]["Value"][item_rate])
+            item_content[i]["Value"]["RareIngredientQuantity"] = enemy_data[0]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareIngredientRate"] = enemy_data[0]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
             item_content[i]["Value"]["RareIngredientRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[10]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(chest_data[10]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
+            item_content[i]["Value"]["CommonIngredientQuantity"] = enemy_data[1]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonIngredientRate"] = enemy_data[1]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -1105,32 +1118,32 @@ def patch_enemy_entry(item_type, item_rate, i):
     elif item_type == enemy_data[2]["Key"]:
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareItemId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareItemQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareItemRate"] = random.choice(enemy_data[2]["Value"][item_rate])
+            item_content[i]["Value"]["RareItemQuantity"] = enemy_data[2]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareItemRate"] = enemy_data[2]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareItemId"] = "None"
             item_content[i]["Value"]["RareItemQuantity"] = 0
             item_content[i]["Value"]["RareItemRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[4]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[4]["Value"]["ItemPool"], enemy_data[0]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonItemQuantity"] = random.choice(enemy_data[0]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonRate"] = random.choice(enemy_data[0]["Value"][item_rate])
+            item_content[i]["Value"]["CommonItemQuantity"] = enemy_data[0]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonRate"] = enemy_data[0]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonItemId"] = "None"
             item_content[i]["Value"]["CommonItemQuantity"] = 0
             item_content[i]["Value"]["CommonRate"] = 0.0
         if random.choice(odd) == 1 and chest_data[10]["Value"]["ItemPool"]:
             item_content[i]["Value"]["RareIngredientId"] = any_pick(chest_data[10]["Value"]["ItemPool"], enemy_data[1]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["RareIngredientQuantity"] = random.choice(enemy_data[1]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["RareIngredientRate"] = random.choice(enemy_data[1]["Value"][item_rate])
+            item_content[i]["Value"]["RareIngredientQuantity"] = enemy_data[1]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["RareIngredientRate"] = enemy_data[1]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["RareIngredientId"] = "None"
             item_content[i]["Value"]["RareIngredientQuantity"] = 0
             item_content[i]["Value"]["RareIngredientRate"] = 0.0
         if random.choice(odd) == 1 and enemy_data[2]["Value"]["ItemPool"]:
             item_content[i]["Value"]["CommonIngredientId"] = any_pick(enemy_data[2]["Value"]["ItemPool"], enemy_data[2]["Value"]["IsUnique"], item_type)
-            item_content[i]["Value"]["CommonIngredientQuantity"] = random.choice(enemy_data[2]["Value"]["ItemQuantity"])
-            item_content[i]["Value"]["CommonIngredientRate"] = random.choice(enemy_data[2]["Value"][item_rate])
+            item_content[i]["Value"]["CommonIngredientQuantity"] = enemy_data[2]["Value"]["ItemQuantity"]
+            item_content[i]["Value"]["CommonIngredientRate"] = enemy_data[2]["Value"]["ItemRate"]*item_rate
         else:
             item_content[i]["Value"]["CommonIngredientId"] = "None"
             item_content[i]["Value"]["CommonIngredientQuantity"] = 0
@@ -1192,19 +1205,19 @@ def rand_quest_pool():
             if chest_data[0]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[0]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[0]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[1]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[1]["Value"]["ItemPool"], chest_data[1]["Value"]["IsUnique"], item_type)
             if chest_data[1]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[1]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[1]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[2]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[2]["Value"]["ItemPool"], chest_data[2]["Value"]["IsUnique"], item_type)
             if chest_data[2]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[2]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[2]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[3]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = "Money"
             quest_content[i]["Value"]["RewardNum01"] = any_pick(chest_data[3]["Value"]["ItemPool"], chest_data[3]["Value"]["IsUnique"], item_type)
@@ -1213,49 +1226,49 @@ def rand_quest_pool():
             if chest_data[4]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[4]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[4]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[5]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[5]["Value"]["ItemPool"], chest_data[5]["Value"]["IsUnique"], item_type)
             if chest_data[5]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[5]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[5]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[6]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[6]["Value"]["ItemPool"], chest_data[6]["Value"]["IsUnique"], item_type)
             if chest_data[6]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[6]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[6]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[7]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[7]["Value"]["ItemPool"], chest_data[7]["Value"]["IsUnique"], item_type)
             if chest_data[7]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[7]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[7]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[8]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[8]["Value"]["ItemPool"], chest_data[8]["Value"]["IsUnique"], item_type)
             if chest_data[8]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[8]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[8]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[9]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[9]["Value"]["ItemPool"], chest_data[9]["Value"]["IsUnique"], item_type)
             if chest_data[9]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[9]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[9]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[10]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[10]["Value"]["ItemPool"], chest_data[10]["Value"]["IsUnique"], item_type)
             if chest_data[10]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[10]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[10]["Value"]["ItemQuantity"]*3
         elif item_type == chest_data[12]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[12]["Value"]["ItemPool"], chest_data[12]["Value"]["IsUnique"], item_type)
             if chest_data[12]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = max(chest_data[12]["Value"]["ItemQuantity"]) * 3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[12]["Value"]["ItemQuantity"]*3
     invert_ratio()
     debug("rand_quest_pool()")
 

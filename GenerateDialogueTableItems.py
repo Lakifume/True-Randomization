@@ -20,12 +20,18 @@ Abigail = []
 Todd = []
 Coachman = []
 
+skip = [
+    "Qu01_N2012_027(3)"
+]
+
 #Content
 with open("Data\\DialogueTableItems\\Content\\PB_DT_DialogueTableItems.json", "r") as file_reader:
     content = json.load(file_reader)
 
 #Data
 for i in range(1151):
+    if content[i]["Key"] in skip:
+        continue
     if content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Miriam" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Miriam" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Miriam(3)" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Miriam(3)":
         Miriam.append(content[i]["Key"])
     elif content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Johannes" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Johannes":
@@ -61,6 +67,8 @@ for i in range(1151):
 
 def rand_dialogue():
     for i in range(1151):
+        if content[i]["Key"] in skip:
+            continue
         if content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Miriam" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Miriam" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Miriam(3)" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Miriam(3)":
             content[i]["Value"]["EventID"] = any_pick(Miriam)
         elif content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Left" and content[i]["Value"]["SpeakerID_Left"] == "Johannes" or content[i]["Value"]["SpeakingPosition"] == "ESpeakingPosition::Right" and content[i]["Value"]["SpeakerID_Right"] == "Johannes":

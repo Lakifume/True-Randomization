@@ -1610,6 +1610,7 @@ class Main(QWidget):
             remove_infinite()
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
+            no_shard_craft()
             rand_key_placement()
             rand_shard_placement()
             rand_item_pool()
