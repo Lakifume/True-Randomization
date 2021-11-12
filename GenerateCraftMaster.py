@@ -9,7 +9,7 @@ with open("Data\\CraftMaster\\Content\\PB_DT_CraftMaster.json", "r") as file_rea
 def no_shard_craft():
     i = 345
     while i <= 356:
-        content[i]["Value"]["Type"] = "ECraftType::None"
+        content[i]["Value"]["OpenKeyRecipeID"] = "Medal019"
         i += 1
     debug("no_shard_craft()")
 

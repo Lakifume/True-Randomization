@@ -320,6 +320,19 @@ shop_skip_list = [
     "DiscountCard",
     "MonarchCrown"
 ]
+gun_list = [
+    "Musketon",
+    "Branderbus",
+    "Tanegasima",
+    "Trador",
+    "Carvalin",
+    "Betelgeuse",
+    "Ursula",
+    "Adrastea",
+    "TrustMusket",
+    "TrustMusket2",
+    "TrustMusket3"
+]
 
 log = []
 
@@ -454,13 +467,13 @@ def unused_room_check(path):
             chest_unused_list.append(i["Key"])
     debug("unused_room_check(" + path + ")")
 
-def load_custom_logic(path):
+def load_custom_key_logic(path):
     global logic_data
     name, extension = os.path.splitext(path)
     if os.path.isfile(name + ".logic"):
         with open(name + ".logic", "r") as file_reader:
             logic_data = json.load(file_reader)
-    debug("load_custom_logic(" + path + ")")
+    debug("load_custom_key_logic(" + path + ")")
 
 def hard_enemy_logic():
     for i in enemy_location:
@@ -474,16 +487,6 @@ def hard_enemy_logic():
     debug("hard_enemy_logic()")
 
 def remove_infinite():
-    #ByDefault
-    item_content[69]["Value"]["RareItemId"] = "None"
-    item_content[69]["Value"]["RareItemQuantity"] = 0
-    item_content[69]["Value"]["RareItemRate"] = 0.0
-    item_content[69]["Value"]["CoinType"] = "EDropCoin::D2000"
-    item_content[69]["Value"]["CoinOverride"] = 10000
-    item_content[69]["Value"]["CoinRate"] = 100.0
-    quest_content[55]["Value"]["RewardItem01"] = "Medal019"
-    quest_content[55]["Value"]["RewardNum01"] = 1
-    #FromPool
     while "Gebelsglasses" in chest_data[0]["Value"]["ItemPool"]:
         chest_data[0]["Value"]["ItemPool"].remove("Gebelsglasses")
     while "Gebelsglasses" in item_req_data[0]["Value"]["ItemPool"]:
@@ -616,7 +619,7 @@ def logic_choice(chosen_item, room_list):
         all_keys.remove(chosen_item)
     #ChoosingRoomToPlaceItemIn
     check = False
-    while check == False:
+    while not check:
         chosen_room = random.choice(room_list)
         if chosen_room in key_items_location or chosen_room in key_shards_location or chosen_room == "m01SIP_000":
             continue
@@ -742,7 +745,7 @@ def rand_item_pool():
     #ZangetsuReward
     patch_chest_entry(random.choice(green_chest_type), 11)
     #StartChest
-    patch_chest_entry(chest_data[12]["Key"], 36)
+    patch_start_chest_entry(36)
     #ItemPool
     for i in chest_index:
         #UnusedCheck
@@ -821,6 +824,30 @@ def patch_key_shard_entry(shard, enemy):
             else:
                 item_content[i]["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
                 item_content[i]["Value"]["ShardId"] = shard
+
+def patch_start_chest_entry(i):
+    i = seed_convert(i)
+    item_content[i]["Value"]["RareItemId"] = any_pick(chest_data[12]["Value"]["ItemPool"], chest_data[12]["Value"]["IsUnique"], chest_data[12]["Key"])
+    item_content[i]["Value"]["RareItemQuantity"] = chest_data[12]["Value"]["ItemQuantity"]
+    item_content[i]["Value"]["RareItemRate"] = chest_data[12]["Value"]["ItemRate"]
+    if item_content[i]["Value"]["RareItemId"] in gun_list:
+        item_content[i]["Value"]["CommonItemId"] = any_pick(chest_data[2]["Value"]["ItemPool"], chest_data[2]["Value"]["IsUnique"], chest_data[2]["Key"])
+        item_content[i]["Value"]["CommonItemQuantity"] = chest_data[2]["Value"]["ItemQuantity"]*3
+        item_content[i]["Value"]["CommonRate"] = chest_data[2]["Value"]["ItemRate"]
+    else:
+        item_content[i]["Value"]["CommonItemId"] = "None"
+        item_content[i]["Value"]["CommonItemQuantity"] = 0
+        item_content[i]["Value"]["CommonRate"] = 0.0
+    item_content[i]["Value"]["RareIngredientId"] = "None"
+    item_content[i]["Value"]["RareIngredientQuantity"] = 0
+    item_content[i]["Value"]["RareIngredientRate"] = 0.0
+    item_content[i]["Value"]["CommonIngredientId"] = "None"
+    item_content[i]["Value"]["CommonIngredientQuantity"] = 0
+    item_content[i]["Value"]["CommonIngredientRate"] = 0.0
+    item_content[i]["Value"]["CoinType"] = "EDropCoin::None"
+    item_content[i]["Value"]["CoinOverride"] = 0
+    item_content[i]["Value"]["CoinRate"] = 0.0
+    item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
 
 def patch_chest_entry(item_type, i):
     if item_content[i]["Key"] in key_items_location:
@@ -1226,7 +1253,7 @@ def rand_quest_pool():
             if chest_data[4]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = chest_data[4]["Value"]["ItemQuantity"]*3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[4]["Value"]["ItemQuantity"]*9
         elif item_type == chest_data[5]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[5]["Value"]["ItemPool"], chest_data[5]["Value"]["IsUnique"], item_type)
             if chest_data[5]["Value"]["IsUnique"]:
@@ -1262,7 +1289,7 @@ def rand_quest_pool():
             if chest_data[10]["Value"]["IsUnique"]:
                 quest_content[i]["Value"]["RewardNum01"] = 1
             else:
-                quest_content[i]["Value"]["RewardNum01"] = chest_data[10]["Value"]["ItemQuantity"]*3
+                quest_content[i]["Value"]["RewardNum01"] = chest_data[10]["Value"]["ItemQuantity"]*9
         elif item_type == chest_data[12]["Key"]:
             quest_content[i]["Value"]["RewardItem01"] = any_pick(chest_data[12]["Value"]["ItemPool"], chest_data[12]["Value"]["IsUnique"], item_type)
             if chest_data[12]["Value"]["IsUnique"]:

@@ -1602,7 +1602,8 @@ class Main(QWidget):
         
         if self.string:
             unused_room_check(self.string)
-            load_custom_logic(self.string)
+            load_custom_key_logic(self.string)
+            load_custom_enemy_logic(self.string)
             create_room_log(self.string)
             write_map_log()
         

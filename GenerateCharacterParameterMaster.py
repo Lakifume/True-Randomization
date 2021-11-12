@@ -4,8 +4,13 @@ import os
 import shutil
 import random
 
+temp_gate = []
+previous_gate = []
+
 below_25_range = []
 below_50_range = []
+chance_10_range = []
+chance_8_range = []
 chance_6_range = []
 chance_4_range = []
 chance_3_range = []
@@ -27,6 +32,55 @@ second_stat = [
     "CUR",
     "STO",
     "SLO"
+]
+
+area = [
+    "m01SIP",
+    "m02VIL",
+    "m03ENT",
+    "m04GDN",
+    "m05SAN",
+    "m06KNG",
+    "m07LIB",
+    "m08TWR",
+    "m09TRN",
+    "m10BIG",
+    "m11UGD",
+    "m12SND",
+    "m13ARC",
+    "m14TAR",
+    "m15JPN",
+    "m17RVA",
+    "m18ICE",
+    "m88BKR"
+]
+area_to_list = {
+    "m01SIP": [],
+    "m02VIL": [],
+    "m03ENT": [],
+    "m04GDN": [],
+    "m05SAN": [],
+    "m06KNG": [],
+    "m07LIB": [],
+    "m08TWR": [],
+    "m09TRN": [],
+    "m10BIG": [],
+    "m11UGD": [],
+    "m12SND": [],
+    "m13ARC": [],
+    "m14TAR": [],
+    "m15JPN": [],
+    "m17RVA": [],
+    "m18ICE": [],
+    "m88BKR": [],
+    "Start": [],
+    "PostStart": [],
+    "PreFinal": [],
+    "Final": []
+}
+skip_list = [
+    "m02VIL_003",
+    "m02VIL_005"
 ]
 
 zangetsu_exp = [
@@ -63,6 +117,12 @@ with open("Data\\CharacterParameterMaster\\Content\\PB_DT_CharacterParameterMast
     content = json.load(file_reader)
 
 #Data
+with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.logic", "r") as file_reader:
+    logic_data = json.load(file_reader)
+
+with open("Data\\DropRateMaster\\EnemyLocation.json", "r") as file_reader:
+    location = json.load(file_reader)
+
 with open("Data\\CharacterParameterMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
@@ -71,6 +131,20 @@ for i in range(25):
 
 for i in range(50):
     below_50_range.append(i+1)
+
+for i in range(99):
+    if i <= 49:
+        for e in range(9):
+            chance_10_range.append(i+1)
+    else:
+        chance_10_range.append(i+1)
+
+for i in range(99):
+    if i <= 49:
+        for e in range(7):
+            chance_8_range.append(i+1)
+    else:
+        chance_8_range.append(i+1)
 
 for i in range(99):
     if i <= 49:
@@ -102,6 +176,14 @@ for i in range(int(100/5)*2 + 1):
         stat_pool.append(stat_int + 0.0)
     stat_int += 5
 #print(stat_pool)
+
+def load_custom_enemy_logic(path):
+    global logic_data
+    name, extension = os.path.splitext(path)
+    if os.path.isfile(name + ".logic"):
+        with open(name + ".logic", "r") as file_reader:
+            logic_data = json.load(file_reader)
+    debug("load_custom_enemy_logic(" + path + ")")
 
 def more_HPMP():
     content[5]["Value"]["MaxHP"] += 300.0
@@ -148,13 +230,69 @@ def zangetsu_no_stats():
     content[6]["Value"]["LUC99Enemy"] = 0.0
     debug("write_chara_log()")
 
+def enemy_logic():
+    #StartLogic
+    intensity = 1
+    while True:
+        temp_gate.clear()
+        for i in logic_data:
+            if i["Key"] in skip_list:
+                continue
+            if previous_in_nearest(previous_gate, i["Value"]["NearestGate"]):
+                area_to_list[i["Key"][:6]].append(intensity)
+                if i["Value"]["GateRoom"]:
+                    temp_gate.append(i["Key"])
+        previous_gate.clear()
+        for i in temp_gate:
+            previous_gate.append(i)
+        if not previous_gate:
+            break
+        intensity += 1
+    #GettingAverageIntensity
+    for i in area:
+        area_to_list[i] = round(sum(area_to_list[i])/len(area_to_list[i]))
+        if area_to_list[i] > 6:
+            area_to_list[i] = 6
+    #AssigningLists
+    for i in area:
+        if area_to_list[i] == 1:
+            area_to_list[i] = chance_10_range
+        elif area_to_list[i] == 2:
+            area_to_list[i] = chance_8_range
+        elif area_to_list[i] == 3:
+            area_to_list[i] = chance_6_range
+        elif area_to_list[i] == 4:
+            area_to_list[i] = chance_4_range
+        elif area_to_list[i] == 5:
+            area_to_list[i] = chance_3_range
+        elif area_to_list[i] == 6:
+            area_to_list[i] = chance_2_range
+    area_to_list["Start"] = below_25_range
+    area_to_list["PostStart"] = below_50_range
+    area_to_list["PreFinal"] = chance_3_range
+    area_to_list["Final"] = chance_2_range
+
+def previous_in_nearest(previous_gate, nearest_gate):
+    if not previous_gate and not nearest_gate:
+        return True
+    else:
+        for i in previous_gate:
+            if i in nearest_gate:
+                return True
+    return False
+
 def rand_enemy(level, resist, custom, value):
+    enemy_logic()
     #NG+
     if custom:
         below_25_range.clear()
         below_25_range.append(value)
         below_50_range.clear()
         below_50_range.append(value)
+        chance_10_range.clear()
+        chance_10_range.append(value)
+        chance_8_range.clear()
+        chance_8_range.append(value)
         chance_6_range.clear()
         chance_6_range.append(value)
         chance_4_range.clear()
@@ -163,86 +301,34 @@ def rand_enemy(level, resist, custom, value):
         chance_3_range.append(value)
         chance_2_range.clear()
         chance_2_range.append(value)
-    #MainCastleEnemies
+    #All
     i = 12
-    while i <= 107:
+    while i <= 176:
         if resist:
             rand_stat(i)
         if level:
-            if content[i]["Key"][0:5] == "N3006":
-                patch_level(below_25_range, i)
-            elif content[i]["Key"][0:5] == "N3025":
-                patch_level(chance_2_range, i)
-            else:
-                patch_level(chance_6_range, i)
+            check = True
+            for e in location:
+                if content[i]["Key"] == e["Key"]:
+                    patch_level(area_to_list[e["Value"]["AreaID"]], i)
+                    check = False
+            if check:
+                patch_level([0], i)
         create_log(i)
         i += 1
-    #DenEnemies
-    i = 108
-    while i <= 121:
-        if resist:
-            rand_stat(i)
-        if level:
-            patch_level(chance_4_range, i)
-        create_log(i)
-        i += 1
-    #IceEnemies
-    i = 122
-    while i <= 129:
-        if resist:
-            rand_stat(i)
-        if level:
-            patch_level(chance_3_range, i)
-        create_log(i)
-        i += 1
-    #BackerBosses
-    i = 130
-    while i <= 137:
-        if resist:
-            rand_stat(i)
-        if level:
-            patch_level(chance_3_range, i)
-        create_log(i)
-        i += 1
-    #MainCastleBosses
-    i = 138
-    while i <= 156:
-        if resist:
-            rand_stat(i)
-        if level:
-            if content[i]["Key"][0:5] == "N1001":
-                patch_level(below_25_range, i)
-            elif content[i]["Key"][0:5] == "N2001":
-                patch_level(below_50_range, i)
-            elif content[i]["Key"][0:5] == "N2015":
-                patch_level(chance_3_range, i)
-            else:
-                patch_level(chance_6_range, i)
-        create_log(i)
-        i += 1
-    #EndgameBosses
-    i = 157
-    while i <= 177:
-        if resist:
-            rand_stat(i)
-        if level:
-            if content[i]["Key"] == "N1011":
-                patch_level(below_50_range, i)
-            elif content[i]["Key"] == "N1004":
-                patch_level(chance_4_range, i)
-            elif content[i]["Key"] == "N1008" or content[i]["Key"] == "N1011_STRONG" or content[i]["Key"] == "N1011_COOP":
-                patch_level(chance_3_range, i)
-            else:
-                patch_level(chance_2_range, i)
-        create_log(i)
-        i += 1
+    #Miriam
+    if resist:
+        rand_stat(177)
+    if level:
+        patch_level(area_to_list["Final"], 177)
+    create_log(177)
     #Breeder
     if resist:
         rand_stat(185)
         rand_stat(186)
     if level:
-        patch_level(chance_6_range, 185)
-        patch_level(chance_6_range, 186)
+        patch_level(area_to_list["m09TRN"], 185)
+        patch_level(area_to_list["m09TRN"], 186)
     create_log(185)
     debug("rand_enemy(" + str(level) + ", " + str(resist) + ", " + str(custom) + ", " + str(value) + ")")
 
@@ -255,9 +341,9 @@ def patch_level(array, i):
         content[i]["Value"]["DefaultEnemyLevel"] = abs(random.choice(array) - 100)
     elif content[i]["Key"][0:5] == "N1013" or content[i]["Key"] == "N1009_Bael":
         content[i]["Value"]["DefaultEnemyLevel"] = abs(content[159]["Value"]["DefaultEnemyLevel"] - 100)
-    elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"] == "JuckPod" or content[i]["Key"][0:5] == "N3125":
+    elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"] != "N1011_STRONG" or content[i]["Key"][0:5] == "N3125":
         content[i]["Value"]["DefaultEnemyLevel"] = content[i-1]["Value"]["DefaultEnemyLevel"]
-    elif content[i]["Key"] != "P1003" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
+    else:
         content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
     stat_scale(i)
     
@@ -312,10 +398,10 @@ def rand_stat(i):
         elif content[i]["Key"][0:5] == "N1013" and content[i]["Key"] != "N1013_Bael" or content[i]["Key"] == "N1009_Bael":
             for e in stat:
                 content[i]["Value"][e] = content[168]["Value"][e]
-        elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"][0:5] != "N1011" or content[i]["Key"][0:5] == "N3125":
+        elif content[i]["Key"][0:5] == content[i-1]["Key"][0:5] and content[i]["Key"] != "N1011_STRONG" or content[i]["Key"][0:5] == "N3125":
             for e in stat:
                 content[i]["Value"][e] = content[i-1]["Value"][e]
-        elif content[i]["Key"] != "P1003" and content[i]["Key"] != "JuckPod" and content[i]["Key"] != "N1011_PL" and content[i]["Key"] != "N3049" and content[i]["Key"] != "N3050" and content[i]["Key"] != "N3068":
+        else:
             for e in stat:
                 content[i]["Value"][e] = random.choice(stat_pool)
 
