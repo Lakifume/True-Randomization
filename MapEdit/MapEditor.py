@@ -33,6 +33,48 @@ area_color = [
     "#3ec7e6",
     "#666666"
 ]
+area_black = [
+    "#00001f",
+    "#271604",
+    "#272727",
+    "#2a3709",
+    "#353321",
+    "#441f06",
+    "#24032f",
+    "#0c2724",
+    "#02023f",
+    "#1f0000",
+    "#0c163a",
+    "#3f3602",
+    "#1f1f00",
+    "#092f0e",
+    "#42073f",
+    "#000000",
+    "#3f020e",
+    "#0a353f",
+    "#171717"
+]
+area_white = [
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff",
+    "#ffffff"
+]
 
 music_id = []
 music_name = []
@@ -44,6 +86,7 @@ assign_list = []
 restrictions = False
 search_mode = False
 logic_mode = False
+area_mode = False
 assign_mode = False
 key_mode = False
 
@@ -134,7 +177,7 @@ class Void:
         self.z_block = z_block
 
 class RoomItem(QGraphicsRectItem):
-    def __init__(self, index, room_data, logic_data, outline, fill, opacity, icon_color, can_move, group_list, room_list, metadata=None, parent=None):
+    def __init__(self, index, room_data, logic_data, outline, fill, fill_black, fill_white, opacity, icon_color, can_move, group_list, room_list, metadata=None, parent=None):
         super().__init__(0, 0, room_data.width, room_data.height, parent)
         self.setPos(room_data.offset_x, room_data.offset_z)
         self.setData(KEY_METADATA, metadata)
@@ -145,6 +188,8 @@ class RoomItem(QGraphicsRectItem):
         self.logic_data = logic_data
         self.outline = outline
         self.fill = fill
+        self.fill_black = fill_black
+        self.fill_white = fill_white
         self.opacity = opacity
         self.icon_color = icon_color
         self.can_move = can_move
@@ -158,7 +203,7 @@ class RoomItem(QGraphicsRectItem):
         super().mousePressEvent(event)
         #NormalModeSelection
         for i in self.scene().selectedItems():
-            if restrictions and not search_mode and not logic_mode and not key_mode:
+            if restrictions and not search_mode and not logic_mode and not area_mode and not key_mode:
                 for e in i.group_list:
                     self.room_list[e].setSelected(True)
         #AssignModeSelection
@@ -296,8 +341,13 @@ class Main(QMainWindow):
         self.logic_editor.triggered.connect(self.logic_editor_action)
         tool_bar.addAction(self.logic_editor)
         
+        self.area_order = QAction("Area Order", self, checkable = True)
+        self.area_order.setShortcut(QKeySequence(Qt.Key_6))
+        self.area_order.triggered.connect(self.area_order_action)
+        tool_bar.addAction(self.area_order)
+        
         self.key_location = QAction("Key Locations", self, checkable = True)
-        self.key_location.setShortcut(QKeySequence(Qt.Key_6))
+        self.key_location.setShortcut(QKeySequence(Qt.Key_7))
         self.key_location.triggered.connect(self.key_location_action)
         tool_bar.addAction(self.key_location)
         
@@ -404,12 +454,24 @@ class Main(QMainWindow):
         
         #ListWidgets
         
+        list_layout = QVBoxLayout()
+        
         self.room_search_list = QListWidget()
         self.room_search_list.currentItemChanged.connect(self.room_search_list_change)
         self.room_search_list.setVisible(False)
         retain = self.room_search_list.sizePolicy()
         retain.setRetainSizeWhenHidden(True)
         self.room_search_list.setSizePolicy(retain)
+        list_layout.addWidget(self.room_search_list)
+        
+        self.area_order_list = QListWidget()
+        self.area_order_list.currentItemChanged.connect(self.area_order_list_change)
+        self.area_order_list.setDragDropMode(QAbstractItemView.InternalMove)
+        self.area_order_list.setVisible(False)
+        retain = self.area_order_list.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.area_order_list.setSizePolicy(retain)
+        list_layout.addWidget(self.area_order_list)
         
         #Boxes
         
@@ -511,7 +573,7 @@ class Main(QMainWindow):
         hbox_center = QHBoxLayout()
         hbox_center.addWidget(self.gate_box)
         hbox_center.addStretch(1)
-        hbox_center.addWidget(self.room_search_list)
+        hbox_center.addLayout(list_layout)
         
         hbox_bottom = QHBoxLayout()
         hbox_bottom.addWidget(self.reverse)
@@ -613,6 +675,8 @@ class Main(QMainWindow):
             #OtherToolDisable
             self.logic_editor.setChecked(False)
             self.logic_editor_action()
+            self.area_order.setChecked(False)
+            self.area_order_action()
             self.key_location.setChecked(False)
             self.key_location_action()
             #MenuOptionDisable
@@ -639,6 +703,8 @@ class Main(QMainWindow):
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
+            self.area_order.setChecked(False)
+            self.area_order_action()
             self.key_location.setChecked(False)
             self.key_location_action()
             #MenuOptionDisable
@@ -662,6 +728,34 @@ class Main(QMainWindow):
             self.assign_mode.setChecked(False)
             self.assign_mode_action()
             self.gate_box.setVisible(False)
+            self.reset_room()
+    
+    def area_order_action(self):
+        global area_mode
+        if self.area_order.isChecked():
+            area_mode = True
+            #OtherToolDisable
+            self.room_search.setChecked(False)
+            self.room_search_action()
+            self.logic_editor.setChecked(False)
+            self.logic_editor_action()
+            self.key_location.setChecked(False)
+            self.key_location_action()
+            #MenuOptionDisable
+            self.use_restr.setEnabled(False)
+            #Initiate
+            self.disable_buttons()
+            for i in self.room_list:
+                i.setSelected(False)
+                i.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
+            self.area_order_list.setCurrentItem(self.area_order_list.item(0))
+            self.area_order_list_change(self.area_order_list.item(0))
+            self.area_order_list.setVisible(True)
+        else:
+            area_mode = False
+            self.enable_buttons()
+            self.use_restr.setEnabled(True)
+            self.area_order_list.setVisible(False)
             self.reset_room()
     
     def key_location_action(self):
@@ -708,7 +802,7 @@ class Main(QMainWindow):
     def how_to(self):
         box = QMessageBox(self)
         box.setWindowTitle("How to use")
-        box.setText("Map Editor:\n\nThis editor allows you to fully customize the layout of the game's map. You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.\nSave your creations to the Custom folder for them to be picked by the randomizer.\n\nLogic Editor:\n\nOnce you've finished laying out a map you can use the logic editor tool to guide the randomizer in its key item placement to prevent unbeatable seeds on your map.\nEach gate represents a room that is an obstacle to the player's progression which must be connected to other previous gates and linked to the rooms that it leads to.\nThe randomizer will look for the first set of gates at the start of the game then move onto the next and so on until every key item is placed based on this consecution of requirements.\nThe graphical cues of this mode are:\n\n-Black fill: standard non-gate rooms\n-White fill: Gate rooms that selected room is connected to\n-Blue outline: rooms that have no requirement to get to\n-Green outline: rooms that are connected to selected gate\n-Red outline: rooms that are being assigned a gate in assign mode\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
+        box.setText("Map Editor:\n\nThis editor allows you to fully customize the layout of the game's map. You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.\nSave your creations to the Custom folder for them to be picked by the randomizer.\n\nLogic Editor:\n\nOnce you've finished laying out a map you can use the logic editor tool to guide the randomizer in its key item placement to prevent unbeatable seeds on your map.\nEach gate represents a room that is an obstacle to the player's progression which must be connected to other previous gates and linked to the rooms that it leads to.\nThe randomizer will look for the first set of gates at the start of the game then move onto the next and so on until every key item is placed based on this consecution of requirements.\nThe graphical cues of this mode are:\n\n-Black fill: standard non-gate rooms\n-White fill: Gate rooms that selected room is connected to\n-Blue outline: rooms that have no requirement to get to\n-Green outline: rooms that are connected to selected gate\n-Red outline: rooms that are being assigned a gate in assign mode\n\nArea Order:\n\nA simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
         box.exec()
     
     def guidelines(self):
@@ -815,10 +909,21 @@ class Main(QMainWindow):
     
     def room_search_list_change(self, item):
         for i in self.room_list:
-            i.setSelected(False)
             self.fill_room(i, "#000000")
         i = self.room_list[self.room_search_list.currentRow()]
         self.reveal_room(i)
+    
+    def area_order_list_change(self, item):
+        #UnsavedTag
+        if not self.unsaved:
+            self.change_title("*")
+            self.unsaved = True
+        #ColorRooms
+        for i in self.room_list:
+            if i.room_data.area == "EAreaID::" + item.text():
+                self.reveal_room(i)
+            else:
+                self.fill_room(i, "#000000")
         i.setSelected(True)
     
     def music_drop_down_change(self, index):
@@ -830,10 +935,16 @@ class Main(QMainWindow):
             i.room_data.play = play_id[index]
     
     def fill_room(self, i, color):
-        i.setBrush(QColor(color[:1] + i.opacity + color[1:]))
-        for e in i.childItems():
-            if type(e) == QGraphicsRectItem:
-                e.setBrush(QColor(color))
+        if color == "#000000":
+            i.setBrush(QColor(i.fill_black[:1] + i.opacity + i.fill_black[1:]))
+            for e in i.childItems():
+                if type(e) == QGraphicsRectItem:
+                    e.setBrush(QColor(i.fill_black))
+        elif color == "#ffffff":
+            i.setBrush(QColor(i.fill_white[:1] + i.opacity + i.fill_white[1:]))
+            for e in i.childItems():
+                if type(e) == QGraphicsRectItem:
+                    e.setBrush(QColor(i.fill_white))
         if color == "#000000" and i.icon_color == 0:
             self.invert_icon(i)
             i.icon_color = 1
@@ -1346,20 +1457,30 @@ class Main(QMainWindow):
         self.scene.clear()
         QApplication.processEvents()
         self.room_search_list.clear()
+        self.area_order_list.clear()
         self.room_list = []
         self.change_title("")
-        #Open
+        #OpenMain
         with open(filename, "r") as file_reader:
             self.map_content = json.load(file_reader)
         name, extension = os.path.splitext(filename)
+        #OpenLogic
         if os.path.isfile(name + ".logic"):
             with open(name + ".logic", "r") as file_reader:
                 self.logic_content = json.load(file_reader)
         else:
             with open("Data\\RoomMaster\\Content\\PB_DT_RoomMaster.logic", "r") as file_reader:
                 self.logic_content = json.load(file_reader)
+        #OpenOrder
+        if os.path.isfile(name + ".order"):
+            with open(name + ".order", "r") as file_reader:
+                self.order_content = json.load(file_reader)
+        else:
+            with open("Data\\RoomMaster\\Content\\PB_DT_RoomMaster.order", "r") as file_reader:
+                self.order_content = json.load(file_reader)
         #Process
         self.draw_map()
+        self.fill_area()
         self.use_restr_action()
         self.show_out_action()
         self.show_name_action()
@@ -1367,6 +1488,8 @@ class Main(QMainWindow):
             self.room_search_action()
         if self.logic_editor.isChecked():
             self.logic_editor_action()
+        if self.area_order.isChecked():
+            self.area_order_action()
         if self.key_location.isChecked():
             self.key_location_action()
         self.selection_event()
@@ -1376,6 +1499,7 @@ class Main(QMainWindow):
     def save_to_json(self, filename):
         self.update_offsets()
         self.update_logic()
+        self.update_order()
         self.same_check()
         self.adj_check()
         with open(filename, "w") as file_writer:
@@ -1383,6 +1507,8 @@ class Main(QMainWindow):
         name, extension = os.path.splitext(filename)
         with open(name + ".logic", "w") as file_writer:
             file_writer.write(json.dumps(self.logic_content, indent=2))
+        with open(name + ".order", "w") as file_writer:
+            file_writer.write(json.dumps(self.order_content, indent=2))
         self.change_title("")
         self.unsaved = False
     
@@ -1502,7 +1628,6 @@ class Main(QMainWindow):
             group_list = []
             can_move = True
             
-            
             #NoWidthRooms
             
             if room_data.width == 0:
@@ -1516,6 +1641,16 @@ class Main(QMainWindow):
                 fill = area_color[18]
             else:
                 fill = area_color[int(room_data.area[10:12]) - 1]
+            
+            if room_data.area == "EAreaID::None":
+                fill_black = area_black[18]
+            else:
+                fill_black = area_black[int(room_data.area[10:12]) - 1]
+            
+            if room_data.area == "EAreaID::None":
+                fill_white = area_white[18]
+            else:
+                fill_white = area_white[int(room_data.area[10:12]) - 1]
             
             #RoomOutline
             
@@ -1562,7 +1697,7 @@ class Main(QMainWindow):
             
             #CreatingRoom
             
-            room = RoomItem(i, room_data, logic_data, outline, fill, opacity, icon_color, can_move, self.convert_group_to_index(group_list), self.room_list)
+            room = RoomItem(i, room_data, logic_data, outline, fill, fill_black, fill_white, opacity, icon_color, can_move, self.convert_group_to_index(group_list), self.room_list)
             self.scene.addItem(room)
             self.room_list.append(room)
             
@@ -1909,6 +2044,10 @@ class Main(QMainWindow):
             text.setTransform(QTransform.fromScale(0.25, -0.5))
             text.setPos(room_data.width/2 - text.document().size().width()/8, room_data.height/2 + TILEHEIGHT/2 - 0.5)
             text.setParentItem(room)
+    
+    def fill_area(self):
+        for i in self.order_content["Value"]["AreaList"]:
+            self.area_order_list.addItem(i)
 
     def update_offsets(self):
         for i in self.room_list:
@@ -1961,6 +2100,11 @@ class Main(QMainWindow):
             self.logic_content[logic_index]["Value"]["Keyofbacker4"] = i.logic_data.celeste
             if logic_index < len(self.logic_content) - 1:
                 logic_index += 1
+    
+    def update_order(self):
+        self.order_content["Value"]["AreaList"].clear()
+        for i in range(self.area_order_list.count()):
+            self.order_content["Value"]["AreaList"].append(self.area_order_list.item(i).text())
 
     def same_check(self):
         for i in self.map_content:
