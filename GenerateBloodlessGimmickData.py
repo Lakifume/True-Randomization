@@ -148,7 +148,7 @@ def write_patched_gimmick():
         #RoomToFile
         file_name = i["Value"]["RoomId"].replace(")", "").split("(")[0] + "_Gimmick"
         #TowerCheck
-        if i["Value"]["RoomId"] == "m08TWR_019(1)":
+        if i["Value"]["RoomId"] == "m08TWR_019":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_BLOOD_STEAL"
         elif i["Value"]["RoomId"] == "m08TWR_019(2)":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP"

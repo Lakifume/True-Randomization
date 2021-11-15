@@ -4,17 +4,6 @@ import os
 import shutil
 import random
 
-temp_gate = []
-previous_gate = []
-
-below_25_range = []
-below_50_range = []
-chance_10_range = []
-chance_8_range = []
-chance_6_range = []
-chance_4_range = []
-chance_3_range = []
-chance_2_range = []
 stat_pool = []
 
 stat = [
@@ -51,37 +40,11 @@ area = [
     "m14TAR",
     "m15JPN",
     "m17RVA",
-    "m18ICE",
-    "m88BKR"
+    "m18ICE"
 ]
-area_to_list = {
-    "m01SIP": [],
-    "m02VIL": [],
-    "m03ENT": [],
-    "m04GDN": [],
-    "m05SAN": [],
-    "m06KNG": [],
-    "m07LIB": [],
-    "m08TWR": [],
-    "m09TRN": [],
-    "m10BIG": [],
-    "m11UGD": [],
-    "m12SND": [],
-    "m13ARC": [],
-    "m14TAR": [],
-    "m15JPN": [],
-    "m17RVA": [],
-    "m18ICE": [],
-    "m88BKR": [],
-    "Start": [],
-    "PostStart": [],
-    "PreFinal": [],
-    "Final": []
-}
-skip_list = [
-    "m02VIL_003",
-    "m02VIL_005"
-]
+original_area_to_progress = {}
+area_to_progress = {}
+area_to_list = {}
 
 zangetsu_exp = [
     34,
@@ -117,8 +80,11 @@ with open("Data\\CharacterParameterMaster\\Content\\PB_DT_CharacterParameterMast
     content = json.load(file_reader)
 
 #Data
-with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.logic", "r") as file_reader:
-    logic_data = json.load(file_reader)
+with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.order", "r") as file_reader:
+    original_order_data = json.load(file_reader)
+
+with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.order", "r") as file_reader:
+    order_data = json.load(file_reader)
 
 with open("Data\\DropRateMaster\\EnemyLocation.json", "r") as file_reader:
     location = json.load(file_reader)
@@ -126,64 +92,57 @@ with open("Data\\DropRateMaster\\EnemyLocation.json", "r") as file_reader:
 with open("Data\\CharacterParameterMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
-for i in range(25):
-    below_25_range.append(i+1)
-
-for i in range(50):
-    below_50_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
-        for e in range(9):
-            chance_10_range.append(i+1)
-    else:
-        chance_10_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
-        for e in range(7):
-            chance_8_range.append(i+1)
-    else:
-        chance_8_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
-        for e in range(5):
-            chance_6_range.append(i+1)
-    else:
-        chance_6_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
-        for e in range(3):
-            chance_4_range.append(i+1)
-    else:
-        chance_4_range.append(i+1)
-
-for i in range(99):
-    if i <= 49:
-        for e in range(2):
-            chance_3_range.append(i+1)
-    else:
-        chance_3_range.append(i+1)
-
-for i in range(99):
-    chance_2_range.append(i+1)
-
 stat_int = -100
 for i in range(int(100/5)*2 + 1):
     for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
         stat_pool.append(stat_int + 0.0)
     stat_int += 5
-#print(stat_pool)
 
-def load_custom_enemy_logic(path):
-    global logic_data
+def convert_area_to_progress():
+    #General
+    for i in range(len(order_data["Value"]["AreaList"])):
+        original_area_to_progress[original_order_data["Value"]["AreaList"][i]] = i + 1
+        area_to_progress[order_data["Value"]["AreaList"][i]] = i + 1
+    #Special
+    original_area_to_progress["m05SAN(2)"] = original_area_to_progress["m06KNG"]
+    area_to_progress["m05SAN(2)"] = area_to_progress["m05SAN"]
+    original_area_to_progress["m07LIB(2)"] = original_area_to_progress["m13ARC"]
+    area_to_progress["m07LIB(2)"] = area_to_progress["m07LIB"]
+    original_area_to_progress["m11UGD(2)"] = original_area_to_progress["m07LIB"]
+    area_to_progress["m11UGD(2)"] = area_to_progress["m11UGD"]
+
+def convert_area_to_list():
+    #Variable
+    for i in area:
+        list = []
+        for e in range(99):
+            if e <= 49:
+                for o in range(abs(area_to_progress[i] - 19)):
+                    list.append(e+1)
+            else:
+                list.append(e+1)
+        area_to_list[i] = list
+    #SpecialCases
+    area_to_list["m05SAN(2)"] = area_to_list["m05SAN"]
+    area_to_list["m07LIB(2)"] = area_to_list["m07LIB"]
+    area_to_list["m11UGD(2)"] = area_to_list["m11UGD"]
+    #Static
+    list = []
+    for i in range(50):
+        list.append(i+1)
+    area_to_list["Minor"] = list
+    list = []
+    for i in range(99):
+        list.append(i+1)
+    area_to_list["Major"] = list
+
+def load_custom_order(path):
+    global order_data
     name, extension = os.path.splitext(path)
-    if os.path.isfile(name + ".logic"):
-        with open(name + ".logic", "r") as file_reader:
-            logic_data = json.load(file_reader)
-    debug("load_custom_enemy_logic(" + path + ")")
+    if os.path.isfile(name + ".order"):
+        with open(name + ".order", "r") as file_reader:
+            order_data = json.load(file_reader)
+    debug("load_custom_order(" + path + ")")
 
 def more_HPMP():
     content[5]["Value"]["MaxHP"] += 300.0
@@ -230,88 +189,43 @@ def zangetsu_no_stats():
     content[6]["Value"]["LUC99Enemy"] = 0.0
     debug("write_chara_log()")
 
-def enemy_logic():
-    #StartLogic
-    intensity = 1
-    while True:
-        temp_gate.clear()
-        for i in logic_data:
-            if i["Key"] in skip_list:
-                continue
-            if previous_in_nearest(previous_gate, i["Value"]["NearestGate"]):
-                area_to_list[i["Key"][:6]].append(intensity)
-                if i["Value"]["GateRoom"]:
-                    temp_gate.append(i["Key"])
-        previous_gate.clear()
-        for i in temp_gate:
-            previous_gate.append(i)
-        if not previous_gate:
-            break
-        intensity += 1
-    #GettingAverageIntensity
-    for i in area:
-        area_to_list[i] = round(sum(area_to_list[i])/len(area_to_list[i]))
-        if area_to_list[i] > 6:
-            area_to_list[i] = 6
-    #AssigningLists
-    for i in area:
-        if area_to_list[i] == 1:
-            area_to_list[i] = chance_10_range
-        elif area_to_list[i] == 2:
-            area_to_list[i] = chance_8_range
-        elif area_to_list[i] == 3:
-            area_to_list[i] = chance_6_range
-        elif area_to_list[i] == 4:
-            area_to_list[i] = chance_4_range
-        elif area_to_list[i] == 5:
-            area_to_list[i] = chance_3_range
-        elif area_to_list[i] == 6:
-            area_to_list[i] = chance_2_range
-    area_to_list["Start"] = below_25_range
-    area_to_list["PostStart"] = below_50_range
-    area_to_list["PreFinal"] = chance_3_range
-    area_to_list["Final"] = chance_2_range
-
-def previous_in_nearest(previous_gate, nearest_gate):
-    if not previous_gate and not nearest_gate:
-        return True
-    else:
-        for i in previous_gate:
-            if i in nearest_gate:
-                return True
-    return False
-
-def rand_enemy(level, resist, custom, value):
-    enemy_logic()
-    #NG+
-    if custom:
-        below_25_range.clear()
-        below_25_range.append(value)
-        below_50_range.clear()
-        below_50_range.append(value)
-        chance_10_range.clear()
-        chance_10_range.append(value)
-        chance_8_range.clear()
-        chance_8_range.append(value)
-        chance_6_range.clear()
-        chance_6_range.append(value)
-        chance_4_range.clear()
-        chance_4_range.append(value)
-        chance_3_range.clear()
-        chance_3_range.append(value)
-        chance_2_range.clear()
-        chance_2_range.append(value)
+def enemy_level(level, resist, map, custom, value):
+    convert_area_to_progress()
+    convert_area_to_list()
     #All
     i = 12
     while i <= 176:
         if resist:
             rand_stat(i)
-        if level:
+        if custom:
+            patch_level([value], i)
+        elif level:
             check = True
             for e in location:
                 if content[i]["Key"] == e["Key"]:
-                    patch_level(area_to_list[e["Value"]["AreaID"]], i)
                     check = False
+                    patch_level(area_to_list[e["Value"]["AreaID"]], i)
+            if check:
+                patch_level([0], i)
+        elif map:
+            check = True
+            for e in location:
+                if content[i]["Key"] == e["Key"]:
+                    check = False
+                    #Area
+                    if e["Value"]["AreaID"] == "Minor":
+                        current_area = e["Value"]["NormalModeRooms"][0][:6]
+                    elif e["Value"]["AreaID"] == "Major":
+                        continue
+                    else:
+                        current_area = e["Value"]["AreaID"]
+                    #Level
+                    new_level = round(content[i]["Value"]["DefaultEnemyLevel"] + ((area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17)))
+                    if new_level < 1:
+                        new_level = 1
+                    if new_level > 50:
+                        new_level = 50
+                    patch_level([new_level], i)
             if check:
                 patch_level([0], i)
         create_log(i)
@@ -319,18 +233,23 @@ def rand_enemy(level, resist, custom, value):
     #Miriam
     if resist:
         rand_stat(177)
-    if level:
-        patch_level(area_to_list["Final"], 177)
+    if custom:
+        patch_level([value], 177)
+    elif level:
+        patch_level(area_to_list["Major"], 177)
     create_log(177)
     #Breeder
     if resist:
         rand_stat(185)
         rand_stat(186)
-    if level:
+    if custom:
+        patch_level([value], 185)
+        patch_level([value], 186)
+    elif level:
         patch_level(area_to_list["m09TRN"], 185)
         patch_level(area_to_list["m09TRN"], 186)
     create_log(185)
-    debug("rand_enemy(" + str(level) + ", " + str(resist) + ", " + str(custom) + ", " + str(value) + ")")
+    debug("enemy_level(" + str(level) + ", " + str(resist) + ", " + str(map) + ", " + str(custom) + ", " + str(value) + ")")
 
 def patch_level(array, i):
     if content[i]["Key"] == "N3001_Armor":
@@ -359,13 +278,6 @@ def stat_scale(i):
         #BossStoneCheck
         if e == "STO" and content[i]["Value"]["StoneType"] == "EPBStoneType::Boss":
             continue
-        #Loss
-        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"]:
-            stat_num -= 25.0
-        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"] * 0.5:
-            stat_num -= 25.0
-        if stat_num < 0.0:
-            stat_num = 0.0
         #Gain
         if content[i]["Value"]["DefaultEnemyLevel"] > content[i]["Value"]["HardEnemyLevel"]:
             stat_num += 25.0
@@ -373,6 +285,16 @@ def stat_scale(i):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
+        #Immunity
+        if content[i]["Value"]["POI"] == 100.0 and content[i]["Value"]["CUR"] == 100.0 and content[i]["Value"]["STO"] == 100.0 and content[i]["Value"]["SLO"] == 100.0:
+            continue
+        #Loss
+        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"]:
+            stat_num -= 25.0
+        if content[i]["Value"]["DefaultEnemyLevel"] < content[i]["Value"]["HardEnemyLevel"] * 0.5:
+            stat_num -= 25.0
+        if stat_num < 0.0:
+            stat_num = 0.0
         content[i]["Value"][e] = stat_num
 
 def rand_stat(i):

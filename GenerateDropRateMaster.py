@@ -165,7 +165,9 @@ thousand = []
 coin = [1, 5, 10, 50, 100, 500, 1000]
 odd = [1, 1, 0]
 
-chest_unused_list = [
+#Lists
+
+chest_skip_list = [
     "HPRecover",
     "SPEED",
     "Peanut",
@@ -320,6 +322,9 @@ shop_skip_list = [
     "DiscountCard",
     "MonarchCrown"
 ]
+
+#Galleon
+
 gun_list = [
     "Musketon",
     "Branderbus",
@@ -332,6 +337,39 @@ gun_list = [
     "TrustMusket",
     "TrustMusket2",
     "TrustMusket3"
+]
+ship_chest_list = [
+    "Treasurebox_SIP002(2)",
+    "Treasurebox_SIP003(2)",
+    "Treasurebox_SIP004(2)",
+    "Treasurebox_SIP005(2)",
+    "Treasurebox_SIP005(3)",
+    "Treasurebox_SIP006(2)",
+    "Treasurebox_SIP007(2)",
+    "Treasurebox_SIP007(3)",
+    "Treasurebox_SIP009(2)",
+    "Treasurebox_SIP011(2)",
+    "Treasurebox_SIP011(3)",
+    "Treasurebox_SIP011(4)",
+    "Treasurebox_SIP011(5)",
+    "Treasurebox_SIP012(2)",
+    "Treasurebox_SIP013(2)",
+    "Treasurebox_SIP015(2)",
+    "Treasurebox_SIP016(2)",
+    "Treasurebox_SIP017(2)",
+    "Treasurebox_SIP018(2)",
+    "Treasurebox_SIP019(2)",
+    "Treasurebox_SIP020(2)",
+    "Treasurebox_SIP021(3)",
+    "Treasurebox_SIP025(2)",
+    "Treasurebox_SIP025(3)",
+    "Wall_SIP004(2)",
+    "Wall_SIP009(2)",
+    "Wall_SIP016(2)"
+]
+ship_skip_list = [
+    "m01SIP_022",
+    "m01SIP_023"
 ]
 
 log = []
@@ -464,16 +502,16 @@ def unused_room_check(path):
             room_unused_list.append(i["Key"])
     for i in item_content:
         if chest_to_room(i["Key"]) in room_unused_list:
-            chest_unused_list.append(i["Key"])
+            chest_skip_list.append(i["Key"])
     debug("unused_room_check(" + path + ")")
 
-def load_custom_key_logic(path):
+def load_custom_logic(path):
     global logic_data
     name, extension = os.path.splitext(path)
     if os.path.isfile(name + ".logic"):
         with open(name + ".logic", "r") as file_reader:
             logic_data = json.load(file_reader)
-    debug("load_custom_key_logic(" + path + ")")
+    debug("load_custom_logic(" + path + ")")
 
 def hard_enemy_logic():
     for i in enemy_location:
@@ -645,7 +683,7 @@ def logic_choice(chosen_item, room_list):
 def room_chest_check(room):
     for i in item_content:
         #CheckingIfChestIsntUnused
-        if i["Key"] not in chest_unused_list:
+        if i["Key"] not in chest_skip_list:
             #CheckingIfChestCorrespondsToRoom
             if chest_to_room(i["Key"]) == room:
                 return True
@@ -669,7 +707,7 @@ def room_to_chest():
         #GatheringPossibleChestChoices
         possible_chests = []
         for e in item_content:
-            if e["Key"] not in chest_unused_list:
+            if e["Key"] not in chest_skip_list:
                 if key_items_location[i][3:].replace("_", "") in e["Key"]:
                     possible_chests.append(e["Key"])
                 try:
@@ -712,7 +750,7 @@ def fill_log():
         log_data["Value"]["RoomList"] = enemy_to_room(key_shards_location[i])
         log.append(log_data)
 
-def rand_key_placement():
+def rand_key_placement(waystone):
     key_logic()
     #KeyItems
     for i in range(len(key_items)):
@@ -722,7 +760,30 @@ def rand_key_placement():
         i["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::None"
     for i in range(len(key_shards)):
         patch_key_shard_entry(key_shards[i], key_shards_location[i])
-    debug("rand_key_placement()")
+    #ShipWaystone
+    if waystone:
+        #QuickLogic
+        for i in range(len(key_shards)):
+            for e in enemy_location:
+                if e["Key"] == key_shards_location[i]:
+                    for o in e["Value"]["NormalModeRooms"]:
+                        if "m01SIP" in o and o not in ship_skip_list:
+                            if key_shards[i] == "Doublejump" or key_shards[i] == "Dimensionshift" or key_shards[i] == "Reflectionray":
+                                ship_chest_list.append("Treasurebox_SIP014(2)")
+                                ship_chest_list.append("Treasurebox_SIP024(2)")
+                                ship_chest_list.append("Treasurebox_SIP024(3)")
+                                ship_chest_list.append("Treasurebox_SIP026(2)")
+                                ship_chest_list.append("Wall_SIP014(2)")
+                                while "m01SIP_023" in ship_skip_list:
+                                    ship_skip_list.remove("m01SIP_023")
+                            if key_shards[i] == "HighJump" or key_shards[i] == "Invert":
+                                ship_chest_list.append("Treasurebox_PureMiriam_Hair")
+        #AssignChest
+        chosen_chest = random.choice(ship_chest_list)
+        while chosen_chest in chest_skip_list:
+            chosen_chest = random.choice(ship_chest_list)
+        patch_key_item_entry("Waystone", chosen_chest)
+    debug("rand_key_placement(" + str(waystone) + ")")
 
 def rand_shard_placement():
     i = 500
@@ -749,7 +810,7 @@ def rand_item_pool():
     #ItemPool
     for i in chest_index:
         #UnusedCheck
-        if item_content[i]["Key"] in chest_unused_list:
+        if item_content[i]["Key"] in chest_skip_list:
             continue
         #Patch
         patch_chest_entry(random.choice(chest_type), i)
@@ -814,6 +875,7 @@ def patch_key_item_entry(item, chest):
             item_content[seed_convert(i)]["Value"]["CoinOverride"] = 0
             item_content[seed_convert(i)]["Value"]["CoinRate"] = 0.0
             item_content[seed_convert(i)]["Value"]["AreaChangeTreasureFlag"] = False
+    chest_skip_list.append(chest)
     
 def patch_key_shard_entry(shard, enemy):
     for i in range(len(item_content)):
@@ -850,7 +912,7 @@ def patch_start_chest_entry(i):
     item_content[i]["Value"]["AreaChangeTreasureFlag"] = False
 
 def patch_chest_entry(item_type, i):
-    if item_content[i]["Key"] in key_items_location:
+    if item_content[i]["Key"] in chest_skip_list:
         return
     i = seed_convert(i)
     if item_type == chest_data[0]["Key"]:

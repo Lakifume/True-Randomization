@@ -416,7 +416,6 @@ class Main(QWidget):
             config.set("Misc", "fWindowSize", "1.0")
         
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}"
-        + "QLabel{border: 1px}"
         + "QComboBox{background-color: #21222e}"
         + "QMessageBox{background-color: #21222e}"
         + "QDialog{background-color: #21222e}"
@@ -1602,8 +1601,8 @@ class Main(QWidget):
         
         if self.string:
             unused_room_check(self.string)
-            load_custom_key_logic(self.string)
-            load_custom_enemy_logic(self.string)
+            load_custom_logic(self.string)
+            load_custom_order(self.string)
             create_room_log(self.string)
             write_map_log()
         
@@ -1612,7 +1611,7 @@ class Main(QWidget):
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             no_shard_craft()
-            rand_key_placement()
+            rand_key_placement(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
             rand_shard_placement()
             rand_item_pool()
             write_drop_log()
@@ -1647,8 +1646,8 @@ class Main(QWidget):
             rand_weapon()
             write_weapon_log()
         
-        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("SpecialMode", "bCustom"):
-            rand_enemy(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("SpecialMode", "bCustom"), config.getboolean("EnemyRandomization", "bEnemyTolerances"), config.getboolean("SpecialMode", "bCustom"), config.getint("Misc", "iCustomLevel"))
+        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or self.string or config.getboolean("SpecialMode", "bCustom"):
+            enemy_level(config.getboolean("EnemyRandomization", "bEnemyLevels"), config.getboolean("EnemyRandomization", "bEnemyTolerances"), bool(self.string), config.getboolean("SpecialMode", "bCustom"), config.getint("Misc", "iCustomLevel"))
             if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
                 write_chara_log()
         
@@ -1908,7 +1907,7 @@ class Main(QWidget):
                     self.setEnabled(True)
                     return
                 
-                self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["Value"], self)
+                self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
                 self.progress_bar.setWindowTitle("Status")
                 self.progress_bar.setWindowModality(Qt.WindowModal)
                 self.progress_bar.setAutoClose(False)
