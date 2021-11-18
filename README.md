@@ -6,7 +6,7 @@ New and improved randomization options for Bloodstained randomizer
 
 Requirements:
 * latest version of Python
-* latest version of Pyside6
+* latest version of PySide6
 * latest version of Pyinstaller
 
 Steps:
