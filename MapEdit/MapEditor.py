@@ -699,7 +699,6 @@ class Main(QMainWindow):
     def logic_editor_action(self):
         global logic_mode
         if self.logic_editor.isChecked():
-            logic_mode = True
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
@@ -718,6 +717,7 @@ class Main(QMainWindow):
                 i.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
                 if i.logic_data == None:
                     i.setVisible(False)
+            logic_mode = True
             self.selection_event()
             self.gate_box.setVisible(True)
         else:
@@ -841,10 +841,10 @@ class Main(QMainWindow):
         for i in self.scene.selectedItems():
             if i.room_data.room_type == "ERoomType::Save":
                 i.room_data.room_type = "ERoomType::Warp"
-                i.childItems()[4].setPixmap("Data\\warp.png")
+                i.childItems()[4].setPixmap(QPixmap("Data\\warp.png"))
             elif i.room_data.room_type == "ERoomType::Warp":
                 i.room_data.room_type = "ERoomType::Save"
-                i.childItems()[4].setPixmap("Data\\save.png")
+                i.childItems()[4].setPixmap(QPixmap("Data\\save.png"))
     
     def ignore_left_action(self):
         for i in self.scene.selectedItems():
