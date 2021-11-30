@@ -21,6 +21,15 @@ def normal_bomber():
     
     debug("normal_bomber()")
 
+def normal_milli():
+    bullet_content[751]["Value"]["BeginEffectBeginScale"] /= 1.5
+    bullet_content[751]["Value"]["BeginEffectEndScale"] /= 1.5
+    
+    collision_content[681]["Value"]["R00"] /= 1.5
+    collision_content[681]["Value"]["R01"] /= 1.5
+    
+    debug("normal_milli()")
+
 def normal_bael():
     #LightRay
     ballistic_content[73]["Value"]["InitialSpeed"] /= 2.0

@@ -13,9 +13,9 @@ def write_bloodless():
     shutil.copyfile("Serializer\\PB_DT_BloodlessAbilityData.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_BloodlessAbilityData.uasset")
     debug("write_bloodless()")
 
-def write_brv():
-    shutil.copyfile("Serializer\\PB_DT_BRVAttackDamage.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Character\\PB_DT_BRVAttackDamage.uasset")
-    debug("write_brv()")
+def write_brv_char():
+    shutil.copyfile("Serializer\\PB_DT_BRVCharacterParameters.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Character\\PB_DT_BRVCharacterParameters.uasset")
+    debug("write_brv_char()")
 
 def write_unique():
     shutil.copyfile("Serializer\\PB_DT_CharaUniqueParameterMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_CharaUniqueParameterMaster.uasset")

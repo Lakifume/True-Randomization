@@ -88,6 +88,9 @@ with open("Data\\SystemStringTable\\Content\\PBSystemStringTable.json", "r") as 
 with open("Data\\SpecialEffectDefinitionMaster\\Content\\PB_DT_SpecialEffectDefinitionMaster.json", "r") as file_reader:
     effect_content = json.load(file_reader)
 
+with open("Data\\BRVAttackDamage\\Content\\PB_DT_BRVAttackDamage.json", "r") as file_reader:
+    brv_content = json.load(file_reader)
+
 #Data
 with open("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.order", "r") as file_reader:
     original_order_data = json.load(file_reader)
@@ -252,6 +255,20 @@ def zangetsu_no_stats():
     chara_content[6]["Value"]["LUC99Enemy"] = 0.0
     debug("write_chara_log()")
 
+def brv_speed():
+    chara_content[159]["Value"]["AnimaionPlayRateNormal"] = 1.25
+    chara_content[161]["Value"]["AnimaionPlayRateNormal"] = 1.25
+    chara_content[177]["Value"]["AnimaionPlayRateNormal"] = 1.25
+    debug("brv_speed()")
+
+def brv_damage(factor):
+    for i in brv_content:
+        i["Value"]["VsAndrealphus"] *= factor
+        i["Value"]["VsBathin"] *= factor
+        i["Value"]["VsBloodless"] *= factor
+        i["Value"]["VsGremory"] *= factor
+    debug("brv_damage(" + str(factor) + ")")
+
 def enemy_level(level, resist, map, custom, value):
     convert_area_to_progress()
     convert_area_to_list()
@@ -322,7 +339,7 @@ def patch_level(array, i):
     elif chara_content[i]["Key"] == "N3098_Guard":
         chara_content[i]["Value"]["DefaultEnemyLevel"] = chara_content[i-2]["Value"]["DefaultEnemyLevel"]
     #Vepar
-    elif chara_content[i]["Key"] == "N1001" or chara_content[i]["Key"] == "N1001_HEAD":
+    elif chara_content[i]["Key"] == "N1001":
         chara_content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
         chara_content[i]["Value"]["BloodlessModeEnemyHPOverride"] = int(int(((chara_content[i]["Value"]["MaxHP99Enemy"] - chara_content[i]["Value"]["MaxHP"])/98)*(chara_content[i]["Value"]["DefaultEnemyLevel"]-1) + chara_content[i]["Value"]["MaxHP"])*2.0) + 0.0
     #Gebel
@@ -338,6 +355,7 @@ def patch_level(array, i):
     #Duplicate
     elif chara_content[i]["Key"][0:5] == chara_content[i-1]["Key"][0:5] and chara_content[i]["Key"] != "N1011_STRONG" or chara_content[i]["Key"][0:5] == "N3125":
         chara_content[i]["Value"]["DefaultEnemyLevel"] = chara_content[i-1]["Value"]["DefaultEnemyLevel"]
+        chara_content[i]["Value"]["BloodlessModeEnemyHPOverride"] = chara_content[i-1]["Value"]["BloodlessModeEnemyHPOverride"]
     #Other
     else:
         chara_content[i]["Value"]["DefaultEnemyLevel"] = random.choice(array)
@@ -362,12 +380,14 @@ def stat_scale(i):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
+        if e == "STO" and stat_num > 99.9:
+            stat_num = 99.9
         #Immunity
-        if chara_content[i]["Value"]["POI"] == 100.0 and chara_content[i]["Value"]["CUR"] == 100.0 and chara_content[i]["Value"]["STO"] == 100.0 and chara_content[i]["Value"]["SLO"] == 100.0:
+        if chara_content[i]["Value"]["POI"] == 100.0 and chara_content[i]["Value"]["CUR"] == 100.0 and chara_content[i]["Value"]["STO"] >= 99.0 and chara_content[i]["Value"]["SLO"] == 100.0:
             continue
         #Loss
         if chara_content[i]["Value"]["DefaultEnemyLevel"] < chara_content[i]["Value"]["HardEnemyLevel"]:
-            stat_num -= 25.0
+            stat_num = math.ceil(stat_num - 25.0)
         if chara_content[i]["Value"]["DefaultEnemyLevel"] < chara_content[i]["Value"]["HardEnemyLevel"] * 0.5:
             stat_num -= 25.0
         if stat_num < 0.0:
@@ -375,41 +395,43 @@ def stat_scale(i):
         chara_content[i]["Value"][e] = stat_num
 
 def rand_stat(i):
-    if chara_content[i]["Value"]["ZAN"] != 100.0:
-        #WeakPoints
-        if chara_content[i]["Key"] == "N3015_HEAD" or chara_content[i]["Key"] == "N1001_HEAD" or chara_content[i]["Key"] == "N2001_HEAD":
-            for e in stat:
-                if chara_content[i-1]["Value"][e] < -20:
-                    chara_content[i]["Value"][e] = -100
-                else:
-                    chara_content[i]["Value"][e] = chara_content[i-1]["Value"][e]-80
-        #BuerArmor
-        elif chara_content[i]["Key"] == "N3001_Armor":
-            for e in stat:
-                chara_content[i]["Value"][e] = chara_content[38]["Value"][e]
-        #Vepar
-        elif chara_content[i]["Key"] == "N1001_Tentacle":
-            for e in stat:
-                chara_content[i]["Value"][e] = chara_content[i-2]["Value"][e]
-        #GluttonTrain
-        elif chara_content[i]["Key"] == "N2001_ARMOR":
-            for e in stat:
-                if chara_content[i-2]["Value"][e] > 50:
-                        chara_content[i]["Value"][e] = 100
-                else:
-                    chara_content[i]["Value"][e] = chara_content[i-2]["Value"][e]+50
-        #Bael
-        elif chara_content[i]["Key"][0:5] == "N1013" and chara_content[i]["Key"] != "N1013_Bael" or chara_content[i]["Key"] == "N1009_Bael":
-            for e in stat:
-                chara_content[i]["Value"][e] = chara_content[168]["Value"][e]
-        #Duplicate
-        elif chara_content[i]["Key"][0:5] == chara_content[i-1]["Key"][0:5] and chara_content[i]["Key"] != "N1011_STRONG" or chara_content[i]["Key"][0:5] == "N3125":
-            for e in stat:
-                chara_content[i]["Value"][e] = chara_content[i-1]["Value"][e]
-        #Other
-        else:
-            for e in stat:
-                chara_content[i]["Value"][e] = random.choice(stat_pool)
+    #Immunity
+    if chara_content[i]["Value"]["ZAN"] == 100.0 and chara_content[i]["Value"]["DAG"] == 100.0 and chara_content[i]["Value"]["TOT"] == 100.0 and chara_content[i]["Value"]["FLA"] == 100.0 and chara_content[i]["Value"]["ICE"] == 100.0 and chara_content[i]["Value"]["LIG"] == 100.0 and chara_content[i]["Value"]["HOL"] == 100.0 and chara_content[i]["Value"]["DAR"] == 100.0:
+        return
+    #WeakPoints
+    if chara_content[i]["Key"] == "N3015_HEAD" or chara_content[i]["Key"] == "N1001_HEAD" or chara_content[i]["Key"] == "N2001_HEAD":
+        for e in stat:
+            if chara_content[i-1]["Value"][e] < -20:
+                chara_content[i]["Value"][e] = -100
+            else:
+                chara_content[i]["Value"][e] = chara_content[i-1]["Value"][e]-80
+    #BuerArmor
+    elif chara_content[i]["Key"] == "N3001_Armor":
+        for e in stat:
+            chara_content[i]["Value"][e] = chara_content[38]["Value"][e]
+    #Vepar
+    elif chara_content[i]["Key"] == "N1001_Tentacle":
+        for e in stat:
+            chara_content[i]["Value"][e] = chara_content[i-2]["Value"][e]
+    #StrongParts
+    elif chara_content[i]["Key"] == "N3108_GUARD" or chara_content[i]["Key"] == "N2001_ARMOR":
+        for e in stat:
+            if chara_content[i-2]["Value"][e] > 20:
+                    chara_content[i]["Value"][e] = 100
+            else:
+                chara_content[i]["Value"][e] = chara_content[i-2]["Value"][e]+80
+    #Bael
+    elif chara_content[i]["Key"][0:5] == "N1013" and chara_content[i]["Key"] != "N1013_Bael" or chara_content[i]["Key"] == "N1009_Bael":
+        for e in stat:
+            chara_content[i]["Value"][e] = chara_content[168]["Value"][e]
+    #Duplicate
+    elif chara_content[i]["Key"][0:5] == chara_content[i-1]["Key"][0:5] and chara_content[i]["Key"] != "N1011_STRONG" or chara_content[i]["Key"][0:5] == "N3125":
+        for e in stat:
+            chara_content[i]["Value"][e] = chara_content[i-1]["Value"][e]
+    #Other
+    else:
+        for e in stat:
+            chara_content[i]["Value"][e] = random.choice(stat_pool)
 
 def create_log(i):
     try:
@@ -490,6 +512,21 @@ def write_patched_effect():
 def write_effect():
     shutil.copyfile("Serializer\\PB_DT_SpecialEffectDefinitionMaster.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\PB_DT_SpecialEffectDefinitionMaster.uasset")
     debug("write_effect()")
+
+def write_patched_brv_atk():
+    with open("Serializer\\PB_DT_BRVAttackDamage.json", "w") as file_writer:
+        file_writer.write(json.dumps(brv_content, ensure_ascii=False, indent=2))
+    root = os.getcwd()
+    os.chdir("Serializer")
+    os.system("cmd /c UAsset2Json.exe -tobin PB_DT_BRVAttackDamage.json")
+    os.chdir(root)
+    shutil.move("Serializer\\PB_DT_BRVAttackDamage.bin", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Character\\PB_DT_BRVAttackDamage.uasset")
+    os.remove("Serializer\\PB_DT_BRVAttackDamage.json")
+    debug("write_patched_brv_atk()")
+
+def write_brv_atk():
+    shutil.copyfile("Serializer\\PB_DT_BRVAttackDamage.uasset", "UnrealPak\\Mod\\BloodstainedRotN\\Content\\Core\\DataTable\\Character\\PB_DT_BRVAttackDamage.uasset")
+    debug("write_brv_atk()")
 
 def write_chara_log():
     with open("SpoilerLog\\EnemyProperties.json", "w") as file_writer:

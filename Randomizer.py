@@ -217,6 +217,7 @@ datatable_files = [
     "PB_DT_BloodlessAbilityData",
     "PB_DT_BookMaster",
     "PB_DT_BRVAttackDamage",
+    "PB_DT_BRVCharacterParameters",
     "PB_DT_BulletMaster",
     "PB_DT_CharacterParameterMaster",
     "PB_DT_CharaUniqueParameterMaster",
@@ -255,25 +256,17 @@ umap_files = [
 ]
 
 patch_list = [write_patched_system]
-write_list = [write_ammunition, write_arts, write_bloodless, write_brv, write_unique, write_damage, write_enchant, write_frame, write_8bit, write_ent]
+write_list = [write_ammunition, write_arts, write_bloodless, write_brv_char, write_unique, write_damage, write_enchant, write_frame, write_8bit, write_ent]
 json_list = []
 
-start_shard = [
-    "Bloodsteel",
-    "AccelWorld",
-    "Accelerator",
-    "Healing",
-    "Sacredshade",
-    "ChangeBunny",
-    "Doublejump"
-]
-
 #Config
+
 config = configparser.ConfigParser()
 config.optionxform = str
 config.read("Data\\config.ini")
 
 #Data
+
 with open("Data\\ShardMaster\\Translation.json", "r") as file_reader:
     translation = json.load(file_reader)
 
@@ -285,6 +278,8 @@ def writing_and_exit():
     with open("Data\\config.ini", "w") as file_writer:
         config.write(file_writer)
     sys.exit()
+
+#Threads
 
 class Signaller(QObject):
     progress = Signal(int)
@@ -409,8 +404,11 @@ class Main(QWidget):
         self.check_for_updates()
 
     def initUI(self):
-        if config.getfloat("Misc", "fWindowSize") != 0.8 and config.getfloat("Misc", "fWindowSize") != 0.9:
+        
+        self.first_time = False
+        if config.getfloat("Misc", "fWindowSize") != 0.8 and config.getfloat("Misc", "fWindowSize") != 0.9 and config.getfloat("Misc", "fWindowSize") != 1.0:
             config.set("Misc", "fWindowSize", "1.0")
+            self.first_time = True
         
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}"
         + "QComboBox{background-color: #21222e}"
@@ -635,19 +633,19 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_9)
 
         self.check_box_10 = QCheckBox("Enemy Levels")
-        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.\nWARNING: Not recommended for Bloodless mode !")
+        self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.\nWARNING: Only recommended for Miriam mode !")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
         box_6_grid.addWidget(self.check_box_10, 0, 0)
         checkbox_list.append(self.check_box_10)
 
         self.check_box_11 = QCheckBox("Enemy Tolerances")
-        self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.\nWARNING: Not recommended for Bloodless mode !")
+        self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.\nWARNING: Only recommended for Miriam mode !")
         self.check_box_11.stateChanged.connect(self.check_box_11_changed)
         box_6_grid.addWidget(self.check_box_11, 1, 0)
         checkbox_list.append(self.check_box_11)
 
         self.check_box_12 = QCheckBox("Room Layout")
-        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").\nWARNING: Not recommended for Bloodless mode !")
+        self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").\nWARNING: Only recommended for Miriam mode !")
         self.check_box_12.stateChanged.connect(self.check_box_12_changed)
         box_7_grid.addWidget(self.check_box_12, 0, 0)
         checkbox_list.append(self.check_box_12)
@@ -790,6 +788,8 @@ class Main(QWidget):
         self.radio_button_15.toggled.connect(self.radio_button_group_6_checked)
         box_17_grid.addWidget(self.radio_button_15, 0, 1)
         
+        #SpinBoxes
+        
         if config.getint("Misc", "iCustomLevel") < 1:
             config.set("Misc", "iCustomLevel", "1")
         if config.getint("Misc", "iCustomLevel") > 99:
@@ -827,15 +827,14 @@ class Main(QWidget):
         self.setting_layout.addWidget(size_box, 0, 0, 1, 1)
         
         self.size_drop_down = QComboBox()
-        self.size_drop_down.addItem("0.8")
-        self.size_drop_down.addItem("0.9")
-        self.size_drop_down.addItem("1.0")
-        self.size_drop_down.currentIndexChanged.connect(self.size_drop_down_change)
+        self.size_drop_down.addItem("720p")
+        self.size_drop_down.addItem("900p")
+        self.size_drop_down.addItem("1080p and above")
         size_box_grid.addWidget(self.size_drop_down, 0, 0, 1, 1)
         
         setting_button = QPushButton("Apply")
         setting_button.clicked.connect(self.setting_button_clicked)
-        self.setting_layout.addWidget(setting_button, 2, 0, 1, 1)
+        self.setting_layout.addWidget(setting_button, 1, 0, 1, 1)
         
         #InitCheckboxes
         
@@ -1374,9 +1373,6 @@ class Main(QWidget):
         elif index == 6:
             for i in range(len(checkbox_list)):
                 checkbox_list[i].setChecked(blood_preset[i])
-    
-    def size_drop_down_change(self, index):
-        config.set("Misc", "fWindowSize", self.size_drop_down.currentText())
 
     def matches_preset(self):
         is_preset_1 = True
@@ -1491,14 +1487,30 @@ class Main(QWidget):
         self.setEnabled(True)
     
     def setting_button_clicked(self):
-        writing()
-        os.execl(sys.executable, sys.executable, *sys.argv)
+        if config.getfloat("Misc", "fWindowSize") == 0.8 and self.size_drop_down.currentIndex() == 0 or config.getfloat("Misc", "fWindowSize") == 0.9 and self.size_drop_down.currentIndex() == 1 or config.getfloat("Misc", "fWindowSize") == 1.0 and self.size_drop_down.currentIndex() == 2:
+            self.box.close()
+        else:
+            if self.size_drop_down.currentIndex() == 0:
+                config.set("Misc", "fWindowSize", "0.8")
+            elif self.size_drop_down.currentIndex() == 1:
+                config.set("Misc", "fWindowSize", "0.9")
+            elif self.size_drop_down.currentIndex() == 2:
+                config.set("Misc", "fWindowSize", "1.0")
+            writing()
+            os.execl(sys.executable, sys.executable, *sys.argv)
     
     def button_3_clicked(self):
         self.box = QDialog(self)
         self.box.setLayout(self.setting_layout)
         self.box.setWindowTitle("Settings")
         self.box.exec()
+        
+        if config.getfloat("Misc", "fWindowSize") == 0.8:
+            self.size_drop_down.setCurrentIndex(0)
+        elif config.getfloat("Misc", "fWindowSize") == 0.9:
+            self.size_drop_down.setCurrentIndex(1)
+        elif config.getfloat("Misc", "fWindowSize") == 1.0:
+            self.size_drop_down.setCurrentIndex(2)
 
     def button_4_clicked(self):
         path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit//Custom", filter="*.json")[0]
@@ -1566,13 +1578,18 @@ class Main(QWidget):
         if config.getboolean("GameDifficulty", "bNormal"):
             rename_difficulty("Normal", "???", "???")
             normal_bomber()
+            normal_milli()
             normal_bael()
         elif config.getboolean("GameDifficulty", "bHard"):
             rename_difficulty("???", "Hard", "???")
             hard_enemy_logic()
+            brv_speed()
+            brv_damage(2)
         elif config.getboolean("GameDifficulty", "bNightmare"):
             rename_difficulty("???", "???", "Nightmare")
             hard_enemy_logic()
+            brv_speed()
+            brv_damage(3)
         
         if config.getboolean("GameMode", "bRandomizer"):
             give_shortcut()
@@ -1673,6 +1690,11 @@ class Main(QWidget):
             write_list.append(write_bullet)
             write_list.append(write_collision)
         
+        if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
+            patch_list.append(write_patched_brv_atk)
+        else:
+            write_list.append(write_brv_atk)
+        
         if config.getboolean("GameMode", "bRandomizer") or config.getboolean("SpecialMode", "bProgressive") or config.getboolean("EnemyRandomization", "bEnemyLevels"):
             patch_list.append(write_patched_coordinate)
         else:
@@ -1729,7 +1751,7 @@ class Main(QWidget):
         else:
             write_list.append(write_armor)
         
-        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("SpecialMode", "bCustom") or config.getboolean("SpecialMode", "bProgressive"):
+        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare") or config.getboolean("SpecialMode", "bCustom") or config.getboolean("SpecialMode", "bProgressive"):
             patch_list.append(write_patched_chara)
         else:
             write_list.append(write_chara)
@@ -1775,17 +1797,24 @@ class Main(QWidget):
         
         for i in os.listdir("Data"):
             if os.path.isdir("Data\\" + i) and i != "Hue":
-                json_list.append(os.listdir("Data\\" + i + "\\Content")[0][:-5])
-        json_list.append("PB_DT_RoomMaster")
+                name, extension = os.path.splitext(os.listdir("Data\\" + i + "\\Content")[0])
+                if os.path.getmtime("Data\\" + i + "\\Content\\" + name + ".json") > os.path.getmtime("Serializer\\" + name + ".uasset"):
+                    json_list.append(name)
+        if os.path.getmtime("MapEdit\\Data\\RoomMaster\\Content\\PB_DT_RoomMaster.json") > os.path.getmtime("Serializer\\PB_DT_RoomMaster.uasset"):
+            json_list.append("PB_DT_RoomMaster")
         
-        self.progress_bar = QProgressDialog("Converting...", None, 0, len(json_list), self)
-        self.progress_bar.setWindowTitle("Status")
-        self.progress_bar.setWindowModality(Qt.WindowModal)
-        
-        self.worker = Convert()
-        self.worker.signaller.progress.connect(self.set_progress)
-        self.worker.signaller.finished.connect(self.convert_finished)
-        self.worker.start()
+        if json_list:
+            self.progress_bar = QProgressDialog("Converting...", None, 0, len(json_list), self)
+            self.progress_bar.setWindowTitle("Status")
+            self.progress_bar.setWindowModality(Qt.WindowModal)
+            
+            self.worker = Convert()
+            self.worker.signaller.progress.connect(self.set_progress)
+            self.worker.signaller.finished.connect(self.convert_finished)
+            self.worker.start()
+        else:
+            print("Nothing to convert")
+            self.setEnabled(True)
     
     def button_7_clicked(self):
         label1_image = QLabel()
@@ -1889,19 +1918,19 @@ class Main(QWidget):
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:
-            self.setEnabled(True)
+            self.check_for_resolution()
             return
         try:
             tag = api["tag_name"]
         except KeyError:
-            self.setEnabled(True)
+            self.check_for_resolution()
             return
         if tag != config.get("Misc", "sVersion"):
             choice = QMessageBox.question(self, "Auto Updater", "New version found:\n\n" + api["body"] + "\n\nUpdate ?", QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.Yes:
                 if "MapEditor.exe" in (i.name() for i in psutil.process_iter()):
                     self.error()
-                    self.setEnabled(True)
+                    self.check_for_resolution()
                     return
                 
                 self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
@@ -1914,9 +1943,14 @@ class Main(QWidget):
                 self.worker.signaller.progress.connect(self.set_progress)
                 self.worker.start()
             else:
-                self.setEnabled(True)
+                self.check_for_resolution()
         else:
-            self.setEnabled(True)
+            self.check_for_resolution()
+    
+    def check_for_resolution(self):
+        if self.first_time:
+            self.button_3_clicked()
+        self.setEnabled(True)
 
 def main():
     app = QApplication(sys.argv)

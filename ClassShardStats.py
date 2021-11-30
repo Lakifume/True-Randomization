@@ -86,8 +86,8 @@ def rand_shard(scale):
     debug("rand_shard(" + str(scale) + ")")
 
 def eye_max():
-    content[114]["Value"]["minGradeValue"] = 100.0
-    content[114]["Value"]["maxGradeValue"] = 100.0
+    content[114]["Value"]["minGradeValue"] = 999.0
+    content[114]["Value"]["maxGradeValue"] = 999.0
     debug("eye_max()")
 
 def write_patched_shard():
