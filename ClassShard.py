@@ -35,7 +35,7 @@ log = []
 
 def init():
     value = 100
-    min = 33
+    min = 20
     max = 500
     stat_int = min
     for i in range(max-min+1):
@@ -44,7 +44,7 @@ def init():
         elif stat_int > value:
             num_range = (value-min)/(max-value)
         else:
-            num_range = (((max-value)/(value-min)+(value-min)/(max-value))/2)
+            num_range = ((max-value)/(value-min)+(value-min)/(max-value))/2
         
         if num_range < 1:
             num_range = 1

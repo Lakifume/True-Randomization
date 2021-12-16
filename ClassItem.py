@@ -44,6 +44,26 @@ room_to_special_chest = {
     "m08TWR_016": ["Treasurebox_PureMiriam_Sword"],
     "m88BKR_004": ["N3106_1ST_Treasure", "N3106_2ND_Treasure"]
 }
+boss_rooms= [
+    "m01SIP_022",
+    "m05SAN_023",
+    "m06KNG_021",
+    "m07LIB_011",
+    "m08TWR_019",
+    "m09TRN_002",
+    "m10BIG_011",
+    "m10BIG_015",
+    "m12SND_026",
+    "m13ARC_005",
+    "m14TAR_004",
+    "m15JPN_016",
+    "m17RVA_008",
+    "m18ICE_004",
+    "m18ICE_018",
+    "m88BKR_001",
+    "m88BKR_002",
+    "m88BKR_004"
+]
 
 all_keys = [
     "Doublejump",
@@ -360,9 +380,9 @@ def init():
     for i in ClassManagement.item_drop_data:
         for e in range(i["Value"]["ChestRatio"]):
             chest_type.append(i["Key"])
-            if i["Value"]["ChestColor"] == "EChestColor::Green":
+            if i["Value"]["ChestColor"] == "Green":
                 green_chest_type.append(i["Key"])
-            if i["Value"]["ChestColor"] == "EChestColor::Blue":
+            if i["Value"]["ChestColor"] == "Blue":
                 blue_chest_type.append(i["Key"])
         for e in range(i["Value"]["QuestRatio"]):
             quest_type.append(i["Key"])
@@ -507,6 +527,9 @@ def give_extra(shard):
         for i in ClassManagement.logic_data:
             if i["Value"][shard]:
                 i["Value"]["GateRoom"] = False
+                for e in ClassManagement.logic_data:
+                    if i["Key"] in e["Value"]["NearestGate"]:
+                        e["Value"]["NearestGate"] = i["Value"]["NearestGate"]
     else:
         while shard in ClassManagement.shard_drop_data["Value"]["ItemPool"]:
             ClassManagement.shard_drop_data["Value"]["ItemPool"].remove(shard)
@@ -561,16 +584,19 @@ def key_logic():
         for i in ClassManagement.logic_data:
             if not i["Value"]["GateRoom"] and previous_in_nearest(previous_gate, i["Value"]["NearestGate"]) or i["Key"] in previous_gate:
                 #IncreasingChancesOfLateRooms
-                gate_count = 0
+                gate_count = 1
                 gate_list = i["Value"]["NearestGate"]
                 while gate_list:
-                    nearest_gate = gate_list[0]
+                    nearest_gate = random.choice(gate_list)
                     for e in ClassManagement.logic_data:
                         if e["Key"] == nearest_gate:
                             gate_count += 1
                             gate_list = e["Value"]["NearestGate"]
                             break
-                for e in range((gate_count + 1)**3):
+                #IncreasingChancesOfBossRooms
+                if i["Key"] in boss_rooms:
+                    gate_count *= 6
+                for e in range(gate_count):
                     previous_room.append(i["Key"])
         #ChoosingKeyItemBasedOnRequirements
         chosen_item = random.choice(all_keys)
@@ -690,7 +716,7 @@ def room_to_enemy():
         for e in ClassManagement.enemy_location_data:
             if not e["Key"] in enemy_skip_list and e["Value"]["HasShard"] and ordered_key_shards_location[i] in e["Value"]["NormalModeRooms"]:
                 #IncreasingChancesOfUncommonEnemies
-                for o in range(math.ceil(40/len(e["Value"]["NormalModeRooms"]))):
+                for o in range(math.ceil(36/len(e["Value"]["NormalModeRooms"]))):
                     possible_enemy.append(e["Key"])
         #CheckingIfEnemyIsntAlreadyTaken
         chosen_enemy = random.choice(possible_enemy)
@@ -717,7 +743,7 @@ def fill_log():
         log_data["Value"]["RoomList"] = enemy_to_room(key_shards_location[i])
         log.append(log_data)
 
-def rand_overworld_key(waystone):
+def rand_overworld_key():
     key_logic()
     #KeyItems
     for i in range(len(key_items)):
@@ -727,29 +753,30 @@ def rand_overworld_key(waystone):
         i["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::None"
     for i in range(len(key_shards)):
         patch_key_shard_entry(key_shards[i], key_shards_location[i])
-    #ShipWaystone
-    if waystone:
-        #CheckStartingKey
-        if not "Doublejump" in key_shards or not "Dimensionshift" in key_shards or not "Reflectionray" in key_shards:
-            ship_height()
-        if key_shards[i] == "HighJump" or key_shards[i] == "Invert":
-            ship_flight()
-        #CheckShardsOnShip
-        for i in range(len(key_shards)):
-            for e in ClassManagement.enemy_location_data:
-                if e["Key"] == key_shards_location[i]:
-                    for o in e["Value"]["NormalModeRooms"]:
-                        if "m01SIP" in o and o not in ship_skip_list:
-                            if key_shards[i] == "Doublejump" or key_shards[i] == "Dimensionshift" or key_shards[i] == "Reflectionray":
-                                ship_height()
-                            if key_shards[i] == "HighJump" or key_shards[i] == "Invert":
-                                ship_flight()
-        #AssignChest
+    ClassManagement.debug("ClassItem.rand_overworld_key()")
+
+def rand_ship_waystone():
+    #CheckStartingKey
+    if not "Doublejump" in key_shards or not "Dimensionshift" in key_shards or not "Reflectionray" in key_shards:
+        ship_height()
+    if not "HighJump" in key_shards or not "Invert" in key_shards:
+        ship_flight()
+    #CheckShardsOnShip
+    for i in range(len(key_shards)):
+        for e in ClassManagement.enemy_location_data:
+            if e["Key"] == key_shards_location[i]:
+                for o in e["Value"]["NormalModeRooms"]:
+                    if "m01SIP" in o and o not in ship_skip_list:
+                        if key_shards[i] == "Doublejump" or key_shards[i] == "Dimensionshift" or key_shards[i] == "Reflectionray":
+                            ship_height()
+                        if key_shards[i] == "HighJump" or key_shards[i] == "Invert":
+                            ship_flight()
+    #AssignChest
+    chosen_chest = random.choice(ship_chest_list)
+    while chosen_chest in chest_skip_list:
         chosen_chest = random.choice(ship_chest_list)
-        while chosen_chest in chest_skip_list:
-            chosen_chest = random.choice(ship_chest_list)
-        patch_key_item_entry("Waystone", chosen_chest)
-    ClassManagement.debug("ClassItem.rand_overworld_key(" + str(waystone) + ")")
+    patch_key_item_entry("Waystone", chosen_chest)
+    ClassManagement.debug("ClassItem.rand_ship_waystone()")
 
 def ship_height():
     if "Treasurebox_SIP014(2)" not in ship_chest_list:
@@ -1387,19 +1414,15 @@ def rand_shop_pool():
         for e in shop_skip_list:
             while e in i["Value"]["ItemPool"]:
                 i["Value"]["ItemPool"].remove(e)
-        events = []
-        for e in range(i["Value"]["ShopRatio"]):
-            events.append(random.choice(event_type))
         chosen = []
-        for e in events:
+        for e in range(i["Value"]["ShopRatio"]):
             if i["Value"]["ItemPool"]:
                 chosen.append(any_pick(i["Value"]["ItemPool"], True, "None"))
         for e in ClassManagement.item_content:
             if e["Key"] in shop_skip_list:
                 continue
             if e["Key"] in chosen:
-                e["Value"]["Producted"] = random.choice(events)
-                events.remove(e["Value"]["Producted"])
+                e["Value"]["Producted"] = random.choice(event_type)
             elif e["Value"]["ItemType"] == i["Value"]["ShopName"]:
                 e["Value"]["Producted"] = "None"
     ClassManagement.debug("ClassItem.rand_shop_pool()")
@@ -1430,7 +1453,10 @@ def rand_shop_price(scale):
                     chosen += random.choice(thousand)
                 if chosen >= 100000:
                     chosen += random.choice(ten_thousand)
-        i["Value"]["sellPrice"] = round(chosen/10)
+        if i["Value"]["ItemType"] == "ECarriedCatalog::Ingredient" or i["Value"]["ItemType"] == "ECarriedCatalog::FoodStuff" or i["Value"]["ItemType"] == "ECarriedCatalog::Seed":
+            i["Value"]["sellPrice"] = 0
+        else:
+            i["Value"]["sellPrice"] = round(chosen/10)
     ClassManagement.debug("ClassItem.rand_shop_price(" + str(scale) + ")")
 
 def any_pick(item_array, remove, item_type):

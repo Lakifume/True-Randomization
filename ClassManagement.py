@@ -156,12 +156,32 @@ def load_custom_map(path):
     global room_content
     with open(path, "r") as file_reader:
         room_content = json.load(file_reader)
-    if room_content[295]["Value"]["OffsetZ"] >= 0:
+    #UndergroundBigRoomsInitialFix
+    for i in range(len(room_content[295]["Value"]["NoTraverse"])):
+        room_content[295]["Value"]["NoTraverse"][i] += room_content[295]["Value"]["AreaWidthSize"]*2
+    for i in range(len(room_content[313]["Value"]["NoTraverse"])):
+        room_content[313]["Value"]["NoTraverse"][i] += room_content[313]["Value"]["AreaWidthSize"]*3
+    #UndergroundBigRoomsNegativeOffset
+    if room_content[295]["Value"]["OffsetZ"] < 0:
+        multiplier = abs(int(room_content[295]["Value"]["OffsetZ"]/7.2)) - 1
+        if multiplier > room_content[295]["Value"]["AreaHeightSize"] - 1:
+            multiplier = room_content[295]["Value"]["AreaHeightSize"] - 1
         for i in range(len(room_content[295]["Value"]["NoTraverse"])):
-            room_content[295]["Value"]["NoTraverse"][i] += room_content[295]["Value"]["AreaWidthSize"]*2
-    if room_content[313]["Value"]["OffsetZ"] >= 0:
+            room_content[295]["Value"]["NoTraverse"][i] -= room_content[295]["Value"]["AreaWidthSize"]*multiplier
+    if room_content[313]["Value"]["OffsetZ"] < 0:
+        multiplier = abs(int(room_content[313]["Value"]["OffsetZ"]/7.2)) - 1
+        if multiplier > room_content[313]["Value"]["AreaHeightSize"] - 1:
+            multiplier = room_content[313]["Value"]["AreaHeightSize"] - 1
         for i in range(len(room_content[313]["Value"]["NoTraverse"])):
-            room_content[313]["Value"]["NoTraverse"][i] += room_content[313]["Value"]["AreaWidthSize"]*3
+            room_content[313]["Value"]["NoTraverse"][i] -= room_content[313]["Value"]["AreaWidthSize"]*multiplier
+    #GlobalMapDisplayFix
+    for i in room_content:
+        if i["Value"]["OffsetX"] < 201.6:
+            i["Value"]["AreaID"] = "EAreaID::m01SIP"
+        elif i["Value"]["OffsetX"] + i["Value"]["AreaWidthSize"]*12.6 > 1096.2:
+            i["Value"]["AreaID"] = "EAreaID::m13ARC"
+        else:
+            i["Value"]["AreaID"] = "EAreaID::m03ENT"
     debug("ClassManagement.load_custom_map(" + path + ")")
 
 def load_custom_logic(path):
@@ -179,6 +199,20 @@ def load_custom_order(path):
         with open(name + ".order", "r") as file_reader:
             order_data = json.load(file_reader)
     debug("ClassManagement.load_custom_order(" + path + ")")
+
+def create_log(path):
+    name, extension = os.path.splitext(path)
+    global log_data
+    log_data = {}
+    log_data["Key"] = "Map"
+    log_data["Value"] = {}
+    log_data["Value"]["FileName"] = name.split("\\")[-1]
+    debug("ClassManagement.create_log(" + path + ")")
+
+def write_log(filename, filepath, log, ascii):
+    with open(filepath + "\\" + filename + ".json", "w") as file_writer:
+        file_writer.write(json.dumps(log, ensure_ascii=ascii, indent=2))
+    debug("ClassManagement.write_log(" + filename + ", " + filepath + ", " + "[log]" + ", " + str(ascii) + ")")
 
 def write_json(filename, filepath, content, ascii):
     with open("Serializer\\" + filename + ".json", "w") as file_writer:
@@ -309,11 +343,6 @@ def convert_umap_to_json():
         
         shutil.move("UAssetGUI\\" + i[:-5] + ".json", "UAssetGUI\\Json\\" + i[:-5] + ".json")
         os.remove("UAssetGUI\\" + i)
-
-def write_log(filename, filepath, log, ascii):
-    with open(filepath + "\\" + filename + ".json", "w") as file_writer:
-        file_writer.write(json.dumps(log, ensure_ascii=ascii, indent=2))
-    debug("ClassManagement.write_log(" + filename + ", " + filepath + ", " + "[log]" + ", " + str(ascii) + ")")
 
 def copy_file(filename, extension, source, destination):
     shutil.copyfile(source + "\\" + filename + "." + extension, "UnrealPak\\Mod\\BloodstainedRotN\\" + destination + "\\" + filename + "." + extension)

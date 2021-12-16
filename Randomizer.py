@@ -5,7 +5,6 @@ import ClassEquipment
 import ClassItem
 import ClassLibrary
 import ClassManagement
-import ClassMap
 import ClassShard
 import ClassSound
 #ImportGUI
@@ -262,6 +261,7 @@ blueprint_files = [
 ]
 
 write_json_param_list = []
+write_log_param_list = []
 copy_file_param_list = [
     ("PB_DT_AmmunitionMaster", "uasset", "Serializer", "Content\\Core\\DataTable"),
     ("PB_DT_ArtsCommandMaster", "uasset", "Serializer", "Content\\Core\\DataTable"),
@@ -357,6 +357,11 @@ class Generate(QThread):
             shutil.move("UnrealPak\\Randomizer.pak", config.get("Misc", "sOutputPath") + "\\Randomizer.pak")
         else:
             shutil.move("UnrealPak\\Randomizer.pak", "Randomizer.pak")
+        
+        #Log
+        
+        for i in write_log_param_list:
+            ClassManagement.write_log(i[0], i[1], i[2], i[3])
         
         self.signaller.finished.emit()
 
@@ -1674,11 +1679,20 @@ class Main(QWidget):
             ClassManagement.load_custom_map(self.string)
             ClassManagement.load_custom_logic(self.string)
             ClassManagement.load_custom_order(self.string)
-            ClassMap.create_log(self.string)
-            ClassManagement.write_log("MapSelection", "SpoilerLog", ClassMap.get_log(), True)
+            ClassManagement.create_log(self.string)
+            write_log_param_list.append(("MapSelection", "MapEdit\\Key", ClassManagement.log_data, False))
         
         if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
             ClassItem.hard_enemy_logic()
+        
+        if config.getboolean("GameMode", "bRandomizer"):
+            ClassItem.give_shortcut()
+            ClassItem.give_eye()
+            ClassShard.eye_max_range()
+            ClassItem.unlock_all_quest()
+            ClassItem.all_hair_in_shop()
+            ClassItem.no_card_in_shop()
+            ClassEnemy.no_upgrade_cap()
         
         if config.getboolean("StartWith", "bDoubleJump"):
             ClassItem.give_extra("Doublejump")
@@ -1687,7 +1701,7 @@ class Main(QWidget):
         
         if config.getboolean("LibraryRandomization", "bMapRequirements") or config.getboolean("LibraryRandomization", "bTomeAppearance"):
             ClassLibrary.rand_book(config.getboolean("LibraryRandomization", "bMapRequirements"), config.getboolean("LibraryRandomization", "bTomeAppearance"))
-            ClassManagement.write_log("LibraryTomes", "SpoilerLog", ClassLibrary.get_log(), True)
+            write_log_param_list.append(("LibraryTomes", "SpoilerLog", ClassLibrary.get_log(), True))
         
         if config.getboolean("ItemRandomization", "bRemoveInfinites"):
             ClassItem.remove_infinite()
@@ -1696,10 +1710,12 @@ class Main(QWidget):
             ClassItem.unused_room_check()
             ClassItem.extra_logic_safety()
             ClassItem.no_shard_craft()
-            ClassItem.rand_overworld_key(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
+            ClassItem.rand_overworld_key()
+            if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
+                ClassItem.rand_ship_waystone()
             ClassItem.rand_overworld_shard()
             ClassItem.rand_overworld_pool()
-            ClassManagement.write_log("KeyLocation", "MapEdit\\Key", ClassItem.get_log(), False)
+            write_log_param_list.append(("KeyLocation", "MapEdit\\Key", ClassItem.get_log(), True))
         
         if config.getboolean("ItemRandomization", "bQuestPool"):
             ClassItem.rand_quest_pool()
@@ -1719,7 +1735,7 @@ class Main(QWidget):
         
         if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
             ClassShard.rand_shard(config.getboolean("ShardRandomization", "bScaleMagicCostWithPower"))
-            ClassManagement.write_log("ShardPower", "SpoilerLog", ClassShard.get_log(), False)
+            write_log_param_list.append(("ShardPower", "SpoilerLog", ClassShard.get_log(), False))
         
         if config.getboolean("EquipmentRandomization", "bGlobalGearStats"):
             ClassEquipment.rand_all_equip()
@@ -1727,14 +1743,14 @@ class Main(QWidget):
         
         if config.getboolean("EquipmentRandomization", "bCheatGearStats"):
             ClassEquipment.rand_cheat_equip()
-            ClassManagement.write_log("CheatEquipmentStats", "SpoilerLog", ClassEquipment.get_armor_log(), True)
+            write_log_param_list.append(("CheatEquipmentStats", "SpoilerLog", ClassEquipment.get_armor_log(), True))
             ClassEquipment.rand_cheat_weapon()
-            ClassManagement.write_log("CheatWeaponStats", "SpoilerLog", ClassEquipment.get_weapon_log(), True)
+            write_log_param_list.append(("CheatWeaponStats", "SpoilerLog", ClassEquipment.get_weapon_log(), True))
         
         if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or self.string or config.getboolean("SpecialMode", "bCustom"):
             ClassEnemy.enemy_property(config.getboolean("EnemyRandomization", "bEnemyLevels"), config.getboolean("EnemyRandomization", "bEnemyTolerances"), bool(self.string), config.getboolean("SpecialMode", "bCustom"), config.getint("Misc", "iCustomLevel"))
             if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
-                ClassManagement.write_log("EnemyProperties", "SpoilerLog", ClassEnemy.get_log(), True)
+                write_log_param_list.append(("EnemyProperties", "SpoilerLog", ClassEnemy.get_log(), True))
         
         if config.getboolean("EnemyRandomization", "bEnemyLevels") and not config.getboolean("SpecialMode", "bCustom"):
             ClassEnemy.higher_HPMP()
@@ -1755,24 +1771,15 @@ class Main(QWidget):
             ClassEnemy.normal_bomber()
             ClassEnemy.normal_milli()
             ClassEnemy.normal_bael()
-            ClassEnemy.brv_damage(1)
+            ClassEnemy.brv_damage(1.0)
         elif config.getboolean("GameDifficulty", "bHard"):
             ClassEnemy.rename_difficulty("???", "Hard", "???")
-            ClassEnemy.brv_speed(False)
-            ClassEnemy.brv_damage(2)
+            ClassEnemy.brv_speed("AnimaionPlayRateHard")
+            ClassEnemy.brv_damage(ClassManagement.coordinate_content[9]["Value"]["Value"])
         elif config.getboolean("GameDifficulty", "bNightmare"):
             ClassEnemy.rename_difficulty("???", "???", "Nightmare")
-            ClassEnemy.brv_speed(True)
-            ClassEnemy.brv_damage(3)
-        
-        if config.getboolean("GameMode", "bRandomizer"):
-            ClassItem.give_shortcut()
-            ClassItem.give_eye()
-            ClassShard.eye_max_range()
-            ClassItem.unlock_all_quest()
-            ClassItem.all_hair_in_shop()
-            ClassItem.no_card_in_shop()
-            ClassEnemy.no_upgrade_cap()
+            ClassEnemy.brv_speed("AnimaionPlayRateNightmare")
+            ClassEnemy.brv_damage(ClassManagement.coordinate_content[14]["Value"]["Value"])
         
         if config.getboolean("SpecialMode", "bProgressive"):
             if config.getboolean("GameDifficulty", "bNightmare"):

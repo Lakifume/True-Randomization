@@ -24,7 +24,35 @@ cheat_weapon = [
     "DungeonNightSword",
     "EvilTheSword"
 ]
+special_list = [
+    "Safering",
+    "Cursering",
+    "Riskring",
+    "Adversityring"
+]
 
+property_list = [
+    "MeleeAttack", 
+    "MagicAttack",
+    "MeleeDefense",
+    "MagicDefense",
+    "ZAN",
+    "DAG",
+    "TOT",
+    "FLA",
+    "ICE",
+    "LIG",
+    "HOL",
+    "DAR",
+    "POI",
+    "CUR",
+    "STO",
+    "STR",
+    "CON",
+    "INT",
+    "MND",
+    "LUC"
+]
 attack_list = [
     "MeleeAttack", 
     "MagicAttack"
@@ -104,16 +132,16 @@ armor_log = []
 weapon_log = []
 
 def init():
-    stat_int = -50
-    for i in range(50 + 25 + 1):
+    stat_int = -60
+    for i in range(60 + 30 + 1):
         if stat_int < 0:
-            for e in range(2**(abs(math.ceil(abs(stat_int)/10)-5))):
+            for e in range(2**(abs(math.ceil(abs(stat_int)/12)-5))):
                 stat_pool.append(stat_int)
         elif stat_int > 0:
-            for e in range(2**(abs(math.ceil(stat_int/5)-5))*10):
+            for e in range(2**(abs(math.ceil(stat_int/6)-5))*8):
                 stat_pool.append(stat_int)
         stat_int += 1
-    for i in range(len(stat_pool)*5):
+    for i in range(len(stat_pool)*4):
         stat_pool.append(0)
     ClassManagement.debug("ClassEquipment.init()")
 
@@ -124,57 +152,36 @@ def zangetsu_black_belt():
 
 def rand_all_equip():
     for i in ClassManagement.armor_content:
-        if i["Key"] == "Safering" or i["Key"] == "Riskring":
-            continue
         try:
             test = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]]
         except KeyError:
             continue
-        #Attack
-        for e in attack_list:
-            value = i["Value"][e]
-            if value == 0:
-                continue
-            max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Attack"]
-            i["Value"][e] = random.choice(create_list(abs(value), 0, int(max*1.2)))
-            if value < 0:
-                i["Value"][e] *= -1
-        #Defense
-        for e in defense_list:
-            value = i["Value"][e]
-            if value == 0:
-                continue
-            max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Defense"]
-            i["Value"][e] = random.choice(create_list(abs(value), 0, int(max*1.2)))
-            if value < 0:
-                i["Value"][e] *= -1
-        #Resist
-        for e in resist_list:
-            value = i["Value"][e]
-            if value == 0:
-                continue
-            max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Resist"]
-            i["Value"][e] = random.choice(create_list(abs(value), 0, int(max*1.2)))
-            if value < 0:
-                i["Value"][e] *= -1
-        #Status
-        for e in status_list:
-            value = i["Value"][e]
-            if value == 0:
-                continue
-            max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Status"]
-            i["Value"][e] = random.choice(create_list(abs(value), 0, int(max*1.2)))
-            if value < 0:
-                i["Value"][e] *= -1
-        #Stat
-        for e in stat_list:
-            value = i["Value"][e]
-            if value == 0:
-                continue
-            max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Stat"]
-            i["Value"][e] = random.choice(create_list(abs(value), 0, int(max*1.2)))
-            if value < 0:
-                i["Value"][e] *= -1
+        if i["Key"] in special_list:
+            list = []
+            for e in property_list:
+                if i["Value"][e] == 0:
+                    continue
+                list.append(abs(i["Value"][e]))
+            multiplier = random.choice(create_list(100, int(100/min(list)), 120))/100
+            for e in property_list:
+                if i["Value"][e] == 0:
+                    continue
+                i["Value"][e] = round(i["Value"][e]*multiplier)
+        else:
+            for e in property_list:
+                if i["Value"][e] == 0:
+                    continue
+                if e in attack_list:
+                    max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Attack"]
+                elif e in defense_list:
+                    max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Defense"]
+                elif e in resist_list:
+                    max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Resist"]
+                elif e in status_list:
+                    max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Status"]
+                elif e in stat_list:
+                    max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Stat"]
+                i["Value"][e] = random.choice(create_list(i["Value"][e], 1, int(max*1.2)))
         if i["Value"]["MagicAttack"] != 0:
             ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]].split("mATK")[0] + "mATK " + str(i["Value"]["MagicAttack"]) + " </>"
         if i["Value"]["MagicDefense"] != 0:
@@ -222,7 +229,11 @@ def rand_all_weapon():
     ClassManagement.coordinate_content[18]["Value"]["Value"] = int(ClassManagement.weapon_content[79]["Value"]["MeleeAttack"]*1.2) + 0.0
     ClassManagement.debug("ClassEquipment.rand_all_weapon()")
 
-def create_list(value, min, max):
+def create_list(value, abs_min, max):
+    if value == abs_min:
+        min = abs_min - 1
+    else:
+        min = abs_min
     list = []
     list_int = min
     for i in range(max-min+1):
@@ -231,19 +242,19 @@ def create_list(value, min, max):
         elif list_int > value:
             num_range = (value-min)/(max-value)
         else:
-            num_range = (((max-value)/(value-min)+(value-min)/(max-value))/2)
+            num_range = ((max-value)/(value-min)+(value-min)/(max-value))/2
         
         if num_range < 1:
             num_range = 1
         for e in range(round(num_range*10)):
             list.append(list_int)
         list_int += 1
-    return [1 if i==0 else i for i in list]
+    return [abs_min if i==min else i for i in list]
 
 def rand_cheat_equip():
     for i in ClassManagement.armor_content:
         if i["Key"] in cheat_equip:
-            for e in stat_list:
+            for e in property_list:
                 i["Value"][e] = random.choice(stat_pool)
             if i["Value"]["MagicAttack"] != 0:
                 ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff8000\">mATK " + str(i["Value"]["MagicAttack"]) + " </>"
@@ -252,15 +263,7 @@ def rand_cheat_equip():
             log_data = {}
             log_data["Key"] = ClassManagement.item_translation["Value"][i["Key"]]
             log_data["Value"] = {}
-            for e in attack_list:
-                log_data["Value"][e] = i["Value"][e]
-            for e in defense_list:
-                log_data["Value"][e] = i["Value"][e]
-            for e in resist_list:
-                log_data["Value"][e] = i["Value"][e]
-            for e in status_list:
-                log_data["Value"][e] = i["Value"][e]
-            for e in stat_list:
+            for e in property_list:
                 log_data["Value"][e] = i["Value"][e]
             armor_log.append(log_data)
     ClassManagement.debug("ClassEquipment.rand_cheat_equip()")
@@ -268,7 +271,13 @@ def rand_cheat_equip():
 def rand_cheat_weapon():
     for i in ClassManagement.weapon_content:
         if i["Key"] in cheat_weapon:
-            i["Value"]["MeleeAttack"] = random.randint(int(weapon_type_to_max_value["ShortSword"][0]*0.8), int(weapon_type_to_max_value["ShortSword"][1]*1.2))
+            min = weapon_type_to_max_value[i["Value"]["WeaponType"].split("::")[1]][0]
+            max = weapon_type_to_max_value[i["Value"]["WeaponType"].split("::")[1]][1]
+            if i["Value"]["SpecialEffectId"] != "None":
+                reduction = 0.8
+            else:
+                reduction = 1.0
+            i["Value"]["MeleeAttack"] = random.randint(int(min*0.8*reduction), int(max*1.2*reduction))
             if i["Value"]["SpecialEffectDenominator"] != 0.0:
                 i["Value"]["SpecialEffectDenominator"] = random.randint(1, 3) + 0.0
             log_data = {}

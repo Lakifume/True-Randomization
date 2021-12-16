@@ -74,7 +74,7 @@ log = []
 def init():
     stat_int = -100
     for i in range(int(100/5)*2 + 1):
-        for e in range(2**(abs(math.ceil(abs(stat_int)/25)-4))):
+        for e in range(2**(abs(math.ceil(abs(stat_int)/20)-5))):
             stat_pool.append(stat_int + 0.0)
         stat_int += 5
     ClassManagement.debug("ClassEnemy.init()")
@@ -83,7 +83,7 @@ def convert_area_to_progress():
     #General
     for i in range(len(ClassManagement.order_data["Value"]["AreaList"])):
         original_area_to_progress[ClassManagement.original_order_data["Value"]["AreaList"][i]] = i + 1.0
-        area_to_progress[ClassManagement.order_data["Value"]["AreaList"][i]] = i + 1.0
+        area_to_progress[ClassManagement.order_data["Value"]["AreaList"][i]] = i + 1
     #Special
     original_area_to_progress["m04GDN(2)"] = (original_area_to_progress["m04GDN"] + original_area_to_progress["m05SAN"])/2
     area_to_progress["m04GDN(2)"] = area_to_progress["m04GDN"]
@@ -102,7 +102,7 @@ def convert_area_to_list():
         list = []
         for e in range(99):
             if e <= 49:
-                for o in range(abs(int(area_to_progress[i]) - 19)):
+                for o in range(abs(area_to_progress[i] - 19)):
                     list.append(e+1)
             else:
                 list.append(e+1)
@@ -113,11 +113,21 @@ def convert_area_to_list():
     area_to_list["m07LIB(2)"] = area_to_list["m07LIB"]
     area_to_list["m08TWR(2)"] = area_to_list["m08TWR"]
     area_to_list["m11UGD(2)"] = area_to_list["m11UGD"]
-    #Static
+    #Minor
     list = []
     for i in range(50):
         list.append(i+1)
     area_to_list["Minor"] = list
+    #Intermediate
+    list = []
+    for e in range(99):
+        if e <= 49:
+            for o in range(10):
+                list.append(e+1)
+        else:
+            list.append(e+1)
+    area_to_list["Intermediate"] = list
+    #PreMajor
     list = []
     for e in range(99):
         if e <= 49:
@@ -126,6 +136,7 @@ def convert_area_to_list():
         else:
             list.append(e+1)
     area_to_list["PreMajor"] = list
+    #Major
     list = []
     for i in range(99):
         list.append(i+1)
@@ -220,16 +231,11 @@ def zangetsu_no_stats():
     ClassManagement.character_content[6]["Value"]["LUC99Enemy"] = 0.0
     ClassManagement.debug("ClassEnemy.zangetsu_no_stats()")
 
-def brv_speed(nightmare):
-    if nightmare:
-        ClassManagement.character_content[159]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[159]["Value"]["AnimaionPlayRateNightmare"]
-        ClassManagement.character_content[161]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[161]["Value"]["AnimaionPlayRateNightmare"]
-        ClassManagement.character_content[177]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[177]["Value"]["AnimaionPlayRateNightmare"]
-    else:
-        ClassManagement.character_content[159]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[159]["Value"]["AnimaionPlayRateHard"]
-        ClassManagement.character_content[161]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[161]["Value"]["AnimaionPlayRateHard"]
-        ClassManagement.character_content[177]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[177]["Value"]["AnimaionPlayRateHard"]
-    ClassManagement.debug("ClassEnemy.brv_speed(" + str(nightmare) + ")")
+def brv_speed(play_rate):
+    ClassManagement.character_content[159]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[159]["Value"][play_rate]
+    ClassManagement.character_content[161]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[161]["Value"][play_rate]
+    ClassManagement.character_content[177]["Value"]["AnimaionPlayRateNormal"] = ClassManagement.character_content[177]["Value"][play_rate]
+    ClassManagement.debug("ClassEnemy.brv_speed(" + play_rate + ")")
 
 def brv_damage(difficulty):
     for i in ClassManagement.attack_content:
@@ -349,12 +355,12 @@ def enemy_property(level, resist, map, custom, value):
                     #Area
                     if e["Value"]["AreaID"] == "Minor":
                         current_area = e["Value"]["NormalModeRooms"][0][:6]
-                    elif "Major" in e["Value"]["AreaID"]:
+                    elif e["Value"]["AreaID"] == "Intermediate" or "Major" in e["Value"]["AreaID"]:
                         continue
                     else:
                         current_area = e["Value"]["AreaID"]
                     #Level
-                    new_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + ((area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17)))
+                    new_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
                     if new_level < 1:
                         new_level = 1
                     if new_level > 50:
