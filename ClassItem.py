@@ -1454,9 +1454,11 @@ def rand_shop_price(scale):
                 if chosen >= 100000:
                     chosen += random.choice(ten_thousand)
         if i["Value"]["ItemType"] == "ECarriedCatalog::Ingredient" or i["Value"]["ItemType"] == "ECarriedCatalog::FoodStuff" or i["Value"]["ItemType"] == "ECarriedCatalog::Seed":
-            i["Value"]["sellPrice"] = 0
+            i["Value"]["sellPrice"] = int(chosen/20)
         else:
-            i["Value"]["sellPrice"] = round(chosen/10)
+            i["Value"]["sellPrice"] = int(chosen/10)
+        if i["Value"]["sellPrice"] < 1:
+            i["Value"]["sellPrice"] = 1
     ClassManagement.debug("ClassItem.rand_shop_price(" + str(scale) + ")")
 
 def any_pick(item_array, remove, item_type):
