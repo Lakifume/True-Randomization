@@ -630,8 +630,9 @@ class Main(QMainWindow):
             self.direct_save = True
 
     def reset(self):
+        self.string = "Data/RoomMaster/PB_DT_RoomMaster.json"
         self.title_string = ""
-        self.load_from_json("Data\\RoomMaster\\PB_DT_RoomMaster.json")
+        self.load_from_json(self.string)
         self.direct_save = False
     
     def use_restr_action(self):
@@ -761,23 +762,43 @@ class Main(QMainWindow):
     def key_location_action(self):
         global key_mode
         if self.key_location.isChecked():
+            name, extension = os.path.splitext(self.string)
+            box = QMessageBox(self)
+            box.setWindowTitle("Error")
+            box.setIcon(QMessageBox.Critical)
             try:
                 with open("Key\\KeyLocation.json", "r") as file_reader:
                     self.key_log = json.load(file_reader)
             except FileNotFoundError:
-                box = QMessageBox(self)
-                box.setWindowTitle("Error")
-                box.setIcon(QMessageBox.Critical)
                 box.setText("No key log found.")
                 box.exec()
                 self.key_location.setChecked(False)
+                self.key_location_action()
                 return
+            try:
+                with open("Key\\MapSelection.json", "r") as file_reader:
+                    self.map_log = json.load(file_reader)
+                if name.split("/")[-1] != self.map_log["Value"]["FileName"]:
+                    box.setText("Current key location is meant for map " + self.map_log["Value"]["FileName"] + ".")
+                    box.exec()
+                    self.key_location.setChecked(False)
+                    self.key_location_action()
+                    return
+            except FileNotFoundError:
+                if name.split("/")[-1] != "PB_DT_RoomMaster":
+                    box.setText("Current key location is meant for the default map.")
+                    box.exec()
+                    self.key_location.setChecked(False)
+                    self.key_location_action()
+                    return
             key_mode = True
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
             self.logic_editor.setChecked(False)
             self.logic_editor_action()
+            self.area_order.setChecked(False)
+            self.area_order_action()
             #MenuOptionDisable
             self.use_restr.setEnabled(False)
             #FillDropDown
@@ -900,13 +921,6 @@ class Main(QMainWindow):
         else:
             self.zoom_out.setEnabled(True)
     
-    def key_drop_down_change(self, index):
-        for i in self.room_list:
-            if i.room_data.name in self.key_log[index]["Value"]["RoomList"]:
-                self.reveal_room(i)
-            else:
-                self.fill_room(i, "#000000")
-    
     def room_search_list_change(self, item):
         for i in self.room_list:
             self.fill_room(i, "#000000")
@@ -925,6 +939,13 @@ class Main(QMainWindow):
             else:
                 self.fill_room(i, "#000000")
         i.setSelected(True)
+    
+    def key_drop_down_change(self, index):
+        for i in self.room_list:
+            if i.room_data.name in self.key_log[index]["Value"]["RoomList"]:
+                self.reveal_room(i)
+            else:
+                self.fill_room(i, "#000000")
     
     def music_drop_down_change(self, index):
         for i in self.scene.selectedItems():
@@ -2100,8 +2121,7 @@ class Main(QMainWindow):
             self.logic_content[logic_index]["Value"]["Keyofbacker2"] = i.logic_data.warhorse
             self.logic_content[logic_index]["Value"]["Keyofbacker3"] = i.logic_data.millionaire
             self.logic_content[logic_index]["Value"]["Keyofbacker4"] = i.logic_data.celeste
-            if logic_index < len(self.logic_content) - 1:
-                logic_index += 1
+            logic_index += 1
     
     def update_order(self):
         self.order_content["Value"]["AreaList"].clear()
