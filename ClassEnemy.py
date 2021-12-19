@@ -40,7 +40,6 @@ area = [
 ]
 original_area_to_progress = {}
 area_to_progress = {}
-area_to_list = {}
 
 zangetsu_exp = [
     34,
@@ -95,52 +94,6 @@ def convert_area_to_progress():
     area_to_progress["m08TWR(2)"] = area_to_progress["m08TWR"]
     original_area_to_progress["m11UGD(2)"] = (original_area_to_progress["m07LIB"] + original_area_to_progress["m13ARC"])/2
     area_to_progress["m11UGD(2)"] = area_to_progress["m11UGD"]
-
-def convert_area_to_list():
-    #Variable
-    for i in area:
-        list = []
-        for e in range(99):
-            if e <= 49:
-                for o in range(abs(area_to_progress[i] - 19)):
-                    list.append(e+1)
-            else:
-                list.append(e+1)
-        area_to_list[i] = list
-    #SpecialCases
-    area_to_list["m04GDN(2)"] = area_to_list["m04GDN"]
-    area_to_list["m05SAN(2)"] = area_to_list["m05SAN"]
-    area_to_list["m07LIB(2)"] = area_to_list["m07LIB"]
-    area_to_list["m08TWR(2)"] = area_to_list["m08TWR"]
-    area_to_list["m11UGD(2)"] = area_to_list["m11UGD"]
-    #Minor
-    list = []
-    for i in range(50):
-        list.append(i+1)
-    area_to_list["Minor"] = list
-    #Intermediate
-    list = []
-    for e in range(99):
-        if e <= 49:
-            for o in range(10):
-                list.append(e+1)
-        else:
-            list.append(e+1)
-    area_to_list["Intermediate"] = list
-    #PreMajor
-    list = []
-    for e in range(99):
-        if e <= 49:
-            for o in range(2):
-                list.append(e+1)
-        else:
-            list.append(e+1)
-    area_to_list["PreMajor"] = list
-    #Major
-    list = []
-    for i in range(99):
-        list.append(i+1)
-    area_to_list["Major"] = list
 
 def rename_difficulty(normal, hard, nightmare):
     ClassManagement.system_content["Table"]["SYS_SEN_Difficulty_Normal"] = normal
@@ -331,7 +284,6 @@ def brv_damage(difficulty):
 
 def enemy_property(level, resist, map, custom, value):
     convert_area_to_progress()
-    convert_area_to_list()
     #All
     i = 12
     while i <= 176:
@@ -339,15 +291,7 @@ def enemy_property(level, resist, map, custom, value):
             rand_stat(i)
         if custom:
             patch_level([value], i)
-        elif level:
-            check = True
-            for e in ClassManagement.enemy_location_data:
-                if ClassManagement.character_content[i]["Key"] == e["Key"]:
-                    check = False
-                    patch_level(area_to_list[e["Value"]["AreaID"]], i)
-            if check:
-                patch_level([0], i)
-        elif map:
+        elif level or map:
             check = True
             for e in ClassManagement.enemy_location_data:
                 if ClassManagement.character_content[i]["Key"] == e["Key"]:
@@ -355,17 +299,28 @@ def enemy_property(level, resist, map, custom, value):
                     #Area
                     if e["Value"]["AreaID"] == "Minor":
                         current_area = e["Value"]["NormalModeRooms"][0][:6]
-                    elif e["Value"]["AreaID"] == "Intermediate" or "Major" in e["Value"]["AreaID"]:
-                        continue
                     else:
                         current_area = e["Value"]["AreaID"]
                     #Level
-                    new_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
-                    if new_level < 1:
-                        new_level = 1
-                    if new_level > 50:
-                        new_level = 50
-                    patch_level([new_level], i)
+                    if e["Value"]["AreaID"] == "Static" or e["Value"]["AreaID"] == "Major" or not map:
+                        current_level = ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]
+                    else:
+                        current_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
+                        if current_level < 1:
+                            current_level = 1
+                        elif current_level > 50:
+                            current_level = 50
+                    #Patch
+                    if level:
+                        if e["Value"]["AreaID"] == "Minor":
+                            patch_level(create_list(current_level, 1, 50), i)
+                        elif e["Value"]["AreaID"] == "Major":
+                            patch_level(create_list(50, 1, 99), i)
+                        else:
+                            patch_level(create_list(current_level, 1, 99), i)
+                    elif e["Value"]["AreaID"] != "Static" and e["Value"]["AreaID"] != "Major":
+                        patch_level([current_level], i)
+                    break
             if check:
                 patch_level([0], i)
         create_log(i)
@@ -376,7 +331,7 @@ def enemy_property(level, resist, map, custom, value):
     if custom:
         patch_level([value], 177)
     elif level:
-        patch_level(area_to_list["Major"], 177)
+        patch_level(create_list(ClassManagement.character_content[177]["Value"]["DefaultEnemyLevel"], 1, 99), 177)
     create_log(177)
     #Breeder
     if resist:
@@ -386,10 +341,32 @@ def enemy_property(level, resist, map, custom, value):
         patch_level([value], 185)
         patch_level([value], 186)
     elif level:
-        patch_level(area_to_list["Major"], 185)
-        patch_level(area_to_list["Major"], 186)
+        patch_level(create_list(ClassManagement.character_content[185]["Value"]["DefaultEnemyLevel"], 1, 99), 185)
+        patch_level(create_list(ClassManagement.character_content[186]["Value"]["DefaultEnemyLevel"], 1, 99), 186)
     create_log(185)
     ClassManagement.debug("ClassEnemy.enemy_property(" + str(level) + ", " + str(resist) + ", " + str(map) + ", " + str(custom) + ", " + str(value) + ")")
+
+def create_list(value, abs_min, max):
+    if value == abs_min:
+        min = abs_min - 1
+    else:
+        min = abs_min
+    list = []
+    list_int = min
+    for i in range(max-min+1):
+        if list_int < value:
+            num_range = (max-value)/(value-min)
+        elif list_int > value:
+            num_range = (value-min)/(max-value)
+        else:
+            num_range = ((max-value)/(value-min)+(value-min)/(max-value))/2
+        
+        if num_range < 1:
+            num_range = 1
+        for e in range(round(num_range*10)):
+            list.append(list_int)
+        list_int += 1
+    return [abs_min if i==min else i for i in list]
 
 def patch_level(array, i):
     #BuerArmor
