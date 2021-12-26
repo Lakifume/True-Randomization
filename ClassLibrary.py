@@ -4,7 +4,7 @@ import random
 is_tome = []
 completion = []
 count = []
-log = []
+log = {}
 
 def init():
     for i in range(20):
@@ -36,11 +36,7 @@ def rand_book(req, appear):
     i = 1
     while i <= 21:
         if ClassManagement.book_content[i]["Value"]["IslibraryBook"]:
-            log_data = {}
-            log_data["Key"] = ClassManagement.item_translation["Value"][ClassManagement.book_content[i]["Key"]]
-            log_data["Value"] = {}
-            log_data["Value"]["MapRequirement"] = ClassManagement.book_content[i]["Value"]["RoomTraverseThreshold"]
-            log.append(log_data)
+            log[ClassManagement.item_translation[ClassManagement.book_content[i]["Key"]]] = ClassManagement.book_content[i]["Value"]["RoomTraverseThreshold"]
         i += 1
     ClassManagement.debug("ClassLibrary.rand_book(" + str(req) + ", " + str(appear) + ")")
 

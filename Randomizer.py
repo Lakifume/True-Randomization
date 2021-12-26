@@ -314,6 +314,12 @@ class Generate(QThread):
         current = 0
         self.signaller.progress.emit(current)
         
+        #FinalizeMap
+        
+        ClassManagement.room_final()
+        current += 1
+        self.signaller.progress.emit(current)
+        
         #Copy
         
         for i in copy_file_param_list:
@@ -1010,7 +1016,7 @@ class Main(QWidget):
         grid.addWidget(button_5, 10, 1, 1, 4)
         
         button_6 = QPushButton("Auto Convert")
-        button_6.setToolTip("Convert all the .json files from the Data folder into .uasset automatically.\nOnly use this if you've made manual edits to those datatables and want\nto apply them to this mod.")
+        button_6.setToolTip("Convert all the .json files from the Serializer\Json folder into .uasset\nautomatically. Only use this if you've made manual edits to those\ndatatables and want to apply them to this mod.")
         button_6.clicked.connect(self.button_6_clicked)
         grid.addWidget(button_6, 9, 3, 1, 1)
         
@@ -1399,6 +1405,8 @@ class Main(QWidget):
             self.check_box_16.setChecked(False)
             self.check_box_17.setChecked(False)
             self.check_box_18.setChecked(False)
+            #CheckStartNothing
+            self.radio_button_11.setChecked(True)
     
     def radio_button_group_6_checked(self):
         if self.radio_button_14.isChecked():
@@ -1680,7 +1688,7 @@ class Main(QWidget):
             ClassManagement.load_custom_logic(self.string)
             ClassManagement.load_custom_order(self.string)
             ClassManagement.create_log(self.string)
-            write_log_param_list.append(("MapSelection", "MapEdit\\Key", ClassManagement.log_data, False))
+            write_log_param_list.append(("MapSelection", "MapEdit\\Key", ClassManagement.log, False))
         
         if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
             ClassItem.hard_enemy_logic()
@@ -1794,15 +1802,13 @@ class Main(QWidget):
         
         write_json_param_list.append(("PBSystemStringTable", "Content\\L10N\\en\\Core\\StringTable", ClassManagement.system_content, False))
         write_json_param_list.append(("PB_DT_BRVAttackDamage", "Content\\Core\\DataTable\\Character", ClassManagement.attack_content, True))
+        write_json_param_list.append(("PB_DT_RoomMaster", "Content\\Core\\DataTable", ClassManagement.room_content, True))
         
         if self.string:
-            write_json_param_list.append(("PB_DT_RoomMaster", "Content\\Core\\DataTable", ClassManagement.room_content, True))
             copy_file_param_list.append(("icon_8bitCrown", "uasset", "Serializer\\Uasset", "Content\\Core\\UI\\K2C"))
             copy_file_param_list.append(("Map_Icon_Keyperson", "uasset", "Serializer\\Uasset", "Content\\Core\\UI\\Map\\Texture"))
             copy_file_param_list.append(("Map_Icon_RootBox", "uasset", "Serializer\\Uasset", "Content\\Core\\UI\\Map\\Texture"))
             copy_file_param_list.append(("Map_StartingPoint", "uasset", "Serializer\\Uasset", "Content\\Core\\UI\\Map\\Texture"))
-        else:
-            copy_file_param_list.append(("PB_DT_RoomMaster", "uasset", "Serializer", "Content\\Core\\DataTable"))
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             write_json_param_list.append(("PB_DT_CraftMaster", "Content\\Core\\DataTable", ClassManagement.craft_content, False))
@@ -1896,7 +1902,7 @@ class Main(QWidget):
         
         #Process
         
-        self.progress_bar = QProgressDialog("Generating...", None, 0, len(write_json_param_list) + 1, self)
+        self.progress_bar = QProgressDialog("Generating...", None, 0, len(write_json_param_list) + 2, self)
         self.progress_bar.setWindowTitle("Status")
         self.progress_bar.setWindowModality(Qt.WindowModal)
         

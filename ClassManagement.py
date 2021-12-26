@@ -1,6 +1,46 @@
 import os
 import shutil
 import json
+from enum import Enum
+from collections import OrderedDict
+
+class Direction(Enum):
+    LEFT         = 0x0001
+    BOTTOM       = 0x0002
+    RIGHT        = 0x0004
+    TOP          = 0x0008
+    LEFT_BOTTOM  = 0x0010
+    RIGHT_BOTTOM = 0x0020
+    LEFT_TOP     = 0x0040
+    RIGHT_TOP    = 0x0080
+    TOP_LEFT     = 0x0100
+    TOP_RIGHT    = 0x0200
+    BOTTOM_RIGHT = 0x0400
+    BOTTOM_LEFT  = 0x0800
+
+OppositeDirection = {
+    Direction.LEFT:         Direction.RIGHT,
+    Direction.BOTTOM:       Direction.TOP,
+    Direction.RIGHT:        Direction.LEFT,
+    Direction.TOP:          Direction.BOTTOM,
+    Direction.LEFT_BOTTOM:  Direction.RIGHT_BOTTOM,
+    Direction.RIGHT_BOTTOM: Direction.LEFT_BOTTOM,
+    Direction.LEFT_TOP:     Direction.RIGHT_TOP,
+    Direction.RIGHT_TOP:    Direction.LEFT_TOP,
+    Direction.TOP_LEFT:     Direction.BOTTOM_LEFT,
+    Direction.TOP_RIGHT:    Direction.BOTTOM_RIGHT,
+    Direction.BOTTOM_RIGHT: Direction.TOP_RIGHT,
+    Direction.BOTTOM_LEFT:  Direction.TOP_LEFT,
+}
+
+class Door:
+    def __init__(self, x_block, z_block, direction_part, breakable):
+        self.x_block = x_block
+        self.z_block = z_block
+        self.direction_part = direction_part
+        self.breakable = breakable
+
+used_doors = []
 
 def open_content():
     global armor_content
@@ -89,14 +129,6 @@ def open_content():
     debug("ClassManagement.open_content()")
     
 def open_data():
-    global bloodless_ability_data
-    with open("Data\\Constant\\BloodlessAbility.json", "r") as file_reader:
-        bloodless_ability_data = json.load(file_reader)
-    
-    global bloodless_upgrade_data
-    with open("Data\\Constant\\BloodlessUpgrade.json", "r") as file_reader:
-        bloodless_upgrade_data = json.load(file_reader)
-    
     global enemy_drop_data
     with open("Data\\Constant\\EnemyDrop.json", "r") as file_reader:
         enemy_drop_data = json.load(file_reader)
@@ -113,13 +145,13 @@ def open_data():
     with open("Data\\Constant\\QuestRequirement.json", "r") as file_reader:
         quest_requirement_data = json.load(file_reader)
     
-    global seed_conversion_data
-    with open("Data\\Constant\\SeedConversion.json", "r") as file_reader:
-        seed_conversion_data = json.load(file_reader)
-    
     global shard_drop_data
     with open("Data\\Constant\\ShardDrop.json", "r") as file_reader:
         shard_drop_data = json.load(file_reader)
+    
+    global shard_range_data
+    with open("Data\\Constant\\ShardRange.json", "r") as file_reader:
+        shard_range_data = json.load(file_reader)
     
     global logic_data
     with open("MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.logic", "r") as file_reader:
@@ -202,11 +234,8 @@ def load_custom_order(path):
 
 def create_log(path):
     name, extension = os.path.splitext(path)
-    global log_data
-    log_data = {}
-    log_data["Key"] = "Map"
-    log_data["Value"] = {}
-    log_data["Value"]["FileName"] = name.split("\\")[-1]
+    global log
+    log = name.split("\\")[-1]
     debug("ClassManagement.create_log(" + path + ")")
 
 def write_log(filename, filepath, log, ascii):
@@ -243,11 +272,11 @@ def write_bloodless_candle(datatable):
     tower_check = 0
     for i in datatable:
         #RoomToFile
-        file_name = i["Value"]["RoomId"].replace(")", "").split("(")[0] + "_Gimmick"
+        file_name = datatable[i].replace(")", "").split("(")[0] + "_Gimmick"
         #TowerCheck
-        if i["Value"]["RoomId"] == "m08TWR_019":
+        if datatable[i] == "m08TWR_019":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_BLOOD_STEAL"
-        elif i["Value"]["RoomId"] == "m08TWR_019(2)":
+        elif datatable[i] == "m08TWR_019(2)":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP"
         else:
             search = "EPBBloodlessAbilityType::"
@@ -262,14 +291,14 @@ def write_bloodless_candle(datatable):
         for e in content["Exports"]:
             try:
                 if search in e["Data"][1]["Value"]:
-                    e["Data"][1]["Value"] = "EPBBloodlessAbilityType::" + i["Key"]
+                    e["Data"][1]["Value"] = "EPBBloodlessAbilityType::" + i
             except TypeError:
                 continue
             except IndexError:
                 continue
         for e in range(len(content["NameMap"])):
             if search in content["NameMap"][e]:
-                content["NameMap"][e] = "EPBBloodlessAbilityType::" + i["Key"][:-3]
+                content["NameMap"][e] = "EPBBloodlessAbilityType::" + i[:-3]
         #WriteJson
         with open("UAssetGUI\\" + file_name + ".json", "w") as file_writer:
             file_writer.write(json.dumps(content))
@@ -292,15 +321,12 @@ def write_bloodless_candle(datatable):
     debug("ClassManagement.write_bloodless_candle([datatable])")
 
 def candle_process(shard, candle):
-    for i in enemy_location_data:
-        if i["Key"] == candle:
-            filelist = i["Value"]["NormalModeRooms"]
     for i in shard_content:
         if i["Key"] == candle:
             candle_type = i["Value"]["ShardType"]
         if i["Key"] == shard:
             shard_type = i["Value"]["ShardType"]
-    for i in filelist:
+    for i in enemy_location_data[candle]["NormalModeRooms"]:
         file_name = i + "_Gimmick"
         #ReadJson
         with open("UAssetGUI\\Json\\" + file_name + ".json", "r", encoding="utf-8") as file_reader:
@@ -347,6 +373,204 @@ def convert_umap_to_json():
 def copy_file(filename, extension, source, destination):
     shutil.copyfile(source + "\\" + filename + "." + extension, "UnrealPak\\Mod\\BloodstainedRotN\\" + destination + "\\" + filename + "." + extension)
     debug("ClassManagement.copy_file(" + filename + ", " + extension + ", " + source + ", " + destination + ")")
+
+def convert_flag_to_door(door_flag, width):
+    door_list = []
+    for i in range(0, len(door_flag), 2):
+        tile_index = door_flag[i]
+        direction = door_flag[i+1]
+        tile_index -= 1
+        if width == 0:
+            x_block = tile_index
+            z_block = 0
+        else:
+            x_block = tile_index % width
+            z_block = tile_index // width
+        for direction_part in Direction:
+            if (direction & direction_part.value) != 0:
+                breakable = (direction & (direction_part.value << 16)) != 0
+                door = Door(x_block, z_block, direction_part, breakable)
+                door_list.append(door)
+    return door_list
+
+def convert_door_to_flag(door_list, width):
+    door_flags_by_coords = OrderedDict()
+    for door in door_list:
+        coords = (door.x_block, door.z_block)
+        if coords not in door_flags_by_coords:
+            door_flags_by_coords[coords] = 0
+            
+        door_flags_by_coords[coords] |= door.direction_part.value
+        if door.breakable:
+            door_flags_by_coords[coords] |= (door.direction_part.value << 16)
+        
+    door_flag = []
+    for (x, z), dir_flags in door_flags_by_coords.items():
+        tile_index_in_room = z*width + x
+        tile_index_in_room += 1
+        door_flag += [tile_index_in_room, dir_flags]
+    return door_flag
+
+def room_final():
+    global room_content
+    #SameCheck
+    for i in room_content:
+        if i["Value"]["OutOfMap"]:
+            continue
+        for e in room_content:
+            if e["Value"]["OutOfMap"]:
+                continue
+            #SameRoom
+            if i["Value"]["OffsetX"] == e["Value"]["OffsetX"] and i["Value"]["OffsetZ"] == e["Value"]["OffsetZ"] and i["Key"] != e["Key"]:
+                i["Value"]["SameRoom"] = e["Key"]
+                break;
+            else:
+                i["Value"]["SameRoom"] = "None"
+    #AdjacentCheck
+    for i in room_content:
+        i["Value"]["AdjacentRoomName"].clear()
+        used_doors.clear()
+        if i["Value"]["WarpPositionX"] == -1.0:
+            i["Value"]["DoorFlag"].clear()
+            continue
+        door_1 = convert_flag_to_door(i["Value"]["DoorFlag"], i["Value"]["AreaWidthSize"])
+        for e in room_content:
+            if i["Value"]["OutOfMap"] != e["Value"]["OutOfMap"] or e["Value"]["WarpPositionX"] == -1.0:
+                continue
+            door_2 = convert_flag_to_door(e["Value"]["DoorFlag"], e["Value"]["AreaWidthSize"])
+            #AdjacentRoom
+            check = False
+            if left_check(i, e):
+                if i["Value"]["OutOfMap"]:
+                    check = True
+                else:
+                    check = door_vertical_check(door_1, door_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP, i["Value"]["OffsetZ"], e["Value"]["OffsetZ"])
+            elif bottom_check(i, e):
+                if i["Value"]["OutOfMap"]:
+                    check = True
+                else:
+                    check = door_horizontal_check(door_1, door_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT, i["Value"]["OffsetX"], e["Value"]["OffsetX"])
+            elif right_check(i, e):
+                if i["Value"]["OutOfMap"]:
+                    check = True
+                else:
+                    check = door_vertical_check(door_1, door_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP, i["Value"]["OffsetZ"], e["Value"]["OffsetZ"])
+            elif top_check(i, e):
+                if i["Value"]["OutOfMap"]:
+                    check = True
+                else:
+                    check = door_horizontal_check(door_1, door_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT, i["Value"]["OffsetX"], e["Value"]["OffsetX"])
+            if check:
+                #TransitionFix
+                if not (e["Value"]["RoomType"] == "ERoomType::Load" and e["Key"][0:6] != i["Key"][0:6] and e["Value"]["SameRoom"] != "None" and e["Key"] != "m02VIL(1201)" and e["Value"]["SameRoom"] != "m03ENT(1201)"):
+                    #VillageTransitionFix
+                    if e["Value"]["SameRoom"] != "m02VIL(1201)" and e["Key"] != "m03ENT(1201)":
+                        i["Value"]["AdjacentRoomName"].append(e["Key"])
+        for e in door_1:
+            if not e in used_doors:
+                door_1.remove(e)
+        i["Value"]["DoorFlag"] = convert_door_to_flag(door_1, i["Value"]["AreaWidthSize"])
+    #VeparFix
+    if "m02VIL_001" in room_content[22]["Value"]["AdjacentRoomName"]:
+        room_content[22]["Value"]["AdjacentRoomName"].remove("m02VIL_001")
+    if "m01SIP_022" in room_content[32]["Value"]["AdjacentRoomName"]:
+        room_content[32]["Value"]["AdjacentRoomName"].remove("m01SIP_022")
+    if not "m02VIL_000" in room_content[22]["Value"]["AdjacentRoomName"]:
+        room_content[22]["Value"]["AdjacentRoomName"].append("m02VIL_000")
+    #TowerFix
+    if not "m08TWR_017" in room_content[227]["Value"]["AdjacentRoomName"]:
+        room_content[227]["Value"]["AdjacentRoomName"].append("m08TWR_017")
+    if not "m08TWR_018" in room_content[232]["Value"]["AdjacentRoomName"]:
+        room_content[232]["Value"]["AdjacentRoomName"].append("m08TWR_018")
+    if not "m08TWR_018" in room_content[233]["Value"]["AdjacentRoomName"]:
+        room_content[233]["Value"]["AdjacentRoomName"].append("m08TWR_018")
+    if not "m08TWR_019" in room_content[243]["Value"]["AdjacentRoomName"]:
+        room_content[243]["Value"]["AdjacentRoomName"].append("m08TWR_019")
+    
+    if not "m08TWR_000" in room_content[244]["Value"]["AdjacentRoomName"]:
+        room_content[244]["Value"]["AdjacentRoomName"].append("m08TWR_000")
+    if not "m08TWR_005" in room_content[245]["Value"]["AdjacentRoomName"]:
+        room_content[245]["Value"]["AdjacentRoomName"].append("m08TWR_005")
+    if not "m08TWR_006" in room_content[245]["Value"]["AdjacentRoomName"]:
+        room_content[245]["Value"]["AdjacentRoomName"].append("m08TWR_006")
+    if not "m08TWR_016" in room_content[246]["Value"]["AdjacentRoomName"]:
+        room_content[246]["Value"]["AdjacentRoomName"].append("m08TWR_016")
+    
+    room_content[227]["Value"]["DoorFlag"].insert(0, 1)
+    room_content[227]["Value"]["DoorFlag"].insert(0, 1)
+    room_content[232]["Value"]["DoorFlag"].append(4)
+    room_content[232]["Value"]["DoorFlag"].append(4)
+    room_content[233]["Value"]["DoorFlag"].insert(0, 1)
+    room_content[233]["Value"]["DoorFlag"].insert(0, 1)
+    room_content[243]["Value"]["DoorFlag"].insert(0, 4)
+    room_content[243]["Value"]["DoorFlag"].insert(0, 2)
+    
+    room_content[244]["Value"]["DoorFlag"].append(18)
+    room_content[244]["Value"]["DoorFlag"].append(8)
+    room_content[245]["Value"]["DoorFlag"].append(3)
+    room_content[245]["Value"]["DoorFlag"].append(2)
+    room_content[245]["Value"]["DoorFlag"].append(34)
+    room_content[245]["Value"]["DoorFlag"].append(8)
+    room_content[246]["Value"]["DoorFlag"].append(39)
+    room_content[246]["Value"]["DoorFlag"].append(8)
+    #GebelFix
+    if not "m02VIL_099" in room_content[166]["Value"]["AdjacentRoomName"]:
+        room_content[166]["Value"]["AdjacentRoomName"].append("m02VIL_099")
+    #BaelFix
+    if not "m02VIL_099" in room_content[475]["Value"]["AdjacentRoomName"]:
+        room_content[475]["Value"]["AdjacentRoomName"].append("m02VIL_099")
+
+def left_check(i, e):
+    return bool(e["Value"]["OffsetX"] == round(i["Value"]["OffsetX"] - 12.6 * e["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
+
+def bottom_check(i, e):
+    return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and e["Value"]["OffsetZ"] == round(i["Value"]["OffsetZ"] - 7.2 * e["Value"]["AreaHeightSize"], 1))
+
+def right_check(i, e):
+    return bool(e["Value"]["OffsetX"] == round(i["Value"]["OffsetX"] + 12.6 * i["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
+
+def top_check(i, e):
+    return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and e["Value"]["OffsetZ"] == round(i["Value"]["OffsetZ"] + 7.2 * i["Value"]["AreaHeightSize"], 1))
+
+def door_vertical_check(door_1, door_2, direction_1, direction_2, direction_3, offset_1, offset_2):
+    check = False
+    for i in door_1:
+        if i.direction_part == direction_1:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_1] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
+                    used_doors.append(i)
+                    check = True
+        elif i.direction_part == direction_2:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_2] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
+                    used_doors.append(i)
+                    check = True
+        elif i.direction_part == direction_3:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_3] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
+                    used_doors.append(i)
+                    check = True
+    return check
+
+def door_horizontal_check(door_1, door_2, direction_1, direction_2, direction_3, offset_1, offset_2):
+    check = False
+    for i in door_1:
+        if i.direction_part == direction_1:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_1] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
+                    used_doors.append(i)
+                    check = True
+        elif i.direction_part == direction_2:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_2] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
+                    used_doors.append(i)
+                    check = True
+        elif i.direction_part == direction_3:
+            for e in door_2:
+                if e.direction_part == OppositeDirection[direction_3] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
+                    used_doors.append(i)
+                    check = True
+    return check
 
 def debug(line):
     with open("SpoilerLog\\~debug.txt", "a") as file:

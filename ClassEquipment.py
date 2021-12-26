@@ -128,8 +128,8 @@ equipment_type_to_max_value = {
 }
 
 stat_pool = []
-armor_log = []
-weapon_log = []
+armor_log = {}
+weapon_log = {}
 
 def init():
     stat_int = -60
@@ -162,7 +162,7 @@ def rand_all_equip():
                 if i["Value"][e] == 0:
                     continue
                 list.append(abs(i["Value"][e]))
-            multiplier = random.choice(create_list(100, int(100/min(list)), 120))/100
+            multiplier = random.choice(create_list(min(list), 1, int(min(list)*1.2)))/min(list)
             for e in property_list:
                 if i["Value"][e] == 0:
                     continue
@@ -229,27 +229,14 @@ def rand_all_weapon():
     ClassManagement.coordinate_content[18]["Value"]["Value"] = int(ClassManagement.weapon_content[79]["Value"]["MeleeAttack"]*1.2) + 0.0
     ClassManagement.debug("ClassEquipment.rand_all_weapon()")
 
-def create_list(value, abs_min, max):
-    if value == abs_min:
-        min = abs_min - 1
-    else:
-        min = abs_min
+def create_list(value, minimum, maximum):
     list = []
-    list_int = min
-    for i in range(max-min+1):
-        if list_int < value:
-            num_range = (max-value)/(value-min)
-        elif list_int > value:
-            num_range = (value-min)/(max-value)
-        else:
-            num_range = ((max-value)/(value-min)+(value-min)/(max-value))/2
-        
-        if num_range < 1:
-            num_range = 1
-        for e in range(round(num_range*10)):
+    list_int = minimum
+    for i in range(maximum-minimum+1):
+        for e in range(2**(abs(math.ceil(abs(list_int-value)*5/max(value-minimum, maximum-value))-5))):
             list.append(list_int)
         list_int += 1
-    return [abs_min if i==min else i for i in list]
+    return list
 
 def rand_cheat_equip():
     for i in ClassManagement.armor_content:
@@ -260,12 +247,9 @@ def rand_cheat_equip():
                 ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff8000\">mATK " + str(i["Value"]["MagicAttack"]) + " </>"
             if i["Value"]["MagicDefense"] != 0:
                 ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff00ff\">mDEF " + str(i["Value"]["MagicDefense"]) + "</>"
-            log_data = {}
-            log_data["Key"] = ClassManagement.item_translation["Value"][i["Key"]]
-            log_data["Value"] = {}
+            armor_log[ClassManagement.item_translation[i["Key"]]] = {}
             for e in property_list:
-                log_data["Value"][e] = i["Value"][e]
-            armor_log.append(log_data)
+                armor_log[ClassManagement.item_translation[i["Key"]]][e] = i["Value"][e]
     ClassManagement.debug("ClassEquipment.rand_cheat_equip()")
 
 def rand_cheat_weapon():
@@ -280,19 +264,16 @@ def rand_cheat_weapon():
             i["Value"]["MeleeAttack"] = random.randint(int(min*0.8*reduction), int(max*1.2*reduction))
             if i["Value"]["SpecialEffectDenominator"] != 0.0:
                 i["Value"]["SpecialEffectDenominator"] = random.randint(1, 3) + 0.0
-            log_data = {}
-            log_data["Key"] = ClassManagement.item_translation["Value"][i["Key"]]
-            log_data["Value"] = {}
-            log_data["Value"]["MeleeAttack"] = i["Value"]["MeleeAttack"]
+            weapon_log[ClassManagement.item_translation[i["Key"]]] = {}
+            weapon_log[ClassManagement.item_translation[i["Key"]]]["MeleeAttack"] = i["Value"]["MeleeAttack"]
             if i["Value"]["SpecialEffectDenominator"] == 3.0:
-                log_data["Value"]["SpecialEffectRate"] = "Rare"
+                weapon_log[ClassManagement.item_translation[i["Key"]]]["SpecialEffectRate"] = "Rare"
             elif i["Value"]["SpecialEffectDenominator"] == 2.0:
-                log_data["Value"]["SpecialEffectRate"] = "Occasional"
+                weapon_log[ClassManagement.item_translation[i["Key"]]]["SpecialEffectRate"] = "Occasional"
             elif i["Value"]["SpecialEffectDenominator"] == 1.0:
-                log_data["Value"]["SpecialEffectRate"] = "Frequent"
+                weapon_log[ClassManagement.item_translation[i["Key"]]]["SpecialEffectRate"] = "Frequent"
             else:
-                log_data["Value"]["SpecialEffectRate"] = "None"
-            weapon_log.append(log_data)
+                weapon_log[ClassManagement.item_translation[i["Key"]]]["SpecialEffectRate"] = "None"
     ClassManagement.debug("ClassEquipment.rand_cheat_weapon()")
 
 def get_armor_log():

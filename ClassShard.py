@@ -31,7 +31,7 @@ skip_list = [
     "Venomsmog",
     "LigaDoin"
 ]
-log = []
+log = {}
 
 def init():
     value = 100
@@ -57,33 +57,35 @@ def rand_shard(scale):
     for i in range(79):
         if ClassManagement.shard_content[i]["Key"] in skip_list:
             continue
-        stat_num = random.choice(stat_pool)
-        ClassManagement.shard_content[i]["Value"]["minGradeValue"] = round(ClassManagement.shard_content[i]["Value"]["minGradeValue"] * (stat_num/100), 3)
-        ClassManagement.shard_content[i]["Value"]["maxGradeValue"] = round(ClassManagement.shard_content[i]["Value"]["maxGradeValue"] * (stat_num/100), 3)
+        multiplier = random.choice(create_list(int(ClassManagement.shard_content[i]["Value"]["minGradeValue"]), int(ClassManagement.shard_range_data[ClassManagement.shard_content[i]["Key"]]/20), ClassManagement.shard_range_data[ClassManagement.shard_content[i]["Key"]]))/ClassManagement.shard_content[i]["Value"]["minGradeValue"]
+        ClassManagement.shard_content[i]["Value"]["minGradeValue"] = round(ClassManagement.shard_content[i]["Value"]["minGradeValue"] * multiplier) + 0.0
+        ClassManagement.shard_content[i]["Value"]["maxGradeValue"] = round(ClassManagement.shard_content[i]["Value"]["maxGradeValue"] * multiplier) + 0.0
         if ClassManagement.shard_content[i]["Key"] == "LigaStreyma":
-            ClassManagement.shard_content[73]["Value"]["minGradeValue"] = round(ClassManagement.shard_content[73]["Value"]["minGradeValue"] * (stat_num/100), 3)
-            ClassManagement.shard_content[73]["Value"]["maxGradeValue"] = round(ClassManagement.shard_content[73]["Value"]["maxGradeValue"] * (stat_num/100), 3)
-        log_data = {}
-        log_data["Key"] = ClassManagement.shard_translation["Value"][ClassManagement.shard_content[i]["Key"]]
-        log_data["Value"] = {}
-        log_data["Value"]["PowerPercentage"] = stat_num
-        if scale:
-            if stat_num > 100 and ClassManagement.shard_content[i]["Key"] in special_list:
-                stat_num += (stat_num-100)*4
-            else:
-                stat_num += (stat_num-100)/4
-        else:
-            stat_num = random.choice(stat_pool)
-        ClassManagement.shard_content[i]["Value"]["useMP"] = int(ClassManagement.shard_content[i]["Value"]["useMP"] * (stat_num/100)) + 0.0
+            ClassManagement.shard_content[73]["Value"]["minGradeValue"] = round(ClassManagement.shard_content[73]["Value"]["minGradeValue"] * multiplier) + 0.0
+            ClassManagement.shard_content[73]["Value"]["maxGradeValue"] = round(ClassManagement.shard_content[73]["Value"]["maxGradeValue"] * multiplier) + 0.0
+        log[ClassManagement.shard_translation[ClassManagement.shard_content[i]["Key"]]] = {}
+        log[ClassManagement.shard_translation[ClassManagement.shard_content[i]["Key"]]]["PowerPercentage"] = round(multiplier*100)
+        if not scale:
+            multiplier = random.choice(create_list(int(ClassManagement.shard_content[i]["Value"]["minGradeValue"]), int(ClassManagement.shard_range_data[ClassManagement.shard_content[i]["Key"]]/20), ClassManagement.shard_range_data[ClassManagement.shard_content[i]["Key"]]))/ClassManagement.shard_content[i]["Value"]["minGradeValue"]
+        if multiplier > 1 and ClassManagement.shard_content[i]["Key"] in special_list:
+            multiplier += (multiplier-1)*4
+        ClassManagement.shard_content[i]["Value"]["useMP"] = int(ClassManagement.shard_content[i]["Value"]["useMP"] * multiplier) + 0.0
         if ClassManagement.shard_content[i]["Key"] == "LigaStreyma":
-            ClassManagement.shard_content[73]["Value"]["useMP"] = int(ClassManagement.shard_content[73]["Value"]["useMP"] * (stat_num/100)) + 0.0
+            ClassManagement.shard_content[73]["Value"]["useMP"] = int(ClassManagement.shard_content[73]["Value"]["useMP"] * multiplier) + 0.0
             if ClassManagement.shard_content[73]["Value"]["useMP"] <= 0.0:
                 ClassManagement.shard_content[73]["Value"]["useMP"] = 1.0
         if ClassManagement.shard_content[i]["Value"]["useMP"] <= 0.0:
             ClassManagement.shard_content[i]["Value"]["useMP"] = 1.0
-            stat_num = 1.0
-        log_data["Value"]["CostPercentage"] = int(stat_num)
-        log.append(log_data)
+        log[ClassManagement.shard_translation[ClassManagement.shard_content[i]["Key"]]]["CostPercentage"] = round(multiplier*100)
+
+def create_list(value, minimum, maximum):
+    list = []
+    list_int = minimum
+    for i in range(maximum-minimum+1):
+        for e in range(2**(abs(math.ceil(abs(list_int-value)*5/max(value-minimum, maximum-value))-5))):
+            list.append(list_int)
+        list_int += 1
+    return list
     ClassManagement.debug("ClassShard.rand_shard(" + str(scale) + ")")
 
 def eye_max_range():

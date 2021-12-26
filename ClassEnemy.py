@@ -40,7 +40,6 @@ area = [
 ]
 original_area_to_progress = {}
 area_to_progress = {}
-area_to_list = {}
 
 zangetsu_exp = [
     34,
@@ -69,7 +68,7 @@ zangetsu_exp = [
     1906
 ]
 
-log = []
+log = {}
 
 def init():
     stat_int = -100
@@ -81,9 +80,9 @@ def init():
 
 def convert_area_to_progress():
     #General
-    for i in range(len(ClassManagement.order_data["Value"]["AreaList"])):
-        original_area_to_progress[ClassManagement.original_order_data["Value"]["AreaList"][i]] = i + 1.0
-        area_to_progress[ClassManagement.order_data["Value"]["AreaList"][i]] = i + 1
+    for i in range(len(ClassManagement.order_data)):
+        original_area_to_progress[ClassManagement.original_order_data[i]] = i + 1.0
+        area_to_progress[ClassManagement.order_data[i]] = i + 1
     #Special
     original_area_to_progress["m04GDN(2)"] = (original_area_to_progress["m04GDN"] + original_area_to_progress["m05SAN"])/2
     area_to_progress["m04GDN(2)"] = area_to_progress["m04GDN"]
@@ -95,52 +94,6 @@ def convert_area_to_progress():
     area_to_progress["m08TWR(2)"] = area_to_progress["m08TWR"]
     original_area_to_progress["m11UGD(2)"] = (original_area_to_progress["m07LIB"] + original_area_to_progress["m13ARC"])/2
     area_to_progress["m11UGD(2)"] = area_to_progress["m11UGD"]
-
-def convert_area_to_list():
-    #Variable
-    for i in area:
-        list = []
-        for e in range(99):
-            if e <= 49:
-                for o in range(abs(area_to_progress[i] - 19)):
-                    list.append(e+1)
-            else:
-                list.append(e+1)
-        area_to_list[i] = list
-    #SpecialCases
-    area_to_list["m04GDN(2)"] = area_to_list["m04GDN"]
-    area_to_list["m05SAN(2)"] = area_to_list["m05SAN"]
-    area_to_list["m07LIB(2)"] = area_to_list["m07LIB"]
-    area_to_list["m08TWR(2)"] = area_to_list["m08TWR"]
-    area_to_list["m11UGD(2)"] = area_to_list["m11UGD"]
-    #Minor
-    list = []
-    for i in range(50):
-        list.append(i+1)
-    area_to_list["Minor"] = list
-    #Intermediate
-    list = []
-    for e in range(99):
-        if e <= 49:
-            for o in range(10):
-                list.append(e+1)
-        else:
-            list.append(e+1)
-    area_to_list["Intermediate"] = list
-    #PreMajor
-    list = []
-    for e in range(99):
-        if e <= 49:
-            for o in range(2):
-                list.append(e+1)
-        else:
-            list.append(e+1)
-    area_to_list["PreMajor"] = list
-    #Major
-    list = []
-    for i in range(99):
-        list.append(i+1)
-    area_to_list["Major"] = list
 
 def rename_difficulty(normal, hard, nightmare):
     ClassManagement.system_content["Table"]["SYS_SEN_Difficulty_Normal"] = normal
@@ -331,7 +284,6 @@ def brv_damage(difficulty):
 
 def enemy_property(level, resist, map, custom, value):
     convert_area_to_progress()
-    convert_area_to_list()
     #All
     i = 12
     while i <= 176:
@@ -339,34 +291,34 @@ def enemy_property(level, resist, map, custom, value):
             rand_stat(i)
         if custom:
             patch_level([value], i)
-        elif level:
-            check = True
-            for e in ClassManagement.enemy_location_data:
-                if ClassManagement.character_content[i]["Key"] == e["Key"]:
-                    check = False
-                    patch_level(area_to_list[e["Value"]["AreaID"]], i)
-            if check:
-                patch_level([0], i)
-        elif map:
-            check = True
-            for e in ClassManagement.enemy_location_data:
-                if ClassManagement.character_content[i]["Key"] == e["Key"]:
-                    check = False
-                    #Area
-                    if e["Value"]["AreaID"] == "Minor":
-                        current_area = e["Value"]["NormalModeRooms"][0][:6]
-                    elif e["Value"]["AreaID"] == "Intermediate" or "Major" in e["Value"]["AreaID"]:
-                        continue
+        elif level or map:
+            try:
+                enemy_location = ClassManagement.enemy_location_data[ClassManagement.character_content[i]["Key"]]
+                #Area
+                if enemy_location["AreaID"] == "Minor":
+                    current_area = enemy_location["NormalModeRooms"][0][:6]
+                else:
+                    current_area = enemy_location["AreaID"]
+                #Level
+                if enemy_location["AreaID"] == "Static" or enemy_location["AreaID"] == "Major" or not map:
+                    current_level = ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]
+                else:
+                    current_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
+                    if current_level < 1:
+                        current_level = 1
+                    elif current_level > 50:
+                        current_level = 50
+                #Patch
+                if level:
+                    if enemy_location["AreaID"] == "Minor":
+                        patch_level(create_list(current_level, 1, 50), i)
+                    elif enemy_location["AreaID"] == "Major":
+                        patch_level(create_list(999, 1, 99), i)
                     else:
-                        current_area = e["Value"]["AreaID"]
-                    #Level
-                    new_level = round(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
-                    if new_level < 1:
-                        new_level = 1
-                    if new_level > 50:
-                        new_level = 50
-                    patch_level([new_level], i)
-            if check:
+                        patch_level(create_list(current_level, 1, 99), i)
+                elif enemy_location["AreaID"] != "Static" and enemy_location["AreaID"] != "Major":
+                    patch_level([current_level], i)
+            except KeyError:
                 patch_level([0], i)
         create_log(i)
         i += 1
@@ -376,7 +328,7 @@ def enemy_property(level, resist, map, custom, value):
     if custom:
         patch_level([value], 177)
     elif level:
-        patch_level(area_to_list["Major"], 177)
+        patch_level(create_list(ClassManagement.character_content[177]["Value"]["DefaultEnemyLevel"], 1, 99), 177)
     create_log(177)
     #Breeder
     if resist:
@@ -386,10 +338,19 @@ def enemy_property(level, resist, map, custom, value):
         patch_level([value], 185)
         patch_level([value], 186)
     elif level:
-        patch_level(area_to_list["Major"], 185)
-        patch_level(area_to_list["Major"], 186)
+        patch_level(create_list(ClassManagement.character_content[185]["Value"]["DefaultEnemyLevel"], 1, 99), 185)
+        patch_level(create_list(ClassManagement.character_content[186]["Value"]["DefaultEnemyLevel"], 1, 99), 186)
     create_log(185)
     ClassManagement.debug("ClassEnemy.enemy_property(" + str(level) + ", " + str(resist) + ", " + str(map) + ", " + str(custom) + ", " + str(value) + ")")
+
+def create_list(value, minimum, maximum):
+    list = []
+    list_int = minimum
+    for i in range(maximum-minimum+1):
+        for e in range(2**(abs(math.ceil(abs(list_int-value)*5/max(value-minimum, maximum-value))-5))):
+            list.append(list_int)
+        list_int += 1
+    return list
 
 def patch_level(array, i):
     #BuerArmor
@@ -495,27 +456,24 @@ def rand_stat(i):
 
 def create_log(i):
     try:
-        log_data = {}
-        log_data["Key"] = ClassManagement.enemy_translation["Value"][ClassManagement.character_content[i]["Key"]]
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]] = {}
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["Level"] = ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"] = {}
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["HP"] = int(((ClassManagement.character_content[i]["Value"]["MaxHP99Enemy"] - ClassManagement.character_content[i]["Value"]["MaxHP"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["MaxHP"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["STR"] = int(((ClassManagement.character_content[i]["Value"]["STR99Enemy"] - ClassManagement.character_content[i]["Value"]["STR"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["STR"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["INT"] = int(((ClassManagement.character_content[i]["Value"]["INT99Enemy"] - ClassManagement.character_content[i]["Value"]["INT"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["INT"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["CON"] = int(((ClassManagement.character_content[i]["Value"]["CON99Enemy"] - ClassManagement.character_content[i]["Value"]["CON"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["CON"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["MND"] = int(((ClassManagement.character_content[i]["Value"]["MND99Enemy"] - ClassManagement.character_content[i]["Value"]["MND"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["MND"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["LUC"] = int(((ClassManagement.character_content[i]["Value"]["LUC99Enemy"] - ClassManagement.character_content[i]["Value"]["LUC"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["LUC"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["EXP"] = int(((ClassManagement.character_content[i]["Value"]["Experience99Enemy"] - ClassManagement.character_content[i]["Value"]["Experience"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["Experience"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["MainStats"]["AP"] = int(((ClassManagement.character_content[i]["Value"]["ArtsExperience99Enemy"] - ClassManagement.character_content[i]["Value"]["ArtsExperience"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["ArtsExperience"])
+        log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["Resistances"] = {}
+        for e in stat:
+            log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["Resistances"][e] = int(ClassManagement.character_content[i]["Value"][e])
+        for e in second_stat:
+            log[ClassManagement.enemy_translation[ClassManagement.character_content[i]["Key"]]]["Resistances"][e] = int(ClassManagement.character_content[i]["Value"][e])
     except KeyError:
         return
-    log_data["Value"] = {}
-    log_data["Value"]["Level"] = ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]
-    log_data["Value"]["MainStats"] = {}
-    log_data["Value"]["MainStats"]["HP"] = int(((ClassManagement.character_content[i]["Value"]["MaxHP99Enemy"] - ClassManagement.character_content[i]["Value"]["MaxHP"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["MaxHP"])
-    log_data["Value"]["MainStats"]["STR"] = int(((ClassManagement.character_content[i]["Value"]["STR99Enemy"] - ClassManagement.character_content[i]["Value"]["STR"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["STR"])
-    log_data["Value"]["MainStats"]["INT"] = int(((ClassManagement.character_content[i]["Value"]["INT99Enemy"] - ClassManagement.character_content[i]["Value"]["INT"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["INT"])
-    log_data["Value"]["MainStats"]["CON"] = int(((ClassManagement.character_content[i]["Value"]["CON99Enemy"] - ClassManagement.character_content[i]["Value"]["CON"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["CON"])
-    log_data["Value"]["MainStats"]["MND"] = int(((ClassManagement.character_content[i]["Value"]["MND99Enemy"] - ClassManagement.character_content[i]["Value"]["MND"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["MND"])
-    log_data["Value"]["MainStats"]["LUC"] = int(((ClassManagement.character_content[i]["Value"]["LUC99Enemy"] - ClassManagement.character_content[i]["Value"]["LUC"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["LUC"])
-    log_data["Value"]["MainStats"]["EXP"] = int(((ClassManagement.character_content[i]["Value"]["Experience99Enemy"] - ClassManagement.character_content[i]["Value"]["Experience"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["Experience"])
-    log_data["Value"]["MainStats"]["AP"] = int(((ClassManagement.character_content[i]["Value"]["ArtsExperience99Enemy"] - ClassManagement.character_content[i]["Value"]["ArtsExperience"])/98)*(ClassManagement.character_content[i]["Value"]["DefaultEnemyLevel"]-1) + ClassManagement.character_content[i]["Value"]["ArtsExperience"])
-    log_data["Value"]["Resistances"] = {}
-    for e in stat:
-        log_data["Value"]["Resistances"][e] = int(ClassManagement.character_content[i]["Value"][e])
-    for e in second_stat:
-        log_data["Value"]["Resistances"][e] = int(ClassManagement.character_content[i]["Value"][e])
-    log.append(log_data)
 
 def get_log():
     return log
