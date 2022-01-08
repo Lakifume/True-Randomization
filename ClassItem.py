@@ -421,6 +421,8 @@ boss_rooms= [
     "m17RVA_008",
     "m18ICE_004",
     "m18ICE_018",
+    "m19K2C_000",
+    "m51EBT_000",
     "m88BKR_001",
     "m88BKR_002",
     "m88BKR_004"
@@ -441,7 +443,8 @@ all_keys = [
     "Keyofbacker1",
     "Keyofbacker2",
     "Keyofbacker3",
-    "Keyofbacker4"
+    "Keyofbacker4",
+    "MonarchCrown"
 ]
 key_items = [
     "Swordsman",
@@ -450,7 +453,8 @@ key_items = [
     "Keyofbacker1",
     "Keyofbacker2",
     "Keyofbacker3",
-    "Keyofbacker4"
+    "Keyofbacker4",
+    "MonarchCrown"
 ]
 key_shards = [
     "Doublejump",
@@ -469,6 +473,10 @@ previous_room = []
 all_rooms = []
 requirement = []
 requirement_to_gate = {}
+other_key = [
+    "ShipMap",
+    "DiscountCard"
+]
 
 #Pool
 
@@ -516,9 +524,7 @@ enemy_skip_list = [
     "N2013"
 ]
 shop_skip_list = [
-    "Waystone",
-    "DiscountCard",
-    "MonarchCrown"
+    "Waystone"
 ]
 
 #Galleon
@@ -665,7 +671,51 @@ def unused_room_check():
             del chest_to_seed[i["Key"]]
     ClassManagement.debug("ClassItem.unused_room_check()")
 
-def extra_logic_safety():
+def extra_logic():
+    #8BitNightmare
+    ClassManagement.logic_data["m51EBT_000"] = {}
+    ClassManagement.logic_data["m51EBT_000"]["GateRoom"] = False
+    ClassManagement.logic_data["m51EBT_000"]["NearestGate"] = ClassManagement.logic_data["m06KNG_021"]["NearestGate"]
+    ClassManagement.logic_data["m51EBT_000"]["Doublejump"] = False
+    ClassManagement.logic_data["m51EBT_000"]["HighJump"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Invert"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Deepsinker"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Dimensionshift"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Reflectionray"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Aquastream"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Bloodsteel"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Swordsman"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Silverbromide"] = False
+    ClassManagement.logic_data["m51EBT_000"]["BreastplateofAguilar"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Keyofbacker1"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Keyofbacker2"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Keyofbacker3"] = False
+    ClassManagement.logic_data["m51EBT_000"]["Keyofbacker4"] = False
+    #K2C
+    for i in ClassManagement.logic_data:
+        ClassManagement.logic_data[i]["MonarchCrown"] = False
+    ClassManagement.logic_data["m19K2C_000"] = {}
+    ClassManagement.logic_data["m19K2C_000"]["GateRoom"] = True
+    if ClassManagement.logic_data["m09TRN_002"]["GateRoom"]:
+        ClassManagement.logic_data["m19K2C_000"]["NearestGate"] = ["m09TRN_002"]
+    else:
+        ClassManagement.logic_data["m19K2C_000"]["NearestGate"] = ClassManagement.logic_data["m09TRN_002"]["NearestGate"]
+    ClassManagement.logic_data["m19K2C_000"]["Doublejump"] = False
+    ClassManagement.logic_data["m19K2C_000"]["HighJump"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Invert"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Deepsinker"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Dimensionshift"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Reflectionray"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Aquastream"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Bloodsteel"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Swordsman"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Silverbromide"] = False
+    ClassManagement.logic_data["m19K2C_000"]["BreastplateofAguilar"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Keyofbacker1"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Keyofbacker2"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Keyofbacker3"] = False
+    ClassManagement.logic_data["m19K2C_000"]["Keyofbacker4"] = False
+    ClassManagement.logic_data["m19K2C_000"]["MonarchCrown"] = True
     #Benjamin
     ClassManagement.logic_data["m02VIL_003"]["NearestGate"] = ClassManagement.logic_data["m18ICE_019"]["NearestGate"]
     #100%Chest
@@ -673,7 +723,7 @@ def extra_logic_safety():
     #OD
     if ClassManagement.book_content[21]["Value"]["RoomTraverseThreshold"] > 80:
         ClassManagement.logic_data["m18ICE_004"]["NearestGate"] = ClassManagement.logic_data["m18ICE_019"]["NearestGate"]
-    ClassManagement.debug("ClassItem.extra_logic_safety()")
+    ClassManagement.debug("ClassItem.extra_logic()")
 
 def hard_enemy_logic():
     for i in ClassManagement.enemy_location_data:
@@ -685,6 +735,13 @@ def hard_enemy_logic():
     ClassManagement.enemy_location_data["N3090"]["NormalModeRooms"].remove("m08TWR_013")
     ClassManagement.enemy_location_data["N3090"]["NormalModeRooms"].remove("m11UGD_013")
     ClassManagement.debug("ClassItem.hard_enemy_logic()")
+
+def story_chest():
+    for i in chest_to_seed:
+        chest_to_seed[i] = i
+    enemy_skip_list.append("N3006")
+    enemy_skip_list.append("N3005")
+    ClassManagement.debug("ClassItem.story_chest()")
 
 def remove_infinite():
     while "Gebelsglasses" in ClassManagement.item_drop_data["Accessory"]["ItemPool"]:
@@ -931,6 +988,9 @@ def rand_overworld_key():
         i["Value"]["DropSpecialFlags"] = "EDropSpecialFlag::None"
     for i in key_shards:
         patch_key_shard_entry(i, key_shard_to_location[i])
+    #OtherKeys
+    for i in other_key:
+        patch_key_item_entry(i, random.choice(list(chest_to_seed)))
     ClassManagement.debug("ClassItem.rand_overworld_key()")
 
 def rand_ship_waystone():
@@ -974,7 +1034,7 @@ def ship_flight():
 
 def rand_overworld_shard():
     i = 500
-    while i <= 629:
+    while i <= 630:
         if ClassManagement.drop_content[i]["Key"].split("_")[0] in list(key_shard_to_location.values()) or ClassManagement.drop_content[i]["Value"]["ShardRate"] == 0.0 or ClassManagement.drop_content[i]["Key"].split("_")[0] in enemy_skip_list:
             i += 1
             continue
@@ -1015,8 +1075,11 @@ def rand_overworld_pool():
             ClassManagement.drop_content[i]["Value"]["ShardRate"] /= 2
         if ClassManagement.drop_content[i]["Value"]["DropSpecialFlags"] == "EDropSpecialFlag::DropShardOnce":
             ClassManagement.drop_content[i]["Value"]["ShardRate"] *= 3
+        if ClassManagement.drop_content[i]["Value"]["ShardRate"] > 100.0:
+            ClassManagement.drop_content[i]["Value"]["ShardRate"] = 100.0
     #FireCannonShardFix
-    ClassManagement.drop_content[516]["Value"]["ShardRate"] = ClassManagement.drop_content[515]["Value"]["ShardRate"]
+    if not "N3005" in enemy_skip_list:
+        ClassManagement.drop_content[516]["Value"]["ShardRate"] = ClassManagement.drop_content[515]["Value"]["ShardRate"]
     #DuplicateCheck
     for i in enemy_index:
         if "Treasure" in ClassManagement.drop_content[i]["Key"]:
@@ -1354,10 +1417,12 @@ def all_hair_in_shop():
         i += 1
     ClassManagement.debug("ClassItem.all_hair_in_shop()")
 
-def no_card_in_shop():
+def no_key_in_shop():
     ClassManagement.item_content[561]["Value"]["buyPrice"] = 0
     ClassManagement.item_content[561]["Value"]["sellPrice"] = 0
-    ClassManagement.debug("ClassItem.no_card_in_shop()")
+    ClassManagement.item_content[886]["Value"]["buyPrice"] = 0
+    ClassManagement.item_content[886]["Value"]["sellPrice"] = 0
+    ClassManagement.debug("ClassItem.no_key_in_shop()")
 
 def rand_shop_pool():
     for i in ClassManagement.item_drop_data:

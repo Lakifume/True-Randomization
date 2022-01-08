@@ -151,6 +151,10 @@ def zangetsu_black_belt():
     ClassManagement.debug("ClassEquipment.zangetsu_black_belt()")
 
 def rand_all_equip():
+    #ShovelArmorAttack
+    ClassManagement.coordinate_content[28]["Value"]["Value"] = random.choice(create_list(ClassManagement.coordinate_content[28]["Value"]["Value"], int(weapon_type_to_max_value["LargeSword"][0]*0.8), int(weapon_type_to_max_value["LargeSword"][1]*1.2))) + 0.0
+    ClassManagement.master_content["Table"]["ITEM_EXPLAIN_Shovelarmorsarmor"] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_Shovelarmorsarmor"].split("<span color=\"#ff0000\">")[0] + "<span color=\"#ff0000\">wATK " + str(int(ClassManagement.coordinate_content[28]["Value"]["Value"])) + "</> "
+    #AllArmor
     for i in ClassManagement.armor_content:
         try:
             test = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]]
@@ -183,9 +187,9 @@ def rand_all_equip():
                     max = equipment_type_to_max_value[i["Value"]["SlotType"].split("::")[1]]["Stat"]
                 i["Value"][e] = random.choice(create_list(i["Value"][e], 1, int(max*1.2)))
         if i["Value"]["MagicAttack"] != 0:
-            ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]].split("mATK")[0] + "mATK " + str(i["Value"]["MagicAttack"]) + " </>"
+            ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]].split("<span color=\"#ff8000\">")[0] + "<span color=\"#ff8000\">mATK " + str(i["Value"]["MagicAttack"]) + "</> "
         if i["Value"]["MagicDefense"] != 0:
-            ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]].split("mDEF")[0] + "mDEF " + str(i["Value"]["MagicDefense"]) + "</>"
+            ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] = ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]].split("<span color=\"#ff00ff\">")[0] + "<span color=\"#ff00ff\">mDEF " + str(i["Value"]["MagicDefense"]) + "</>"
     ClassManagement.debug("ClassEquipment.rand_all_equip()")
 
 def rand_all_weapon():
@@ -244,7 +248,7 @@ def rand_cheat_equip():
             for e in property_list:
                 i["Value"][e] = random.choice(stat_pool)
             if i["Value"]["MagicAttack"] != 0:
-                ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff8000\">mATK " + str(i["Value"]["MagicAttack"]) + " </>"
+                ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff8000\">mATK " + str(i["Value"]["MagicAttack"]) + "</> "
             if i["Value"]["MagicDefense"] != 0:
                 ClassManagement.master_content["Table"]["ITEM_EXPLAIN_" + i["Key"]] += "<span color=\"#ff00ff\">mDEF " + str(i["Value"]["MagicDefense"]) + "</>"
             armor_log[ClassManagement.item_translation[i["Key"]]] = {}

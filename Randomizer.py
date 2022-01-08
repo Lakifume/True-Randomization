@@ -1056,8 +1056,6 @@ class Main(QWidget):
             self.check_box_1.setStyleSheet("color: " + item_color)
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #CheckRandomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bOverworldPool", "false")
             self.check_box_1.setStyleSheet("color: #ffffff")
@@ -1070,8 +1068,6 @@ class Main(QWidget):
             self.check_box_2.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #CheckRandomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bShopPool", "false")
             self.check_box_2.setStyleSheet("color: #ffffff")
@@ -1084,8 +1080,6 @@ class Main(QWidget):
             self.check_box_16.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #CheckRandomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bQuestPool", "false")
             self.check_box_16.setStyleSheet("color: #ffffff")
@@ -1099,8 +1093,6 @@ class Main(QWidget):
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
             self.add_to_list(datatable_files, "PBScenarioStringTable", [])
-            #CheckRandomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bQuestRequirements", "false")
             self.check_box_17.setStyleSheet("color: #ffffff")
@@ -1114,8 +1106,6 @@ class Main(QWidget):
             self.check_box_18.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #CheckRandomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bRemoveInfinites", "false")
             self.check_box_18.setStyleSheet("color: #ffffff")
@@ -1334,6 +1324,12 @@ class Main(QWidget):
             self.remove_from_list(sound_files, "ACT50_BRM", [self.radio_button_15])
             self.radio_button_7.setVisible(True)
             self.radio_button_8.setVisible(True)
+            #UncheckItem
+            self.check_box_1.setChecked(False)
+            self.check_box_2.setChecked(False)
+            self.check_box_16.setChecked(False)
+            self.check_box_17.setChecked(False)
+            self.check_box_18.setChecked(False)
             #CheckStory
             self.radio_button_6.setChecked(True)
             #CheckSpecialNone
@@ -1378,10 +1374,14 @@ class Main(QWidget):
             config.set("StartWith", "bNothing", "false")
             config.set("StartWith", "bDoubleJump", "true")
             config.set("StartWith", "bAccelerator", "false")
+            #CheckRandomizer
+            self.radio_button_4.setChecked(True)
         else:
             config.set("StartWith", "bNothing", "false")
             config.set("StartWith", "bDoubleJump", "false")
             config.set("StartWith", "bAccelerator", "true")
+            #CheckRandomizer
+            self.radio_button_4.setChecked(True)
 
     def radio_button_group_2_checked(self):
         if self.radio_button_4.isChecked():
@@ -1399,12 +1399,6 @@ class Main(QWidget):
             config.set("GameMode", "bStory", "true")
             if not self.string:
                 self.remove_from_list(datatable_files, "PB_DT_QuestMaster", [self.check_box_12])
-            #UncheckItem
-            self.check_box_1.setChecked(False)
-            self.check_box_2.setChecked(False)
-            self.check_box_16.setChecked(False)
-            self.check_box_17.setChecked(False)
-            self.check_box_18.setChecked(False)
             #CheckStartNothing
             self.radio_button_11.setChecked(True)
     
@@ -1423,6 +1417,12 @@ class Main(QWidget):
             config.set("SpecialMode", "bProgressive", "false")
             self.add_to_list(ui_files, "icon", [self.check_box_21])
             self.add_to_list(sound_files, "ACT50_BRM", [self.check_box_21])
+            #UncheckItem
+            self.check_box_1.setChecked(False)
+            self.check_box_2.setChecked(False)
+            self.check_box_16.setChecked(False)
+            self.check_box_17.setChecked(False)
+            self.check_box_18.setChecked(False)
             #CheckStory
             self.radio_button_6.setChecked(True)
             #UncheckExtra
@@ -1435,6 +1435,12 @@ class Main(QWidget):
             config.set("SpecialMode", "bProgressive", "true")
             self.remove_from_list(ui_files, "icon", [self.check_box_21])
             self.remove_from_list(sound_files, "ACT50_BRM", [self.check_box_21])
+            #UncheckItem
+            self.check_box_1.setChecked(False)
+            self.check_box_2.setChecked(False)
+            self.check_box_16.setChecked(False)
+            self.check_box_17.setChecked(False)
+            self.check_box_18.setChecked(False)
             #CheckStory
             self.radio_button_6.setChecked(True)
             #UncheckExtra
@@ -1687,11 +1693,13 @@ class Main(QWidget):
             ClassManagement.load_custom_map(self.string)
             ClassManagement.load_custom_logic(self.string)
             ClassManagement.load_custom_order(self.string)
+            ClassItem.unused_room_check()
             ClassManagement.create_log(self.string)
             write_log_param_list.append(("MapSelection", "MapEdit\\Key", ClassManagement.log, False))
         
         if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
             ClassItem.hard_enemy_logic()
+        ClassItem.extra_logic()
         
         if config.getboolean("GameMode", "bRandomizer"):
             ClassItem.give_shortcut()
@@ -1699,8 +1707,9 @@ class Main(QWidget):
             ClassShard.eye_max_range()
             ClassItem.unlock_all_quest()
             ClassItem.all_hair_in_shop()
-            ClassItem.no_card_in_shop()
             ClassEnemy.no_upgrade_cap()
+        else:
+            ClassItem.story_chest()
         
         if config.getboolean("StartWith", "bDoubleJump"):
             ClassItem.give_extra("Doublejump")
@@ -1715,8 +1724,7 @@ class Main(QWidget):
             ClassItem.remove_infinite()
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
-            ClassItem.unused_room_check()
-            ClassItem.extra_logic_safety()
+            ClassItem.no_key_in_shop()
             ClassItem.no_shard_craft()
             ClassItem.rand_overworld_key()
             if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
@@ -1744,6 +1752,8 @@ class Main(QWidget):
         if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
             ClassShard.rand_shard(config.getboolean("ShardRandomization", "bScaleMagicCostWithPower"))
             write_log_param_list.append(("ShardPower", "SpoilerLog", ClassShard.get_log(), False))
+        else:
+            ClassShard.default_shard()
         
         if config.getboolean("EquipmentRandomization", "bGlobalGearStats"):
             ClassEquipment.rand_all_equip()
@@ -1803,6 +1813,7 @@ class Main(QWidget):
         write_json_param_list.append(("PBSystemStringTable", "Content\\L10N\\en\\Core\\StringTable", ClassManagement.system_content, False))
         write_json_param_list.append(("PB_DT_BRVAttackDamage", "Content\\Core\\DataTable\\Character", ClassManagement.attack_content, True))
         write_json_param_list.append(("PB_DT_RoomMaster", "Content\\Core\\DataTable", ClassManagement.room_content, True))
+        write_json_param_list.append(("PB_DT_ShardMaster", "Content\\Core\\DataTable", ClassManagement.shard_content, True))
         
         if self.string:
             copy_file_param_list.append(("icon_8bitCrown", "uasset", "Serializer\\Uasset", "Content\\Core\\UI\\K2C"))
@@ -1836,11 +1847,6 @@ class Main(QWidget):
             write_json_param_list.append(("PB_DT_BookMaster", "Content\\Core\\DataTable", ClassManagement.book_content, True))
         else:
             copy_file_param_list.append(("PB_DT_BookMaster", "uasset", "Serializer", "Content\\Core\\DataTable"))
-        
-        if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost") or config.getboolean("GameMode", "bRandomizer"):
-            write_json_param_list.append(("PB_DT_ShardMaster", "Content\\Core\\DataTable", ClassManagement.shard_content, True))
-        else:
-            copy_file_param_list.append(("PB_DT_ShardMaster", "uasset", "Serializer", "Content\\Core\\DataTable"))
         
         if config.getboolean("EquipmentRandomization", "bGlobalGearStats") or config.getboolean("EquipmentRandomization", "bCheatGearStats"):
             write_json_param_list.append(("PB_DT_WeaponMaster", "Content\\Core\\DataTable", ClassManagement.weapon_content, True))

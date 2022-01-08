@@ -145,6 +145,10 @@ def open_data():
     with open("Data\\Constant\\QuestRequirement.json", "r") as file_reader:
         quest_requirement_data = json.load(file_reader)
     
+    global shard_base_data
+    with open("Data\\Constant\\ShardBase.json", "r") as file_reader:
+        shard_base_data = json.load(file_reader)
+    
     global shard_drop_data
     with open("Data\\Constant\\ShardDrop.json", "r") as file_reader:
         shard_drop_data = json.load(file_reader)
@@ -208,9 +212,9 @@ def load_custom_map(path):
             room_content[313]["Value"]["NoTraverse"][i] -= room_content[313]["Value"]["AreaWidthSize"]*multiplier
     #GlobalMapDisplayFix
     for i in room_content:
-        if i["Value"]["OffsetX"] < 201.6:
+        if i["Value"]["OffsetX"] < 214.2:
             i["Value"]["AreaID"] = "EAreaID::m01SIP"
-        elif i["Value"]["OffsetX"] + i["Value"]["AreaWidthSize"]*12.6 > 1096.2:
+        elif i["Value"]["OffsetX"] + i["Value"]["AreaWidthSize"]*12.6 > 1108.8:
             i["Value"]["AreaID"] = "EAreaID::m13ARC"
         else:
             i["Value"]["AreaID"] = "EAreaID::m03ENT"
@@ -466,7 +470,7 @@ def room_final():
                     #VillageTransitionFix
                     if e["Value"]["SameRoom"] != "m02VIL(1201)" and e["Key"] != "m03ENT(1201)":
                         i["Value"]["AdjacentRoomName"].append(e["Key"])
-        for e in door_1:
+        for e in list(door_1):
             if not e in used_doors:
                 door_1.remove(e)
         i["Value"]["DoorFlag"] = convert_door_to_flag(door_1, i["Value"]["AreaWidthSize"])
