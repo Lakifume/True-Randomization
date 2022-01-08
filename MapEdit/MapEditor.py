@@ -75,6 +75,39 @@ area_white = [
     "#ffffff",
     "#ffffff"
 ]
+boss_room = [
+    "m01SIP_022",
+    "m03ENT_013",
+    "m05SAN_012",
+    "m05SAN_023",
+    "m06KNG_020",
+    "m07LIB_011",
+    "m07LIB_038",
+    "m08TWR_019",
+    "m10BIG_011",
+    "m12SND_027",
+    "m13ARC_005",
+    "m14TAR_004",
+    "m15JPN_016",
+    "m17RVA_008",
+    "m18ICE_004",
+    "m18ICE_018",
+    "m18ICE_019",
+    "m50BRM_001",
+    "m50BRM_003",
+    "m50BRM_005",
+    "m50BRM_007",
+    "m50BRM_009",
+    "m50BRM_051",
+    "m50BRM_053",
+    "m50BRM_055",
+    "m50BRM_057",
+    "m50BRM_059",
+    "m53BRV_001",
+    "m53BRV_003",
+    "m53BRV_005",
+    "m77LBP_000"
+]
 
 music_id = []
 music_name = []
@@ -89,9 +122,6 @@ logic_mode = False
 area_mode = False
 assign_mode = False
 key_mode = False
-
-with open("Data\\Constant\\BossRooms.json", "r") as file_reader:
-    boss_room = json.load(file_reader)
     
 with open("Data\\Constant\\ConnectedRooms.json", "r") as file_reader:
     connected_room = json.load(file_reader)
@@ -103,12 +133,12 @@ with open("Data\\Translation\\PlayTranslation.json", "r") as file_reader:
     play_translate = json.load(file_reader)
 
 for i in music_translate:
-    music_id.append(i["Value"]["MusicId"])
-    music_name.append(i["Value"]["MusicName"])
+    music_id.append(i)
+    music_name.append(music_translate[i])
 
 for i in play_translate:
-    play_id.append(i["Value"]["PlayId"])
-    play_name.append(i["Value"]["PlayName"])
+    play_id.append(i)
+    play_name.append(play_translate[i])
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -125,17 +155,12 @@ class Direction(Enum):
     BOTTOM_LEFT  = 0x0800
 
 class Room:
-    def __init__(self, name, area, same_room, out_of_map, room_type, room_path, consider_left, consider_right, consider_top, consider_bottom, width, height, offset_x, offset_z, door_flag, no_traverse, music, play):
+    def __init__(self, name, area, out_of_map, room_type, room_path, width, height, offset_x, offset_z, door_flag, no_traverse, music, play, unused):
         self.name = name
         self.area = area
-        self.same_room = same_room
         self.out_of_map = out_of_map
         self.room_type = room_type
         self.room_path = room_path
-        self.consider_left = consider_left
-        self.consider_right = consider_right
-        self.consider_top = consider_top
-        self.consider_bottom = consider_bottom
         self.width = width
         self.height = height
         self.offset_x = offset_x
@@ -144,6 +169,7 @@ class Room:
         self.no_traverse = no_traverse
         self.music = music
         self.play = play
+        self.unused = unused
 
 class Logic:
     def __init__(self, is_gate, gate_list, double_jump, high_jump, invert, deepsinker, dimension_shift, reflector_ray, aqua_stream, blood_steal, zangetsuto, silver_bromide, aegis_plate, carpenter, warhorse, millionaire, celeste):
@@ -321,7 +347,7 @@ class Main(QMainWindow):
         self.use_restr.setChecked(True)
         edit_bar.addAction(self.use_restr)
         
-        self.show_out = QAction("Show standalone rooms", self, checkable = True)
+        self.show_out = QAction("Show out-of-map rooms", self, checkable = True)
         self.show_out.setShortcut(QKeySequence(Qt.Key_2))
         self.show_out.triggered.connect(self.show_out_action)
         view_bar.addAction(self.show_out)
@@ -379,33 +405,12 @@ class Main(QMainWindow):
         self.swap.clicked.connect(self.swap_action)
         self.swap.setFixedSize(50, 30)
         
-        self.ignore_left = QPushButton()
-        self.ignore_left.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Left))
-        self.ignore_left.setIcon(QIcon("Data\\ignore_left_icon.png"))
-        self.ignore_left.setToolTip("Ignore left transitions\nShortcut: Ctrl + Left")
-        self.ignore_left.clicked.connect(self.ignore_left_action)
-        self.ignore_left.setFixedSize(50, 30)
-        
-        self.ignore_right = QPushButton()
-        self.ignore_right.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Right))
-        self.ignore_right.setIcon(QIcon("Data\\ignore_right_icon.png"))
-        self.ignore_right.setToolTip("Ignore right transitions\nShortcut: Ctrl + Right")
-        self.ignore_right.clicked.connect(self.ignore_right_action)
-        self.ignore_right.setFixedSize(50, 30)
-        
-        self.ignore_top = QPushButton()
-        self.ignore_top.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Up))
-        self.ignore_top.setIcon(QIcon("Data\\ignore_top_icon.png"))
-        self.ignore_top.setToolTip("Ignore top transitions\nShortcut: Ctrl + Up")
-        self.ignore_top.clicked.connect(self.ignore_top_action)
-        self.ignore_top.setFixedSize(50, 30)
-        
-        self.ignore_bottom = QPushButton()
-        self.ignore_bottom.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Down))
-        self.ignore_bottom.setIcon(QIcon("Data\\ignore_bottom_icon.png"))
-        self.ignore_bottom.setToolTip("Ignore bottom transitions\nShortcut: Ctrl + Down")
-        self.ignore_bottom.clicked.connect(self.ignore_bottom_action)
-        self.ignore_bottom.setFixedSize(50, 30)
+        self.delete = QPushButton()
+        self.delete.setShortcut(QKeySequence(Qt.Key_Delete))
+        self.delete.setIcon(QIcon("Data\\delete_icon.png"))
+        self.delete.setToolTip("Tag room as unused\nShortcut: Del")
+        self.delete.clicked.connect(self.delete_action)
+        self.delete.setFixedSize(50, 30)
         
         self.zoom_in = QPushButton()
         self.zoom_in.setShortcut(QKeySequence(Qt.ALT + Qt.Key_Up))
@@ -579,10 +584,7 @@ class Main(QMainWindow):
         hbox_bottom.addWidget(self.reverse)
         hbox_bottom.addWidget(self.swap)
         hbox_bottom.addStretch(1)
-        hbox_bottom.addWidget(self.ignore_left)
-        hbox_bottom.addWidget(self.ignore_right)
-        hbox_bottom.addWidget(self.ignore_top)
-        hbox_bottom.addWidget(self.ignore_bottom)
+        hbox_bottom.addWidget(self.delete)
         hbox_bottom.addStretch(1)
         hbox_bottom.addWidget(self.zoom_in)
         hbox_bottom.addWidget(self.zoom_out)
@@ -778,8 +780,8 @@ class Main(QMainWindow):
             try:
                 with open("Key\\MapSelection.json", "r") as file_reader:
                     self.map_log = json.load(file_reader)
-                if name.split("/")[-1] != self.map_log["Value"]["FileName"]:
-                    box.setText("Current key location is meant for map " + self.map_log["Value"]["FileName"] + ".")
+                if name.split("/")[-1] != self.map_log:
+                    box.setText("Current key location is meant for map " + self.map_log + ".")
                     box.exec()
                     self.key_location.setChecked(False)
                     self.key_location_action()
@@ -801,10 +803,13 @@ class Main(QMainWindow):
             self.area_order_action()
             #MenuOptionDisable
             self.use_restr.setEnabled(False)
+            self.show_out.setChecked(True)
+            self.show_out_action()
+            self.show_out.setEnabled(False)
             #FillDropDown
             self.key_drop_down.clear()
             for i in self.key_log:
-                self.key_drop_down.addItem(i["Key"])
+                self.key_drop_down.addItem(i)
             #Initiate
             self.disable_buttons()
             for i in self.room_list:
@@ -829,7 +834,7 @@ class Main(QMainWindow):
     def guidelines(self):
         box = QMessageBox(self)
         box.setWindowTitle("Map guidelines")
-        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\nAcceptable:\n\n-having a non-downward entrance lead to an empty space\n-connecting a standard room to a transition room directly (except for m03ENT1201)\n-leaving the galleon untouched due to its complexity (note the 2 different heights of sideways entrances)\n\nPreferable:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-roughly keeping the whole map within the canvas size\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n\nNecessary:\n\n-having the \"Use restrictions\" option enabled while building your map\n-not having any downward entrance lead to an empty space\n-not overlapping any rooms except for the semi-transparent ones\n-not putting any empty entrance that does not ignore transitions right against the side of another room")
+        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\nAcceptable:\n\n-having a non-downward entrance lead to an empty space\n-connecting a standard room to a transition room directly (except for m03ENT1201)\n-leaving the galleon untouched due to its complexity (note the 2 different heights of sideways entrances)\n\nPreferable:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n\nNecessary:\n\n-having the \"Use restrictions\" option enabled while building your map\n-not having any downward entrance lead to an empty space\n-not overlapping any rooms except for the semi-transparent ones")
         box.exec()
     
     def restrictions(self):
@@ -847,61 +852,39 @@ class Main(QMainWindow):
             if i.room_data.room_type == "ERoomType::Save" or i.room_data.room_type == "ERoomType::Warp":
                 if i.room_data.room_path == "ERoomPath::Left":
                     i.room_data.room_path = "ERoomPath::Right"
-                    i.childItems()[5].setVisible(False)
-                    i.childItems()[6].setVisible(True)
+                    i.childItems()[1].setVisible(False)
+                    i.childItems()[2].setVisible(True)
                 elif i.room_data.room_path == "ERoomPath::Right":
                     i.room_data.room_path = "ERoomPath::Both"
-                    i.childItems()[5].setVisible(True)
-                    i.childItems()[6].setVisible(True)
+                    i.childItems()[1].setVisible(True)
+                    i.childItems()[2].setVisible(True)
                 elif i.room_data.room_path == "ERoomPath::Both":
                     i.room_data.room_path = "ERoomPath::Left"
-                    i.childItems()[5].setVisible(True)
-                    i.childItems()[6].setVisible(False)
+                    i.childItems()[1].setVisible(True)
+                    i.childItems()[2].setVisible(False)
     
     def swap_action(self):
         for i in self.scene.selectedItems():
             if i.room_data.room_type == "ERoomType::Save":
                 i.room_data.room_type = "ERoomType::Warp"
-                i.childItems()[4].setPixmap(QPixmap("Data\\warp.png"))
+                i.childItems()[0].setPixmap(QPixmap("Data\\warp.png"))
             elif i.room_data.room_type == "ERoomType::Warp":
                 i.room_data.room_type = "ERoomType::Save"
-                i.childItems()[4].setPixmap(QPixmap("Data\\save.png"))
+                i.childItems()[0].setPixmap(QPixmap("Data\\save.png"))
     
-    def ignore_left_action(self):
+    def delete_action(self):
         for i in self.scene.selectedItems():
-            if i.room_data.consider_left:
-                i.room_data.consider_left = False
-                i.childItems()[0].setVisible(True)
+            if i.room_data.room_type != "ERoomType::Normal" or i.room_data.out_of_map:
+                continue
+            if i.room_data.unused:
+                i.room_data.unused = False
+                i.outline.setColor("#ffffff")
+                i.setPen(i.outline)
             else:
-                i.room_data.consider_left = True
-                i.childItems()[0].setVisible(False)
-    
-    def ignore_right_action(self):
-        for i in self.scene.selectedItems():
-            if i.room_data.consider_right:
-                i.room_data.consider_right = False
-                i.childItems()[1].setVisible(True)
-            else:
-                i.room_data.consider_right = True
-                i.childItems()[1].setVisible(False)
-    
-    def ignore_top_action(self):
-        for i in self.scene.selectedItems():
-            if i.room_data.consider_top:
-                i.room_data.consider_top = False
-                i.childItems()[2].setVisible(True)
-            else:
-                i.room_data.consider_top = True
-                i.childItems()[2].setVisible(False)
-    
-    def ignore_bottom_action(self):
-        for i in self.scene.selectedItems():
-            if i.room_data.consider_bottom:
-                i.room_data.consider_bottom = False
-                i.childItems()[3].setVisible(True)
-            else:
-                i.room_data.consider_bottom = True
-                i.childItems()[3].setVisible(False)
+                i.room_data.unused = True
+                i.outline.setColor("#000000")
+                i.setPen(i.outline)
+        self.show_out_action()
     
     def zoom_in_action(self):
         self.view.scale(2, 2)
@@ -942,7 +925,7 @@ class Main(QMainWindow):
     
     def key_drop_down_change(self, index):
         for i in self.room_list:
-            if i.room_data.name in self.key_log[index]["Value"]["RoomList"]:
+            if i.room_data.name in self.key_log[self.key_drop_down.itemText(index)]:
                 self.reveal_room(i)
             else:
                 self.fill_room(i, "#000000")
@@ -981,7 +964,10 @@ class Main(QMainWindow):
                 e.setPixmap(QPixmap.fromImage(image))
     
     def outline_room(self, i, color):
-        i.outline.setColor(color)
+        if color == "#ffffff" and i.room_data.unused:
+            i.outline.setColor("#000000")
+        else:
+            i.outline.setColor(color)
         i.setPen(i.outline)
         if color == "#ffffff":
             i.setZValue(0 - (i.room_data.width/TILEWIDTH)*(i.room_data.height/TILEHEIGHT))
@@ -1169,18 +1155,12 @@ class Main(QMainWindow):
     def enable_buttons(self):
         self.reverse.setEnabled(True)
         self.swap.setEnabled(True)
-        self.ignore_left.setEnabled(True)
-        self.ignore_right.setEnabled(True)
-        self.ignore_top.setEnabled(True)
-        self.ignore_bottom.setEnabled(True)
+        self.delete.setEnabled(True)
     
     def disable_buttons(self):
         self.reverse.setEnabled(False)
         self.swap.setEnabled(False)
-        self.ignore_left.setEnabled(False)
-        self.ignore_right.setEnabled(False)
-        self.ignore_top.setEnabled(False)
-        self.ignore_bottom.setEnabled(False)
+        self.delete.setEnabled(False)
     
     def enable_checkboxes(self):
         self.check_box_1.setEnabled(True)
@@ -1523,8 +1503,6 @@ class Main(QMainWindow):
         self.update_offsets()
         self.update_logic()
         self.update_order()
-        self.same_check()
-        self.adj_check()
         with open(filename, "w") as file_writer:
             file_writer.write(json.dumps(self.map_content, indent=2))
         name, extension = os.path.splitext(filename)
@@ -1538,14 +1516,9 @@ class Main(QMainWindow):
     def convert_json_to_room(self, json):
         name = json["Key"]
         area = json["Value"]["AreaID"]
-        same_room = json["Value"]["SameRoom"]
         out_of_map = json["Value"]["OutOfMap"]
         room_type = json["Value"]["RoomType"]
         room_path = json["Value"]["RoomPath"]
-        consider_left = json["Value"]["ConsiderLeft"]
-        consider_right = json["Value"]["ConsiderRight"]
-        consider_top = json["Value"]["ConsiderTop"]
-        consider_bottom = json["Value"]["ConsiderBottom"]
         width = json["Value"]["AreaWidthSize"] * TILEWIDTH
         height = json["Value"]["AreaHeightSize"] * TILEHEIGHT
         offset_x = round(json["Value"]["OffsetX"]/12.6) * TILEWIDTH
@@ -1554,28 +1527,29 @@ class Main(QMainWindow):
         no_traverse = self.convert_no_traverse_to_block(json["Value"]["NoTraverse"], round(width/TILEWIDTH))
         music = json["Value"]["BgmID"]
         play = json["Value"]["BgmType"]
+        unused = bool(json["Value"]["WarpPositionX"] == -1.0)
         
-        room = Room(name, area, same_room, out_of_map, room_type, room_path, consider_left, consider_right, consider_top, consider_bottom, width, height, offset_x, offset_z, door_flag, no_traverse, music, play)
+        room = Room(name, area, out_of_map, room_type, room_path, width, height, offset_x, offset_z, door_flag, no_traverse, music, play, unused)
         return room
     
     def convert_json_to_logic(self, json):
-        is_gate = json["Value"]["GateRoom"]
-        gate_list = self.convert_gate_to_index(json["Value"]["NearestGate"])
-        double_jump = json["Value"]["Doublejump"]
-        high_jump = json["Value"]["HighJump"]
-        invert = json["Value"]["Invert"]
-        deepsinker = json["Value"]["Deepsinker"]
-        dimension_shift = json["Value"]["Dimensionshift"]
-        reflector_ray = json["Value"]["Reflectionray"]
-        aqua_stream = json["Value"]["Aquastream"]
-        blood_steal = json["Value"]["Bloodsteel"]
-        zangetsuto = json["Value"]["Swordsman"]
-        silver_bromide = json["Value"]["Silverbromide"]
-        aegis_plate = json["Value"]["BreastplateofAguilar"]
-        carpenter = json["Value"]["Keyofbacker1"]
-        warhorse = json["Value"]["Keyofbacker2"]
-        millionaire = json["Value"]["Keyofbacker3"]
-        celeste = json["Value"]["Keyofbacker4"]
+        is_gate = json["GateRoom"]
+        gate_list = self.convert_gate_to_index(json["NearestGate"])
+        double_jump = json["Doublejump"]
+        high_jump = json["HighJump"]
+        invert = json["Invert"]
+        deepsinker = json["Deepsinker"]
+        dimension_shift = json["Dimensionshift"]
+        reflector_ray = json["Reflectionray"]
+        aqua_stream = json["Aquastream"]
+        blood_steal = json["Bloodsteel"]
+        zangetsuto = json["Swordsman"]
+        silver_bromide = json["Silverbromide"]
+        aegis_plate = json["BreastplateofAguilar"]
+        carpenter = json["Keyofbacker1"]
+        warhorse = json["Keyofbacker2"]
+        millionaire = json["Keyofbacker3"]
+        celeste = json["Keyofbacker4"]
         
         logic = Logic(is_gate, gate_list, double_jump, high_jump, invert, deepsinker, dimension_shift, reflector_ray, aqua_stream, blood_steal, zangetsuto, silver_bromide, aegis_plate, carpenter, warhorse, millionaire, celeste)
         return logic
@@ -1635,17 +1609,14 @@ class Main(QMainWindow):
         return new_gate_list
     
     def draw_map(self):
-        logic_index = 0
         for i in range(len(self.map_content)):
             
             #ConvertingData
             
             room_data = self.convert_json_to_room(self.map_content[i])
-            if self.map_content[i]["Key"] == self.logic_content[logic_index]["Key"]:
-                logic_data = self.convert_json_to_logic(self.logic_content[logic_index])
-                if logic_index < len(self.logic_content) - 1:
-                    logic_index += 1
-            else:
+            try:
+                logic_data = self.convert_json_to_logic(self.logic_content[self.map_content[i]["Key"]])
+            except KeyError:
                 logic_data = None
             self.room_search_list.addItem(room_data.name)
             group_list = []
@@ -1660,24 +1631,21 @@ class Main(QMainWindow):
             
             #AreaColor
             
-            if room_data.area == "EAreaID::None":
+            if room_data.out_of_map:
                 fill = area_color[18]
-            else:
-                fill = area_color[int(room_data.area[10:12]) - 1]
-            
-            if room_data.area == "EAreaID::None":
                 fill_black = area_black[18]
-            else:
-                fill_black = area_black[int(room_data.area[10:12]) - 1]
-            
-            if room_data.area == "EAreaID::None":
                 fill_white = area_white[18]
             else:
+                fill = area_color[int(room_data.area[10:12]) - 1]
+                fill_black = area_black[int(room_data.area[10:12]) - 1]
                 fill_white = area_white[int(room_data.area[10:12]) - 1]
             
             #RoomOutline
             
-            outline = QPen("#ffffff")
+            if room_data.unused:
+                outline = QPen("#000000")
+            else:
+                outline = QPen("#ffffff")
             outline.setWidth(OUTLINE)
             outline.setJoinStyle(Qt.MiterJoin)
             
@@ -1703,15 +1671,14 @@ class Main(QMainWindow):
             #RoomGroup
             
             for e in connected_room:
-                for o in e["Value"]["RoomId"]:
-                    if room_data.name == o:
-                        group_list = e["Value"]["RoomId"]
-                        can_move = e["Value"]["CanMove"]
-                        break
+                if room_data.name in connected_room[e]["Room"]:
+                    group_list = connected_room[e]["Room"]
+                    can_move = connected_room[e]["CanMove"]
+                    break
             
             #RoomOpacity
             
-            if room_data.room_type == "ERoomType::Load" or room_data.name == "m01SIP_022" or room_data.name == "m02VIL_000" or room_data.name == "m02VIL_099" or room_data.name == "m02VIL(101)" or room_data.name == "m18ICE_020":
+            if room_data.room_type == "ERoomType::Load"or room_data.name == "m02VIL_000":
                 opacity = "80"
             else:
                 opacity = "ff"
@@ -1728,32 +1695,6 @@ class Main(QMainWindow):
             
             outline.setColor("#00000000")
             
-            #IgnoreDirection
-            
-            if not room_data.out_of_map:
-                pen = QPen("#555555")
-                pen.setWidth(2)
-                line = self.scene.addLine(2.5, 2.5, 2.5, room_data.height - 2.5)
-                line.setPen(pen)
-                line.setParentItem(room)
-                if room_data.consider_left:
-                    line.setVisible(False)
-                line = self.scene.addLine(room_data.width - 2.5, 2.5, room_data.width - 2.5, room_data.height - 2.5)
-                line.setPen(pen)
-                line.setParentItem(room)
-                if room_data.consider_right:
-                    line.setVisible(False)
-                line = self.scene.addLine(2.5, room_data.height - 2.5, room_data.width - 2.5, room_data.height - 2.5)
-                line.setPen(pen)
-                line.setParentItem(room)
-                if room_data.consider_top:
-                    line.setVisible(False)
-                line = self.scene.addLine(2.5, 2.5, room_data.width - 2.5, 2.5)
-                line.setPen(pen)
-                line.setParentItem(room)
-                if room_data.consider_bottom:
-                    line.setVisible(False)
-            
             #Icons
             
             if room_data.room_type == "ERoomType::Save":
@@ -1766,7 +1707,7 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
-            if room_data.name in boss_room["Value"]["RoomId"]:
+            if room_data.name in boss_room:
                 icon = self.scene.addPixmap(QPixmap("Data\\boss.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
@@ -1792,12 +1733,22 @@ class Main(QMainWindow):
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
             if room_data.name == "m06KNG_021":
-                icon = self.scene.addPixmap(QPixmap("Data\\8bit.png"))
+                icon = self.scene.addPixmap(QPixmap("Data\\flame.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
             if room_data.name == "m07LIB_009":
                 icon = self.scene.addPixmap(QPixmap("Data\\book.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if room_data.name == "m19K2C_000":
+                icon = self.scene.addPixmap(QPixmap("Data\\crown.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if room_data.name == "m51EBT_000":
+                icon = self.scene.addPixmap(QPixmap("Data\\8bit.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
@@ -1884,6 +1835,11 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, TILEHEIGHT*3 - 9)
                 icon.setParentItem(room)
+            if room_data.name == "m09TRN_003":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width - 13.5, TILEHEIGHT - 1.5)
+                icon.setParentItem(room)
             if room_data.name == "m08TWR_009":
                 icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
@@ -1903,6 +1859,11 @@ class Main(QMainWindow):
                 icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 8.5, room_data.height - 1.5)
+                icon.setParentItem(room)
+            if room_data.name == "m13ARC_005":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
             if room_data.name == "m15JPN_010" or room_data.name == "m17RVA_005":
                 icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole.png"))
@@ -1973,92 +1934,91 @@ class Main(QMainWindow):
             
             #Doors
             
-            if not room_data.out_of_map:
-                for e in room_data.door_flag:
-                    if e.direction_part == Direction.LEFT or (room_data.room_type == "ERoomType::Save" or room_data.room_type == "ERoomType::Warp") and len(room_data.door_flag) == 1:
+            for e in room_data.door_flag:
+                if e.direction_part == Direction.LEFT or (room_data.room_type == "ERoomType::Save" or room_data.room_type == "ERoomType::Warp") and len(room_data.door_flag) == 1:
+                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
+                    door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
+                    door.setParentItem(room)
+                    if e.direction_part != Direction.LEFT:
+                        door.setVisible(False)
+                if e.direction_part == Direction.BOTTOM:
+                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
+                    door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.RIGHT or (room_data.room_type == "ERoomType::Save" or room_data.room_type == "ERoomType::Warp") and len(room_data.door_flag) == 1:
+                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
+                    door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
+                    door.setParentItem(room)
+                    if e.direction_part != Direction.RIGHT:
+                        door.setVisible(False)
+                if e.direction_part == Direction.TOP:
+                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
+                    door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.LEFT_BOTTOM:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
+                    else:
                         door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                        door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
-                        door.setParentItem(room)
-                        if e.direction_part != Direction.LEFT:
-                            door.setVisible(False)
-                    if e.direction_part == Direction.BOTTOM:
-                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
-                        door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.RIGHT or (room_data.room_type == "ERoomType::Save" or room_data.room_type == "ERoomType::Warp") and len(room_data.door_flag) == 1:
+                        door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.RIGHT_BOTTOM:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
+                    else:
                         door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                        door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
-                        door.setParentItem(room)
-                        if e.direction_part != Direction.RIGHT:
-                            door.setVisible(False)
-                    if e.direction_part == Direction.TOP:
+                        door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.LEFT_TOP:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
+                    else:
+                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.RIGHT_TOP:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
+                    else:
+                        door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.TOP_LEFT:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                    else:
                         door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
-                        door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.LEFT_BOTTOM:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
-                        else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.RIGHT_BOTTOM:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
-                        else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.LEFT_TOP:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                        else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.RIGHT_TOP:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                        else:
-                            door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.TOP_LEFT:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                        else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.TOP_RIGHT:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                        else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(QColor(fill)))
-                            door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.BOTTOM_RIGHT:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
-                        else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
-                    if e.direction_part == Direction.BOTTOM_LEFT:
-                        if room_data.area == "EAreaID::m10BIG":
-                            door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT - 1.5)
-                        else:
-                            door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
-                            door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT - 1.5)
-                        door.setParentItem(room)
+                        door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.TOP_RIGHT:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                    else:
+                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(QColor(fill)))
+                        door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.BOTTOM_RIGHT:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
+                    else:
+                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
+                if e.direction_part == Direction.BOTTOM_LEFT:
+                    if room_data.area == "EAreaID::m10BIG":
+                        door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT - 1.5)
+                    else:
+                        door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(fill))
+                        door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT - 1.5)
+                    door.setParentItem(room)
             
             #Text
             
@@ -2069,17 +2029,17 @@ class Main(QMainWindow):
             text.setParentItem(room)
     
     def fill_area(self):
-        for i in self.order_content["Value"]["AreaList"]:
+        for i in self.order_content:
             self.area_order_list.addItem(i)
 
     def update_offsets(self):
         for i in self.room_list:
+            self.map_content[i.index]["Value"]["SameRoom"] = "None"
+            self.map_content[i.index]["Value"]["AdjacentRoomName"].clear()
+            if i.room_data.unused:
+                self.map_content[i.index]["Value"]["WarpPositionX"] = -1.0
             self.map_content[i.index]["Value"]["RoomType"] = i.room_data.room_type
             self.map_content[i.index]["Value"]["RoomPath"] = i.room_data.room_path
-            self.map_content[i.index]["Value"]["ConsiderLeft"] = i.room_data.consider_left
-            self.map_content[i.index]["Value"]["ConsiderRight"] = i.room_data.consider_right
-            self.map_content[i.index]["Value"]["ConsiderTop"] = i.room_data.consider_top
-            self.map_content[i.index]["Value"]["ConsiderBottom"] = i.room_data.consider_bottom
             self.map_content[i.index]["Value"]["OffsetX"] = i.pos().x() * 12.6 / TILEWIDTH
             self.map_content[i.index]["Value"]["OffsetZ"] = i.pos().y() * 7.2 / TILEHEIGHT
             self.map_content[i.index]["Value"]["BgmID"] = i.room_data.music
@@ -2091,9 +2051,16 @@ class Main(QMainWindow):
                     self.map_content[i.index]["Value"]["DoorFlag"] = [1, 4]
                 elif self.map_content[i.index]["Value"]["RoomPath"] == "ERoomPath::Both":
                     self.map_content[i.index]["Value"]["DoorFlag"] = [1, 5]
+        #VillageFix
+        self.map_content[44]["Value"]["OffsetX"] = self.map_content[33]["Value"]["OffsetX"]
+        self.map_content[44]["Value"]["OffsetZ"] = self.map_content[33]["Value"]["OffsetZ"]
+        self.map_content[45]["Value"]["OffsetX"] = self.map_content[33]["Value"]["OffsetX"]
+        self.map_content[45]["Value"]["OffsetZ"] = self.map_content[33]["Value"]["OffsetZ"]
+        #IceFix
+        self.map_content[480]["Value"]["OffsetX"] = self.map_content[475]["Value"]["OffsetX"]
+        self.map_content[480]["Value"]["OffsetZ"] = self.map_content[475]["Value"]["OffsetZ"]
     
     def update_logic(self):
-        logic_index = 0
         for i in self.room_list:
             if i.logic_data == None:
                 continue
@@ -2104,111 +2071,28 @@ class Main(QMainWindow):
                         continue
                     if i.index in e.logic_data.gate_list:
                         e.logic_data.gate_list.remove(i.index)
-            self.logic_content[logic_index]["Value"]["GateRoom"] = i.logic_data.is_gate
-            self.logic_content[logic_index]["Value"]["NearestGate"] = self.convert_index_to_gate(i.logic_data.gate_list)
-            self.logic_content[logic_index]["Value"]["Doublejump"] = i.logic_data.double_jump
-            self.logic_content[logic_index]["Value"]["HighJump"] = i.logic_data.high_jump
-            self.logic_content[logic_index]["Value"]["Invert"] = i.logic_data.invert
-            self.logic_content[logic_index]["Value"]["Deepsinker"] = i.logic_data.deepsinker
-            self.logic_content[logic_index]["Value"]["Dimensionshift"] = i.logic_data.dimension_shift
-            self.logic_content[logic_index]["Value"]["Reflectionray"] = i.logic_data.reflector_ray
-            self.logic_content[logic_index]["Value"]["Aquastream"] = i.logic_data.aqua_stream
-            self.logic_content[logic_index]["Value"]["Bloodsteel"] = i.logic_data.blood_steal
-            self.logic_content[logic_index]["Value"]["Swordsman"] = i.logic_data.zangetsuto
-            self.logic_content[logic_index]["Value"]["Silverbromide"] = i.logic_data.silver_bromide
-            self.logic_content[logic_index]["Value"]["BreastplateofAguilar"] = i.logic_data.aegis_plate
-            self.logic_content[logic_index]["Value"]["Keyofbacker1"] = i.logic_data.carpenter
-            self.logic_content[logic_index]["Value"]["Keyofbacker2"] = i.logic_data.warhorse
-            self.logic_content[logic_index]["Value"]["Keyofbacker3"] = i.logic_data.millionaire
-            self.logic_content[logic_index]["Value"]["Keyofbacker4"] = i.logic_data.celeste
-            logic_index += 1
+            self.logic_content[i.room_data.name]["GateRoom"] = i.logic_data.is_gate
+            self.logic_content[i.room_data.name]["NearestGate"] = self.convert_index_to_gate(i.logic_data.gate_list)
+            self.logic_content[i.room_data.name]["Doublejump"] = i.logic_data.double_jump
+            self.logic_content[i.room_data.name]["HighJump"] = i.logic_data.high_jump
+            self.logic_content[i.room_data.name]["Invert"] = i.logic_data.invert
+            self.logic_content[i.room_data.name]["Deepsinker"] = i.logic_data.deepsinker
+            self.logic_content[i.room_data.name]["Dimensionshift"] = i.logic_data.dimension_shift
+            self.logic_content[i.room_data.name]["Reflectionray"] = i.logic_data.reflector_ray
+            self.logic_content[i.room_data.name]["Aquastream"] = i.logic_data.aqua_stream
+            self.logic_content[i.room_data.name]["Bloodsteel"] = i.logic_data.blood_steal
+            self.logic_content[i.room_data.name]["Swordsman"] = i.logic_data.zangetsuto
+            self.logic_content[i.room_data.name]["Silverbromide"] = i.logic_data.silver_bromide
+            self.logic_content[i.room_data.name]["BreastplateofAguilar"] = i.logic_data.aegis_plate
+            self.logic_content[i.room_data.name]["Keyofbacker1"] = i.logic_data.carpenter
+            self.logic_content[i.room_data.name]["Keyofbacker2"] = i.logic_data.warhorse
+            self.logic_content[i.room_data.name]["Keyofbacker3"] = i.logic_data.millionaire
+            self.logic_content[i.room_data.name]["Keyofbacker4"] = i.logic_data.celeste
     
     def update_order(self):
-        self.order_content["Value"]["AreaList"].clear()
+        self.order_content.clear()
         for i in range(self.area_order_list.count()):
-            self.order_content["Value"]["AreaList"].append(self.area_order_list.item(i).text())
-
-    def same_check(self):
-        for i in self.map_content:
-            if i["Value"]["OutOfMap"]:
-                continue
-            offsetX_1 = i["Value"]["OffsetX"]
-            offsetZ_1 = i["Value"]["OffsetZ"]
-            for e in self.map_content:
-                if e["Value"]["OutOfMap"]:
-                    continue
-                offsetX_2 = e["Value"]["OffsetX"]
-                offsetZ_2 = e["Value"]["OffsetZ"]
-                #SameRoom
-                if offsetX_1 == offsetX_2 and offsetZ_1 == offsetZ_2 and i["Key"] != e["Key"]:
-                    i["Value"]["SameRoom"] = e["Key"]
-                    break;
-                else:
-                    i["Value"]["SameRoom"] = "None"
-    
-    def adj_check(self):
-        for i in self.map_content:
-            adj_rooms = []
-            if i["Value"]["OutOfMap"]:
-                continue
-            area_1 = i["Value"]["AreaID"]
-            width_1 = i["Value"]["AreaWidthSize"]
-            height_1 = i["Value"]["AreaHeightSize"]
-            offsetX_1 = i["Value"]["OffsetX"]
-            offsetZ_1 = i["Value"]["OffsetZ"]
-            for e in self.map_content:
-                if e["Value"]["OutOfMap"]:
-                    continue
-                area_2 = e["Value"]["AreaID"]
-                type_2 = e["Value"]["RoomType"]
-                width_2 = e["Value"]["AreaWidthSize"]
-                height_2 = e["Value"]["AreaHeightSize"]
-                offsetX_2 = e["Value"]["OffsetX"]
-                offsetZ_2 = e["Value"]["OffsetZ"]
-                #Adjacent
-                if self.left_check(i, e) or self.bottom_check(i, e) or self.right_check(i, e) or self.top_check(i, e):
-                    #TransitionFix
-                    if not (type_2 == "ERoomType::Load" and area_2 != area_1 and e["Value"]["SameRoom"] != "None" and e["Key"] != "m02VIL(1201)" and e["Value"]["SameRoom"] != "m03ENT(1201)"):
-                        #VillageTransitionFix
-                        if e["Value"]["SameRoom"] != "m02VIL(1201)" and e["Key"] != "m03ENT(1201)":
-                            adj_rooms.append(e["Key"])
-            i["Value"]["AdjacentRoomName"].clear()
-            for e in adj_rooms:
-                i["Value"]["AdjacentRoomName"].append(e)
-        #VeparFix
-        if "m02VIL_001" in self.map_content[22]["Value"]["AdjacentRoomName"]:
-            self.map_content[22]["Value"]["AdjacentRoomName"].remove("m02VIL_001")
-        if "m01SIP_022" in self.map_content[32]["Value"]["AdjacentRoomName"]:
-            self.map_content[32]["Value"]["AdjacentRoomName"].remove("m01SIP_022")
-        if not "m02VIL_000" in self.map_content[22]["Value"]["AdjacentRoomName"]:
-            self.map_content[22]["Value"]["AdjacentRoomName"].append("m02VIL_000")
-        #TowerFix
-        if "m08TWR_017" in self.map_content[228]["Value"]["AdjacentRoomName"]:
-            self.map_content[228]["Value"]["AdjacentRoomName"].remove("m08TWR_017")
-        if "m08TWR_018" in self.map_content[228]["Value"]["AdjacentRoomName"]:
-            self.map_content[228]["Value"]["AdjacentRoomName"].remove("m08TWR_018")
-        if "m08TWR_018" in self.map_content[234]["Value"]["AdjacentRoomName"]:
-            self.map_content[234]["Value"]["AdjacentRoomName"].remove("m08TWR_018")
-        if "m08TWR_019" in self.map_content[241]["Value"]["AdjacentRoomName"]:
-            self.map_content[241]["Value"]["AdjacentRoomName"].remove("m08TWR_019")
-        #GebelFix
-        if not "m02VIL_099" in self.map_content[166]["Value"]["AdjacentRoomName"]:
-            self.map_content[166]["Value"]["AdjacentRoomName"].append("m02VIL_099")
-        #BaelFix
-        if not "m02VIL_099" in self.map_content[475]["Value"]["AdjacentRoomName"]:
-            self.map_content[475]["Value"]["AdjacentRoomName"].append("m02VIL_099")
-    
-    def left_check(self, i, e):
-        return bool(i["Value"]["OffsetX"] > e["Value"]["OffsetX"] >= round(i["Value"]["OffsetX"] - 12.6 * e["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
-    
-    def bottom_check(self, i, e):
-        return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and i["Value"]["OffsetZ"] > e["Value"]["OffsetZ"] >= round(i["Value"]["OffsetZ"] - 7.2 * e["Value"]["AreaHeightSize"], 1))
-    
-    def right_check(self, i, e):
-        return bool(i["Value"]["OffsetX"] < e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * i["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))
-    
-    def top_check(self, i, e):
-        return bool(round(i["Value"]["OffsetX"] - 12.6 * (e["Value"]["AreaWidthSize"] - 1), 1) <= e["Value"]["OffsetX"] <= round(i["Value"]["OffsetX"] + 12.6 * (i["Value"]["AreaWidthSize"] - 1), 1) and i["Value"]["OffsetZ"] < e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * i["Value"]["AreaHeightSize"], 1))
+            self.order_content.append(self.area_order_list.item(i).text())
 
 def main():
     app = QApplication(sys.argv)
