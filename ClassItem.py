@@ -675,7 +675,7 @@ def extra_logic():
     #8BitNightmare
     ClassManagement.logic_data["m51EBT_000"] = {}
     ClassManagement.logic_data["m51EBT_000"]["GateRoom"] = False
-    ClassManagement.logic_data["m51EBT_000"]["NearestGate"] = ClassManagement.logic_data["m06KNG_021"]["NearestGate"]
+    ClassManagement.logic_data["m51EBT_000"]["NearestGate"] = list(ClassManagement.logic_data["m06KNG_021"]["NearestGate"])
     ClassManagement.logic_data["m51EBT_000"]["Doublejump"] = False
     ClassManagement.logic_data["m51EBT_000"]["HighJump"] = False
     ClassManagement.logic_data["m51EBT_000"]["Invert"] = False
@@ -699,7 +699,7 @@ def extra_logic():
     if ClassManagement.logic_data["m09TRN_002"]["GateRoom"]:
         ClassManagement.logic_data["m19K2C_000"]["NearestGate"] = ["m09TRN_002"]
     else:
-        ClassManagement.logic_data["m19K2C_000"]["NearestGate"] = ClassManagement.logic_data["m09TRN_002"]["NearestGate"]
+        ClassManagement.logic_data["m19K2C_000"]["NearestGate"] = list(ClassManagement.logic_data["m09TRN_002"]["NearestGate"])
     ClassManagement.logic_data["m19K2C_000"]["Doublejump"] = False
     ClassManagement.logic_data["m19K2C_000"]["HighJump"] = False
     ClassManagement.logic_data["m19K2C_000"]["Invert"] = False
@@ -717,12 +717,12 @@ def extra_logic():
     ClassManagement.logic_data["m19K2C_000"]["Keyofbacker4"] = False
     ClassManagement.logic_data["m19K2C_000"]["MonarchCrown"] = True
     #Benjamin
-    ClassManagement.logic_data["m02VIL_003"]["NearestGate"] = ClassManagement.logic_data["m18ICE_019"]["NearestGate"]
+    ClassManagement.logic_data["m02VIL_003"]["NearestGate"] = list(ClassManagement.logic_data["m18ICE_019"]["NearestGate"])
     #100%Chest
-    ClassManagement.logic_data["m02VIL_005"]["NearestGate"] = ClassManagement.logic_data["m18ICE_019"]["NearestGate"]
+    ClassManagement.logic_data["m02VIL_005"]["NearestGate"] = list(ClassManagement.logic_data["m18ICE_019"]["NearestGate"])
     #OD
     if ClassManagement.book_content[21]["Value"]["RoomTraverseThreshold"] > 80:
-        ClassManagement.logic_data["m18ICE_004"]["NearestGate"] = ClassManagement.logic_data["m18ICE_019"]["NearestGate"]
+        ClassManagement.logic_data["m18ICE_004"]["NearestGate"] = list(ClassManagement.logic_data["m18ICE_019"]["NearestGate"])
     ClassManagement.debug("ClassItem.extra_logic()")
 
 def hard_enemy_logic():
@@ -782,7 +782,7 @@ def give_extra(shard):
                 ClassManagement.logic_data[i]["GateRoom"] = False
                 for e in ClassManagement.logic_data:
                     if i in ClassManagement.logic_data[e]["NearestGate"]:
-                        ClassManagement.logic_data[e]["NearestGate"] = ClassManagement.logic_data[i]["NearestGate"]
+                        ClassManagement.logic_data[e]["NearestGate"] = list(ClassManagement.logic_data[i]["NearestGate"])
     else:
         while shard in ClassManagement.shard_drop_data["ItemPool"]:
             ClassManagement.shard_drop_data["ItemPool"].remove(shard)
@@ -843,14 +843,16 @@ def key_logic():
             if not ClassManagement.logic_data[i]["GateRoom"] and previous_in_nearest(previous_gate, ClassManagement.logic_data[i]["NearestGate"]) or i in previous_gate:
                 #IncreasingChancesOfLateRooms
                 gate_count = 1
-                gate_list = ClassManagement.logic_data[i]["NearestGate"]
+                gate_list = list(ClassManagement.logic_data[i]["NearestGate"])
                 while gate_list:
                     nearest_gate = random.choice(gate_list)
                     for e in ClassManagement.logic_data:
                         if e == nearest_gate:
                             gate_count += 1
-                            gate_list = ClassManagement.logic_data[e]["NearestGate"]
+                            gate_list = list(ClassManagement.logic_data[e]["NearestGate"])
                             break
+                #MakingMultplierMoreExtreme
+                gate_count *= gate_count
                 #IncreasingChancesOfBossRooms
                 if i in boss_rooms:
                     gate_count *= 6
@@ -880,6 +882,19 @@ def previous_in_nearest(previous_gate, nearest_gate):
             if i in nearest_gate:
                 return True
     return False
+
+#def gate_to_end(gate):
+#    current_gate = list(ClassManagement.logic_data["m18ICE_019"]["NearestGate"])
+#    all_gate = list(ClassManagement.logic_data["m18ICE_019"]["NearestGate"])
+#    while True:
+#        for e in ClassManagement.logic_data:
+#            if e in current_gate:
+#                if ClassManagement.logic_data[e]["NearestGate"]:
+#                    all_gate.extend(ClassManagement.logic_data[e]["NearestGate"])
+#                    current_gate.extend(ClassManagement.logic_data[e]["NearestGate"])
+#                else:
+#                    break
+#    return bool(gate in all_gate)
 
 def chest_to_room(chest):
     try:

@@ -523,6 +523,8 @@ def room_final():
     #BaelFix
     if not "m02VIL_099" in room_content[475]["Value"]["AdjacentRoomName"]:
         room_content[475]["Value"]["AdjacentRoomName"].append("m02VIL_099")
+    #ICE_020Fix
+    room_content[480]["Value"]["DoorFlag"] = [2, 4]
 
 def left_check(i, e):
     return bool(e["Value"]["OffsetX"] == round(i["Value"]["OffsetX"] - 12.6 * e["Value"]["AreaWidthSize"], 1) and round(i["Value"]["OffsetZ"] - 7.2 * (e["Value"]["AreaHeightSize"] - 1), 1) <= e["Value"]["OffsetZ"] <= round(i["Value"]["OffsetZ"] + 7.2 * (i["Value"]["AreaHeightSize"] - 1), 1))

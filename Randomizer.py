@@ -1056,6 +1056,9 @@ class Main(QWidget):
             self.check_box_1.setStyleSheet("color: " + item_color)
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            #UncheckExtra
+            self.check_box_21.setChecked(False)
+            self.check_box_22.setChecked(False)
         else:
             config.set("ItemRandomization", "bOverworldPool", "false")
             self.check_box_1.setStyleSheet("color: #ffffff")
@@ -1068,6 +1071,9 @@ class Main(QWidget):
             self.check_box_2.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            #UncheckExtra
+            self.check_box_21.setChecked(False)
+            self.check_box_22.setChecked(False)
         else:
             config.set("ItemRandomization", "bShopPool", "false")
             self.check_box_2.setStyleSheet("color: #ffffff")
@@ -1080,6 +1086,9 @@ class Main(QWidget):
             self.check_box_16.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            #UncheckExtra
+            self.check_box_21.setChecked(False)
+            self.check_box_22.setChecked(False)
         else:
             config.set("ItemRandomization", "bQuestPool", "false")
             self.check_box_16.setStyleSheet("color: #ffffff")
@@ -1093,6 +1102,9 @@ class Main(QWidget):
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
             self.add_to_list(datatable_files, "PBScenarioStringTable", [])
+            #UncheckExtra
+            self.check_box_21.setChecked(False)
+            self.check_box_22.setChecked(False)
         else:
             config.set("ItemRandomization", "bQuestRequirements", "false")
             self.check_box_17.setStyleSheet("color: #ffffff")
@@ -1106,6 +1118,9 @@ class Main(QWidget):
             self.check_box_18.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
+            #UncheckExtra
+            self.check_box_21.setChecked(False)
+            self.check_box_22.setChecked(False)
         else:
             config.set("ItemRandomization", "bRemoveInfinites", "false")
             self.check_box_18.setStyleSheet("color: #ffffff")
