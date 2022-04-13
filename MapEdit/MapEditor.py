@@ -93,6 +93,7 @@ boss_room = [
     "m18ICE_004",
     "m18ICE_018",
     "m18ICE_019",
+    "m20JRN_003",
     "m50BRM_001",
     "m50BRM_003",
     "m50BRM_005",
@@ -123,13 +124,13 @@ area_mode = False
 assign_mode = False
 key_mode = False
     
-with open("Data\\Constant\\ConnectedRooms.json", "r") as file_reader:
+with open("Data\\Constant\\ConnectedRooms.json", "r", encoding="utf8") as file_reader:
     connected_room = json.load(file_reader)
 
-with open("Data\\Translation\\MusicTranslation.json", "r") as file_reader:
+with open("Data\\Translation\\MusicTranslation.json", "r", encoding="utf8") as file_reader:
     music_translate = json.load(file_reader)
 
-with open("Data\\Translation\\PlayTranslation.json", "r") as file_reader:
+with open("Data\\Translation\\PlayTranslation.json", "r", encoding="utf8") as file_reader:
     play_translate = json.load(file_reader)
 
 for i in music_translate:
@@ -267,7 +268,7 @@ class RoomItem(QGraphicsRectItem):
     
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
-        if not self.room_data.out_of_map and not assign_mode:
+        if self.room_data.area != "EAreaID::None" and not assign_mode:
             for i in self.room_list:
                 if i.room_data.area == self.room_data.area:
                     i.setSelected(True)
@@ -432,6 +433,12 @@ class Main(QMainWindow):
         self.lock_label = QLabel()
         self.lock_label.setPixmap(QPixmap("Data\\lock_icon.png"))
         
+        self.seed_label = QLabel()
+        self.seed_label.setVisible(False)
+        retain = self.seed_label.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.seed_label.setSizePolicy(retain)
+        
         #DropDownLists
         
         self.key_drop_down = QComboBox()
@@ -571,6 +578,7 @@ class Main(QMainWindow):
         hbox_top = QHBoxLayout()
         hbox_top.addWidget(self.lock_label)
         hbox_top.addWidget(self.key_drop_down)
+        hbox_top.addWidget(self.seed_label)
         hbox_top.addStretch(1)
         hbox_top.addWidget(self.music_drop_down)
         hbox_top.addWidget(self.play_drop_down)
@@ -764,36 +772,6 @@ class Main(QMainWindow):
     def key_location_action(self):
         global key_mode
         if self.key_location.isChecked():
-            name, extension = os.path.splitext(self.string)
-            box = QMessageBox(self)
-            box.setWindowTitle("Error")
-            box.setIcon(QMessageBox.Critical)
-            try:
-                with open("Key\\KeyLocation.json", "r") as file_reader:
-                    self.key_log = json.load(file_reader)
-            except FileNotFoundError:
-                box.setText("No key log found.")
-                box.exec()
-                self.key_location.setChecked(False)
-                self.key_location_action()
-                return
-            try:
-                with open("Key\\MapSelection.json", "r") as file_reader:
-                    self.map_log = json.load(file_reader)
-                if name.split("/")[-1] != self.map_log:
-                    box.setText("Current key location is meant for map " + self.map_log + ".")
-                    box.exec()
-                    self.key_location.setChecked(False)
-                    self.key_location_action()
-                    return
-            except FileNotFoundError:
-                if name.split("/")[-1] != "PB_DT_RoomMaster":
-                    box.setText("Current key location is meant for the default map.")
-                    box.exec()
-                    self.key_location.setChecked(False)
-                    self.key_location_action()
-                    return
-            key_mode = True
             #OtherToolDisable
             self.room_search.setChecked(False)
             self.room_search_action()
@@ -801,14 +779,42 @@ class Main(QMainWindow):
             self.logic_editor_action()
             self.area_order.setChecked(False)
             self.area_order_action()
+            #CheckLog
+            name, extension = os.path.splitext(self.string)
+            box = QMessageBox(self)
+            box.setWindowTitle("Error")
+            box.setIcon(QMessageBox.Critical)
+            try:
+                with open("Key\\KeyLocation.json", "r", encoding="utf8") as file_reader:
+                    self.log = json.load(file_reader)
+                if not self.log["Map"] and name.split("/")[-1] != "PB_DT_RoomMaster":
+                    box.setText("Current key location is meant for the default map.")
+                    box.exec()
+                    self.key_location.setChecked(False)
+                    self.key_location_action()
+                    return
+                elif self.log["Map"] and name.split("/")[-1] != self.log["Map"]:
+                    box.setText("Current key location is meant for map " + self.log["Map"] + ".")
+                    box.exec()
+                    self.key_location.setChecked(False)
+                    self.key_location_action()
+                    return
+                self.seed_label.setText(str(self.log["Seed"]))
+            except FileNotFoundError:
+                box.setText("No key log found.")
+                box.exec()
+                self.key_location.setChecked(False)
+                self.key_location_action()
+                return
+            key_mode = True
             #MenuOptionDisable
             self.use_restr.setEnabled(False)
             self.show_out.setChecked(True)
             self.show_out_action()
             self.show_out.setEnabled(False)
-            #FillDropDown
+            #FillInformation
             self.key_drop_down.clear()
-            for i in self.key_log:
+            for i in self.log["Key"]:
                 self.key_drop_down.addItem(i)
             #Initiate
             self.disable_buttons()
@@ -818,11 +824,14 @@ class Main(QMainWindow):
             self.key_drop_down.setCurrentIndex(0)
             self.key_drop_down_change(0)
             self.key_drop_down.setVisible(True)
+            self.seed_label.setVisible(True)
         else:
             key_mode = False
             self.enable_buttons()
             self.use_restr.setEnabled(True)
+            self.show_out.setEnabled(True)
             self.key_drop_down.setVisible(False)
+            self.seed_label.setVisible(False)
             self.reset_room()
     
     def how_to(self):
@@ -925,7 +934,7 @@ class Main(QMainWindow):
     
     def key_drop_down_change(self, index):
         for i in self.room_list:
-            if i.room_data.name in self.key_log[self.key_drop_down.itemText(index)]:
+            if i.room_data.name in self.log["Key"][self.key_drop_down.itemText(index)]:
                 self.reveal_room(i)
             else:
                 self.fill_room(i, "#000000")
@@ -1143,6 +1152,7 @@ class Main(QMainWindow):
             for i in assign_list:
                 i.setSelected(True)
                 self.outline_room(i, "#ffffff")
+            assign_list.clear()
     
     def unassign_all_action(self):
         for i in self.room_list:
@@ -1464,23 +1474,8 @@ class Main(QMainWindow):
         self.room_list = []
         self.change_title("")
         #OpenMain
-        with open(filename, "r") as file_reader:
-            self.map_content = json.load(file_reader)
-        name, extension = os.path.splitext(filename)
-        #OpenLogic
-        if os.path.isfile(name + ".logic"):
-            with open(name + ".logic", "r") as file_reader:
-                self.logic_content = json.load(file_reader)
-        else:
-            with open("Data\\RoomMaster\\PB_DT_RoomMaster.logic", "r") as file_reader:
-                self.logic_content = json.load(file_reader)
-        #OpenOrder
-        if os.path.isfile(name + ".order"):
-            with open(name + ".order", "r") as file_reader:
-                self.order_content = json.load(file_reader)
-        else:
-            with open("Data\\RoomMaster\\PB_DT_RoomMaster.order", "r") as file_reader:
-                self.order_content = json.load(file_reader)
+        with open(filename, "r", encoding="utf8") as file_reader:
+            self.json_file = json.load(file_reader)
         #Process
         self.draw_map()
         self.fill_area()
@@ -1503,31 +1498,25 @@ class Main(QMainWindow):
         self.update_offsets()
         self.update_logic()
         self.update_order()
-        with open(filename, "w") as file_writer:
-            file_writer.write(json.dumps(self.map_content, indent=2))
-        name, extension = os.path.splitext(filename)
-        with open(name + ".logic", "w") as file_writer:
-            file_writer.write(json.dumps(self.logic_content, indent=2))
-        with open(name + ".order", "w") as file_writer:
-            file_writer.write(json.dumps(self.order_content, indent=2))
+        with open(filename, "w", encoding="utf8") as file_writer:
+            file_writer.write(json.dumps(self.json_file, indent=2))
         self.change_title("")
         self.unsaved = False
     
-    def convert_json_to_room(self, json):
-        name = json["Key"]
-        area = json["Value"]["AreaID"]
-        out_of_map = json["Value"]["OutOfMap"]
-        room_type = json["Value"]["RoomType"]
-        room_path = json["Value"]["RoomPath"]
-        width = json["Value"]["AreaWidthSize"] * TILEWIDTH
-        height = json["Value"]["AreaHeightSize"] * TILEHEIGHT
-        offset_x = round(json["Value"]["OffsetX"]/12.6) * TILEWIDTH
-        offset_z = round(json["Value"]["OffsetZ"]/7.2) * TILEHEIGHT 
-        door_flag = self.convert_flag_to_door(json["Value"]["DoorFlag"], round(width/TILEWIDTH))
-        no_traverse = self.convert_no_traverse_to_block(json["Value"]["NoTraverse"], round(width/TILEWIDTH))
-        music = json["Value"]["BgmID"]
-        play = json["Value"]["BgmType"]
-        unused = bool(json["Value"]["WarpPositionX"] == -1.0)
+    def convert_json_to_room(self, name, json):
+        area = json["AreaID"]
+        out_of_map = json["OutOfMap"]
+        room_type = json["RoomType"]
+        room_path = json["RoomPath"]
+        width = json["AreaWidthSize"] * TILEWIDTH
+        height = json["AreaHeightSize"] * TILEHEIGHT
+        offset_x = round(json["OffsetX"]/12.6) * TILEWIDTH
+        offset_z = round(json["OffsetZ"]/7.2) * TILEHEIGHT 
+        door_flag = self.convert_flag_to_door(json["DoorFlag"], round(width/TILEWIDTH))
+        no_traverse = self.convert_no_traverse_to_block(json["NoTraverse"], round(width/TILEWIDTH))
+        music = json["BgmID"]
+        play = json["BgmType"]
+        unused = json["Unused"]
         
         room = Room(name, area, out_of_map, room_type, room_path, width, height, offset_x, offset_z, door_flag, no_traverse, music, play, unused)
         return room
@@ -1589,16 +1578,20 @@ class Main(QMainWindow):
     
     def convert_group_to_index(self, group_list):
         new_group_list = []
-        for i in range(len(self.map_content)):
-            if self.map_content[i]["Key"] in group_list:
-                new_group_list.append(i)
+        index = 0
+        for i in self.json_file["MapData"]:
+            if i in group_list:
+                new_group_list.append(index)
+            index += 1
         return new_group_list
     
     def convert_gate_to_index(self, gate_list):
         new_gate_list = []
-        for i in range(len(self.map_content)):
-            if self.map_content[i]["Key"] in gate_list:
-                new_gate_list.append(i)
+        index = 0
+        for i in self.json_file["MapData"]:
+            if i in gate_list:
+                new_gate_list.append(index)
+            index += 1
         return new_gate_list
     
     def convert_index_to_gate(self, gate_list):
@@ -1609,13 +1602,14 @@ class Main(QMainWindow):
         return new_gate_list
     
     def draw_map(self):
-        for i in range(len(self.map_content)):
+        index = 0
+        for i in self.json_file["MapData"]:
             
             #ConvertingData
             
-            room_data = self.convert_json_to_room(self.map_content[i])
+            room_data = self.convert_json_to_room(i, self.json_file["MapData"][i])
             try:
-                logic_data = self.convert_json_to_logic(self.logic_content[self.map_content[i]["Key"]])
+                logic_data = self.convert_json_to_logic(self.json_file["KeyLogic"][i])
             except KeyError:
                 logic_data = None
             self.room_search_list.addItem(room_data.name)
@@ -1687,7 +1681,7 @@ class Main(QMainWindow):
             
             #CreatingRoom
             
-            room = RoomItem(i, room_data, logic_data, outline, fill, fill_black, fill_white, opacity, icon_color, can_move, self.convert_group_to_index(group_list), self.room_list)
+            room = RoomItem(index, room_data, logic_data, outline, fill, fill_black, fill_white, opacity, icon_color, can_move, self.convert_group_to_index(group_list), self.room_list)
             self.scene.addItem(room)
             self.room_list.append(room)
             
@@ -2022,43 +2016,45 @@ class Main(QMainWindow):
             
             #Text
             
-            text = self.scene.addText(room_data.name.replace('_', '').replace('(', '').replace(')', ''), "Impact")
+            text = self.scene.addText(room_data.name.replace('_', ''), "Impact")
             text.setDefaultTextColor(QColor("#ffffff"))
             text.setTransform(QTransform.fromScale(0.25, -0.5))
             text.setPos(room_data.width/2 - text.document().size().width()/8, room_data.height/2 + TILEHEIGHT/2 - 0.5)
             text.setParentItem(room)
+            
+            index += 1
     
     def fill_area(self):
-        for i in self.order_content:
+        for i in self.json_file["AreaOrder"]:
             self.area_order_list.addItem(i)
 
     def update_offsets(self):
         for i in self.room_list:
-            self.map_content[i.index]["Value"]["SameRoom"] = "None"
-            self.map_content[i.index]["Value"]["AdjacentRoomName"].clear()
+            self.json_file["MapData"][i.room_data.name]["RoomType"] = i.room_data.room_type
+            self.json_file["MapData"][i.room_data.name]["RoomPath"] = i.room_data.room_path
+            self.json_file["MapData"][i.room_data.name]["OffsetX"] = i.pos().x() * 12.6 / TILEWIDTH
+            self.json_file["MapData"][i.room_data.name]["OffsetZ"] = i.pos().y() * 7.2 / TILEHEIGHT
+            self.json_file["MapData"][i.room_data.name]["BgmID"] = i.room_data.music
+            self.json_file["MapData"][i.room_data.name]["BgmType"] = i.room_data.play
+            if self.json_file["MapData"][i.room_data.name]["RoomType"] in ["ERoomType::Save", "ERoomType::Warp"]:
+                if self.json_file["MapData"][i.room_data.name]["RoomPath"] == "ERoomPath::Left":
+                    self.json_file["MapData"][i.room_data.name]["DoorFlag"] = [1, 1]
+                elif self.json_file["MapData"][i.room_data.name]["RoomPath"] == "ERoomPath::Right":
+                    self.json_file["MapData"][i.room_data.name]["DoorFlag"] = [1, 4]
+                elif self.json_file["MapData"][i.room_data.name]["RoomPath"] == "ERoomPath::Both":
+                    self.json_file["MapData"][i.room_data.name]["DoorFlag"] = [1, 5]
             if i.room_data.unused:
-                self.map_content[i.index]["Value"]["WarpPositionX"] = -1.0
-            self.map_content[i.index]["Value"]["RoomType"] = i.room_data.room_type
-            self.map_content[i.index]["Value"]["RoomPath"] = i.room_data.room_path
-            self.map_content[i.index]["Value"]["OffsetX"] = i.pos().x() * 12.6 / TILEWIDTH
-            self.map_content[i.index]["Value"]["OffsetZ"] = i.pos().y() * 7.2 / TILEHEIGHT
-            self.map_content[i.index]["Value"]["BgmID"] = i.room_data.music
-            self.map_content[i.index]["Value"]["BgmType"] = i.room_data.play
-            if self.map_content[i.index]["Value"]["RoomType"] == "ERoomType::Save" or self.map_content[i.index]["Value"]["RoomType"] == "ERoomType::Warp":
-                if self.map_content[i.index]["Value"]["RoomPath"] == "ERoomPath::Left":
-                    self.map_content[i.index]["Value"]["DoorFlag"] = [1, 1]
-                elif self.map_content[i.index]["Value"]["RoomPath"] == "ERoomPath::Right":
-                    self.map_content[i.index]["Value"]["DoorFlag"] = [1, 4]
-                elif self.map_content[i.index]["Value"]["RoomPath"] == "ERoomPath::Both":
-                    self.map_content[i.index]["Value"]["DoorFlag"] = [1, 5]
+                self.json_file["MapData"][i.room_data.name]["Unused"] = True
+            else:
+                self.json_file["MapData"][i.room_data.name]["Unused"] = False
         #VillageFix
-        self.map_content[44]["Value"]["OffsetX"] = self.map_content[33]["Value"]["OffsetX"]
-        self.map_content[44]["Value"]["OffsetZ"] = self.map_content[33]["Value"]["OffsetZ"]
-        self.map_content[45]["Value"]["OffsetX"] = self.map_content[33]["Value"]["OffsetX"]
-        self.map_content[45]["Value"]["OffsetZ"] = self.map_content[33]["Value"]["OffsetZ"]
+        self.json_file["MapData"]["m02VIL_099"]["OffsetX"] = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
+        self.json_file["MapData"]["m02VIL_099"]["OffsetZ"] = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
+        self.json_file["MapData"]["m02VIL_100"]["OffsetX"] = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
+        self.json_file["MapData"]["m02VIL_100"]["OffsetZ"] = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
         #IceFix
-        self.map_content[480]["Value"]["OffsetX"] = self.map_content[475]["Value"]["OffsetX"]
-        self.map_content[480]["Value"]["OffsetZ"] = self.map_content[475]["Value"]["OffsetZ"]
+        self.json_file["MapData"]["m18ICE_020"]["OffsetX"] = self.json_file["MapData"]["m18ICE_019"]["OffsetX"]
+        self.json_file["MapData"]["m18ICE_020"]["OffsetZ"] = self.json_file["MapData"]["m18ICE_019"]["OffsetZ"]
     
     def update_logic(self):
         for i in self.room_list:
@@ -2071,28 +2067,28 @@ class Main(QMainWindow):
                         continue
                     if i.index in e.logic_data.gate_list:
                         e.logic_data.gate_list.remove(i.index)
-            self.logic_content[i.room_data.name]["GateRoom"] = i.logic_data.is_gate
-            self.logic_content[i.room_data.name]["NearestGate"] = self.convert_index_to_gate(i.logic_data.gate_list)
-            self.logic_content[i.room_data.name]["Doublejump"] = i.logic_data.double_jump
-            self.logic_content[i.room_data.name]["HighJump"] = i.logic_data.high_jump
-            self.logic_content[i.room_data.name]["Invert"] = i.logic_data.invert
-            self.logic_content[i.room_data.name]["Deepsinker"] = i.logic_data.deepsinker
-            self.logic_content[i.room_data.name]["Dimensionshift"] = i.logic_data.dimension_shift
-            self.logic_content[i.room_data.name]["Reflectionray"] = i.logic_data.reflector_ray
-            self.logic_content[i.room_data.name]["Aquastream"] = i.logic_data.aqua_stream
-            self.logic_content[i.room_data.name]["Bloodsteel"] = i.logic_data.blood_steal
-            self.logic_content[i.room_data.name]["Swordsman"] = i.logic_data.zangetsuto
-            self.logic_content[i.room_data.name]["Silverbromide"] = i.logic_data.silver_bromide
-            self.logic_content[i.room_data.name]["BreastplateofAguilar"] = i.logic_data.aegis_plate
-            self.logic_content[i.room_data.name]["Keyofbacker1"] = i.logic_data.carpenter
-            self.logic_content[i.room_data.name]["Keyofbacker2"] = i.logic_data.warhorse
-            self.logic_content[i.room_data.name]["Keyofbacker3"] = i.logic_data.millionaire
-            self.logic_content[i.room_data.name]["Keyofbacker4"] = i.logic_data.celeste
+            self.json_file["KeyLogic"][i.room_data.name]["GateRoom"] = i.logic_data.is_gate
+            self.json_file["KeyLogic"][i.room_data.name]["NearestGate"] = self.convert_index_to_gate(i.logic_data.gate_list)
+            self.json_file["KeyLogic"][i.room_data.name]["Doublejump"] = i.logic_data.double_jump
+            self.json_file["KeyLogic"][i.room_data.name]["HighJump"] = i.logic_data.high_jump
+            self.json_file["KeyLogic"][i.room_data.name]["Invert"] = i.logic_data.invert
+            self.json_file["KeyLogic"][i.room_data.name]["Deepsinker"] = i.logic_data.deepsinker
+            self.json_file["KeyLogic"][i.room_data.name]["Dimensionshift"] = i.logic_data.dimension_shift
+            self.json_file["KeyLogic"][i.room_data.name]["Reflectionray"] = i.logic_data.reflector_ray
+            self.json_file["KeyLogic"][i.room_data.name]["Aquastream"] = i.logic_data.aqua_stream
+            self.json_file["KeyLogic"][i.room_data.name]["Bloodsteel"] = i.logic_data.blood_steal
+            self.json_file["KeyLogic"][i.room_data.name]["Swordsman"] = i.logic_data.zangetsuto
+            self.json_file["KeyLogic"][i.room_data.name]["Silverbromide"] = i.logic_data.silver_bromide
+            self.json_file["KeyLogic"][i.room_data.name]["BreastplateofAguilar"] = i.logic_data.aegis_plate
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker1"] = i.logic_data.carpenter
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker2"] = i.logic_data.warhorse
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker3"] = i.logic_data.millionaire
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker4"] = i.logic_data.celeste
     
     def update_order(self):
-        self.order_content.clear()
+        self.json_file["AreaOrder"].clear()
         for i in range(self.area_order_list.count()):
-            self.order_content.append(self.area_order_list.item(i).text())
+            self.json_file["AreaOrder"].append(self.area_order_list.item(i).text())
 
 def main():
     app = QApplication(sys.argv)
