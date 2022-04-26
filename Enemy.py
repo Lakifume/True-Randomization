@@ -325,12 +325,12 @@ def rand_enemy_level():
         if Manager.is_enemy(i)["Main"]:
             #Some bosses have a cap for either being too boring or having a time limit
             if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Minor":
-                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 50, 1, 5), i)
+                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 50, 1, 4), i)
             #While all enemies have a weigthed random level based on their regular level the last boss can be anything
             elif Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
-                patch_level(Manager.random_weighted(999, 1, 99, 1, 5), i)
+                patch_level(random.randint(1, 99), i)
             else:
-                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 99, 1, 5), i)
+                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 99, 1, 4), i)
         elif Manager.is_enemy(i)["Exception"]:
             patch_level(0, i)
         else:

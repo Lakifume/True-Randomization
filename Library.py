@@ -13,7 +13,6 @@ def init():
     for i in range(20):
         completion.append(i*5)
     completion.append(99)
-    
     for i in range(21):
         if i % 2 == 0:
             is_tome.append(True)
@@ -23,7 +22,10 @@ def init():
 
 def rand_book(req, appear):
     #Start by randomizing Tome of Conquest, ensuring that it alwasy exists
-    chosen = any_pick_true(count)
+    chosen = random.choice(count)
+    while not is_tome[chosen]:
+        chosen = random.choice(count)
+    count.remove(chosen)
     if req:
         Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["RoomTraverseThreshold"] = completion[chosen]
     if appear:
@@ -40,13 +42,6 @@ def rand_book(req, appear):
 
 def any_pick(array):
     item = random.choice(array)
-    array.remove(item)
-    return item
-    
-def any_pick_true(array):
-    item = random.choice(array)
-    while not is_tome[item]:
-        item = random.choice(array)
     array.remove(item)
     return item
 

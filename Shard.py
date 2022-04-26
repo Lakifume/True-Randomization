@@ -73,14 +73,14 @@ def rand_shard(scale):
         else:
             reduction = 1
         #Randome magic cost first
-        multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 5)/original_cost
+        multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 4)/original_cost
         Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * multiplier)
         #Riga Doin explosion is shared with Riga Storeama
         if i == "LigaStreyma":
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] * multiplier)
         #Randomize power based on magic cost
         if not scale:
-            multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 5)/original_cost
+            multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 4)/original_cost
         new_base = original_cost * Manager.dictionary["ShardBase"][i]["Base"] * multiplier
         #Prevent power from scaling too high or too low
         if i == "Healing":

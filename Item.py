@@ -436,6 +436,8 @@ def init():
     ]
     global all_keys
     all_keys = []
+    global key_order
+    key_order = []
     global key_items
     key_items = [
         "Swordsman",
@@ -616,11 +618,11 @@ def init():
             base.append(i)
         i += 10000
     i = 100000
-    while i <= 400000:
+    while i <= 900000:
         for e in range(10):
             base.append(i)
         i += 100000
-    base.append(500000)
+    base.append(1000000)
     i = 0
     while i <= 90:
         ten.append(i)
@@ -696,13 +698,17 @@ def extra_logic():
     Manager.dictionary["MapLogic"]["m19K2C_000"]["Keyofbacker4"]         = False
     Manager.dictionary["MapLogic"]["m19K2C_000"]["MonarchCrown"]         = True
     #Benjamin's last reward appears if you've completed all his quests which is not guaranteed to be possible early on
-    #Make sure he's never required
-    Manager.dictionary["MapLogic"]["m02VIL_003"]["NearestGate"] = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
-    #Same goes for the Gebel's Glasses chest that requires you to get 1 copy of every shard
-    Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"] = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
-    #OD's shard drop can only be obtained if Tome of Conquest was acuired which is not always possible due to the map completion requirement
-    #So don't make him required
-    Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"] = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+    #Gebel's Glasses chest only appears if you to get 1 copy of every shard
+    #OD can only be fought if the Tome of Conquest was obtained
+    #Make sure none of these are required
+    if Manager.dictionary["MapLogic"]["m18ICE_019"]["GateRoom"]:
+        Manager.dictionary["MapLogic"]["m02VIL_003"]["NearestGate"]      = ["m18ICE_019"]
+        Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"]      = ["m18ICE_019"]
+        Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"]      = ["m18ICE_019"]
+    else:
+        Manager.dictionary["MapLogic"]["m02VIL_003"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
 
 def hard_enemy_logic():
     #On hard mode some rooms have extra enemies so update the location info
@@ -757,18 +763,18 @@ def give_extra(shard):
     Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientQuantity"] = 1
     Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientRate"] = 100.0
     #If it is a key shard then update the logic so that all requirement for it are lifted
-    if shard in key_shards:
-        key_shards.remove(shard)
-        all_keys.remove(shard)
-        for i in Manager.dictionary["MapLogic"]:
-            if Manager.dictionary["MapLogic"][i][shard]:
-                Manager.dictionary["MapLogic"][i]["GateRoom"] = False
-                for e in Manager.dictionary["MapLogic"]:
-                    if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
-                        Manager.dictionary["MapLogic"][e]["NearestGate"] = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
-    else:
-        while shard in Manager.dictionary["ShardDrop"]["ItemPool"]:
-            Manager.dictionary["ShardDrop"]["ItemPool"].remove(shard)
+    #if shard in key_shards:
+    #    key_shards.remove(shard)
+    #    all_keys.remove(shard)
+    #    for i in Manager.dictionary["MapLogic"]:
+    #        if Manager.dictionary["MapLogic"][i][shard]:
+    #            Manager.dictionary["MapLogic"][i]["GateRoom"] = False
+    #            for e in Manager.dictionary["MapLogic"]:
+    #                if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
+    #                    Manager.dictionary["MapLogic"][e]["NearestGate"] = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
+    #else:
+    while shard in Manager.dictionary["ShardDrop"]["ItemPool"]:
+        Manager.dictionary["ShardDrop"]["ItemPool"].remove(shard)
 
 def no_shard_craft():
     #If shards are randomized then disable the possiblity to manually craft shards so that they aren't always available
@@ -894,8 +900,8 @@ def enemy_to_room(enemy):
 
 def logic_choice(chosen_item, room_list):
     #Removing key from list
-    while chosen_item in all_keys:
-        all_keys.remove(chosen_item)
+    all_keys.remove(chosen_item)
+    key_order.append(chosen_item)
     #Choosing room to place item in
     check = False
     while not check:
@@ -1452,33 +1458,21 @@ def rand_shop_pool():
                 Manager.datatable["PB_DT_ItemMaster"][chosen]["Producted"] = random.choice(event_type)
 
 def rand_shop_price(scale):
+    price_list = Manager.create_weighted_list(100, 1, 10000, 1, 4)
     for i in Manager.datatable["PB_DT_ItemMaster"]:
         if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] == 0 or i in shop_skip_list:
             continue
-        sell_ratio = Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"]/Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"]
-        chosen = random.choice(base)
-        if chosen < 500000:
-            if chosen >= 100:
-                chosen += random.choice(ten)
-            if chosen >= 1000:
-                chosen += random.choice(hundred)
-            if chosen >= 10000:
-                chosen += random.choice(thousand)
-            if chosen >= 100000:
-                chosen += random.choice(ten_thousand)
-        Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = chosen
+        #Buy
+        buy_price = Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"]
+        sell_ratio = Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"]/buy_price
+        multiplier = random.choice(price_list)/100
+        Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = int(buy_price*multiplier)
+        if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] < 1:
+            Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = 1
+        #Sell
         if not scale:
-            chosen = random.choice(base)
-            if chosen < 500000:
-                if chosen >= 100:
-                    chosen += random.choice(ten)
-                if chosen >= 1000:
-                    chosen += random.choice(hundred)
-                if chosen >= 10000:
-                    chosen += random.choice(thousand)
-                if chosen >= 100000:
-                    chosen += random.choice(ten_thousand)
-        Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = int(chosen*sell_ratio)
+            multiplier = random.choice(price_list)/100
+        Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = int(buy_price*multiplier*sell_ratio)
         if Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] < 1:
             Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 1
 
@@ -1534,8 +1528,27 @@ def create_log(seed, map):
     log["Seed"] = seed
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
-    for i in key_items:
-        log["Key"][Manager.dictionary["ItemTranslation"][i]] = [chest_to_room(key_item_to_location[i])]
-    for i in key_shards:
-        log["Key"][Manager.dictionary["ShardTranslation"][i]] = enemy_to_room(key_shard_to_location[i])
+    for i in key_order:
+        if i in key_items:
+            log["Key"][Manager.dictionary["ItemTranslation"][i]] = [chest_to_room(key_item_to_location[i])]
+        if i in key_shards:
+            log["Key"][Manager.dictionary["ShardTranslation"][i]] = enemy_to_room(key_shard_to_location[i])
     return log
+
+def create_log_string(seed, map):
+    #Log string for quickly showing answer to a seed
+    name, extension = os.path.splitext(map)
+    if name.split("\\")[-1]:
+        map_name = name.split("\\")[-1]
+    else:
+        map_name = "Default"
+    log_string = ""
+    log_string += "Seed: " + str(seed) + "\n"
+    log_string += "Map: " + map_name + "\n"
+    log_string += "Key:\n"
+    for i in key_order:
+        if i in key_items:
+            log_string += "  " + Manager.dictionary["ItemTranslation"][i] + ": " + key_item_to_location[i] + "\n"
+        if i in key_shards:
+            log_string += "  " + Manager.dictionary["ShardTranslation"][i] + ": " + Manager.dictionary["EnemyTranslation"][key_shard_to_location[i]] + "\n"
+    return log_string

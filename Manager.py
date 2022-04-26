@@ -79,7 +79,7 @@ def load_content():
         full_datatable[name] = {}
         with open("UAssetGUI\\DataTable\\" + i, "r", encoding="utf8") as file_reader:
             full_datatable[name]["DataTable"] = json.load(file_reader)
-    #StoreExtraDataForConvenience
+    #Store extra data for convenience
     for i in full_datatable:
         full_datatable[i]["KeyIndex"] = {}
         for e in range(len(full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"])):
@@ -223,14 +223,16 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
             #Expand expertise point range that scales with level
             #In vanilla the range is too small and barely makes a difference
-            datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
-            datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 15
+            if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 15
+                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
             #Set stone type
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
         else:
-            datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
-            datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 10
+            if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 10
+                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Mob"
         #Make level 1 health based off of level 99 health
         datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/100) + 2.0
@@ -289,14 +291,6 @@ def apply_tweaks():
             datatable["PB_DT_ItemMaster"][i]["max"]       = 1
             datatable["PB_DT_ItemMaster"][i]["buyPrice"]  = 0
             datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 0
-        #Increase the selling price of consumables
-        #It's not likely the player will give them up so they should be rewarding
-        if datatable["PB_DT_ItemMaster"][i]["ItemType"] == "ECarriedCatalog::Potion":
-            datatable["PB_DT_ItemMaster"][i]["sellPrice"] = int(datatable["PB_DT_ItemMaster"][i]["sellPrice"]*2.0)
-        #On the other hand reduce the selling price of materials
-        #Otherwise it's too easy to get money fast with the new drop rates
-        if datatable["PB_DT_ItemMaster"][i]["ItemType"] in ["ECarriedCatalog::Ingredient", "ECarriedCatalog::FoodStuff", "ECarriedCatalog::Seed"]:
-            datatable["PB_DT_ItemMaster"][i]["sellPrice"] = int(datatable["PB_DT_ItemMaster"][i]["sellPrice"]*0.5)
         #Update icon pointer of 8 bit weapons for the new icons
         #The icon texture was edited so that all new icons are evenly shifted from the original ones
         if i[:-1] in bit_weapons and i[-1] == "2":
@@ -829,14 +823,35 @@ def remove_inst(name):
         pass
     return name
 
-def random_weighted(value, minimum, maximum, step, deviation):
-    #Randomly choose from a range with higher odds around a specific value
+def create_weighted_list(value, minimum, maximum, step, deviation):
+    #Create a list in a range with higher odds around a specific value
     list = []
     for i in range(minimum, maximum+1):
         if i % step == 0:
-            for e in range(2**(abs(math.ceil(abs(i-value)*deviation/max(value-minimum, maximum-value))-deviation))):
+            min_distance = min(value-minimum, maximum-value)
+            max_distance = max(value-minimum, maximum-value)
+            if i < value:
+                weight = round((maximum-value)/(value-minimum))
+                current_distance = value-minimum
+            elif i > value:
+                weight = round((value-minimum)/(maximum-value))
+                current_distance = maximum-value
+            else:
+                if min_distance == 0:
+                    weight = max_distance
+                else:
+                    weight = round((max_distance/min_distance)/2)
+                current_distance = 1
+            if weight < 1:
+                weight = 1
+            difference = abs(i-value)
+            for e in range(weight*2**(abs(math.ceil(difference*deviation/current_distance)-deviation))):
                 list.append(i)
-    return random.choice(list)
+    return list
+
+def random_weighted(value, minimum, maximum, step, deviation):
+    #Randomly pick from weighted list
+    return random.choice(create_weighted_list(value, minimum, maximum, step, deviation))
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines

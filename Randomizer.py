@@ -264,49 +264,49 @@ def writing_and_exit():
 
 class Signaller(QObject):
     progress = Signal(int)
-    finished = Signal()
+    finished = Signal(str)
 
 class Generate(QThread):
-    def __init__(self, progress_bar, seed, map):
+    def __init__(self, progress_bar, seed, map, test):
         QThread.__init__(self)
         self.signaller = Signaller()
         self.progress_bar = progress_bar
         self.seed = seed
         self.map = map
+        self.test = test
 
     def run(self):
         current = 0
         self.signaller.progress.emit(current)
         
-        #InitializeSpoilerLog
-        
-        if not os.path.isdir("SpoilerLog"):
-            os.makedirs("SpoilerLog")
-        if not os.path.isdir("MapEdit\\Key"):
-            os.makedirs("MapEdit\\Key")
-        
-        for file in os.listdir("SpoilerLog"):
-            file_path = os.path.join("SpoilerLog", file)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-        for file in os.listdir("MapEdit\\Key"):
-            file_path = os.path.join("MapEdit\\Key", file)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-        
-        #OpenFiles
+        #Open files
         
         Manager.load_content()
         Manager.load_data()
         Manager.complex_to_simple()
         
-        #InitializeModDirectory
+        #Initialize directories
         
-        for i in list(Manager.dictionary["FileToPath"].values()):
-            if not os.path.isdir("UnrealPak\\Mod\\BloodstainedRotN\\" + i):
-                os.makedirs("UnrealPak\\Mod\\BloodstainedRotN\\" + i)
+        if not self.test:
+            #Mod
+            for i in list(Manager.dictionary["FileToPath"].values()):
+                if not os.path.isdir("UnrealPak\\Mod\\BloodstainedRotN\\" + i):
+                    os.makedirs("UnrealPak\\Mod\\BloodstainedRotN\\" + i)
+            #Logs
+            if not os.path.isdir("SpoilerLog"):
+                os.makedirs("SpoilerLog")
+            if not os.path.isdir("MapEdit\\Key"):
+                os.makedirs("MapEdit\\Key")
+            for file in os.listdir("SpoilerLog"):
+                file_path = os.path.join("SpoilerLog", file)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+            for file in os.listdir("MapEdit\\Key"):
+                file_path = os.path.join("MapEdit\\Key", file)
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
         
-        #InitClasses
+        #Init classes
         
         Manager.init()
         Item.init()
@@ -317,7 +317,7 @@ class Generate(QThread):
         Sound.init()
         Bloodless.init()
         
-        #ApplyTweaks
+        #Apply tweaks
         
         Manager.apply_tweaks()
         Shard.default_shard()
@@ -385,8 +385,18 @@ class Generate(QThread):
             Item.rand_overworld_key()
             Item.rand_overworld_shard()
             Item.rand_overworld_pool()
+        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            random.seed(self.seed)
+            if config.getboolean("ExtraRandomization", "bBloodlessFull"):
+                Bloodless.chaos_candle()
+            Bloodless.candle_shuffle()
+            Item.deseema_fix()
         else:
             Item.deseema_fix()
+        
+        if self.test:
+            self.signaller.finished.emit(self.map)
+            return
         
         if config.getboolean("ItemRandomization", "bQuestPool"):
             random.seed(self.seed)
@@ -448,12 +458,6 @@ class Generate(QThread):
         if config.getboolean("SoundRandomization", "bDialogues"):
             random.seed(self.seed)
             Sound.rand_dialogue()
-        
-        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            random.seed(self.seed)
-            if config.getboolean("ExtraRandomization", "bBloodlessFull"):
-                Bloodless.chaos_candle()
-            Bloodless.candle_shuffle()
         
         if config.getboolean("GameDifficulty", "bNormal"):
             Enemy.rename_difficulty("Normal", "???", "???")
@@ -622,7 +626,7 @@ class Generate(QThread):
         self.signaller.progress.emit(current)
         
         self.progress_bar.setLabelText("Done")
-        self.signaller.finished.emit()
+        self.signaller.finished.emit(self.map)
 
 class Update(QThread):
     def __init__(self, progress_bar, api):
@@ -1189,17 +1193,21 @@ class Main(QWidget):
         
         self.seed_layout = QGridLayout()
         
-        seed_field = QLineEdit(config.get("Misc", "sSeed"))
-        seed_field.textChanged[str].connect(self.new_seed)
-        self.seed_layout.addWidget(seed_field, 0, 0, 1, 2)
+        self.seed_field = QLineEdit(config.get("Misc", "sSeed"))
+        self.seed_field.textChanged[str].connect(self.new_seed)
+        self.seed_layout.addWidget(self.seed_field, 0, 0, 1, 3)
         
         seed_button_1 = QPushButton("New Seed")
         seed_button_1.clicked.connect(self.seed_button_1_clicked)
         self.seed_layout.addWidget(seed_button_1, 1, 0, 1, 1)
         
+        seed_button_3 = QPushButton("Test Seed")
+        seed_button_3.clicked.connect(self.seed_button_3_clicked)
+        self.seed_layout.addWidget(seed_button_3, 1, 1, 1, 1)
+        
         seed_button_2 = QPushButton("Confirm")
         seed_button_2.clicked.connect(self.seed_button_2_clicked)
-        self.seed_layout.addWidget(seed_button_2, 1, 1, 1, 1)
+        self.seed_layout.addWidget(seed_button_2, 1, 2, 1, 1)
         
         #Init checkboxes
         
@@ -1307,11 +1315,6 @@ class Main(QWidget):
         button_4.setToolTip("Manually pick a custom map to play on (overrides the random map selection).")
         button_4.clicked.connect(self.button_4_clicked)
         grid.addWidget(button_4, 9, 2, 1, 1)
-
-        button_5 = QPushButton("Generate")
-        button_5.setToolTip("Generate .pak file with current settings.")
-        button_5.clicked.connect(self.button_5_clicked)
-        grid.addWidget(button_5, 10, 1, 1, 4)
         
         button_6 = QPushButton("Import Assets")
         button_6.setToolTip("Reimport and convert all base game assets used in this mod.\nUseful if the game updates or if one asset gets corrupted on\naccident.")
@@ -1322,6 +1325,11 @@ class Main(QWidget):
         button_7.setToolTip("The people involved with this mod.")
         button_7.clicked.connect(self.button_7_clicked)
         grid.addWidget(button_7, 9, 4, 1, 1)
+
+        button_5 = QPushButton("Generate")
+        button_5.setToolTip("Generate .pak file with current settings.")
+        button_5.clicked.connect(self.button_5_clicked)
+        grid.addWidget(button_5, 10, 1, 1, 4)
         
         #Window
         
@@ -1754,6 +1762,17 @@ class Main(QWidget):
     def new_seed(self, text):
         config.set("Misc", "sSeed", text)
     
+    def cast_seed(self, seed):
+        #Cast seed to another object type if possible
+        #By default it is a string
+        try:
+            if "." in self.seed:
+                return float(seed)
+            else:
+                return int(seed)
+        except ValueError:
+            return seed
+    
     def add_to_list(self, filetype, file, checkboxes):
         list   = modified_files[filetype]["Files"]
         change = True
@@ -1823,17 +1842,31 @@ class Main(QWidget):
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
     
-    def seed_finished(self):
+    def seed_finished(self, map):
         box = QMessageBox(self)
         box.setWindowTitle("Done")
+        text = "Pak file generated !"
         if config.getboolean("GameMode", "bRandomizer"):
-            box.setText("Pak file generated !\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work !")
-        else:
-            box.setText("Pak file generated !")
+            text += "\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work."
+        if not config.getboolean("GameDifficulty", "bNormal"):
+            text += "\n\nIf you have not unlocked all difficulties yet enter NIGHTMARE as the in-game file username."
+        box.setText(text)
         box.exec()
         self.setEnabled(True)
     
     def convert_finished(self):
+        self.setEnabled(True)
+    
+    def test_finished(self, map):
+        box = QMessageBox(self)
+        box.setWindowTitle("Test")
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            box.setText(Item.create_log_string(self.seed_test, map))
+        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            box.setText(Bloodless.create_log_string(self.seed_test, map))
+        else:
+            box.setText("No keys to randomize")
+        box.exec()
         self.setEnabled(True)
     
     def browse_button_clicked(self):
@@ -1855,8 +1888,21 @@ class Main(QWidget):
             os.execl(sys.executable, sys.executable, *sys.argv)
     
     def seed_button_1_clicked(self):
-        self.seed = str(round(datetime.now().timestamp()))
-        self.seed_box.close()
+        self.seed_field.setText(str(random.randint(1000000000, 9999999999)))
+    
+    def seed_button_3_clicked(self):
+        self.seed_test = self.cast_seed(config.get("Misc", "sSeed"))
+        self.setEnabled(False)
+        QApplication.processEvents()
+        
+        self.progress_bar = QProgressDialog("Initializing...", None, 0, 1, self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
+        
+        self.worker = Generate(self.progress_bar, self.seed_test, self.map, True)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(self.test_finished)
+        self.worker.start()
     
     def seed_button_2_clicked(self):
         self.seed = config.get("Misc", "sSeed")
@@ -1896,16 +1942,7 @@ class Main(QWidget):
             self.seed_box.exec()
             if not self.seed:
                 return
-        
-        #Cast seed to another object type if possible
-        #By default it is a string
-        try:
-            if "." in self.seed:
-                self.seed = float(self.seed)
-            else:
-                self.seed = int(self.seed)
-        except ValueError:
-            pass
+        self.seed = self.cast_seed(self.seed)
         
         #Check if path exists
         
@@ -1922,7 +1959,7 @@ class Main(QWidget):
         self.progress_bar.setWindowTitle("Status")
         self.progress_bar.setWindowModality(Qt.WindowModal)
         
-        self.worker = Generate(self.progress_bar, self.seed, self.map)
+        self.worker = Generate(self.progress_bar, self.seed, self.map, False)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(self.seed_finished)
         self.worker.start()

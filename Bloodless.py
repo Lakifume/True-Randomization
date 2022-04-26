@@ -200,3 +200,20 @@ def create_log(seed, map):
     for i in bloodless_datatable:
         log["Key"][Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)]].append(Manager.remove_inst(bloodless_datatable[i]))
     return log
+
+def create_log_string(seed, map):
+    #Log string for quickly showing answer to a seed
+    name, extension = os.path.splitext(map)
+    if name.split("\\")[-1]:
+        map_name = name.split("\\")[-1]
+    else:
+        map_name = "Default"
+    log_string = ""
+    log_string += "Seed: " + str(seed) + "\n"
+    log_string += "Map: " + map_name + "\n"
+    log_string += "Key:\n"
+    for i in bloodless_datatable:
+        if i in upgrade_type:
+            break
+        log_string += "  " + Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + Manager.remove_inst(bloodless_datatable[i]) + "\n"
+    return log_string

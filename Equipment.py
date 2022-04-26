@@ -139,7 +139,7 @@ def rand_all_equip():
                 if Manager.datatable["PB_DT_ArmorMaster"][i][e] == 0:
                     continue
                 list.append(abs(Manager.datatable["PB_DT_ArmorMaster"][i][e]))
-            multiplier = Manager.random_weighted(min(list), 1, int(min(list)*1.2), 1, 5)/min(list)
+            multiplier = Manager.random_weighted(min(list), 1, int(min(list)*1.2), 1, 4)/min(list)
             for e in stat_to_property:
                 if Manager.datatable["PB_DT_ArmorMaster"][i][e] == 0:
                     continue
@@ -150,9 +150,9 @@ def rand_all_equip():
                 if Manager.datatable["PB_DT_ArmorMaster"][i][e] == 0:
                     continue
                 max = equipment_type_to_max_value[Manager.datatable["PB_DT_ArmorMaster"][i]["SlotType"].split("::")[1]][stat_to_property[e]]
-                Manager.datatable["PB_DT_ArmorMaster"][i][e] = Manager.random_weighted(Manager.datatable["PB_DT_ArmorMaster"][i][e], 1, int(max*1.2), 1, 5)
+                Manager.datatable["PB_DT_ArmorMaster"][i][e] = Manager.random_weighted(Manager.datatable["PB_DT_ArmorMaster"][i][e], 1, int(max*1.2), 1, 4)
     #Shovel Armor's attack
-    Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Manager.random_weighted(Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"], int(weapon_type_to_max_value["LargeSword"][0]*0.8), int(weapon_type_to_max_value["LargeSword"][1]*1.2), 1, 5)
+    Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Manager.random_weighted(Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"], int(weapon_type_to_max_value["LargeSword"][0]*0.8), int(weapon_type_to_max_value["LargeSword"][1]*1.2), 1, 4)
 
 def rand_all_weapon():
     for i in Manager.datatable["PB_DT_WeaponMaster"]:
@@ -177,7 +177,7 @@ def rand_all_weapon():
             reduction = 1.0
         #Make 8 bit weapons retain their tier system
         if i in Manager.bit_weapons:
-            Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = Manager.random_weighted(Manager.datatable["PB_DT_WeaponMaster"][i + "3"]["MeleeAttack"], int(min*0.8*reduction), int(max*1.2*reduction), 1, 5)
+            Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = Manager.random_weighted(Manager.datatable["PB_DT_WeaponMaster"][i + "3"]["MeleeAttack"], int(min*0.8*reduction), int(max*1.2*reduction), 1, 4)
             bweapon = Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]/3
             Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = int(bweapon)
         elif i[:-1] in Manager.bit_weapons and i[-1] == "2":
@@ -185,7 +185,7 @@ def rand_all_weapon():
         elif i[:-1] in Manager.bit_weapons and i[-1] == "3":
             Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = int(bweapon*3)
         else:
-            Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = Manager.random_weighted(Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"], int(min*0.8*reduction), int(max*1.2*reduction), 1, 5)
+            Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = Manager.random_weighted(Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"], int(min*0.8*reduction), int(max*1.2*reduction), 1, 4)
         #Update magic attack for weapons with elemental attributes
         if Manager.datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] != 0:
             Manager.datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] = Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]
@@ -200,6 +200,9 @@ def rand_cheat_equip():
     for i in Manager.datatable["PB_DT_ArmorMaster"]:
         if i in cheat_equip:
             for e in stat_to_property:
+                #Avoid having direct attack stats as this would favor rapid weapons over slow ones
+                if stat_to_property[e] == "Attack":
+                    continue
                 Manager.datatable["PB_DT_ArmorMaster"][i][e] = random.choice(stat_pool)
 
 def rand_cheat_weapon():
@@ -212,6 +215,6 @@ def rand_cheat_weapon():
             else:
                 reduction = 1.0
             Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"] = random.randint(int(min*0.8*reduction), int(max*1.2*reduction))
-            #RandomizeSpecialEffectRateToo
+            #Randomize special effect rate too
             if Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectDenominator"] != 0.0:
                 Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectDenominator"] = random.randint(1, 3)
