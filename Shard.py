@@ -68,7 +68,7 @@ def rand_shard(scale):
         original_cost      = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"]
         original_doin_cost = Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"]
         #Reduce the range for shards that can be pulsed
-        if i in special_list:
+        if i in special_list or i == "Healing":
             reduction = 3
         else:
             reduction = 1

@@ -4,6 +4,8 @@ import json
 import math
 import glob
 import random
+import struct
+import colorsys
 from enum import Enum
 from collections import OrderedDict
 
@@ -118,7 +120,7 @@ def load_data():
         json_file = json.load(file_reader)
     dictionary["MapLogic"] = json_file["KeyLogic"]
     dictionary["MapOrder"] = json_file["AreaOrder"]
-    dictionary["MapOriginalOrder"] = json_file["AreaOrder"]
+    dictionary["OriginalMapOrder"] = json_file["AreaOrder"]
 
 def load_custom_map(path):
     #Load the file for a custom map, overriding the vanilla RoomMaster file
@@ -214,8 +216,6 @@ def apply_tweaks():
     for i in datatable["PB_DT_CharacterParameterMaster"]:
         if not is_enemy(i)["Enemy"]:
             continue
-        if datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] == 0:
-            continue
         if is_enemy(i)["Boss"]:
             #Make boss health scale with level
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(99/datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]))
@@ -243,7 +243,7 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
         #Give all enemies a luck stat which reduces the chances of critting them
         #Originally only Gebel, Valefar and OD have one
-        if datatable["PB_DT_CharacterParameterMaster"][i]["LUC"] == 0:
+        if datatable["PB_DT_CharacterParameterMaster"][i]["LUC"] == 0 and i != "N1008":
             datatable["PB_DT_CharacterParameterMaster"][i]["LUC"]        = 5.0
             datatable["PB_DT_CharacterParameterMaster"][i]["LUC99Enemy"] = 50.0
         #Allow Zangetsu to chain grab everyone
@@ -496,7 +496,7 @@ def convert_bloodless_candle(bloodless_datatable):
         #Setup an exception so that this file searches for a specific ability
         if bloodless_datatable[i] == "m08TWR_019":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_BLOOD_STEAL"
-        elif bloodless_datatable[i] == "m08TWR_019_2":
+        elif bloodless_datatable[i] == "m08TWR_019_1":
             search = "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP"
         else:
             search = "EPBBloodlessAbilityType::"
@@ -577,7 +577,40 @@ def remove_level_actor(filename, search):
                     for o in search:
                         file.write(str.encode("X"))
 
+def change_material_hsv(filename, offset, new_hsv):
+    #Change a color in a material file at a certain offset
+    #Here we use hsv as a base as it is easier to work with
+    destination = "UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename] + "\\" + filename
+    for i in ["uasset", "uexp"]:
+        shutil.copyfile("UAssetGUI\\Other\\" + filename + "." + i, destination + "." + i)
+    with open(destination + ".uexp", "r+b") as file:
+        rgb = []
+        for e in range(3):
+            file.seek(offset + e*4)
+            raw = "{:08x}".format(int.from_bytes(file.read(4), "little"))
+            float = struct.unpack("!f", bytes.fromhex(raw))[0]
+            rgb.append(float)
+        hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+        if new_hsv[0] < 0:
+            new_hue = hsv[0]
+        else:
+            new_hue = new_hsv[0]/360
+        if new_hsv[1] < 0:
+            new_sat = hsv[1]
+        else:
+            new_sat = new_hsv[1]/100
+        if new_hsv[2] < 0:
+            new_val = hsv[2]
+        else:
+            new_val = new_hsv[2]/100
+        rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
+        for e in range(3):
+            file.seek(offset + e*4)
+            raw = hex(struct.unpack("<I", struct.pack("<f", rgb[e]))[0])
+            file.write(int(raw, 16).to_bytes(4, "little"))
+
 def convert_flag_to_door(door_flag, width):
+    #Function by LagoLunatic
     door_list = []
     for i in range(0, len(door_flag), 2):
         tile_index = door_flag[i]
@@ -597,6 +630,7 @@ def convert_flag_to_door(door_flag, width):
     return door_list
 
 def convert_door_to_flag(door_list, width):
+    #Function by LagoLunatic
     door_flags_by_coords = OrderedDict()
     for door in door_list:
         coords = (door.x_block, door.z_block)
@@ -613,6 +647,15 @@ def convert_door_to_flag(door_list, width):
         tile_index_in_room += 1
         door_flag += [tile_index_in_room, dir_flags]
     return door_flag
+
+def convert_door_to_adjacent_room(room, door_flag):
+    adjacent = [room]
+    door_1 = convert_flag_to_door(door_flag, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
+    for i in datatable["PB_DT_RoomMaster"]:
+        door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][i]["DoorFlag"], datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
+        if is_adjacent(room, i, door_1, door_2):
+            adjacent.append(i)
+    return adjacent
 
 def connect_map():
     #The game map requires you to manually input a list of which rooms can be transitioned into from the current room
@@ -655,30 +698,9 @@ def connect_map():
             #So ignore any other transitions overlayed on top of it
             if datatable["PB_DT_RoomMaster"][e]["SameRoom"] == "m02VIL_1200" or e == "m03ENT_1200":
                 continue
-            door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][e]["DoorFlag"], datatable["PB_DT_RoomMaster"][e]["AreaWidthSize"])
             #Check relative position and distance on every side of the room
-            check = False
-            if left_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-                if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-                    check = True
-                else:
-                    check = door_vertical_check(door_1, door_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
-            elif bottom_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-                if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-                    check = True
-                else:
-                    check = door_horizontal_check(door_1, door_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
-            elif right_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-                if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-                    check = True
-                else:
-                    check = door_vertical_check(door_1, door_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
-            elif top_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-                if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-                    check = True
-                else:
-                    check = door_horizontal_check(door_1, door_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
-            if check:
+            door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][e]["DoorFlag"], datatable["PB_DT_RoomMaster"][e]["AreaWidthSize"])
+            if is_adjacent(i, e, door_1, door_2):
                 datatable["PB_DT_RoomMaster"][i]["AdjacentRoomName"].append(e)
         #If a room transition leads nowhere remove its door flag to make it obvious that it is unused
         for e in list(door_1):
@@ -738,6 +760,28 @@ def connect_map():
     #Give the unused Glacial Tomb room the same doors as Dominique's room
     #Otherwise that room hides the doors of the used one
     datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = [2, 4]
+
+def is_adjacent(i, e, door_1, door_2):
+    if left_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
+        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+            return True
+        else:
+            return door_vertical_check(door_1, door_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
+    elif bottom_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
+        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+            return True
+        else:
+            return door_horizontal_check(door_1, door_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
+    elif right_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
+        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+            return True
+        else:
+            return door_vertical_check(door_1, door_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
+    elif top_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
+        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+            return True
+        else:
+            return door_horizontal_check(door_1, door_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
 
 def left_check(i, e):
     return bool(e["OffsetX"] == round(i["OffsetX"] - 12.6 * e["AreaWidthSize"], 1) and round(i["OffsetZ"] - 7.2 * (e["AreaHeightSize"] - 1), 1) <= e["OffsetZ"] <= round(i["OffsetZ"] + 7.2 * (i["AreaHeightSize"] - 1), 1))
@@ -802,7 +846,7 @@ def is_enemy(character):
     if character in dictionary["EnemyLocation"]:
         dict["Enemy"] = True
         dict["Main"]  = True
-    elif character[0:5] in dictionary["EnemyLocation"]:
+    elif character[0:5] in dictionary["EnemyLocation"] and character != "N1001_Sip":
         dict["Enemy"] = True
     elif character[0:5] == "N1013" or character[0:5] == "N1009" or character == "N3125":
         dict["Enemy"]     = True

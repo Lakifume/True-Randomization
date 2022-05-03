@@ -358,8 +358,6 @@ class Generate(QThread):
             Item.unused_room_check()
             Enemy.enemy_rebalance()
         
-        Item.extra_logic()
-        
         if config.getboolean("GameMode", "bRandomizer"):
             Item.give_shortcut()
             Item.give_eye()
@@ -382,21 +380,21 @@ class Generate(QThread):
             random.seed(self.seed)
             Item.no_key_in_shop()
             Item.no_shard_craft()
+            Item.extra_logic()
             Item.rand_overworld_key()
-            Item.rand_overworld_shard()
             Item.rand_overworld_pool()
+            Item.rand_overworld_shard()
         elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
-            if config.getboolean("ExtraRandomization", "bBloodlessFull"):
-                Bloodless.chaos_candle()
+            Bloodless.extra_logic()
             Bloodless.candle_shuffle()
-            Item.deseema_fix()
-        else:
-            Item.deseema_fix()
         
         if self.test:
             self.signaller.finished.emit(self.map)
             return
+        
+        if not config.getboolean("ItemRandomization", "bOverworldPool"):
+            Item.deseema_fix()
         
         if config.getboolean("ItemRandomization", "bQuestPool"):
             random.seed(self.seed)
@@ -485,7 +483,11 @@ class Generate(QThread):
             Enemy.zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             Equipment.zangetsu_black_belt()
         
+        Item.update_boss_crystal_color()
+        Enemy.update_special_properties()
+        Equipment.update_special_properties()
         Manager.update_descriptions()
+        
         if self.seed:
             Manager.stringtable["PBSystemStringTable"]["SYS_SEN_ModeRogueDungeon"] = str(self.seed)
         
@@ -547,7 +549,7 @@ class Generate(QThread):
         Manager.import_music("ACT50_BRM")
         
         #Edit the health bar frame slightly to give an easy visual cue to tell if someone is using the mod or not
-        #This is especially useful on twitch as this difference is even vissible from stream previews
+        #This is especially useful on twitch as this difference is even visible from stream previews
         Manager.import_texture("frameMiriam")
         #Edit the file that contains all the icons in the game to give 8 bit weapons unique icons per rank
         #Otherwise it is almost impossible to tell which tier the weapon you're looking at actually is
@@ -604,16 +606,12 @@ class Generate(QThread):
         
         root = os.getcwd()
         os.chdir("UnrealPak")
-        os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress Randomizer")
+        os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress")
         os.chdir(root)
         
         #Reset
         
-        for root, dirs, files in os.walk("UnrealPak\\Mod"):
-            for file in os.listdir(root):
-                file_path = os.path.join(root, file)
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
+        shutil.rmtree("UnrealPak\\Mod")
         
         #Move
         
@@ -739,7 +737,7 @@ class Convert(QThread):
         current += 1
         self.signaller.progress.emit(current)
         
-        self.signaller.finished.emit()
+        self.signaller.finished.emit("")
 
 #GUI
 
@@ -1030,13 +1028,6 @@ class Main(QWidget):
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
         box_10_left.addWidget(self.check_box_21)
         checkbox_list.append(self.check_box_21)
-        
-        self.check_box_none = QCheckBox("None")
-        self.check_box_none.setVisible(False)
-        retain = self.check_box_none.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.check_box_none.setSizePolicy(retain)
-        box_10_left.addWidget(self.check_box_none)
 
         self.check_box_22 = QCheckBox("Coming Soon")
         self.check_box_22.setToolTip("™")
@@ -1046,49 +1037,6 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_22)
         
         #RadioButtons
-        
-        self.radio_button_7 = QRadioButton("Full")
-        self.radio_button_7.setToolTip("Shuffle every candle at random.")
-        self.radio_button_7.toggled.connect(self.radio_button_group_3_checked)
-        self.radio_button_7.setVisible(False)
-        retain = self.radio_button_7.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.radio_button_7.setSizePolicy(retain)
-        box_10_right.addWidget(self.radio_button_7)
-        
-        self.radio_button_8 = QRadioButton("Major-Minor")
-        self.radio_button_8.setToolTip("Shuffle abilities and upgrades between themselves only.")
-        self.radio_button_8.toggled.connect(self.radio_button_group_3_checked)
-        self.radio_button_8.setVisible(False)
-        retain = self.radio_button_8.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.radio_button_8.setSizePolicy(retain)
-        box_10_right.addWidget(self.radio_button_8)
-        
-        self.radio_button_none = QRadioButton("None")
-        self.radio_button_none.setVisible(False)
-        retain = self.radio_button_none.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.radio_button_none.setSizePolicy(retain)
-        box_10_right.addWidget(self.radio_button_none)
-        
-        self.radio_button_9 = QRadioButton("Full")
-        self.radio_button_9.setToolTip("")
-        #self.radio_button_9.toggled.connect(self.radio_button_group_4_checked)
-        self.radio_button_9.setVisible(False)
-        retain = self.radio_button_9.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.radio_button_9.setSizePolicy(retain)
-        box_10_right.addWidget(self.radio_button_9)
-        
-        self.radio_button_10 = QRadioButton("Major-Minor")
-        self.radio_button_10.setToolTip("")
-        #self.radio_button_10.toggled.connect(self.radio_button_group_4_checked)
-        self.radio_button_10.setVisible(False)
-        retain = self.radio_button_10.sizePolicy()
-        retain.setRetainSizeWhenHidden(True)
-        self.radio_button_10.setSizePolicy(retain)
-        box_10_right.addWidget(self.radio_button_10)
         
         self.radio_button_1 = QRadioButton("Normal")
         self.radio_button_1.setToolTip("More like easy mode.")
@@ -1251,11 +1199,6 @@ class Main(QWidget):
             self.check_box_15.setChecked(True)
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             self.check_box_21.setChecked(True)
-        
-        if config.getboolean("ExtraRandomization", "bBloodlessFull"):
-            self.radio_button_7.setChecked(True)
-        else:
-            self.radio_button_8.setChecked(True)
         
         if config.getboolean("GameDifficulty", "bNormal"):
             self.radio_button_1.setChecked(True)
@@ -1641,12 +1584,8 @@ class Main(QWidget):
         if self.check_box_21.isChecked():
             config.set("ExtraRandomization", "bBloodlessCandles", "true")
             self.check_box_21.setStyleSheet("color: " + extra_color)
-            self.radio_button_7.setStyleSheet("color: " + extra_color)
-            self.radio_button_8.setStyleSheet("color: " + extra_color)
             if self.check_box_22.isChecked():
                 self.box_10.setStyleSheet("color: " + extra_color)
-            self.radio_button_7.setVisible(True)
-            self.radio_button_8.setVisible(True)
             #Uncheck item
             self.check_box_1.setChecked(False)
             self.check_box_2.setChecked(False)
@@ -1659,16 +1598,6 @@ class Main(QWidget):
             config.set("ExtraRandomization", "bBloodlessCandles", "false")
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
-            self.radio_button_7.setVisible(False)
-            self.radio_button_8.setVisible(False)
-    
-    def radio_button_group_3_checked(self):
-        if self.radio_button_7.isChecked():
-            config.set("ExtraRandomization", "bBloodlessFull", "true")
-            config.set("ExtraRandomization", "bBloodlessMajorMinor", "false")
-        else:
-            config.set("ExtraRandomization", "bBloodlessFull", "false")
-            config.set("ExtraRandomization", "bBloodlessMajorMinor", "true")
     
     def radio_button_group_1_checked(self):
         if self.radio_button_1.isChecked():

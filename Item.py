@@ -460,25 +460,15 @@ def init():
         "Aquastream",
         "Bloodsteel"
     ]
-    global key_item_to_location
-    key_item_to_location = {}
-    global key_shard_to_location
-    key_shard_to_location = {}
-    global previous_gate
-    previous_gate = []
-    global previous_room
-    previous_room = []
-    global all_rooms
-    all_rooms = []
-    global requirement
-    requirement = []
-    global requirement_to_gate
-    requirement_to_gate = {}
     global other_key
     other_key = [
         "ShipMap",
         "DiscountCard"
     ]
+    global key_item_to_location
+    key_item_to_location = {}
+    global key_shard_to_location
+    key_shard_to_location = {}
     #Pool
     global chest_type
     chest_type = []
@@ -525,8 +515,6 @@ def init():
     ]
     global shop_skip_list
     shop_skip_list = [
-        "Potion",
-        "Ether",
         "Waystone"
     ]
     global ship_skip_list
@@ -579,6 +567,15 @@ def init():
         "Wall_SIP009_1",
         "Wall_SIP016_1",
     ]
+    global shard_type_to_hsv
+    shard_type_to_hsv = {
+        "Skill":       (  0,   0, 100),
+        "Trigger":     (  0, 100, 100),
+        "Effective":   (216, 100, 100),
+        "Directional": (270, 100, 100),
+        "Enchant":     ( 60, 100, 100),
+        "Familia":     (120, 100,  80)
+    }
     #Process variables
     for i in key_items:
         all_keys.append(i)
@@ -762,17 +759,6 @@ def give_extra(shard):
     Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientId"] = shard
     Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientQuantity"] = 1
     Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientRate"] = 100.0
-    #If it is a key shard then update the logic so that all requirement for it are lifted
-    #if shard in key_shards:
-    #    key_shards.remove(shard)
-    #    all_keys.remove(shard)
-    #    for i in Manager.dictionary["MapLogic"]:
-    #        if Manager.dictionary["MapLogic"][i][shard]:
-    #            Manager.dictionary["MapLogic"][i]["GateRoom"] = False
-    #            for e in Manager.dictionary["MapLogic"]:
-    #                if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
-    #                    Manager.dictionary["MapLogic"][e]["NearestGate"] = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
-    #else:
     while shard in Manager.dictionary["ShardDrop"]["ItemPool"]:
         Manager.dictionary["ShardDrop"]["ItemPool"].remove(shard)
 
@@ -793,9 +779,13 @@ def key_logic():
     #The startegy used here is similar to the one implemented in vanilla where it reads from a room check file and loops through all the rooms based on that
     #The logic starts in all rooms that have no requirements until a gate is reached to determine which key item to place and so on
     #Since this has to adapt to different map layouts we cannot get away with using any "cheats" that are specific to the default map
+    previous_gate = []
+    previous_room = []
+    all_rooms = []
+    requirement = []
+    requirement_to_gate = {}
     #Filling list with all room names
-    for i in Manager.dictionary["MapLogic"]:
-        all_rooms.append(i)
+    all_rooms = list(Manager.dictionary["MapLogic"])
     #Filling requirement dictionary
     for i in key_items:
         requirement_to_gate[i] = []
@@ -810,7 +800,7 @@ def key_logic():
         for i in key_shards:
             requirement_to_gate[i].clear()
         previous_room.clear()
-        #Gatheringupcoming gate requirements
+        #Gathering upcoming gate requirements
         for i in Manager.dictionary["MapLogic"]:
             if Manager.dictionary["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.dictionary["MapLogic"][i]["NearestGate"]) and not i in previous_gate:
                 for e in key_items:
@@ -826,13 +816,11 @@ def key_logic():
         for i in key_item_to_location:
             if i in requirement:
                 check = True
-                for e in requirement_to_gate[i]:
-                    previous_gate.append(e)
+                previous_gate.extend(requirement_to_gate[i])
         for i in key_shard_to_location:
             if i in requirement:
                 check = True
-                for e in requirement_to_gate[i]:
-                    previous_gate.append(e)
+                previous_gate.extend(requirement_to_gate[i])
         if check:
             continue
         #Gathering rooms available before gate
@@ -866,8 +854,7 @@ def key_logic():
         else:
             logic_choice(chosen_item, all_rooms)
         #Update previous gate
-        for i in requirement_to_gate[chosen_item]:
-            previous_gate.append(i)
+        previous_gate.extend(requirement_to_gate[chosen_item])
     #Convert
     room_to_chest()
     room_to_enemy()
@@ -988,11 +975,6 @@ def rand_overworld_key():
 def rand_ship_waystone():
     #On random enemy levels or resistances Vepar can potentially become an impassable blockade
     #To ensure that the player can always move forward randomly place a waystone on the ship
-    #Check starting abilities
-    if not "Doublejump" in key_shards or not "Dimensionshift" in key_shards or not "Reflectionray" in key_shards:
-        ship_height()
-    if not "HighJump" in key_shards or not "Invert" in key_shards:
-        ship_flight()
     #Check abilities present on the galleon
     for i in key_shard_to_location:
         for e in Manager.dictionary["EnemyLocation"][key_shard_to_location[i]]["NormalModeRooms"]:
@@ -1467,6 +1449,8 @@ def rand_shop_price(scale):
         sell_ratio = Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"]/buy_price
         multiplier = random.choice(price_list)/100
         Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = int(buy_price*multiplier)
+        if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] > 10:
+            Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = round(Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"]/10)*10
         if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] < 1:
             Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] = 1
         #Sell
@@ -1475,6 +1459,16 @@ def rand_shop_price(scale):
         Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = int(buy_price*multiplier*sell_ratio)
         if Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] < 1:
             Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 1
+
+def update_boss_crystal_color():
+    #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
+    #So update it manually in the material files
+    for i in Manager.dictionary["BossToMaterial"]:
+        shard_name = Manager.datatable["PB_DT_DropRateMaster"][i + "_Shard"]["ShardId"]
+        shard_type = Manager.datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
+        shard_hsv  = shard_type_to_hsv[shard_type.split("::")[-1]]
+        for e in Manager.dictionary["BossToMaterial"][i]:
+            Manager.change_material_hsv(e, Manager.dictionary["BossToMaterial"][i][e], shard_hsv)
 
 def any_pick(item_array, remove, item_type):
     #Function for picking and remove an item at random

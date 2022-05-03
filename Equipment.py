@@ -189,10 +189,6 @@ def rand_all_weapon():
         #Update magic attack for weapons with elemental attributes
         if Manager.datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] != 0:
             Manager.datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] = Manager.datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]
-    #Update special weapon properties
-    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_BloodBringer"]["Value"] = int(Manager.datatable["PB_DT_WeaponMaster"]["BradBlingerLv1"]["MeleeAttack"]*2.3)
-    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_RedbeastEdge"]["Value"] = Manager.datatable["PB_DT_WeaponMaster"]["CrystalSword3"]["MeleeAttack"]
-    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_Izayoi"]["Value"]       = int(Manager.datatable["PB_DT_WeaponMaster"]["Truesixteenthnight"]["MeleeAttack"]*1.2)
 
 def rand_cheat_equip():
     #Cheat equipments get stats that are completely random
@@ -218,3 +214,8 @@ def rand_cheat_weapon():
             #Randomize special effect rate too
             if Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectDenominator"] != 0.0:
                 Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectDenominator"] = random.randint(1, 3)
+
+def update_special_properties():
+    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_BloodBringer"]["Value"] = int(Manager.datatable["PB_DT_WeaponMaster"]["BradBlingerLv1"]["MeleeAttack"]*2.3)
+    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_RedbeastEdge"]["Value"] = Manager.datatable["PB_DT_WeaponMaster"]["CrystalSword3"]["MeleeAttack"]
+    Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_Izayoi"]["Value"]       = int(Manager.datatable["PB_DT_WeaponMaster"]["Truesixteenthnight"]["MeleeAttack"]*1.2)

@@ -22,28 +22,6 @@ def init():
         "STO",
         "SLO"
     ]
-    global area
-    area = [
-        "m01SIP",
-        "m02VIL",
-        "m03ENT",
-        "m04GDN",
-        "m05SAN",
-        "m06KNG",
-        "m07LIB",
-        "m08TWR",
-        "m09TRN",
-        "m10BIG",
-        "m11UGD",
-        "m12SND",
-        "m13ARC",
-        "m14TAR",
-        "m15JPN",
-        "m17RVA",
-        "m18ICE"
-    ]
-    global original_area_to_progress
-    original_area_to_progress = {}
     global area_to_progress
     area_to_progress = {}
     global zangetsu_exp
@@ -66,21 +44,41 @@ def init():
     }
 
 def convert_area_to_progress():
+    #Adapt the area order of Bloodless mode based on her starting position
+    Manager.dictionary["BloodlessModeMapOrder"] = ["m05SAN"]
+    start_index = Manager.dictionary["MapOrder"].index("m05SAN")
+    if start_index < len(Manager.dictionary["MapOrder"]) - start_index - 1:
+        shortest_distance = start_index
+        remainder_index = shortest_distance*2 + 1
+        remainder_range = len(Manager.dictionary["MapOrder"]) - remainder_index
+        direction = 1
+    else:
+        shortest_distance = len(Manager.dictionary["MapOrder"]) - start_index - 1
+        remainder_index = len(Manager.dictionary["MapOrder"]) - shortest_distance*2 - 2
+        remainder_range = remainder_index + 1
+        direction = -1
+    for i in range(shortest_distance):
+        current_distance = i + 1
+        Manager.dictionary["BloodlessModeMapOrder"].append(Manager.dictionary["MapOrder"][start_index - current_distance])
+        Manager.dictionary["BloodlessModeMapOrder"].append(Manager.dictionary["MapOrder"][start_index + current_distance])
+    for i in range(remainder_range):
+        Manager.dictionary["BloodlessModeMapOrder"].append(Manager.dictionary["MapOrder"][remainder_index + direction*i])
+    if len(Manager.dictionary["BloodlessModeMapOrder"]) != 17:
+        raise IndexError
     #Convert area list to difficulty scale
-    for i in range(len(Manager.dictionary["MapOrder"])):
-        original_area_to_progress[Manager.dictionary["MapOriginalOrder"][i]] = i + 1.0
-        area_to_progress[Manager.dictionary["MapOrder"][i]] = i + 1
+    for i in ["MapOrder", "OriginalMapOrder", "BloodlessModeMapOrder"]:
+        area_to_progress[i] = {}
+        for e in range(len(Manager.dictionary[i])):
+            area_to_progress[i][Manager.dictionary[i][e]] = e + 1.0
     #In between areas with unique difficulty scale
-    original_area_to_progress["m04GDN_1"] = (original_area_to_progress["m04GDN"] + original_area_to_progress["m05SAN"])/2
-    area_to_progress["m04GDN_1"]          = area_to_progress["m04GDN"]
-    original_area_to_progress["m05SAN_1"] = original_area_to_progress["m06KNG"]
-    area_to_progress["m05SAN_1"]          = area_to_progress["m05SAN"]
-    original_area_to_progress["m07LIB_1"] = original_area_to_progress["m06KNG"]
-    area_to_progress["m07LIB_1"]          = area_to_progress["m07LIB"]
-    original_area_to_progress["m08TWR_1"] = (original_area_to_progress["m07LIB"] + original_area_to_progress["m13ARC"])/2
-    area_to_progress["m08TWR_1"]          = area_to_progress["m08TWR"]
-    original_area_to_progress["m11UGD_1"] = (original_area_to_progress["m07LIB"] + original_area_to_progress["m13ARC"])/2
-    area_to_progress["m11UGD_1"]          = area_to_progress["m11UGD"]
+    area_to_progress["OriginalMapOrder"]["m04GDN_1"] = (area_to_progress["OriginalMapOrder"]["m04GDN"] + area_to_progress["OriginalMapOrder"]["m05SAN"])/2
+    area_to_progress["OriginalMapOrder"]["m05SAN_1"] = (area_to_progress["OriginalMapOrder"]["m06KNG"])
+    area_to_progress["OriginalMapOrder"]["m07LIB_1"] = (area_to_progress["OriginalMapOrder"]["m06KNG"])
+    area_to_progress["OriginalMapOrder"]["m08TWR_1"] = (area_to_progress["OriginalMapOrder"]["m07LIB"] + area_to_progress["OriginalMapOrder"]["m13ARC"])/2
+    area_to_progress["OriginalMapOrder"]["m11UGD_1"] = (area_to_progress["OriginalMapOrder"]["m07LIB"] + area_to_progress["OriginalMapOrder"]["m13ARC"])/2
+    for i in ["m04GDN", "m05SAN", "m07LIB", "m08TWR", "m11UGD"]:
+        area_to_progress["MapOrder"][i + "_1"]          = area_to_progress["MapOrder"][i]
+        area_to_progress["BloodlessModeMapOrder"][i + "_1"] = area_to_progress["BloodlessModeMapOrder"][i]
 
 def rename_difficulty(normal, hard, nightmare):
     #Rename in-game difficulty options to let the user know what was picked in the mod
@@ -121,7 +119,7 @@ def no_upgrade_cap():
     #With random item pool the ratio of upgrades can slightly vary so remove the max cap so that all of them can be used
     Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]       = 9999.0
     Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]       = 9999.0
-    Manager.datatable["PB_DT_CoordinateParameter"]["PlayerBulletMaxNum"]["Value"] = 999.0
+    Manager.datatable["PB_DT_CoordinateParameter"]["PlayerBulletMaxNum"]["Value"] = 9999.0
 
 def zangetsu_growth(nightmare):
     #Progressive Zangetsu is all about using level ups for combat growth
@@ -290,51 +288,54 @@ def enemy_rebalance():
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
         if not Manager.is_enemy(i)["Enemy"]:
             continue
-        if Manager.is_enemy(i)["Main"]:
-            #Determine enemy area
-            if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Minor":
-                current_area = Manager.dictionary["EnemyLocation"][i]["NormalModeRooms"][0][:6]
+        for e in ["", "BloodlessMode"]:
+            if Manager.is_enemy(i)["Main"]:
+                #Determine enemy area
+                if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Minor":
+                    current_area = Manager.dictionary["EnemyLocation"][i]["NormalModeRooms"][0][:6]
+                else:
+                    current_area = Manager.dictionary["EnemyLocation"][i]["AreaID"]
+                #Determine new level
+                if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Static" or Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
+                    continue
+                else:
+                    current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"] + (area_to_progress[e + "MapOrder"][current_area] - area_to_progress["OriginalMapOrder"][current_area])*(40/17))
+                    if current_level < 1:
+                        current_level = 1
+                    elif current_level > 50:
+                        current_level = 50
+                #Patch
+                patch_level(current_level, i, e)
+            elif Manager.is_enemy(i)["Exception"]:
+                patch_level(0, i, e)
             else:
-                current_area = Manager.dictionary["EnemyLocation"][i]["AreaID"]
-            #Determine new level
-            if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Static" or Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
-                continue
-            else:
-                current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] + (area_to_progress[current_area] - original_area_to_progress[current_area])*(40/17))
-                if current_level < 1:
-                    current_level = 1
-                elif current_level > 50:
-                    current_level = 50
-            #Patch
-            patch_level(current_level, i)
-        elif Manager.is_enemy(i)["Exception"]:
-            patch_level(0, i)
-        else:
-            patch_level(Manager.datatable["PB_DT_CharacterParameterMaster"][i[0:5]]["DefaultEnemyLevel"], i)
+                patch_level(Manager.datatable["PB_DT_CharacterParameterMaster"][i[0:5]]["DefaultEnemyLevel"], i, e)
 
 def custom_enemy(value):
     #If custom NG+ is chosen ignore random levels and assign a set value to all enemies
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
         if Manager.is_enemy(i)["Enemy"]:
-            patch_level(value, i)
+            patch_level(value, i, "")
+            patch_level(value, i, "BloodlessMode")
 
 def rand_enemy_level():
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
         if not Manager.is_enemy(i)["Enemy"]:
             continue
-        if Manager.is_enemy(i)["Main"]:
-            #Some bosses have a cap for either being too boring or having a time limit
-            if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Minor":
-                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 50, 1, 4), i)
-            #While all enemies have a weigthed random level based on their regular level the last boss can be anything
-            elif Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
-                patch_level(random.randint(1, 99), i)
+        for e in ["", "BloodlessMode"]:
+            if Manager.is_enemy(i)["Main"]:
+                #Some bosses have a cap for either being too boring or having a time limit
+                if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Minor":
+                    patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"], 1, 50, 1, 4), i, e)
+                #While all enemies have a weigthed random level based on their regular level the last boss can be anything
+                elif Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
+                    patch_level(random.randint(1, 99), i, e)
+                else:
+                    patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"], 1, 99, 1, 4), i, e)
+            elif Manager.is_enemy(i)["Exception"]:
+                patch_level(0, i, e)
             else:
-                patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"], 1, 99, 1, 4), i)
-        elif Manager.is_enemy(i)["Exception"]:
-            patch_level(0, i)
-        else:
-            patch_level(Manager.datatable["PB_DT_CharacterParameterMaster"][i[0:5]]["DefaultEnemyLevel"], i)
+                patch_level(Manager.datatable["PB_DT_CharacterParameterMaster"][i[0:5]]["DefaultEnemyLevel"], i, e)
 
 def rand_enemy_resist():
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
@@ -342,39 +343,36 @@ def rand_enemy_resist():
             continue
         rand_stat(i)
 
-def patch_level(value, entry):
-    #Make sure Vepar always has double health in Bloodless mode otherwise the fight is always too short
-    if entry == "N1001":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = value
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyHPOverride"] = int(int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])/98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])*2.0)
-    #Update Gebel's health threshold for the red moon based on his level
-    elif entry == "N1012":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = value
-        Manager.datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])/98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])*0.15)
+def patch_level(value, entry, extra):
     #Make Dom's level be the inverse of the chosen value
-    elif entry == "N1009_Enemy":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = abs(value - 100)
+    if entry == "N1009_Enemy":
+        if extra:
+            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        else:
+            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = abs(value - 100)
     #Make it so that Bael and Dom's levels combined always equal 100
     #This ensures that the final fight is never too easy or too hard
-    elif entry[0:5] == "N1013" or entry[0:5] == "N1009":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = abs(Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["DefaultEnemyLevel"] - 100)
+    elif entry[0:5] in ["N1009", "N1013"]:
+        if extra:
+            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        else:
+            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = abs(Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["DefaultEnemyLevel"] - 100)
     #Greedling is shared with Breeder despite having a completely different ID
     elif entry == "N3125":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N2016"]["DefaultEnemyLevel"]
+        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N2016"][extra + "DefaultEnemyLevel"]
     #Other
     else:
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] = value
+        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = value
     
     #While physical and elemental resistances can be random status effect ones should scale with the enemy's level
     #Otherwise some enemies made strong could be easily one shot with petrifying weapons and whatnot
-    stat_scale(entry)
+    #Ignore it for Bloodless mode though
+    if not extra:
+        stat_scale(entry)
     
-    #Make level match in all modes
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["HardEnemyLevel"]                   = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["NightmareEnemyLevel"]              = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"]   = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeHardEnemyLevel"]      = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeNightmareEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+    #Make level match in all difficulties
+    Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "HardEnemyLevel"]      = Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
+    Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "NightmareEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
 
 def stat_scale(entry):
     for e in second_stat:
@@ -431,8 +429,15 @@ def rand_stat(entry):
             Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N2016"][e]
     #Main entry
     elif Manager.is_enemy(entry)["Main"]:
-        if entry in ["N1009_Enemy", "N1013_Bael"]:
-            average = 25
+        #Use the original resistances to create an average to base the random resistances off of
+        #Though create an exception for the final boss to favor the one with the higher level
+        if entry[0:5] in ["N1009", "N1013"]:
+            average = 12.5
+            average += (Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] - 45)*1.25
+            if average < 12.5:
+                average = 12.5
+            if average > 25:
+                average = 25
         else:
             average = 0
             for e in stat:
@@ -445,6 +450,25 @@ def rand_stat(entry):
         for e in stat:
             Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][e]
 
+def update_special_properties():
+    for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
+        if not Manager.is_enemy(i)["Enemy"]:
+            continue
+        #Make sure Vepar always has double health in Bloodless mode otherwise the fight is too short
+        if i[0:5] == "N1001":
+            Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyHPOverride"] = int(calculate_stat(i, Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
+        #Add a bit of defense to the stronger final boss
+        elif i[0:5] in ["N1009", "N1013"]:
+            for e in ["CON", "MND"]:
+                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] += (Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] - 45)*2
+                if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] < 60:
+                    Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 60
+                if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] > 80:
+                    Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 80
+                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e] += round((Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] - 60)/10)
+    #Update Gebel's health threshold for the red moon based on his level
+    Manager.datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(calculate_stat("N1012", Manager.datatable["PB_DT_CharacterParameterMaster"]["N1012"]["DefaultEnemyLevel"], "MaxHP")*0.15)
+
 def create_log():
     log = {}
     for i in Manager.dictionary["EnemyLocation"]:
@@ -453,16 +477,8 @@ def create_log():
         else:
             entry = i
         log[Manager.dictionary["EnemyTranslation"][i]] = {}
-        log[Manager.dictionary["EnemyTranslation"][i]]["Level"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"] = {}
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["HP"]  = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]          - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])         /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["STR"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["STR99Enemy"]            - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["STR"])           /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["STR"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["INT"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["INT99Enemy"]            - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["INT"])           /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["INT"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["CON"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CON99Enemy"]            - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CON"])           /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CON"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["MND"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MND99Enemy"]            - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MND"])           /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MND"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["LUC"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["LUC99Enemy"]            - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["LUC"])           /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["LUC"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["EXP"] = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]     - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"])    /98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"])
-        log[Manager.dictionary["EnemyTranslation"][i]]["MainStats"]["AP"]  = int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience"])/98)*(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience"])
+        log[Manager.dictionary["EnemyTranslation"][i]]["DefaultLevel"]   = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        log[Manager.dictionary["EnemyTranslation"][i]]["BloodlessLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"]
         log[Manager.dictionary["EnemyTranslation"][i]]["Resistances"] = {}
         for e in stat:
             log[Manager.dictionary["EnemyTranslation"][i]]["Resistances"][e] = int(Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e])
@@ -471,6 +487,9 @@ def create_log():
         if i == "N0000":
             break
     return log
+
+def calculate_stat(entry, level, stat_name):
+    return int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name + "99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])/98)*(level-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])
 
 def hard_patterns():
     #Some major enemies in vanilla lack any form of patterns changes on harder difficulties making them feel underwhelming compared to the rest
