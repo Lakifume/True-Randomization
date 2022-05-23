@@ -80,6 +80,7 @@ def init():
     global impossible_gates
     impossible_gates = {
         "m05SAN_003": [17, 1],
+        "m07LIB_008": [2, 4],
         "m07LIB_014": [1, 4],
         "m11UGD_056": [4, 4],
         "m10BIG_000": []

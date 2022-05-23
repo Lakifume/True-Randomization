@@ -119,8 +119,44 @@ def load_data():
     with open("MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json", "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
     dictionary["MapLogic"] = json_file["KeyLogic"]
-    dictionary["MapOrder"] = json_file["AreaOrder"]
-    dictionary["OriginalMapOrder"] = json_file["AreaOrder"]
+    dictionary["OriginalMapOrder"] = [
+      "m01SIP",
+      "m02VIL",
+      "m03ENT",
+      "m04GDN",
+      "m05SAN",
+      "m08TWR",
+      "m07LIB",
+      "m09TRN",
+      "m13ARC",
+      "m06KNG",
+      "m11UGD",
+      "m12SND",
+      "m14TAR",
+      "m17RVA",
+      "m15JPN",
+      "m10BIG",
+      "m18ICE"
+    ]
+    dictionary["BloodlessModeOriginalMapOrder"] = [
+      "m05SAN",
+      "m03ENT",
+      "m02VIL",
+      "m01SIP",
+      "m04GDN",
+      "m08TWR",
+      "m07LIB",
+      "m09TRN",
+      "m13ARC",
+      "m06KNG",
+      "m11UGD",
+      "m12SND",
+      "m14TAR",
+      "m17RVA",
+      "m15JPN",
+      "m10BIG",
+      "m18ICE"
+    ]
 
 def load_custom_map(path):
     #Load the file for a custom map, overriding the vanilla RoomMaster file
@@ -135,7 +171,7 @@ def load_custom_map(path):
         datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*2
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
         datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*3
-    #Then shoft those lists if the rooms are below 0
+    #Then shift those lists if the rooms are below 0
     if datatable["PB_DT_RoomMaster"]["m11UGD_013"]["OffsetZ"] < 0:
         multiplier = abs(int(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["OffsetZ"]/7.2)) - 1
         if multiplier > datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaHeightSize"] - 1:

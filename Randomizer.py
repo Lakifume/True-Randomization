@@ -24,6 +24,8 @@ import psutil
 import glob
 from datetime import datetime
 
+script_name, script_extension = os.path.splitext(os.path.basename(__file__))
+
 item_color    = "#ff8080" 
 shop_color    = "#ffff80"
 library_color = "#bf80ff"
@@ -410,6 +412,7 @@ class Generate(QThread):
             Item.catering_quest_info()
         
         if self.map:
+            Item.replace_silver_bromide()
             Item.no_enemy_quest_icon()
         
         if config.getboolean("ShopRandomization", "bItemCostAndSellingPrice"):
@@ -635,11 +638,13 @@ class Update(QThread):
 
     def run(self):
         current = 0
+        zip_name = "True Randomization.zip"
+        exe_name = script_name + ".exe"
         self.signaller.progress.emit(current)
         
         #Download
         
-        with open("True Randomization.zip", "wb") as file_writer:
+        with open(zip_name, "wb") as file_writer:
             url = requests.get(self.api["assets"][0]["browser_download_url"], stream=True)
             for data in url.iter_content(chunk_size=4096):
                 file_writer.write(data)
@@ -658,10 +663,10 @@ class Update(QThread):
         
         #Extract
         
-        os.rename("Randomizer.exe", "OldRandomizer.exe")
-        with zipfile.ZipFile("True Randomization.zip", "r") as zip_ref:
+        os.rename(exe_name, "delete.me")
+        with zipfile.ZipFile(zip_name, "r") as zip_ref:
             zip_ref.extractall("")
-        os.remove("True Randomization.zip")
+        os.remove(zip_name)
         
         #Carry previous config settings
         
@@ -681,7 +686,7 @@ class Update(QThread):
         
         #Open new EXE
         
-        subprocess.Popen("Randomizer.exe")
+        subprocess.Popen(exe_name)
         sys.exit()
 
 class Convert(QThread):
@@ -771,6 +776,9 @@ class Main(QWidget):
         
         grid = QGridLayout()
         grid.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
+        
+        self.dummy_box = QGroupBox()
+        grid.addWidget(self.dummy_box, 10, 1, 1, 4)
 
         #Label
 
@@ -1142,6 +1150,7 @@ class Main(QWidget):
         self.seed_layout = QGridLayout()
         
         self.seed_field = QLineEdit(config.get("Misc", "sSeed"))
+        self.seed_field.setMaxLength(30)
         self.seed_field.textChanged[str].connect(self.new_seed)
         self.seed_layout.addWidget(self.seed_field, 0, 0, 1, 3)
         
@@ -1278,16 +1287,16 @@ class Main(QWidget):
         
         self.setLayout(grid)
         self.setFixedSize(config.getfloat("Misc", "fWindowSize")*1800, config.getfloat("Misc", "fWindowSize")*1000)
-        self.setWindowTitle("Randomizer")
+        self.setWindowTitle(script_name)
         self.setWindowIcon(QIcon("Data\\icon.png"))
         
         #Background
         
         background = QPixmap("MapEdit\\Data\\background.png")
-        palette = QPalette()
-        palette.setBrush(QPalette.Window, background)
-        self.show()        
-        self.setPalette(palette)
+        self.palette = QPalette()
+        self.palette.setBrush(QPalette.Window, background)
+        self.show()
+        self.setPalette(self.palette)
         
         #Position
         
@@ -1314,6 +1323,7 @@ class Main(QWidget):
             config.set("ItemRandomization", "bOverworldPool", "false")
             self.check_box_1.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_2_changed(self):
         self.matches_preset()
@@ -1331,6 +1341,7 @@ class Main(QWidget):
             config.set("ItemRandomization", "bShopPool", "false")
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_16_changed(self):
         self.matches_preset()
@@ -1348,6 +1359,7 @@ class Main(QWidget):
             config.set("ItemRandomization", "bQuestPool", "false")
             self.check_box_16.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_17_changed(self):
         self.matches_preset()
@@ -1365,6 +1377,7 @@ class Main(QWidget):
             config.set("ItemRandomization", "bQuestRequirements", "false")
             self.check_box_17.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_18_changed(self):
         self.matches_preset()
@@ -1382,6 +1395,7 @@ class Main(QWidget):
             config.set("ItemRandomization", "bRemoveInfinites", "false")
             self.check_box_18.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_3_changed(self):
         self.matches_preset()
@@ -1395,6 +1409,7 @@ class Main(QWidget):
             self.check_box_3.setStyleSheet("color: #ffffff")
             self.box_2.setStyleSheet("color: #ffffff")
             self.check_box_4.setChecked(False)
+        self.fix_background_glitch()
 
     def check_box_4_changed(self):
         self.matches_preset()
@@ -1408,6 +1423,7 @@ class Main(QWidget):
             config.set("ShopRandomization", "bScaleSellingPriceWithCost", "false")
             self.check_box_4.setStyleSheet("color: #ffffff")
             self.box_2.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_5_changed(self):
         self.matches_preset()
@@ -1420,6 +1436,7 @@ class Main(QWidget):
             config.set("LibraryRandomization", "bMapRequirements", "false")
             self.check_box_5.setStyleSheet("color: #ffffff")
             self.box_3.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_6_changed(self):
         self.matches_preset()
@@ -1432,6 +1449,7 @@ class Main(QWidget):
             config.set("LibraryRandomization", "bTomeAppearance", "false")
             self.check_box_6.setStyleSheet("color: #ffffff")
             self.box_3.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_7_changed(self):
         self.matches_preset()
@@ -1445,6 +1463,7 @@ class Main(QWidget):
             self.check_box_7.setStyleSheet("color: #ffffff")
             self.box_4.setStyleSheet("color: #ffffff")
             self.check_box_8.setChecked(False)
+        self.fix_background_glitch()
 
     def check_box_8_changed(self):
         self.matches_preset()
@@ -1458,6 +1477,7 @@ class Main(QWidget):
             config.set("ShardRandomization", "bScaleMagicCostWithPower", "false")
             self.check_box_8.setStyleSheet("color: #ffffff")
             self.box_4.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_23_changed(self):
         self.matches_preset()
@@ -1470,6 +1490,7 @@ class Main(QWidget):
             config.set("EquipmentRandomization", "bGlobalGearStats", "false")
             self.check_box_23.setStyleSheet("color: #ffffff")
             self.box_5.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_9_changed(self):
         self.matches_preset()
@@ -1482,6 +1503,7 @@ class Main(QWidget):
             config.set("EquipmentRandomization", "bCheatGearStats", "false")
             self.check_box_9.setStyleSheet("color: #ffffff")
             self.box_5.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_10_changed(self):
         self.matches_preset()
@@ -1494,6 +1516,7 @@ class Main(QWidget):
             config.set("EnemyRandomization", "bEnemyLevels", "false")
             self.check_box_10.setStyleSheet("color: #ffffff")
             self.box_6.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_11_changed(self):
         self.matches_preset()
@@ -1506,6 +1529,7 @@ class Main(QWidget):
             config.set("EnemyRandomization", "bEnemyTolerances", "false")
             self.check_box_11.setStyleSheet("color: #ffffff")
             self.box_6.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_12_changed(self):
         self.matches_preset()
@@ -1527,6 +1551,7 @@ class Main(QWidget):
                 self.remove_from_list("UI", "Map_Icon_Keyperson", [])
                 self.remove_from_list("UI", "Map_Icon_RootBox"  , [])
                 self.remove_from_list("UI", "Map_StartingPoint" , [])
+        self.fix_background_glitch()
 
     def check_box_13_changed(self):
         self.matches_preset()
@@ -1545,6 +1570,7 @@ class Main(QWidget):
             self.remove_from_list("UI"     , "Face_Miriam"      , [])
             self.remove_from_list("Texture", "T_Body01_01_Color", [])
             self.remove_from_list("Texture", "T_Pl01_Cloth_Bace", [])
+        self.fix_background_glitch()
 
     def check_box_14_changed(self):
         self.matches_preset()
@@ -1567,6 +1593,7 @@ class Main(QWidget):
             self.remove_from_list("Texture", "T_N1011_face_color" , [])
             self.remove_from_list("Texture", "T_N1011_equip_color", [])
             self.remove_from_list("Texture", "T_Tknife05_Base"    , [])
+        self.fix_background_glitch()
 
     def check_box_15_changed(self):
         self.matches_preset()
@@ -1578,6 +1605,7 @@ class Main(QWidget):
             config.set("SoundRandomization", "bDialogues", "false")
             self.check_box_15.setStyleSheet("color: #ffffff")
             self.box_9.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
 
     def check_box_21_changed(self):
         self.matches_preset()
@@ -1598,6 +1626,7 @@ class Main(QWidget):
             config.set("ExtraRandomization", "bBloodlessCandles", "false")
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.box_10.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
     
     def radio_button_group_1_checked(self):
         if self.radio_button_1.isChecked():
@@ -1664,6 +1693,14 @@ class Main(QWidget):
             #Check story
             self.radio_button_6.setChecked(True)
     
+    def fix_background_glitch(self):
+        try:
+            self.dummy_box.setStyleSheet("")
+            QApplication.processEvents()
+            self.setPalette(self.palette)
+        except TypeError:
+            return
+    
     def preset_drop_down_change(self, index):
         current = self.preset_drop_down.itemText(index)
         if current == "Custom":
@@ -1689,7 +1726,10 @@ class Main(QWidget):
         config.set("Misc", "sOutputPath", text)
     
     def new_seed(self, text):
-        config.set("Misc", "sSeed", text)
+        if " " in text:
+            self.seed_field.setText(text.replace(" ", ""))
+        else:
+            config.set("Misc", "sSeed", text)
     
     def cast_seed(self, seed):
         #Cast seed to another object type if possible
@@ -1820,6 +1860,8 @@ class Main(QWidget):
         self.seed_field.setText(str(random.randint(1000000000, 9999999999)))
     
     def seed_button_3_clicked(self):
+        if not config.get("Misc", "sSeed"):
+            return
         self.seed_test = self.cast_seed(config.get("Misc", "sSeed"))
         self.setEnabled(False)
         QApplication.processEvents()
@@ -1834,6 +1876,8 @@ class Main(QWidget):
         self.worker.start()
     
     def seed_button_2_clicked(self):
+        if not config.get("Misc", "sSeed"):
+            return
         self.seed = config.get("Misc", "sSeed")
         self.seed_box.close()
     
@@ -1861,6 +1905,12 @@ class Main(QWidget):
             self.add_to_list("UI", "Map_StartingPoint" , [self.check_box_12])
 
     def button_5_clicked(self):
+        #Check if path exists
+        
+        if config.get("Misc", "sOutputPath") and not os.path.isdir(config.get("Misc", "sOutputPath")):
+            self.no_path()
+            return
+        
         #Seed prompt
         
         self.seed = ""
@@ -1872,12 +1922,6 @@ class Main(QWidget):
             if not self.seed:
                 return
         self.seed = self.cast_seed(self.seed)
-        
-        #Check if path exists
-        
-        if config.get("Misc", "sOutputPath") and not os.path.isdir(config.get("Misc", "sOutputPath")):
-            self.no_path()
-            return
         
         #Start
         
@@ -1994,6 +2038,8 @@ class Main(QWidget):
         box.exec()
     
     def check_for_updates(self):
+        if os.path.isfile("delete.me"):
+            os.remove("delete.me")
         if os.path.isfile("OldRandomizer.exe"):
             os.remove("OldRandomizer.exe")
         try:
@@ -2009,7 +2055,7 @@ class Main(QWidget):
         if tag != config.get("Misc", "sVersion"):
             choice = QMessageBox.question(self, "Auto Updater", "New version found:\n\n" + api["body"] + "\n\nUpdate ?", QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.Yes:
-                if "MapEditor.exe" in (i.name() for i in psutil.process_iter()):
+                if "Map Editor.exe" in (i.name() for i in psutil.process_iter()):
                     self.error()
                     self.check_for_resolution()
                     return

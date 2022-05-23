@@ -28,13 +28,6 @@ def init():
         "DungeonNightSword",
         "EvilTheSword"
     ]
-    global special_list
-    special_list = [
-        "Safering",
-        "Cursering",
-        "Riskring",
-        "Adversityring"
-    ]
     global stat_to_property
     stat_to_property = {
         "MeleeAttack":  "Attack",
@@ -133,7 +126,7 @@ def rand_all_equip():
         except KeyError:
             continue
         #Some equipments have extreme stats that need to be evenly multiplied
-        if i in special_list:
+        if has_negative_stat(i):
             list = []
             for e in stat_to_property:
                 if Manager.datatable["PB_DT_ArmorMaster"][i][e] == 0:
@@ -219,3 +212,9 @@ def update_special_properties():
     Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_BloodBringer"]["Value"] = int(Manager.datatable["PB_DT_WeaponMaster"]["BradBlingerLv1"]["MeleeAttack"]*2.3)
     Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_RedbeastEdge"]["Value"] = Manager.datatable["PB_DT_WeaponMaster"]["CrystalSword3"]["MeleeAttack"]
     Manager.datatable["PB_DT_CoordinateParameter"]["WeaponGrowMaxAtk_Izayoi"]["Value"]       = int(Manager.datatable["PB_DT_WeaponMaster"]["Truesixteenthnight"]["MeleeAttack"]*1.2)
+
+def has_negative_stat(equipment):
+    for i in stat_to_property:
+        if Manager.datatable["PB_DT_ArmorMaster"][equipment][i] < 0:
+            return True
+    return False

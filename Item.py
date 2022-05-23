@@ -1460,6 +1460,12 @@ def rand_shop_price(scale):
         if Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] < 1:
             Manager.datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 1
 
+def replace_silver_bromide():
+    #Find Silver Bromide and replace it by the Certification Board
+    for i in Manager.datatable["PB_DT_DropRateMaster"]:
+        if Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] == "Silverbromide":
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] = "Certificationboard"
+
 def update_boss_crystal_color():
     #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
     #So update it manually in the material files

@@ -63,22 +63,43 @@ def convert_area_to_progress():
         Manager.dictionary["BloodlessModeMapOrder"].append(Manager.dictionary["MapOrder"][start_index + current_distance])
     for i in range(remainder_range):
         Manager.dictionary["BloodlessModeMapOrder"].append(Manager.dictionary["MapOrder"][remainder_index + direction*i])
-    if len(Manager.dictionary["BloodlessModeMapOrder"]) != 17:
+    if len(Manager.dictionary["BloodlessModeMapOrder"]) != len(Manager.dictionary["MapOrder"]):
         raise IndexError
     #Convert area list to difficulty scale
-    for i in ["MapOrder", "OriginalMapOrder", "BloodlessModeMapOrder"]:
-        area_to_progress[i] = {}
-        for e in range(len(Manager.dictionary[i])):
-            area_to_progress[i][Manager.dictionary[i][e]] = e + 1.0
+    for i in ["", "Original", "BloodlessMode", "BloodlessModeOriginal"]:
+        entry = i + "MapOrder"
+        area_to_progress[entry] = {}
+        for e in range(len(Manager.dictionary[entry])):
+            area_to_progress[entry][Manager.dictionary[entry][e]] = e + 1.0
     #In between areas with unique difficulty scale
     area_to_progress["OriginalMapOrder"]["m04GDN_1"] = (area_to_progress["OriginalMapOrder"]["m04GDN"] + area_to_progress["OriginalMapOrder"]["m05SAN"])/2
     area_to_progress["OriginalMapOrder"]["m05SAN_1"] = (area_to_progress["OriginalMapOrder"]["m06KNG"])
     area_to_progress["OriginalMapOrder"]["m07LIB_1"] = (area_to_progress["OriginalMapOrder"]["m06KNG"])
     area_to_progress["OriginalMapOrder"]["m08TWR_1"] = (area_to_progress["OriginalMapOrder"]["m07LIB"] + area_to_progress["OriginalMapOrder"]["m13ARC"])/2
     area_to_progress["OriginalMapOrder"]["m11UGD_1"] = (area_to_progress["OriginalMapOrder"]["m07LIB"] + area_to_progress["OriginalMapOrder"]["m13ARC"])/2
+    area_to_progress["BloodlessModeOriginalMapOrder"]["m04GDN_1"] = (area_to_progress["BloodlessModeOriginalMapOrder"]["m04GDN"])
+    area_to_progress["BloodlessModeOriginalMapOrder"]["m05SAN_1"] = (area_to_progress["BloodlessModeOriginalMapOrder"]["m05SAN"])
+    area_to_progress["BloodlessModeOriginalMapOrder"]["m07LIB_1"] = (area_to_progress["BloodlessModeOriginalMapOrder"]["m06KNG"])
+    area_to_progress["BloodlessModeOriginalMapOrder"]["m08TWR_1"] = (area_to_progress["BloodlessModeOriginalMapOrder"]["m07LIB"] + area_to_progress["BloodlessModeOriginalMapOrder"]["m13ARC"])/2
+    area_to_progress["BloodlessModeOriginalMapOrder"]["m11UGD_1"] = (area_to_progress["BloodlessModeOriginalMapOrder"]["m07LIB"] + area_to_progress["BloodlessModeOriginalMapOrder"]["m13ARC"])/2
     for i in ["m04GDN", "m05SAN", "m07LIB", "m08TWR", "m11UGD"]:
-        area_to_progress["MapOrder"][i + "_1"]          = area_to_progress["MapOrder"][i]
+        area_to_progress["MapOrder"][i + "_1"]              = area_to_progress["MapOrder"][i]
         area_to_progress["BloodlessModeMapOrder"][i + "_1"] = area_to_progress["BloodlessModeMapOrder"][i]
+    #Change the order of progressive Zangetsu experience
+    new_boss_order = []
+    for i in range(len(Manager.dictionary["MapOrder"])):
+        for e in zangetsu_exp:
+            if Manager.dictionary["EnemyLocation"][e]["AreaID"] == "Minor":
+                current_area = Manager.dictionary["EnemyLocation"][e]["NormalModeRooms"][0][:6]
+            else:
+                current_area = Manager.dictionary["EnemyLocation"][e]["AreaID"]
+            if area_to_progress["MapOrder"][current_area] == i + 1.0:
+                new_boss_order.append(e)
+    if len(new_boss_order) != len(zangetsu_exp):
+        raise IndexError
+    values = list(zangetsu_exp.values())
+    zangetsu_exp.clear()
+    zangetsu_exp.update(dict(zip(new_boss_order, values)))
 
 def rename_difficulty(normal, hard, nightmare):
     #Rename in-game difficulty options to let the user know what was picked in the mod
@@ -299,7 +320,7 @@ def enemy_rebalance():
                 if Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Static" or Manager.dictionary["EnemyLocation"][i]["AreaID"] == "Major":
                     continue
                 else:
-                    current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"] + (area_to_progress[e + "MapOrder"][current_area] - area_to_progress["OriginalMapOrder"][current_area])*(40/17))
+                    current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"] + (area_to_progress[e + "MapOrder"][current_area] - area_to_progress[e + "OriginalMapOrder"][current_area])*(40/17))
                     if current_level < 1:
                         current_level = 1
                     elif current_level > 50:
