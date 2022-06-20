@@ -22,7 +22,7 @@ import zipfile
 import subprocess
 import psutil
 import glob
-from datetime import datetime
+import copy
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
@@ -2040,8 +2040,6 @@ class Main(QWidget):
     def check_for_updates(self):
         if os.path.isfile("delete.me"):
             os.remove("delete.me")
-        if os.path.isfile("OldRandomizer.exe"):
-            os.remove("OldRandomizer.exe")
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:

@@ -6,6 +6,7 @@ import glob
 import random
 import struct
 import colorsys
+import copy
 from enum import Enum
 from collections import OrderedDict
 
@@ -209,8 +210,8 @@ def complex_to_simple():
     stringtable = {}
     for i in full_stringtable:
         stringtable[i] = {}
-        for e in full_stringtable[i]["Exports"][0]["Table"]["StringTable"]:
-            stringtable[i][e] = full_stringtable[i]["Exports"][0]["Table"]["StringTable"][e]
+        for e in full_stringtable[i]["Exports"][0]["Table"]["Value"]:
+            stringtable[i][e[0]] = e[1]
     #RoomMaster already has a simplified version from the map editor
     with open("MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json", "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
@@ -220,13 +221,86 @@ def simple_to_complex():
     #Convert the simplified datatables back to their complex versions
     for i in datatable:
         for e in datatable[i]:
+            if not e in full_datatable[i]["KeyIndex"]:
+                append_datatable_entry(i, e)
             for o in datatable[i][e]:
                 if i == "PB_DT_RoomMaster" and o == "Unused":
                     continue
                 patch_datatable(i, e, o, datatable[i][e][o])
     for i in stringtable:
+        count = 0
         for e in stringtable[i]:
-            full_stringtable[i]["Exports"][0]["Table"]["StringTable"][e] = stringtable[i][e]
+            full_stringtable[i]["Exports"][0]["Table"]["Value"][count] = [e, stringtable[i][e]]
+            count += 1
+
+def read_datatable(file, entry, data):
+    #Convert strings to indexes
+    entry = full_datatable[file]["KeyIndex"][entry]
+    data  = full_datatable[file]["ValueIndex"][data]
+    #Handle special data types
+    type  = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
+    if "BytePropertyData" in type:
+        value_name = "EnumValue"
+    else:
+        value_name = "Value"
+    value = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data][value_name]
+    #Round floats to 3 digits and fix the "+0" field
+    if "FloatPropertyData" in type:
+        if value == "+0":
+            value = 0.0
+        else:
+            value = round(value, 3)
+    #Convert array of structs to simple array
+    elif "ArrayPropertyData" in type:
+        sub_type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["ArrayType"]
+        if sub_type == "ByteProperty":
+            sub_value_name = "EnumValue"
+        else:
+            sub_value_name = "Value"
+        new_array = []
+        for i in value:
+            new_array.append(i[sub_value_name])
+        value = new_array
+    return value
+
+def patch_datatable(file, entry, data, value):
+    #Convert strings to indexes
+    entry = full_datatable[file]["KeyIndex"][entry]
+    data  = full_datatable[file]["ValueIndex"][data]
+    #Handle special data types
+    type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
+    name = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["Name"]
+    if "BytePropertyData" in type:
+        value_name = "EnumValue"
+    else:
+        value_name = "Value"
+    #Convert simple array to an array of structs
+    if "ArrayPropertyData" in type:
+        sub_type = type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["ArrayType"]
+        if sub_type == "ByteProperty":
+            sub_value_name = "EnumValue"
+        else:
+            sub_value_name = "Value"
+        if value:
+            try:
+                del full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"]
+            except KeyError:
+                pass
+            new_array = []
+            for i in range(len(value)):
+                new_struct = copy.deepcopy(full_datatable[file]["ArrayStruct"][name])
+                new_struct[sub_value_name] = value[i]
+                new_array.append(new_struct)
+            value = new_array
+        else:
+            full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"] = None
+    #Patch
+    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data][value_name] = value
+
+def append_datatable_entry(file, entry):
+    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"].append(copy.deepcopy(full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][0]))
+    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][-1]["Name"] = entry
+    full_datatable[file]["KeyIndex"][entry] = len(full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"]) - 1
 
 def apply_tweaks():
     #Make levels identical in all modes
@@ -243,7 +317,7 @@ def apply_tweaks():
         datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyExperienceOverride"] = 0
         datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyStrIntMultiplier"]   = 1.0
         datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyConMndMultiplier"]   = 1.0
-    #Apply manuel tweaks defined in the json
+    #Apply manual tweaks defined in the json
     for i in dictionary["DefaultTweak"]:
         for e in dictionary["DefaultTweak"][i]:
             for o in dictionary["DefaultTweak"][i][e]:
@@ -342,14 +416,17 @@ def apply_tweaks():
     #Rename the second Zangetsu boss so that he isn't confused with the first
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = dictionary["EnemyTranslation"]["N1011_STRONG"]
     #Update Jinrai cost description
-    stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] = "<span size=\"30\">Jinrai</>\r\n \r\nDraw your blade and strike opponents down in one fierce motion.\r\n \r\n<image id=\"Text_Command_Arrow_Right\"/><image id=\"Text_Command_Arrow_Left\"/><image id=\"Text_Command_Arrow_Right\"/> + <input id=\"Attack\"/>\r\n\r\nMP Cost: " + str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
+    stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
+    #Add Breeder and Greedling to the enemy archives
+    #add_enemy_to_archive("N3125", ["SYS_SEN_AreaName021"], None, "N3124")
+    #add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
     #Rebalance boss rush mode a bit
     #Remove all consumables from inventory
     for i in full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][7]["Value"]:
         i["Value"][1]["Value"] = 0
     #Start both stages at level 50
     for i in range(8, 14):
-        full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][i]["Value"]  = 50
+        full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][i]["Value"] = 50
     #Give all bosses level 66
     for i in full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][14]["Value"]:
         i[1]["Value"] = 66
@@ -392,78 +469,12 @@ def write_log(filename, filepath, log):
     with open(filepath + "\\" + filename + ".json", "w", encoding="utf8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
-def read_datatable(file, entry, data):
-    #Convert strings to indexes
-    entry = full_datatable[file]["KeyIndex"][entry]
-    data  = full_datatable[file]["ValueIndex"][data]
-    #Handle special data types
-    type  = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
-    value = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["Value"]
-    #Round floats to 3 digits and fix the "+0" field
-    if "FloatPropertyData" in type:
-        if value == "+0":
-            value = 0.0
-        else:
-            value = round(value, 3)
-    #Convert name map index to enum
-    elif "BytePropertyData" in type:
-        value = full_datatable[file]["DataTable"]["NameMap"][value]
-    #Convert array of structs to simple array
-    elif "ArrayPropertyData" in type:
-        new_array = []
-        for i in value:
-            new_array.append(i["Value"])
-        value = new_array
-    return value
-
-def patch_datatable(file, entry, data, value):
-    #Convert strings to indexes
-    entry = full_datatable[file]["KeyIndex"][entry]
-    data  = full_datatable[file]["ValueIndex"][data]
-    #Handle special data types
-    type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
-    name = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["Name"]
-    #Add string entry to the name map
-    if "NamePropertyData" in type or "EnumPropertyData" in type:
-        if not remove_inst(value) in full_datatable[file]["DataTable"]["NameMap"]:
-            full_datatable[file]["DataTable"]["NameMap"].append(remove_inst(value))
-    #Convert enum to its index in the name map
-    elif "BytePropertyData" in type:
-        try:
-            index = full_datatable[file]["DataTable"]["NameMap"].index(value)
-        except ValueError:
-            full_datatable[file]["DataTable"]["NameMap"].append(value)
-            index = full_datatable[file]["DataTable"]["NameMap"].index(value)
-        value = index
-    #Convert simple array to an array of structs
-    elif "ArrayPropertyData" in type:
-        if value:
-            try:
-                del full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"]
-            except KeyError:
-                pass
-            new_array = []
-            for i in range(len(value)):
-                new_struct = dict(full_datatable[file]["ArrayStruct"][name])
-                new_struct["Value"] = value[i]
-                try: 
-                    test = int(new_struct["Name"])
-                    new_struct["Name"] = str(i)
-                except ValueError:
-                    pass
-                new_array.append(new_struct)
-            value = new_array
-        else:
-            full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"] = None
-    #Patch
-    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["Value"] = value
-
 def convert_json(filename, content):
     #Convert json to its asset files
     name, extension = os.path.splitext(filename)
     absolute_asset_dir = os.path.abspath("UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][name])
     with open("UAssetGUI\\" + name + ".json", "w", encoding="utf8") as file_writer:
-        file_writer.write(json.dumps(content, ensure_ascii=False))
+        file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
     
     root = os.getcwd()
     os.chdir("UAssetGUI")
@@ -481,7 +492,7 @@ def convert_asset(game_dir, filename, destination):
     name, extension = os.path.splitext(filename)
     root = os.getcwd()
     os.chdir("UAssetGUI")
-    os.system("cmd /c UAssetGUI.exe tojson \"" + game_dir + "\\" + dictionary["FileToPath"][name] + "\\" + filename + "\" \"" + destination + "\\" + name + ".json\" VER_UE4_27")
+    os.system("cmd /c UAssetGUI.exe tojson \"" + game_dir + "\\" + dictionary["FileToPath"][name] + "\\" + filename + "\" \"" + destination + "\\" + name + ".json\" VER_UE4_22")
     os.chdir(root)
 
 def copy_file(game_dir, filename, destination):
@@ -505,7 +516,7 @@ def convert_miriam_candle(candle, shard):
         for e in level["Exports"]:
             for o in e["Data"]:
                 try:
-                    if candle in o["Value"]:
+                    if o["Value"] == candle:
                         o["Value"] = shard
                 except TypeError:
                     continue
@@ -513,11 +524,6 @@ def convert_miriam_candle(candle, shard):
                     continue
                 except KeyError:
                     continue
-        for e in range(len(level["NameMap"])):
-            if level["NameMap"][e] == candle:
-                level["NameMap"][e] = shard
-            if level["NameMap"][e] == candle_type:
-                level["NameMap"][e] = shard_type
         #Convert
         convert_json(filename + ".umap", level)
 
@@ -526,7 +532,7 @@ def convert_bloodless_candle(bloodless_datatable):
     #Just like for Miriam those are defined inside of the level files
     tower_check = 0
     for i in bloodless_datatable:
-        #RoomToFile
+        #Room to file
         filename = remove_inst(bloodless_datatable[i]) + "_Gimmick"
         #Valac's room has two candle abilities and is the only one in the game
         #Setup an exception so that this file searches for a specific ability
@@ -556,13 +562,10 @@ def convert_bloodless_candle(bloodless_datatable):
                     continue
                 except KeyError:
                     continue
-        for e in range(len(level["NameMap"])):
-            if search in level["NameMap"][e]:
-                level["NameMap"][e] = "EPBBloodlessAbilityType::" + remove_inst(i)
         #If it is Valac's room for the first time only dump the information
         if "m08TWR_019" in filename and tower_check == 0:
             with open("UAssetGUI\\" + filename + ".json", "w", encoding="utf-8") as file_writer:
-                file_writer.write(json.dumps(level, ensure_ascii=False))
+                file_writer.write(json.dumps(level, ensure_ascii=False, indent=2))
         #Otherwise dump and convert
         else:
             convert_json(filename + ".umap", level)
@@ -932,6 +935,19 @@ def create_weighted_list(value, minimum, maximum, step, deviation):
 def random_weighted(value, minimum, maximum, step, deviation):
     #Randomly pick from weighted list
     return random.choice(create_weighted_list(value, minimum, maximum, step, deviation))
+
+def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
+    last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[1])
+    entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
+    for i in datatable["PB_DT_ArchiveEnemyMaster"]:
+        if datatable["PB_DT_ArchiveEnemyMaster"][i]["UniqueID"] == copy_from:
+            new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][i])
+            break
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id] = new_entry
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["UniqueID"] = enemy_id
+    for i in range(len(area_ids)):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = area_ids[i]
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines

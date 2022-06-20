@@ -1,5 +1,6 @@
 import Manager
 import random
+import copy
 
 def init():
     #Declare variables

@@ -2,6 +2,7 @@ import Manager
 import math
 import random
 import os
+import copy
 from collections import OrderedDict
 
 def init():
@@ -652,7 +653,7 @@ def extra_logic():
     if Manager.dictionary["MapLogic"]["m06KNG_021"]["GateRoom"]:
         Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
     else:
-        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m06KNG_021"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m06KNG_021"]["NearestGate"])
     Manager.dictionary["MapLogic"]["m51EBT_000"]["Doublejump"]           = False
     Manager.dictionary["MapLogic"]["m51EBT_000"]["HighJump"]             = False
     Manager.dictionary["MapLogic"]["m51EBT_000"]["Invert"]               = False
@@ -677,7 +678,7 @@ def extra_logic():
     if Manager.dictionary["MapLogic"]["m09TRN_002"]["GateRoom"]:
         Manager.dictionary["MapLogic"]["m19K2C_000"]["NearestGate"]      = ["m09TRN_002"]
     else:
-        Manager.dictionary["MapLogic"]["m19K2C_000"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m09TRN_002"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m19K2C_000"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m09TRN_002"]["NearestGate"])
     Manager.dictionary["MapLogic"]["m19K2C_000"]["Doublejump"]           = False
     Manager.dictionary["MapLogic"]["m19K2C_000"]["HighJump"]             = False
     Manager.dictionary["MapLogic"]["m19K2C_000"]["Invert"]               = False
@@ -703,9 +704,9 @@ def extra_logic():
         Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"]      = ["m18ICE_019"]
         Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"]      = ["m18ICE_019"]
     else:
-        Manager.dictionary["MapLogic"]["m02VIL_003"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m02VIL_003"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m02VIL_005"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m18ICE_004"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m18ICE_019"]["NearestGate"])
 
 def hard_enemy_logic():
     #On hard mode some rooms have extra enemies so update the location info
@@ -829,13 +830,13 @@ def key_logic():
                 #Increasing chances of late rooms
                 #Otherwise early game areas are more likely to have everything
                 gate_count = 1
-                gate_list = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
+                gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][i]["NearestGate"])
                 while gate_list:
                     nearest_gate = random.choice(gate_list)
                     for e in Manager.dictionary["MapLogic"]:
                         if e == nearest_gate:
                             gate_count += 1
-                            gate_list = list(Manager.dictionary["MapLogic"][e]["NearestGate"])
+                            gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][e]["NearestGate"])
                             break
                 #Making multplier more extreme with exponent
                 gate_count = round(gate_count**1.5)

@@ -1,6 +1,7 @@
 import Manager
 import random
 import os
+import copy
 
 def init():
     #Declare variables
@@ -15,52 +16,52 @@ def init():
         "BLD_ABILITY_GUILLOTINE_UMBRELLA": "m02VIL_004",
         "BLD_ABILITY_UMBRELLA_TOSS":       "m07LIB_030",
         "BLD_ABILITY_SCARLET_THRUST":      "m05SAN_016",
-        "BLD_ABILITY_SCARLET_THRUST_3":    "m51EBT_000",
+        "BLD_ABILITY_SCARLET_THRUST_2":    "m51EBT_000",
         "BLD_ABILITY_BLOOD_PILLAR":        "m11UGD_048",
-        "BLD_ABILITY_BLOOD_PILLAR_3":      "m17RVA_007",
+        "BLD_ABILITY_BLOOD_PILLAR_2":      "m17RVA_007",
         "BLD_ABILITY_SCARLET_CYCLONE":     "m13ARC_006",
         "BLD_ABILITY_BLOOD_RAIN":          "m15JPN_005"
     }
     global upgrade_to_room
     upgrade_to_room = {
-        "BLD_ABILITY_STR_UP_2":      "m07LIB_042",
-        "BLD_ABILITY_STR_UP_3":      "m11UGD_050",
-        "BLD_ABILITY_STR_UP_4":      "m03ENT_024",
-        "BLD_ABILITY_STR_UP_5":      "m17RVA_015",
-        "BLD_ABILITY_STR_UP_6":      "m01SIP_007",
-        "BLD_ABILITY_STR_UP_7":      "m05SAN_021",
-        "BLD_ABILITY_STR_UP_8":      "m88BKR_001",
-        "BLD_ABILITY_STR_UP_9":      "m10BIG_015",
-        "BLD_ABILITY_INT_UP_2":      "m05SAN_006",
-        "BLD_ABILITY_INT_UP_3":      "m11UGD_030",
-        "BLD_ABILITY_INT_UP_4":      "m08TWR_019_1",
-        "BLD_ABILITY_INT_UP_5":      "m14TAR_006",
-        "BLD_ABILITY_INT_UP_6":      "m07LIB_009",
-        "BLD_ABILITY_INT_UP_7":      "m11UGD_051",
-        "BLD_ABILITY_INT_UP_8":      "m88BKR_004",
-        "BLD_ABILITY_INT_UP_9":      "m10BIG_014",
-        "BLD_ABILITY_CON_UP_2":      "m05SAN_014",
-        "BLD_ABILITY_CON_UP_3":      "m06KNG_022",
-        "BLD_ABILITY_CON_UP_4":      "m04GDN_004",
-        "BLD_ABILITY_CON_UP_5":      "m17RVA_004",
-        "BLD_ABILITY_CON_UP_6":      "m15JPN_017",
-        "BLD_ABILITY_CON_UP_7":      "m01SIP_026",
-        "BLD_ABILITY_CON_UP_8":      "m07LIB_040",
-        "BLD_ABILITY_CON_UP_9":      "m10BIG_002",
-        "BLD_ABILITY_MND_UP_2":      "m02VIL_005",
-        "BLD_ABILITY_MND_UP_3":      "m07LIB_041",
-        "BLD_ABILITY_MND_UP_4":      "m15JPN_018",
-        "BLD_ABILITY_MND_UP_5":      "m12SND_003",
-        "BLD_ABILITY_MND_UP_6":      "m11UGD_010",
-        "BLD_ABILITY_MND_UP_7":      "m05SAN_003",
-        "BLD_ABILITY_MND_UP_8":      "m88BKR_003",
-        "BLD_ABILITY_MND_UP_9":      "m10BIG_010",
-        "BLD_ABILITY_LCK_UP_2":      "m11UGD_049",
-        "BLD_ABILITY_LCK_UP_3":      "m88BKR_002",
-        "BLD_ABILITY_LCK_UP_4":      "m11UGD_038",
-        "BLD_ABILITY_MP_REGEN_UP_2": "m07LIB_012",
-        "BLD_ABILITY_MP_REGEN_UP_3": "m08TWR_018",
-        "BLD_ABILITY_MP_REGEN_UP_4": "m12SND_024"
+        "BLD_ABILITY_STR_UP_1":      "m07LIB_042",
+        "BLD_ABILITY_STR_UP_2":      "m11UGD_050",
+        "BLD_ABILITY_STR_UP_3":      "m03ENT_024",
+        "BLD_ABILITY_STR_UP_4":      "m17RVA_015",
+        "BLD_ABILITY_STR_UP_5":      "m01SIP_007",
+        "BLD_ABILITY_STR_UP_6":      "m05SAN_021",
+        "BLD_ABILITY_STR_UP_7":      "m88BKR_001",
+        "BLD_ABILITY_STR_UP_8":      "m10BIG_015",
+        "BLD_ABILITY_INT_UP_1":      "m05SAN_006",
+        "BLD_ABILITY_INT_UP_2":      "m11UGD_030",
+        "BLD_ABILITY_INT_UP_3":      "m08TWR_019_1",
+        "BLD_ABILITY_INT_UP_4":      "m14TAR_006",
+        "BLD_ABILITY_INT_UP_5":      "m07LIB_009",
+        "BLD_ABILITY_INT_UP_6":      "m11UGD_051",
+        "BLD_ABILITY_INT_UP_7":      "m88BKR_004",
+        "BLD_ABILITY_INT_UP_8":      "m10BIG_014",
+        "BLD_ABILITY_CON_UP_1":      "m05SAN_014",
+        "BLD_ABILITY_CON_UP_2":      "m06KNG_022",
+        "BLD_ABILITY_CON_UP_3":      "m04GDN_004",
+        "BLD_ABILITY_CON_UP_4":      "m17RVA_004",
+        "BLD_ABILITY_CON_UP_5":      "m15JPN_017",
+        "BLD_ABILITY_CON_UP_6":      "m01SIP_026",
+        "BLD_ABILITY_CON_UP_7":      "m07LIB_040",
+        "BLD_ABILITY_CON_UP_8":      "m10BIG_002",
+        "BLD_ABILITY_MND_UP_1":      "m02VIL_005",
+        "BLD_ABILITY_MND_UP_2":      "m07LIB_041",
+        "BLD_ABILITY_MND_UP_3":      "m15JPN_018",
+        "BLD_ABILITY_MND_UP_4":      "m12SND_003",
+        "BLD_ABILITY_MND_UP_5":      "m11UGD_010",
+        "BLD_ABILITY_MND_UP_6":      "m05SAN_003",
+        "BLD_ABILITY_MND_UP_7":      "m88BKR_003",
+        "BLD_ABILITY_MND_UP_8":      "m10BIG_010",
+        "BLD_ABILITY_LCK_UP_1":      "m11UGD_049",
+        "BLD_ABILITY_LCK_UP_2":      "m88BKR_002",
+        "BLD_ABILITY_LCK_UP_3":      "m11UGD_038",
+        "BLD_ABILITY_MP_REGEN_UP_1": "m07LIB_012",
+        "BLD_ABILITY_MP_REGEN_UP_2": "m08TWR_018",
+        "BLD_ABILITY_MP_REGEN_UP_3": "m12SND_024"
     }
     global bloodless_to_miriam
     bloodless_to_miriam = {
@@ -113,7 +114,7 @@ def init():
 def extra_logic():
     #Update the logic to reflect the new starting point
     room_to_list = {}
-    gate_list = list(Manager.dictionary["MapLogic"]["m05SAN_023"]["NearestGate"])
+    gate_list = copy.deepcopy(Manager.dictionary["MapLogic"]["m05SAN_023"]["NearestGate"])
     previous_gate = []
     current_gate = []
     #Start by emptying gate lists in the upper cathedral rooms
@@ -137,7 +138,7 @@ def extra_logic():
             for e in current_gate:
                 if Manager.dictionary["MapLogic"][i]["NearestGate"] == Manager.dictionary["MapLogic"][e]["NearestGate"] and i != e:
                     room_to_list[i].append(e)
-        previous_gate = list(current_gate)
+        previous_gate = copy.deepcopy(current_gate)
         current_gate.clear()
         gate_list.clear()
         for i in previous_gate:
@@ -158,7 +159,7 @@ def extra_logic():
     if Manager.dictionary["MapLogic"]["m06KNG_021"]["GateRoom"]:
         Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
     else:
-        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = list(Manager.dictionary["MapLogic"]["m06KNG_021"]["NearestGate"])
+        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m06KNG_021"]["NearestGate"])
     Manager.dictionary["MapLogic"]["m51EBT_000"]["Doublejump"]           = False
     Manager.dictionary["MapLogic"]["m51EBT_000"]["HighJump"]             = False
     Manager.dictionary["MapLogic"]["m51EBT_000"]["Invert"]               = False
@@ -193,9 +194,9 @@ def extra_logic():
             Manager.dictionary["MapLogic"][i]["GateRoom"] = False
             for e in Manager.dictionary["MapLogic"]:
                 if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
-                    Manager.dictionary["MapLogic"][e]["NearestGate"] = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
+                    Manager.dictionary["MapLogic"][e]["NearestGate"] = copy.deepcopy(Manager.dictionary["MapLogic"][i]["NearestGate"])
     #Adding seperate gate for the upper part of Valac's room
-    Manager.dictionary["MapLogic"]["m08TWR_019_1"] = dict(Manager.dictionary["MapLogic"]["m08TWR_019"])
+    Manager.dictionary["MapLogic"]["m08TWR_019_1"] = copy.deepcopy(Manager.dictionary["MapLogic"]["m08TWR_019"])
     Manager.dictionary["MapLogic"]["m08TWR_019"]["GateRoom"] = False
     for i in Manager.dictionary["MapLogic"]:
         while "m08TWR_019" in Manager.dictionary["MapLogic"][i]["NearestGate"]:
@@ -210,7 +211,7 @@ def candle_logic():
     requirement = []
     requirement_to_gate = {}
     #Filling list with all room names
-    all_rooms = list(candle_room)
+    all_rooms = copy.deepcopy(candle_room)
     #Filling requirement dictionary
     for i in key_abilities:
         requirement_to_gate[i] = []
@@ -245,13 +246,13 @@ def candle_logic():
                 #Increasing chances of late rooms
                 #Otherwise early game areas are more likely to have everything
                 gate_count = 1
-                gate_list = list(Manager.dictionary["MapLogic"][i]["NearestGate"])
+                gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][i]["NearestGate"])
                 while gate_list:
                     nearest_gate = random.choice(gate_list)
                     for e in Manager.dictionary["MapLogic"]:
                         if e == nearest_gate:
                             gate_count += 1
-                            gate_list = list(Manager.dictionary["MapLogic"][e]["NearestGate"])
+                            gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][e]["NearestGate"])
                             break
                 #Making multplier more extreme with exponent
                 gate_count = round(gate_count**1.5)

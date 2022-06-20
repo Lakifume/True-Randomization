@@ -1,6 +1,7 @@
 import Manager
 import math
 import random
+import copy
 
 def init():
     #Declare variables
@@ -210,11 +211,11 @@ def brv_damage(difficulty):
     for i in Manager.datatable["PB_DT_BRVAttackDamage"]:
         #Getting enemy strength as if level 45
         if Manager.datatable["PB_DT_BRVAttackDamage"][i]["Owner"] == "Zangetsu":
-            base = int(((Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["STR99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["STR"])/98)*44 + Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["STR"])
+            base = calculate_stat("N1011_STRONG", 45, "STR")
         elif Manager.datatable["PB_DT_BRVAttackDamage"][i]["Owner"] == "Dominique":
-            base = int(((Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["STR99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["STR"])/98)*44 + Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["STR"])
+            base = calculate_stat("N1009_Enemy", 45, "STR")
         elif Manager.datatable["PB_DT_BRVAttackDamage"][i]["Owner"] == "Miriam":
-            base = int(((Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"]["STR99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"]["STR"])/98)*44 + Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"]["STR"])
+            base = calculate_stat("N0000", 45, "STR")
         #Multiplier for crits on Gremory
         if Manager.datatable["PB_DT_BRVAttackDamage"][i]["IsZangetsutoAttack"]:
             critical = 2.5
@@ -360,9 +361,8 @@ def rand_enemy_level():
 
 def rand_enemy_resist():
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if not Manager.is_enemy(i)["Enemy"]:
-            continue
-        rand_stat(i)
+        if Manager.is_enemy(i)["Enemy"]:
+            rand_stat(i)
 
 def patch_level(value, entry, extra):
     #Make Dom's level be the inverse of the chosen value
@@ -556,10 +556,10 @@ def hard_patterns():
     Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectBeginScale"]   *= 2.0
     Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectEndScale"]     *= 2.0
     
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectBeginScale"]    *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectEndScale"]      *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectBeginScale"] *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectEndScale"]   *= 2.0
+    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectBeginScale"]    *= 1.8
+    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectEndScale"]      *= 1.8
+    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectBeginScale"] *= 1.8
+    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectEndScale"]   *= 1.8
     
     Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectBeginScale"]      *= 2.5
     Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectEndScale"]        *= 2.5
@@ -601,6 +601,6 @@ def hard_patterns():
     Manager.datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R00"] *= 2.0
     Manager.datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R01"] *= 2.0
     
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R00"] *= 2.0
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R01"] *= 2.0
+    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R00"] *= 1.8
+    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R01"] *= 1.8
     
