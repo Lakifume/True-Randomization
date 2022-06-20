@@ -230,22 +230,24 @@ class RoomItem(QGraphicsRectItem):
 
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
-        #NormalModeSelection
+        if event.button() != Qt.LeftButton:
+            return
+        #Normal mode selection
         for i in self.scene().selectedItems():
             if restrictions and not search_mode and not logic_mode and not area_mode and not key_mode:
                 for e in i.group_list:
                     self.room_list[e].setSelected(True)
-        #AssignModeSelection
+        #Assign mode selection
         if assign_mode:
             if self.logic_data.is_gate and self not in assign_list:
-                #CheckingIfOneOfTheRoomsIsAlreadyAssignedToGate
+                #Checking if one of the rooms is already assigned to gate
                 check = False
                 for i in assign_list:
                     if self.index in i.logic_data.gate_list:
                         check = True
                     if i.index in self.logic_data.gate_list:
                         return
-                #ChangingGateFill
+                #Changing gate fill
                 if check:
                     for i in assign_list:
                         if self.index in i.logic_data.gate_list:
@@ -265,17 +267,23 @@ class RoomItem(QGraphicsRectItem):
 
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
+        if event.button() != Qt.LeftButton:
+            return
         for i in self.scene().selectedItems():
             self.apply_round(i)
     
     def mouseDoubleClickEvent(self, event):
+        #Select all rooms belonging to the same area
         super().mouseDoubleClickEvent(event)
+        if event.button() != Qt.LeftButton:
+            return
         if self.room_data.area != "EAreaID::None" and not assign_mode:
             for i in self.room_list:
                 if i.room_data.area == self.room_data.area:
                     i.setSelected(True)
 
     def apply_round(self, item):
+        #Snap rooms to grid
         x = round(item.pos().x() / TILEWIDTH) * TILEWIDTH
         y = round(item.pos().y() / TILEHEIGHT) * TILEHEIGHT
         if item.room_data.name == "m09TRN_002" and y < 0 and restrictions:
@@ -305,11 +313,11 @@ class Main(QMainWindow):
         #Graphics
         
         self.scene = QGraphicsScene(self)
-        self.view = QGraphicsView(self.scene, self)
+        self.view = QGraphicsView(self.scene, self) 
         self.scene.selectionChanged.connect(self.selection_event)
         
-        self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff);
-        self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff);
+        self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.view.setDragMode(QGraphicsView.RubberBandDrag)
         self.view.scale(1, -1)
         self.current_zoom = 1
