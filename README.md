@@ -30,7 +30,7 @@ Why is there no spoiler log for key item location ?
 * there is but it's in a different location than the rest of the logs, to view it open up the map editor and go under Tools > Key Location
 
 Why do various other things seem to play a bit differently than in the vanilla game ?
-* to improve the randomizer experience or even the game experience in general this mod fixes multiple aspects of the game's difficulty balance to make it less reliant on specific strategies and exploits, sorry 8 bit fireball enthousiasts
+* to improve the randomizer experience or even the game experience in general this mod fixes multiple aspects of the game's difficulty balance to make it less reliant on specific strategies and exploits, sorry void ray enthousiasts
 
 What do the special modes even have to do with randomizer ?
 * absolutely nothing, they're just there to provide other non-randomized gameplay options for those who would want to mix things up a bit
