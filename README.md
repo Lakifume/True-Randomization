@@ -2,6 +2,8 @@
 
 New and improved randomization options for Bloodstained randomizer
 
+![Screenshot (337)](https://user-images.githubusercontent.com/56451477/178378598-0cedda11-581d-4a6d-8b33-c9d9e5b0ae52.png)
+
 ## How to build from source
 
 Requirements:
