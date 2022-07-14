@@ -1,4 +1,4 @@
-#ImportSubclasses
+#Import subclasses
 import Bloodless
 import Enemy
 import Equipment
@@ -7,11 +7,11 @@ import Library
 import Manager
 import Shard
 import Sound
-#ImportGUI
+#Import GUI
 from PySide6.QtCore import*
 from PySide6.QtGui import*
 from PySide6.QtWidgets import*
-#ImportModules
+#Import modules
 import configparser
 import sys
 import os
@@ -23,6 +23,7 @@ import subprocess
 import psutil
 import glob
 import copy
+import json
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
@@ -269,48 +270,54 @@ class Signaller(QObject):
     finished = Signal(str)
 
 class Generate(QThread):
-    def __init__(self, progress_bar, seed, map, test):
+    def __init__(self, progress_bar, seed, map):
         QThread.__init__(self)
         self.signaller = Signaller()
         self.progress_bar = progress_bar
         self.seed = seed
         self.map = map
-        self.test = test
 
     def run(self):
         current = 0
         self.signaller.progress.emit(current)
         
-        #Open files
-        
-        Manager.load_content()
-        Manager.load_data()
-        Manager.complex_to_simple()
-        
         #Initialize directories
         
-        if not self.test:
-            #Mod
-            for i in list(Manager.dictionary["FileToPath"].values()):
-                if not os.path.isdir("UnrealPak\\Mod\\BloodstainedRotN\\" + i):
-                    os.makedirs("UnrealPak\\Mod\\BloodstainedRotN\\" + i)
-            #Logs
-            if not os.path.isdir("SpoilerLog"):
-                os.makedirs("SpoilerLog")
-            if not os.path.isdir("MapEdit\\Key"):
-                os.makedirs("MapEdit\\Key")
-            for file in os.listdir("SpoilerLog"):
-                file_path = os.path.join("SpoilerLog", file)
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
-            for file in os.listdir("MapEdit\\Key"):
-                file_path = os.path.join("MapEdit\\Key", file)
-                if os.path.isfile(file_path):
-                    os.remove(file_path)
+        #Mod
+        for i in list(Manager.file_to_path.values()):
+            if not os.path.isdir(Manager.mod_dir + "\\" + i):
+                os.makedirs(Manager.mod_dir + "\\" + i)
+        
+        #Logs
+        if not os.path.isdir("SpoilerLog"):
+            os.makedirs("SpoilerLog")
+        for file in os.listdir("SpoilerLog"):
+            file_path = os.path.join("SpoilerLog", file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        
+        #Open files
+        
+        self.progress_bar.setLabelText("Loading data...")
+        
+        Manager.init()
+        Manager.load_game_data()
+        Manager.load_mod_data()
+        current += 1
+        self.signaller.progress.emit(current)
+        
+        #Simplify data
+        
+        self.progress_bar.setLabelText("Processing data...")
+        
+        Manager.complex_to_simple()
+        current += 1
+        self.signaller.progress.emit(current)
+        
+        self.progress_bar.setLabelText("Randomizing...")
         
         #Init classes
         
-        Manager.init()
         Item.init()
         Library.init()
         Shard.init()
@@ -324,13 +331,6 @@ class Generate(QThread):
         Manager.apply_tweaks()
         Shard.default_shard()
         
-        current += 1
-        self.signaller.progress.emit(current)
-        
-        #RANDOMIZE
-        
-        self.progress_bar.setLabelText("Randomizing...")
-        
         #Map
         
         random.seed(self.seed)
@@ -343,6 +343,7 @@ class Generate(QThread):
                 self.map = ""
         else:
             self.map = ""
+        Manager.load_map(self.map)
         
         #Hue
         
@@ -352,13 +353,13 @@ class Generate(QThread):
         
         #Datatables
         
-        if config.getboolean("GameDifficulty", "bHard") or config.getboolean("GameDifficulty", "bNightmare"):
-            Item.hard_enemy_logic()
-        
         if self.map:
-            Manager.load_custom_map(self.map)
+            Manager.fix_custom_map()
             Item.unused_room_check()
             Enemy.enemy_rebalance()
+        
+        if not config.getboolean("GameDifficulty", "bNormal"):
+            Item.hard_enemy_logic()
         
         if config.getboolean("GameMode", "bRandomizer"):
             Item.give_shortcut()
@@ -366,7 +367,6 @@ class Generate(QThread):
             Shard.eye_max_range()
             Item.unlock_all_quest()
             Item.all_hair_in_shop()
-            Enemy.no_upgrade_cap()
         else:
             Item.story_chest()
         
@@ -384,16 +384,13 @@ class Generate(QThread):
             Item.no_shard_craft()
             Item.extra_logic()
             Item.rand_overworld_key()
-            Item.rand_overworld_pool()
+            Item.rand_overworld_pool(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
             Item.rand_overworld_shard()
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+        
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
             Bloodless.extra_logic()
             Bloodless.candle_shuffle()
-        
-        if self.test:
-            self.signaller.finished.emit(self.map)
-            return
         
         if not config.getboolean("ItemRandomization", "bOverworldPool"):
             Item.deseema_fix()
@@ -422,7 +419,7 @@ class Generate(QThread):
         if config.getboolean("LibraryRandomization", "bMapRequirements") or config.getboolean("LibraryRandomization", "bTomeAppearance"):
             random.seed(self.seed)
             Library.rand_book(config.getboolean("LibraryRandomization", "bMapRequirements"), config.getboolean("LibraryRandomization", "bTomeAppearance"))
-            Manager.write_log("LibraryTomes", "SpoilerLog", Library.create_log())
+            Manager.write_log("LibraryTomes", Library.create_log())
         
         if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
             random.seed(self.seed)
@@ -443,108 +440,90 @@ class Generate(QThread):
         elif config.getboolean("EnemyRandomization", "bEnemyLevels"):
             random.seed(self.seed)
             Enemy.rand_enemy_level()
-            Enemy.higher_HPMP()
-            Enemy.lower_HPMP_growth()
-            Manager.write_log("EnemyProperties", "SpoilerLog", Enemy.create_log())
+            Enemy.high_starting_stats()
+            Manager.write_log("EnemyProperties", Enemy.create_log())
         
         if config.getboolean("EnemyRandomization", "bEnemyTolerances"):
             random.seed(self.seed)
             Enemy.rand_enemy_resist()
-            Manager.write_log("EnemyProperties", "SpoilerLog", Enemy.create_log())
-        
-        if config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"):
-            random.seed(self.seed)
-            Item.rand_ship_waystone()
+            Manager.write_log("EnemyProperties", Enemy.create_log())
         
         if config.getboolean("SoundRandomization", "bDialogues"):
             random.seed(self.seed)
             Sound.rand_dialogue()
         
         if config.getboolean("GameDifficulty", "bNormal"):
-            Enemy.rename_difficulty("Normal", "???", "???")
-            Enemy.remove_animation("AnimaionPlayRateNormal")
+            Manager.remove_difficulties("Normal")
             Enemy.brv_damage(1.0)
         elif config.getboolean("GameDifficulty", "bHard"):
-            Enemy.rename_difficulty("???", "Hard", "???")
-            Enemy.remove_animation("AnimaionPlayRateHard")
+            Manager.default_nightmare_cheatcode()
+            Manager.remove_difficulties("Hard")
             Enemy.hard_patterns()
             Enemy.brv_speed("AnimaionPlayRateHard")
             Enemy.brv_damage(Manager.datatable["PB_DT_CoordinateParameter"]["HardBossDamageRate"]["Value"])
         elif config.getboolean("GameDifficulty", "bNightmare"):
-            Enemy.rename_difficulty("???", "???", "Nightmare")
-            Enemy.remove_animation("AnimaionPlayRateNightmare")
+            Manager.default_nightmare_cheatcode()
+            if config.getboolean("SpecialMode", "bProgressive"):
+                Manager.remove_difficulties("Hard")
+                Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Difficulty_Hard"] = "Nightmare"
+                Enemy.zangetsu_progress()
+                Enemy.nightmare_damage()
+            else:
+                Manager.remove_difficulties("Nightmare")
             Enemy.hard_patterns()
             Enemy.brv_speed("AnimaionPlayRateNightmare")
             Enemy.brv_damage(Manager.datatable["PB_DT_CoordinateParameter"]["NightmareBossDamageRate"]["Value"])
         
         if config.getboolean("SpecialMode", "bProgressive"):
-            if config.getboolean("GameDifficulty", "bNightmare"):
-                Enemy.zangetsu_progress()
-                Enemy.nightmare_damage()
-                Enemy.rename_difficulty("???", "Nightmare", "???")
             Enemy.zangetsu_no_stats()
             Enemy.zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             Equipment.zangetsu_black_belt()
         
         Item.update_boss_crystal_color()
+        Item.update_shard_candles()
+        Bloodless.update_shard_candles()
         Enemy.update_special_properties()
         Equipment.update_special_properties()
         Manager.update_descriptions()
         
         if self.seed:
-            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_ModeRogueDungeon"] = str(self.seed)
+            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Menu_RandomSeed"]            = "Seed # " + str(self.seed)
+            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Randomizer_ConfirmSeed"]     = "Confirm Settings for Seed # " + str(self.seed)
+            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_RandomizerManual_Title"]     = "Enter 17791"
+            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_RandomizerSelect_Customize"] = "XXX"
         
-        current += 1
-        self.signaller.progress.emit(current)
-        
-        #CONNECT
-        
-        self.progress_bar.setLabelText("Connecting map...")
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            Manager.write_log("KeyLocation", Item.create_log(self.seed, self.map))
+        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            Manager.write_log("KeyLocation", Bloodless.create_log(self.seed, self.map))
         
         Manager.connect_map()
-        Manager.simple_to_complex()
-        
         current += 1
         self.signaller.progress.emit(current)
         
-        #WRITE
+        #Convert data
+        
+        self.progress_bar.setLabelText("Converting data...")
+        
+        Manager.simple_to_complex()
+        current += 1
+        self.signaller.progress.emit(current)
+        
+        #Write files
         
         self.progress_bar.setLabelText("Writing files...")
         
-        for i in Manager.full_datatable:
-            Manager.convert_json(i + ".uasset", Manager.full_datatable[i]["DataTable"])
-            current += 1
-            self.signaller.progress.emit(current)
-        for i in Manager.full_stringtable:
-            Manager.convert_json(i + ".uasset", Manager.full_stringtable[i])
-            current += 1
-            self.signaller.progress.emit(current)
-        for i in Manager.full_blueprint:
-            Manager.convert_json(i + ".uasset", Manager.full_blueprint[i])
-            current += 1
-            self.signaller.progress.emit(current)
-        
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            for i in ["Shortcut", "Deepsinker", "FamiliaSilverKnight"]:
-                Manager.convert_miriam_candle(i, Manager.datatable["PB_DT_DropRateMaster"][i + "_Shard"]["ShardId"])
-            Manager.write_log("KeyLocation", "MapEdit\\Key", Item.create_log(self.seed, self.map))
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            Manager.convert_bloodless_candle(Bloodless.get_datatable())
-            Manager.write_log("KeyLocation", "MapEdit\\Key", Bloodless.create_log(self.seed, self.map))
-        
-        current += 1
-        self.signaller.progress.emit(current)
-        
         #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
         #That way you can at least save once before the game truly starts
-        Manager.remove_level_actor("m01SIP_001_Enemy_Hard", "N3015")
+        Manager.remove_level_actor("m01SIP_001_Enemy_Hard", ["Chr_N3015(1040)"])
         #Also remove the bone mortes from that one crowded room in galleon
-        Manager.remove_level_actor("m01SIP_014_Enemy_Hard", "N3004")
-        
+        Manager.remove_level_actor("m01SIP_014_Enemy_Hard", ["Chr_N3004(4)", "Chr_N3005"])
         #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
         #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
         #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
-        Manager.remove_level_actor("m03ENT_000_Gimmick", "IronMaiden")
+        Manager.remove_level_actor("m03ENT_000_Gimmick", ["BP_IronMaiden(766)", "BP_IronMaiden3"])
+        
+        Manager.write_files()
         
         #The recently added Kingdom 2 Crowns crossover area lacks any exclusive music, it just plays the regular cave theme
         #Since this is easy to fix via modding include it in this rando
@@ -556,24 +535,24 @@ class Generate(QThread):
         Manager.import_texture("frameMiriam")
         #Edit the file that contains all the icons in the game to give 8 bit weapons unique icons per rank
         #Otherwise it is almost impossible to tell which tier the weapon you're looking at actually is
-        Manager.import_texture("icon"       )
+        Manager.import_texture("icon")
         
         #The textures used in the 8 Bit Nightmare area have inconsistent formats and mostly use block compression which butchers the pixel arts completely
         #Once again an easy fix so include it here
-        Manager.import_texture("m51_EBT_BG"      )
-        Manager.import_texture("m51_EBT_BG_01"   )
-        Manager.import_texture("m51_EBT_Block"   )
+        Manager.import_texture("m51_EBT_BG")
+        Manager.import_texture("m51_EBT_BG_01")
+        Manager.import_texture("m51_EBT_Block")
         Manager.import_texture("m51_EBT_Block_00")
         Manager.import_texture("m51_EBT_Block_01")
-        Manager.import_texture("m51_EBT_Door"    )
+        Manager.import_texture("m51_EBT_Door")
         
         #Most map icons have fixed positions on the canvas and will not adapt to the position of the rooms
         #Might be possible to edit them via a blueprint but that's not worth it so remove them if custom map is chosen
         if self.map:
-            Manager.import_texture("icon_8bitCrown"    )
+            Manager.import_texture("icon_8bitCrown")
             Manager.import_texture("Map_Icon_Keyperson")
-            Manager.import_texture("Map_Icon_RootBox"  )
-            Manager.import_texture("Map_StartingPoint" )
+            Manager.import_texture("Map_Icon_RootBox")
+            Manager.import_texture("Map_StartingPoint")
         
         #Import chosen hues for Miriam and Zangetsu
         #While it is technically not necessary to first copy the textures out of the chosen folder we do it so that the random hue does not show up on the terminal
@@ -581,7 +560,7 @@ class Generate(QThread):
             for i in os.listdir("Data\\Texture\\Miriam\\" + miriam_hue):
                 shutil.copyfile("Data\\Texture\\Miriam\\" + miriam_hue + "\\" + i, "Data\\Texture\\" + i)
             
-            Manager.import_texture("Face_Miriam"      )
+            Manager.import_texture("Face_Miriam")
             Manager.import_texture("T_Pl01_Cloth_Bace")
             Manager.import_texture("T_Body01_01_Color")
             
@@ -591,15 +570,16 @@ class Generate(QThread):
             for i in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
                 shutil.copyfile("Data\\Texture\\Zangetsu\\" + zangetsu_hue + "\\" + i, "Data\\Texture\\" + i)
             
-            Manager.import_texture("Face_Zangetsu"       )
-            Manager.import_texture("T_N1011_body_color"  )
-            Manager.import_texture("T_N1011_face_color"  )
+            Manager.import_texture("Face_Zangetsu")
+            Manager.import_texture("T_N1011_body_color")
+            Manager.import_texture("T_N1011_face_color")
             Manager.import_texture("T_N1011_weapon_color")
-            Manager.import_texture("T_Tknife05_Base"     )
+            Manager.import_texture("T_Tknife05_Base")
             
             for i in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
                 os.remove("Data\\Texture\\" + i)
         
+        Manager.remove_unchanged()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -607,21 +587,29 @@ class Generate(QThread):
         
         self.progress_bar.setLabelText("Packing files...")
         
+        with open("Tools\\UnrealPak\\filelist.txt", "w") as file_writer:
+            file_writer.write("\"Mod\*.*\" \"..\..\..\*.*\" \n")
+        
         root = os.getcwd()
-        os.chdir("UnrealPak")
+        os.chdir("Tools\\UnrealPak")
         os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress")
         os.chdir(root)
         
         #Reset
         
-        shutil.rmtree("UnrealPak\\Mod")
+        if os.path.isdir("Tools\\UE4 DDS Tools\\src\\__pycache__"):
+            shutil.rmtree("Tools\\UE4 DDS Tools\\src\\__pycache__")
+        shutil.rmtree("Tools\\UnrealPak\\Mod")
+        os.remove("Tools\\UnrealPak\\filelist.txt")
         
         #Move
         
-        if config.get("Misc", "sOutputPath"):
-            shutil.move("UnrealPak\\Randomizer.pak", config.get("Misc", "sOutputPath") + "\\Randomizer.pak")
+        if config.get("Misc", "sGamePath"):
+            if not os.path.isdir(config.get("Misc", "sGamePath") + "\\~mods"):
+                os.makedirs(config.get("Misc", "sGamePath") + "\\~mods")
+            shutil.move("Tools\\UnrealPak\\Randomizer.pak", config.get("Misc", "sGamePath") + "\\~mods\\Randomizer.pak")
         else:
-            shutil.move("UnrealPak\\Randomizer.pak", "Randomizer.pak")
+            shutil.move("Tools\\UnrealPak\\Randomizer.pak", "Randomizer.pak")
         
         current += 1
         self.signaller.progress.emit(current)
@@ -657,9 +645,7 @@ class Update(QThread):
         
         shutil.rmtree("Data")
         shutil.rmtree("MapEdit\\Data")
-        shutil.rmtree("UAssetGUI")
-        shutil.rmtree("UE4 DDS Tools")
-        shutil.rmtree("UnrealPak")
+        shutil.rmtree("Tools")
         
         #Extract
         
@@ -689,58 +675,30 @@ class Update(QThread):
         subprocess.Popen(exe_name)
         sys.exit()
 
-class Convert(QThread):
-    def __init__(self, path):
+class Import(QThread):
+    def __init__(self):
         QThread.__init__(self)
         self.signaller = Signaller()
-        self.path = path
 
     def run(self):
         current = 0
         self.signaller.progress.emit(current)
         
-        Manager.load_data()
+        #Extract specific assets from the game's pak using UModel
         
-        #Files convertible to json
-        for i in os.listdir("UAssetGUI\\DataTable"):
-            name, extension = os.path.splitext(i)
-            Manager.convert_asset(self.path, name + ".uasset", "DataTable")
-            current += 1
-            self.signaller.progress.emit(current)
-        for i in os.listdir("UAssetGUI\\StringTable"):
-            name, extension = os.path.splitext(i)
-            Manager.convert_asset(self.path, name + ".uasset", "StringTable")
-            current += 1
-            self.signaller.progress.emit(current)
-        for i in os.listdir("UAssetGUI\\Blueprint"):
-            name, extension = os.path.splitext(i)
-            Manager.convert_asset(self.path, name + ".uasset", "Blueprint")
-            current += 1
-            self.signaller.progress.emit(current)
-        for i in os.listdir("UAssetGUI\\Level"):
-            name, extension = os.path.splitext(i)
-            Manager.convert_asset(self.path, name + ".umap", "Level")
-            current += 1
-            self.signaller.progress.emit(current)
-        #Other
-        filelist = []
-        for i in os.listdir("UAssetGUI\\Other"):
-            name, extension = os.path.splitext(i)
-            if not name in filelist:
-                filelist.append(name)
-        for i in filelist:
-            Manager.copy_file(self.path, i, "UAssetGUI\\Other")
-        #Texture
-        filelist = []
-        for i in os.listdir("UE4 DDS Tools\\workspace\\uasset"):
-            name, extension = os.path.splitext(i)
-            if not name in filelist:
-                filelist.append(name)
-        for i in filelist:
-            Manager.copy_file(self.path, i, "UE4 DDS Tools\\workspace\\uasset")
+        if os.path.isdir(Manager.asset_dir):
+            shutil.rmtree(Manager.asset_dir)
         
-        current += 1
-        self.signaller.progress.emit(current)
+        for i in Manager.file_to_path:
+            output_path = os.path.abspath("")
+            
+            root = os.getcwd()
+            os.chdir("Tools\\UModel")
+            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[i] + "\\" + i + "\"")
+            os.chdir(root)
+            
+            current += 1
+            self.signaller.progress.emit(current)
         
         self.signaller.finished.emit("")
 
@@ -875,7 +833,7 @@ class Main(QWidget):
         grid.addWidget(box_12, 8, 1, 1, 2)
         
         box_14_grid = QGridLayout()
-        box_14 = QGroupBox("Output Path")
+        box_14 = QGroupBox("Game Path")
         box_14.setLayout(box_14_grid)
         grid.addWidget(box_14, 8, 3, 1, 2)
         
@@ -1245,9 +1203,9 @@ class Main(QWidget):
         self.matches_preset()
         
         #Text field
-
-        self.output_field = QLineEdit(config.get("Misc", "sOutputPath"))
-        self.output_field.setToolTip("Use this field to link the path to your ~mods directory for a direct\ninstall.")
+        
+        self.output_field = QLineEdit(config.get("Misc", "sGamePath"))
+        self.output_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks)")
         self.output_field.textChanged[str].connect(self.new_output)
         box_14_grid.addWidget(self.output_field, 0, 0)
         
@@ -1685,6 +1643,8 @@ class Main(QWidget):
             config.set("SpecialMode", "bProgressive", "false")
             #Check story
             self.radio_button_6.setChecked(True)
+            #Fix background
+            self.fix_background_glitch()
         else:
             self.level_box.setVisible(False)
             config.set("SpecialMode", "bNone", "false")
@@ -1723,7 +1683,7 @@ class Main(QWidget):
         config.set("Misc", "iCustomLevel", str(self.level_box.value()))
     
     def new_output(self, text):
-        config.set("Misc", "sOutputPath", text)
+        config.set("Misc", "sGamePath", text)
     
     def new_seed(self, text):
         if " " in text:
@@ -1734,8 +1694,9 @@ class Main(QWidget):
     def cast_seed(self, seed):
         #Cast seed to another object type if possible
         #By default it is a string
+        seed = str(seed)
         try:
-            if "." in self.seed:
+            if "." in seed:
                 return float(seed)
             else:
                 return int(seed)
@@ -1807,35 +1768,49 @@ class Main(QWidget):
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             return True
         return False
+
+    def generate_pak(self):
+        self.setEnabled(False)
+        QApplication.processEvents()
+        
+        self.progress_bar = QProgressDialog("Initializing...", None, 0, 6, self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
+        
+        self.worker = Generate(self.progress_bar, self.seed, self.map)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(self.generate_finished)
+        self.worker.start()
+    
+    def import_assets(self, finished):
+        self.setEnabled(False)
+        QApplication.processEvents()
+        
+        self.progress_bar = QProgressDialog("Importing assets...", None, 0, len(list(Manager.file_to_path)), self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
+        
+        self.worker = Import()
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(finished)
+        self.worker.start()
     
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
     
-    def seed_finished(self, map):
+    def generate_finished(self, map):
         box = QMessageBox(self)
         box.setWindowTitle("Done")
         text = "Pak file generated !"
-        if config.getboolean("GameMode", "bRandomizer"):
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
             text += "\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work."
-        if not config.getboolean("GameDifficulty", "bNormal"):
-            text += "\n\nIf you have not unlocked all difficulties yet enter NIGHTMARE as the in-game file username."
+        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            text += "\n\nTo access Bloodless mode enter BLOODLESS as the in-game file username."
         box.setText(text)
         box.exec()
         self.setEnabled(True)
     
-    def convert_finished(self):
-        self.setEnabled(True)
-    
-    def test_finished(self, map):
-        box = QMessageBox(self)
-        box.setWindowTitle("Test")
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            box.setText(Item.create_log_string(self.seed_test, map))
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            box.setText(Bloodless.create_log_string(self.seed_test, map))
-        else:
-            box.setText("No keys to randomize")
-        box.exec()
+    def import_finished(self):
         self.setEnabled(True)
     
     def browse_button_clicked(self):
@@ -1854,31 +1829,70 @@ class Main(QWidget):
             elif self.size_drop_down.currentIndex() == 2:
                 config.set("Misc", "fWindowSize", "1.0")
             writing()
-            os.execl(sys.executable, sys.executable, *sys.argv)
+            subprocess.Popen(script_name + ".exe")
+            sys.exit()
     
     def seed_button_1_clicked(self):
         self.seed_field.setText(str(random.randint(1000000000, 9999999999)))
     
     def seed_button_3_clicked(self):
+        #Check seed
+        
         if not config.get("Misc", "sSeed"):
             return
         self.seed_test = self.cast_seed(config.get("Misc", "sSeed"))
-        self.setEnabled(False)
-        QApplication.processEvents()
+        self.map_test = self.map
         
-        self.progress_bar = QProgressDialog("Initializing...", None, 0, 1, self)
-        self.progress_bar.setWindowTitle("Status")
-        self.progress_bar.setWindowModality(Qt.WindowModal)
+        #Start
         
-        self.worker = Generate(self.progress_bar, self.seed_test, self.map, True)
-        self.worker.signaller.progress.connect(self.set_progress)
-        self.worker.signaller.finished.connect(self.test_finished)
-        self.worker.start()
+        Manager.init()
+        Manager.load_mod_data()
+        
+        Item.init()
+        Bloodless.init()
+        
+        random.seed(self.seed_test)
+        if self.map_test:
+            pass
+        elif config.getboolean("MapRandomization", "bRoomLayout"):
+            if glob.glob("MapEdit\\Custom\\*.json"):
+                self.map_test = random.choice(glob.glob("MapEdit\\Custom\\*.json"))
+            else:
+                self.map_test = ""
+        else:
+            self.map_test = ""
+        Manager.load_map(self.map_test)
+        
+        if self.map_test:
+            Item.unused_room_check()
+        
+        if not config.getboolean("GameDifficulty", "bNormal"):
+            Item.hard_enemy_logic()
+        
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            random.seed(self.seed_test)
+            Item.extra_logic()
+            Item.key_logic()
+        
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            random.seed(self.seed_test)
+            Bloodless.extra_logic()
+            Bloodless.candle_shuffle()
+        
+        box = QMessageBox(self)
+        box.setWindowTitle("Test")
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            box.setText(Item.create_log_string(self.seed_test, self.map_test))
+        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            box.setText(Bloodless.create_log_string(self.seed_test, self.map_test))
+        else:
+            box.setText("No keys to randomize")
+        box.exec()
     
     def seed_button_2_clicked(self):
         if not config.get("Misc", "sSeed"):
             return
-        self.seed = config.get("Misc", "sSeed")
+        self.seed = self.cast_seed(config.get("Misc", "sSeed"))
         self.seed_box.close()
     
     def button_3_clicked(self):
@@ -1905,13 +1919,13 @@ class Main(QWidget):
             self.add_to_list("UI", "Map_StartingPoint" , [self.check_box_12])
 
     def button_5_clicked(self):
-        #Check if path exists
+        #Check if path is valid
         
-        if config.get("Misc", "sOutputPath") and not os.path.isdir(config.get("Misc", "sOutputPath")):
-            self.no_path()
+        if not config.get("Misc", "sGamePath") or not os.path.isdir(config.get("Misc", "sGamePath")) or config.get("Misc", "sGamePath").split("\\")[-1] != "Paks":
+            self.error("Game path invalid.")
             return
         
-        #Seed prompt
+        #Prompt seed options
         
         self.seed = ""
         if self.check_rando_options():
@@ -1921,36 +1935,24 @@ class Main(QWidget):
             self.seed_box.exec()
             if not self.seed:
                 return
-        self.seed = self.cast_seed(self.seed)
         
         #Start
         
-        self.setEnabled(False)
-        QApplication.processEvents()
-        
-        self.progress_bar = QProgressDialog("Initializing...", None, 0, 6 + len(os.listdir("UAssetGUI\\DataTable")) + len(os.listdir("UAssetGUI\\StringTable")) + len(os.listdir("UAssetGUI\\Blueprint")), self)
-        self.progress_bar.setWindowTitle("Status")
-        self.progress_bar.setWindowModality(Qt.WindowModal)
-        
-        self.worker = Generate(self.progress_bar, self.seed, self.map, False)
-        self.worker.signaller.progress.connect(self.set_progress)
-        self.worker.signaller.finished.connect(self.seed_finished)
-        self.worker.start()
+        if os.path.isdir(Manager.asset_dir):
+            self.generate_pak()
+        else:
+            self.import_assets(self.generate_pak)
     
     def button_6_clicked(self):
-        path = QFileDialog.getExistingDirectory(self, "Select extracted game directory (\"BloodstainedRotN\")")
-        if path:
-            self.setEnabled(False)
-            QApplication.processEvents()
+        #Check if path is valid
         
-            self.progress_bar = QProgressDialog("Importing...", None, 0, 1 + len(os.listdir("UAssetGUI\\DataTable")) + len(os.listdir("UAssetGUI\\StringTable")) + len(os.listdir("UAssetGUI\\Blueprint")) + len(os.listdir("UAssetGUI\\Level")), self)
-            self.progress_bar.setWindowTitle("Status")
-            self.progress_bar.setWindowModality(Qt.WindowModal)
-            
-            self.worker = Convert(path)
-            self.worker.signaller.progress.connect(self.set_progress)
-            self.worker.signaller.finished.connect(self.convert_finished)
-            self.worker.start()
+        if not config.get("Misc", "sGamePath") or not os.path.isdir(config.get("Misc", "sGamePath")) or config.get("Misc", "sGamePath").split("\\")[-1] != "Paks":
+            self.error("Game path invalid.")
+            return
+        
+        #Start
+        
+        self.import_assets(self.import_finished)
     
     def button_7_clicked(self):
         label1_image = QLabel()
@@ -2023,18 +2025,11 @@ class Main(QWidget):
         box.setWindowTitle("Credits")
         box.exec()
     
-    def no_path(self):
+    def error(self, text):
         box = QMessageBox(self)
         box.setWindowTitle("Error")
         box.setIcon(QMessageBox.Critical)
-        box.setText("Output path invalid.")
-        box.exec()
-    
-    def error(self):
-        box = QMessageBox(self)
-        box.setWindowTitle("Error")
-        box.setIcon(QMessageBox.Critical)
-        box.setText("MapEditor.exe is running, cannot overwrite.")
+        box.setText(text)
         box.exec()
     
     def check_for_updates(self):
@@ -2054,7 +2049,7 @@ class Main(QWidget):
             choice = QMessageBox.question(self, "Auto Updater", "New version found:\n\n" + api["body"] + "\n\nUpdate ?", QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.Yes:
                 if "Map Editor.exe" in (i.name() for i in psutil.process_iter()):
-                    self.error()
+                    self.error("MapEditor.exe is running, cannot overwrite.")
                     self.check_for_resolution()
                     return
                 

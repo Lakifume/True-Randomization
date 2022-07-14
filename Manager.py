@@ -1,14 +1,59 @@
 import os
+import clr
 import shutil
 import json
 import math
 import glob
 import random
 import struct
+import sys
 import colorsys
 import copy
+import filecmp
 from enum import Enum
 from collections import OrderedDict
+
+#Open file information
+with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
+    file_to_path = json.load(file_reader)
+file_to_type = {}
+for i in file_to_path:
+    if "DataTable" in file_to_path[i]:
+        file_to_type[i] = "DataTable"
+    elif "Level" in file_to_path[i]:
+        file_to_type[i] = "Level"
+    elif "StringTable" in file_to_path[i]:
+        file_to_type[i] = "StringTable"
+    elif "Material" in file_to_path[i]:
+        file_to_type[i] = "Material"
+    elif "Texture" in file_to_path[i] or "UI" in file_to_path[i] and not "StartupSelecter" in file_to_path[i]:
+        file_to_type[i] = "Texture"
+    elif "Sound" in file_to_path[i]:
+        file_to_type[i] = "Sound"
+    else:
+        file_to_type[i] = "Blueprint"
+load_types = ["DataTable", "Level", "StringTable", "Blueprint", "Material"]
+simplify_types = ["DataTable", "StringTable"]
+
+mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
+asset_dir = "Game"
+
+#Open UAssetAPI module
+sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
+clr.AddReference("UAssetAPI")
+
+from UAssetAPI import *
+from UAssetAPI.FieldTypes import *
+from UAssetAPI.JSON import *
+from UAssetAPI.Kismet import *
+from UAssetAPI.Kismet.Bytecode import *
+from UAssetAPI.Kismet.Bytecode.Expressions import *
+from UAssetAPI.PropertyTypes import *
+from UAssetAPI.PropertyTypes.Objects import *
+from UAssetAPI.PropertyTypes.Structs import *
+from UAssetAPI.PropertyTypes.Structs.Movies import *
+from UAssetAPI.UnrealTypes import *
+from UAssetAPI.Unversioned import *
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -47,6 +92,12 @@ class Door:
         self.breakable = breakable
 
 def init():
+    global datatable
+    datatable = {}
+    global original_datatable
+    original_datatable = {}
+    global stringtable
+    stringtable = {}
     global used_doors
     used_doors = []
     global bit_weapons
@@ -73,54 +124,52 @@ def init():
         "TrustMusket"
     ]
 
-def load_content():
-    #DataTable
-    global full_datatable
-    full_datatable = {}
-    for i in os.listdir("UAssetGUI\\DataTable"):
-        name, extension = os.path.splitext(i)
-        full_datatable[name] = {}
-        with open("UAssetGUI\\DataTable\\" + i, "r", encoding="utf8") as file_reader:
-            full_datatable[name]["DataTable"] = json.load(file_reader)
-    #Store extra data for convenience
-    for i in full_datatable:
-        full_datatable[i]["KeyIndex"] = {}
-        for e in range(len(full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"])):
-            full_datatable[i]["KeyIndex"][full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"][e]["Name"]] = e
-        full_datatable[i]["ValueIndex"] = {}
-        for e in range(len(full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"][0]["Value"])):
-            full_datatable[i]["ValueIndex"][full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"][0]["Value"][e]["Name"]] = e
-        full_datatable[i]["ArrayStruct"] = {}
-        for e in full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"]:
-            for o in e["Value"]:
-                if "ArrayPropertyData" in o["$type"] and o["Value"]:
-                    full_datatable[i]["ArrayStruct"][o["Name"]] = o["Value"][0]
-    #StringTable
-    global full_stringtable
-    full_stringtable = {}
-    for i in os.listdir("UAssetGUI\\StringTable"):
-        name, extension = os.path.splitext(i)
-        with open("UAssetGUI\\StringTable\\" + i, "r", encoding="utf8") as file_reader:
-            full_stringtable[name] = json.load(file_reader)
-    #Blueprint
-    global full_blueprint
-    full_blueprint = {}
-    for i in os.listdir("UAssetGUI\\Blueprint"):
-        name, extension = os.path.splitext(i)
-        with open("UAssetGUI\\Blueprint\\" + i, "r", encoding="utf8") as file_reader:
-            full_blueprint[name] = json.load(file_reader)
+def load_game_data():
+    global game_data
+    game_data = {}
+    global data_struct
+    data_struct = {}
+    for i in file_to_type:
+        if file_to_type[i] in load_types:
+            #Load all game data in one dict
+            if file_to_type[i] == "Level":
+                extension = ".umap"
+            else:
+                extension = ".uasset"
+            game_data[i] = UAsset(asset_dir + "\\" + file_to_path[i] + "\\" + i + extension, UE4Version(517))
+            #Store extra data for convenience
+            if file_to_type[i] == "DataTable":
+                for e in game_data[i].Exports[0].Table.Data:
+                    for o in e.Value:
+                        if str(o.PropertyType) == "ArrayProperty":
+                            if str(o.ArrayType) == "StructProperty":
+                                for u in o.Value:
+                                    data_struct[str(u.Name)] = u
     
-def load_data():
-    global dictionary
-    dictionary = {}
+def load_mod_data():
+    global mod_data
+    mod_data = {}
     for i in os.listdir("Data\\Dictionary"):
         name, extension = os.path.splitext(i)
         with open("Data\\Dictionary\\" + i, "r", encoding="utf8") as file_reader:
-            dictionary[name] = json.load(file_reader)
-    with open("MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json", "r", encoding="utf8") as file_reader:
+            mod_data[name] = json.load(file_reader)
+
+def load_map(path):
+    #Load map related files
+    if not path:
+        path = "MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json"
+    with open(path, "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
-    dictionary["MapLogic"] = json_file["KeyLogic"]
-    dictionary["OriginalMapOrder"] = [
+    if "PB_DT_RoomMaster" in datatable:
+        for i in json_file["MapData"]:
+            for e in json_file["MapData"][i]:
+                datatable["PB_DT_RoomMaster"][i][e] = json_file["MapData"][i][e]
+    else:
+        datatable["PB_DT_RoomMaster"] = json_file["MapData"]
+    mod_data["MapLogic"] = json_file["KeyLogic"]
+    mod_data["BloodlessModeMapLogic"] = copy.deepcopy(mod_data["MapLogic"])
+    mod_data["MapOrder"] = json_file["AreaOrder"]
+    mod_data["OriginalMapOrder"] = [
       "m01SIP",
       "m02VIL",
       "m03ENT",
@@ -139,7 +188,8 @@ def load_data():
       "m10BIG",
       "m18ICE"
     ]
-    dictionary["BloodlessModeOriginalMapOrder"] = [
+    mod_data["BloodlessModeMapOrder"] = ["m05SAN"]
+    mod_data["BloodlessModeOriginalMapOrder"] = [
       "m05SAN",
       "m03ENT",
       "m02VIL",
@@ -159,13 +209,7 @@ def load_data():
       "m18ICE"
     ]
 
-def load_custom_map(path):
-    #Load the file for a custom map, overriding the vanilla RoomMaster file
-    with open(path, "r", encoding="utf8") as file_reader:
-        json_file = json.load(file_reader)
-    datatable["PB_DT_RoomMaster"] = json_file["MapData"]
-    dictionary["MapLogic"] = json_file["KeyLogic"]
-    dictionary["MapOrder"] = json_file["AreaOrder"]
+def fix_custom_map():
     #The two underground rooms with very specific shapes only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
@@ -196,111 +240,156 @@ def load_custom_map(path):
             datatable["PB_DT_RoomMaster"][i]["AreaID"] = "EAreaID::m03ENT"
 
 def complex_to_simple():
-    #The json files outputted by UAssetGUI are hard to read and would take up too much text space in the code
-    #Convert them to a simplified version that is similar to Serializer's outputs
-    global datatable
-    datatable = {}
-    for i in full_datatable:
-        datatable[i] = {}
-        for e in full_datatable[i]["DataTable"]["Exports"][0]["Table"]["Data"]:
-            datatable[i][e["Name"]] = {}
-            for o in e["Value"]:
-                datatable[i][e["Name"]][o["Name"]] = read_datatable(i, e["Name"], o["Name"])
-    global stringtable
-    stringtable = {}
-    for i in full_stringtable:
-        stringtable[i] = {}
-        for e in full_stringtable[i]["Exports"][0]["Table"]["Value"]:
-            stringtable[i][e[0]] = e[1]
-    #RoomMaster already has a simplified version from the map editor
-    with open("MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json", "r", encoding="utf8") as file_reader:
-        json_file = json.load(file_reader)
-    datatable["PB_DT_RoomMaster"] = json_file["MapData"]
+    #The uasset data is inconvenient to access and would take up too much text space in the code
+    #Convert them to a simplified dictionary that is similar to Serializer's outputs
+    for i in file_to_type:
+        if file_to_type[i] in simplify_types:
+            if file_to_type[i] == "DataTable":
+                datatable[i] = {}
+                for e in game_data[i].Exports[0].Table.Data:
+                    datatable[i][str(e.Name)] = {}
+                    for o in e.Value:
+                        datatable[i][str(e.Name)][str(o.Name)] = read_datatable(o)
+                original_datatable[i] = copy.deepcopy(datatable[i])
+            elif file_to_type[i] == "StringTable":
+                stringtable[i] = {}
+                for e in game_data[i].Exports[0].Table:
+                    stringtable[i][str(e.Key)] = str(e.Value)
 
 def simple_to_complex():
     #Convert the simplified datatables back to their complex versions
-    for i in datatable:
-        for e in datatable[i]:
-            if not e in full_datatable[i]["KeyIndex"]:
-                append_datatable_entry(i, e)
-            for o in datatable[i][e]:
-                if i == "PB_DT_RoomMaster" and o == "Unused":
-                    continue
-                patch_datatable(i, e, o, datatable[i][e][o])
-    for i in stringtable:
-        count = 0
-        for e in stringtable[i]:
-            full_stringtable[i]["Exports"][0]["Table"]["Value"][count] = [e, stringtable[i][e]]
-            count += 1
+    for i in file_to_type:
+        if file_to_type[i] in simplify_types:
+            if file_to_type[i] == "DataTable":
+                ecount = 0
+                for e in datatable[i]:
+                    ocount = 0
+                    #If the datatables had entries added then add an entry slot in the uasset too
+                    if ecount >= game_data[i].Exports[0].Table.Data.Count:
+                        append_datatable_entry(i, e)
+                    for o in datatable[i][e]:
+                        #The unused field in room master is only used by the mod, not by the game
+                        if i == "PB_DT_RoomMaster" and o == "Unused":
+                            ocount += 1
+                            continue
+                        #Only patch the value if it is different from the original, saves a lot of load time
+                        if e in original_datatable[i]:
+                            if datatable[i][e][o] == original_datatable[i][e][o]:
+                                ocount += 1
+                                continue
+                        patch_datatable(i, ecount, ocount, datatable[i][e][o])
+                        ocount += 1
+                    ecount += 1
+            elif file_to_type[i] == "StringTable":
+                game_data[i].Exports[0].Table.Clear()
+                for e in stringtable[i]:
+                    game_data[i].Exports[0].Table.Add(FString(e), FString(stringtable[i][e]))
 
-def read_datatable(file, entry, data):
-    #Convert strings to indexes
-    entry = full_datatable[file]["KeyIndex"][entry]
-    data  = full_datatable[file]["ValueIndex"][data]
-    #Handle special data types
-    type  = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
-    if "BytePropertyData" in type:
-        value_name = "EnumValue"
+def read_datatable(struct):
+    #Read a uasset variable as a python variable
+    type = str(struct.PropertyType)
+    if type == "ArrayProperty":
+        sub_type = str(struct.ArrayType)
+        value = []
+        for i in struct.Value:
+            if sub_type == "ByteProperty":
+                sub_value = str(i.EnumValue)
+            elif sub_type == "FloatProperty":
+                sub_value = round(i.Value, 3)
+            elif sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty", "TextProperty"] and struct.Value:
+                sub_value = str(i.Value)
+            elif sub_type == "StructProperty":
+                sub_value = {}
+                for e in i.Value:
+                    sub_sub_type = str(e.PropertyType)
+                    if sub_sub_type == "ByteProperty":
+                        sub_sub_value = str(e.EnumValue)
+                    elif sub_sub_type == "FloatProperty":
+                        sub_sub_value = round(e.Value, 3)
+                    elif sub_sub_type in ["EnumProperty", "NameProperty", "StrProperty"]:
+                        sub_sub_value = str(e.Value)
+                    else:
+                        sub_sub_value = e.Value
+                    sub_value[str(e.Name)] = sub_sub_value
+            else:
+                sub_value = i.Value
+            value.append(sub_value)
+    elif type == "ByteProperty":
+        value = str(struct.EnumValue)
+    elif type == "FloatProperty":
+        value = round(struct.Value, 3)
+    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty", "TextProperty"] and struct.Value:
+        value = str(struct.Value)
     else:
-        value_name = "Value"
-    value = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data][value_name]
-    #Round floats to 3 digits and fix the "+0" field
-    if "FloatPropertyData" in type:
-        if value == "+0":
-            value = 0.0
-        else:
-            value = round(value, 3)
-    #Convert array of structs to simple array
-    elif "ArrayPropertyData" in type:
-        sub_type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["ArrayType"]
-        if sub_type == "ByteProperty":
-            sub_value_name = "EnumValue"
-        else:
-            sub_value_name = "Value"
-        new_array = []
-        for i in value:
-            new_array.append(i[sub_value_name])
-        value = new_array
+        value = struct.Value
     return value
 
 def patch_datatable(file, entry, data, value):
-    #Convert strings to indexes
-    entry = full_datatable[file]["KeyIndex"][entry]
-    data  = full_datatable[file]["ValueIndex"][data]
-    #Handle special data types
-    type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["$type"]
-    name = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["Name"]
-    if "BytePropertyData" in type:
-        value_name = "EnumValue"
+    #Patch a python variable over a uasset's variable
+    struct = game_data[file].Exports[0].Table.Data[entry].Value[data]
+    type = str(struct.PropertyType)
+    if type == "ArrayProperty":
+        sub_type = str(struct.ArrayType)
+        new_list = []
+        for i in value:
+            if sub_type == "BoolProperty":
+                sub_struct = BoolPropertyData()
+                sub_struct.Value = i
+            elif sub_type == "ByteProperty":
+                sub_struct = BytePropertyData()
+                sub_struct.ByteType = BytePropertyType.FName
+                sub_struct.EnumValue = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+            elif sub_type == "EnumProperty":
+                sub_struct = EnumPropertyData()
+                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+            elif sub_type == "FloatProperty":
+                sub_struct = FloatPropertyData()
+                sub_struct.Value = i
+            elif sub_type == "IntProperty":
+                sub_struct = IntPropertyData()
+                sub_struct.Value = i
+            elif sub_type == "NameProperty":
+                sub_struct = NamePropertyData()
+                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+            elif sub_type == "SoftObjectProperty":
+                sub_struct = SoftObjectPropertyData()
+                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+            elif sub_type == "StrProperty":
+                sub_struct = StrPropertyData()
+                sub_struct.Value = FString(i)
+            elif sub_type == "StructProperty":
+                sub_struct = data_struct[str(struct.Name)].Clone()
+                count = 0
+                for e in i:
+                    sub_sub_type = str(sub_struct.Value[count].PropertyType)
+                    if sub_sub_type == "ByteProperty":
+                        sub_struct.Value[count].EnumValue = FName(game_data[file], split_fname(i[e])[0], split_fname(i[e])[1] + 1)
+                    elif sub_sub_type in ["NameProperty", "EnumProperty"]:
+                        sub_struct.Value[count].Value = FName(game_data[file], split_fname(i[e])[0], split_fname(i[e])[1] + 1)
+                    elif sub_sub_type == "StrProperty":
+                        sub_struct.Value[count].Value = FString(i[e])
+                    else:
+                        sub_struct.Value[count].Value = i[e]
+                    count += 1
+            elif sub_type == "TextProperty":
+                sub_struct = TextPropertyData()
+                sub_struct.Value = FString(i)
+            new_list.append(sub_struct)
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = new_list
+    elif type == "ByteProperty":
+        game_data[file].Exports[0].Table.Data[entry].Value[data].EnumValue = FName(game_data[file], split_fname(value)[0], split_fname(value)[1] + 1)
+    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName(game_data[file], split_fname(value)[0], split_fname(value)[1] + 1)
+    elif type in ["StrProperty", "TextProperty"] and value:
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
     else:
-        value_name = "Value"
-    #Convert simple array to an array of structs
-    if "ArrayPropertyData" in type:
-        sub_type = type = full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["ArrayType"]
-        if sub_type == "ByteProperty":
-            sub_value_name = "EnumValue"
-        else:
-            sub_value_name = "Value"
-        if value:
-            try:
-                del full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"]
-            except KeyError:
-                pass
-            new_array = []
-            for i in range(len(value)):
-                new_struct = copy.deepcopy(full_datatable[file]["ArrayStruct"][name])
-                new_struct[sub_value_name] = value[i]
-                new_array.append(new_struct)
-            value = new_array
-        else:
-            full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data]["DummyStruct"] = None
-    #Patch
-    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][entry]["Value"][data][value_name] = value
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = value
 
 def append_datatable_entry(file, entry):
-    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"].append(copy.deepcopy(full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][0]))
-    full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"][-1]["Name"] = entry
-    full_datatable[file]["KeyIndex"][entry] = len(full_datatable[file]["DataTable"]["Exports"][0]["Table"]["Data"]) - 1
+    #Append a new datatable entry to the end to be edited later on
+    new_entry = game_data[file].Exports[0].Table.Data[0].Clone()
+    new_entry.Name = FName(game_data[file], split_fname(entry)[0], split_fname(entry)[1] + 1)
+    game_data[file].Exports[0].Table.Data.Add(new_entry)
 
 def apply_tweaks():
     #Make levels identical in all modes
@@ -318,10 +407,10 @@ def apply_tweaks():
         datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyStrIntMultiplier"]   = 1.0
         datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyConMndMultiplier"]   = 1.0
     #Apply manual tweaks defined in the json
-    for i in dictionary["DefaultTweak"]:
-        for e in dictionary["DefaultTweak"][i]:
-            for o in dictionary["DefaultTweak"][i][e]:
-                datatable[i][e][o] = dictionary["DefaultTweak"][i][e][o]
+    for i in mod_data["DefaultTweak"]:
+        for e in mod_data["DefaultTweak"][i]:
+            for o in mod_data["DefaultTweak"][i][e]:
+                datatable[i][e][o] = mod_data["DefaultTweak"][i][e][o]
     #Loop through all enemies
     for i in datatable["PB_DT_CharacterParameterMaster"]:
         if not is_enemy(i)["Enemy"]:
@@ -383,21 +472,21 @@ def apply_tweaks():
         else:
             drop_rate_multiplier = 1.0
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["ShardRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = dictionary["ShardDrop"]["ItemRate"]*drop_rate_multiplier
+            datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = mod_data["ShardDrop"]["ItemRate"]*drop_rate_multiplier
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] = dictionary["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+            datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["CommonRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["CommonRate"] = dictionary["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+            datatable["PB_DT_DropRateMaster"][i]["CommonRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] = dictionary["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+            datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] = dictionary["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+            datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
     #Loop through all items
     for i in datatable["PB_DT_ItemMaster"]:
         #Remove dishes from shop to prevent heal spam
         #In vanilla you can easily stock up on an infinite amount of them which breaks the game completely
         #This change also makes regular potions more viable now
-        if i in dictionary["ItemDrop"]["Dish"]["ItemPool"]:
+        if i in mod_data["ItemDrop"]["Dish"]["ItemPool"]:
             datatable["PB_DT_ItemMaster"][i]["max"]       = 1
             datatable["PB_DT_ItemMaster"][i]["buyPrice"]  = 0
             datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 0
@@ -414,39 +503,40 @@ def apply_tweaks():
         #Make all shards ignore standstill
         datatable["PB_DT_ShardMaster"][i]["IsStopByAccelWorld"] = False
     #Rename the second Zangetsu boss so that he isn't confused with the first
-    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = dictionary["EnemyTranslation"]["N1011_STRONG"]
+    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
     #Update Jinrai cost description
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
     #Add Breeder and Greedling to the enemy archives
-    #add_enemy_to_archive("N3125", ["SYS_SEN_AreaName021"], None, "N3124")
-    #add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
+    add_enemy_to_archive("N3125", ["SYS_SEN_AreaName021"], None, "N3124")
+    add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
     #Rebalance boss rush mode a bit
     #Remove all consumables from inventory
-    for i in full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][7]["Value"]:
-        i["Value"][1]["Value"] = 0
+    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
+        i.Value[1].Value = 0
     #Start both stages at level 50
     for i in range(8, 14):
-        full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][i]["Value"] = 50
+        game_data["PBExtraModeInfo_BP"].Exports[1].Data[i].Value = 50
     #Give all bosses level 66
-    for i in full_blueprint["PBExtraModeInfo_BP"]["Exports"][1]["Data"][14]["Value"]:
-        i[1]["Value"] = 66
-    #Keep a dict of the current enemy stats for easier scaling of during randomization
-    global original_enemy_stats
-    original_enemy_stats = {}
-    for i in datatable["PB_DT_CharacterParameterMaster"]:
-        original_enemy_stats[i] = {}
-        original_enemy_stats[i]["Level"] = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        original_enemy_stats[i]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][i]["POI"]
-        original_enemy_stats[i]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
-        original_enemy_stats[i]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
-        original_enemy_stats[i]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
+    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
+        i.Value.Value = 66
+    #Starting equipment test
+    #sub_struct = NamePropertyData()
+    #sub_struct.Name = FName(game_data["PBExtraModeInfo_BP"], "EffectiveShard")
+    #sub_struct.Value = FName(game_data["PBExtraModeInfo_BP"], "Accelerator")
+    #game_data["PBExtraModeInfo_BP"].Exports[1].Data[0].Value.Add(sub_struct)
+
+def search_and_replace_string(filename, entry_keyword, data, old_value, new_value):
+    #Search for a specific piece of data to change in a level file and swap it
+    for i in game_data[filename].Exports:
+        if entry_keyword in str(i.ObjectName):
+            for e in i.Data:
+                if str(e.Name) == data and str(e.Value) == old_value:
+                    e.Value = FName(game_data[filename], split_fname(new_value)[0], split_fname(new_value)[1] + 1)
 
 def update_descriptions():
     #Add magical stats to descriptions
     for i in datatable["PB_DT_ArmorMaster"]:
-        try:
-            test = stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + i]
-        except KeyError:
+        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_ArmorMaster"][i]["MagicAttack"] != 0:
             append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][i]["MagicAttack"]) + "</>")
@@ -454,9 +544,7 @@ def update_descriptions():
             append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][i]["MagicDefense"]) + "</>")
     #Add restoration amount to descriptions
     for i in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
-        try:
-            test = stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + i]
-        except KeyError:
+        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Type"] == "EPBSpecialEffect::ChangeHP":
             append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Parameter01"])) + "</>")
@@ -465,188 +553,127 @@ def update_descriptions():
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
-def write_log(filename, filepath, log):
-    with open(filepath + "\\" + filename + ".json", "w", encoding="utf8") as file_writer:
+def remove_difficulties(current):
+    new_list = []
+    sub_struct = BytePropertyData()
+    sub_struct.ByteType = BytePropertyType.FName
+    sub_struct.EnumValue = FName(game_data["DifficultSelecter"], "EPBGameLevel::" + current)
+    new_list = [sub_struct]
+    game_data["DifficultSelecter"].Exports[2].Data[1].Value = new_list
+
+def default_nightmare_cheatcode():
+    game_data["EntryNameSetter"].Exports[110].Data[0].CultureInvariantString = FString("NIGHTMARE")
+    game_data["EntryNameSetter"].Exports[110].Data[1].CultureInvariantString = FString("NIGHTMARE")
+    game_data["EntryNameSetter"].Exports[111].Data[2].CultureInvariantString = FString("NIGHTMARE")
+    game_data["EntryNameSetter"].Exports[111].Data[3].CultureInvariantString = FString("NIGHTMARE")
+
+def write_log(filename, log):
+    with open("SpoilerLog\\" + filename + ".json", "w", encoding="utf8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
-def convert_json(filename, content):
-    #Convert json to its asset files
-    name, extension = os.path.splitext(filename)
-    absolute_asset_dir = os.path.abspath("UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][name])
-    with open("UAssetGUI\\" + name + ".json", "w", encoding="utf8") as file_writer:
-        file_writer.write(json.dumps(content, ensure_ascii=False, indent=2))
-    
-    root = os.getcwd()
-    os.chdir("UAssetGUI")
-    os.system("cmd /c UAssetGUI.exe fromjson " + name + ".json \"" + absolute_asset_dir + "\\" + filename + "\"")
-    os.chdir(root)
-    
-    #UAssetGUI does not throw an exception if it fails to convert something so throw one from here
-    if not os.path.isfile(absolute_asset_dir + "\\" + filename):
-        raise FileNotFoundError(name + ".json failed to convert")
-    
-    os.remove("UAssetGUI\\" + name + ".json")
+def write_files():
+    #Dump all uasset objects to files
+    for i in file_to_type:
+        if file_to_type[i] in load_types:
+            if file_to_type[i] == "Level":
+                extension = ".umap"
+            else:
+                extension = ".uasset"
+            game_data[i].Write(mod_dir + "\\" + file_to_path[i] + "\\" + i + extension)
 
-def convert_asset(game_dir, filename, destination):
-    #Convert an asset's files to a single json
-    name, extension = os.path.splitext(filename)
-    root = os.getcwd()
-    os.chdir("UAssetGUI")
-    os.system("cmd /c UAssetGUI.exe tojson \"" + game_dir + "\\" + dictionary["FileToPath"][name] + "\\" + filename + "\" \"" + destination + "\\" + name + ".json\" VER_UE4_22")
-    os.chdir(root)
-
-def copy_file(game_dir, filename, destination):
-    #Copy all files of an asset based on its name
-    for i in os.listdir(game_dir + "\\" + dictionary["FileToPath"][filename]):
-        name, extension = os.path.splitext(i)
-        if name == filename:
-            shutil.copyfile(game_dir + "\\" + dictionary["FileToPath"][filename] + "\\" + i, destination + "\\" + i)
-
-def convert_miriam_candle(candle, shard):
-    #While candle shards have entries in DroprateMaster those are completely ignored by the game
-    #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
-    candle_type = datatable["PB_DT_ShardMaster"][candle]["ShardType"]
-    shard_type  = datatable["PB_DT_ShardMaster"][shard]["ShardType"]
-    for i in dictionary["EnemyLocation"][candle]["NormalModeRooms"]:
-        filename = i + "_Gimmick"
-        #Read json
-        with open("UAssetGUI\\Level\\" + filename + ".json", "r", encoding="utf-8") as file_reader:
-            level = json.load(file_reader)
-        #Patch json
-        for e in level["Exports"]:
-            for o in e["Data"]:
-                try:
-                    if o["Value"] == candle:
-                        o["Value"] = shard
-                except TypeError:
-                    continue
-                except IndexError:
-                    continue
-                except KeyError:
-                    continue
-        #Convert
-        convert_json(filename + ".umap", level)
-
-def convert_bloodless_candle(bloodless_datatable):
-    #All of Bloodless' abilities are stored inside of shard candles
-    #Just like for Miriam those are defined inside of the level files
-    tower_check = 0
-    for i in bloodless_datatable:
-        #Room to file
-        filename = remove_inst(bloodless_datatable[i]) + "_Gimmick"
-        #Valac's room has two candle abilities and is the only one in the game
-        #Setup an exception so that this file searches for a specific ability
-        if bloodless_datatable[i] == "m08TWR_019":
-            search = "EPBBloodlessAbilityType::BLD_ABILITY_BLOOD_STEAL"
-        elif bloodless_datatable[i] == "m08TWR_019_1":
-            search = "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP"
-        else:
-            search = "EPBBloodlessAbilityType::"
-        #Read json
-        #Open the same file a second time if it is Valac's room
-        if "m08TWR_019" in filename and tower_check == 1:
-            with open("UAssetGUI\\" + filename + ".json", "r", encoding="utf-8") as file_reader:
-                level = json.load(file_reader)
-        else:
-            with open("UAssetGUI\\Level\\" + filename + ".json", "r", encoding="utf-8") as file_reader:
-                level = json.load(file_reader)
-        #Patch json
-        for e in level["Exports"]:
-            for o in e["Data"]:
-                try:
-                    if search in o["Value"]:
-                        o["Value"] = "EPBBloodlessAbilityType::" + i
-                except TypeError:
-                    continue
-                except IndexError:
-                    continue
-                except KeyError:
-                    continue
-        #If it is Valac's room for the first time only dump the information
-        if "m08TWR_019" in filename and tower_check == 0:
-            with open("UAssetGUI\\" + filename + ".json", "w", encoding="utf-8") as file_writer:
-                file_writer.write(json.dumps(level, ensure_ascii=False, indent=2))
-        #Otherwise dump and convert
-        else:
-            convert_json(filename + ".umap", level)
-        #Update tower check if the edited file was Valac's room
-        if "m08TWR_019" in filename:
-            tower_check += 1
+def remove_unchanged():
+    #Since uasset objects cannot be compared successfully we need to compare the files after they've been written
+    #That way unchanged files get removed from the pak
+    for i in file_to_path:
+        remove = True
+        for e in os.listdir(mod_dir + "\\" + file_to_path[i]):
+            name, extension = os.path.splitext(e)
+            if name == i:
+                if not filecmp.cmp(mod_dir + "\\" + file_to_path[i] + "\\" + e, asset_dir + "\\" + file_to_path[i] + "\\" + e, shallow=False):
+                    remove = False
+        if remove:
+            for e in os.listdir(mod_dir + "\\" + file_to_path[i]):
+                name, extension = os.path.splitext(e)
+                if name == i:
+                    os.remove(mod_dir + "\\" + file_to_path[i] + "\\" + e)
 
 def import_texture(filename):
     #Convert DDS to game assets dynamically instead of cooking them within Unreal Editor
+    absolute_asset_dir   = os.path.abspath(asset_dir + "\\" + file_to_path[filename])
     absolute_texture_dir = os.path.abspath("Data\\Texture")
-    absolute_asset_dir   = os.path.abspath("UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename])
+    absolute_mod_dir     = os.path.abspath(mod_dir + "\\" + file_to_path[filename])
     
     root = os.getcwd()
-    os.chdir("UE4 DDS Tools")
-    os.system("cmd /c python\python.exe src\main.py \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_asset_dir + "\" --mode=inject")
+    os.chdir("Tools\\UE4 DDS Tools")
+    os.system("cmd /c python\python.exe src\main.py \"" + absolute_asset_dir  + "\\" + filename + ".uasset\" \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_mod_dir + "\" --mode=inject --version=4.22")
     os.chdir(root)
     
     #UE4 DDS Tools does output an error but it does not interrupt the program if a texture fails to convert so do it from here
-    if not os.path.isfile(absolute_asset_dir + "\\" + filename + ".uasset"):
+    if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
         raise FileNotFoundError(filename + ".dds failed to inject")
 
 def import_music(filename):
     #Start by coppying all secondary music files to destination
-    for i in os.listdir("UAssetGUI\\Other"):
+    for i in os.listdir(asset_dir + "\\" + file_to_path[filename]):
         name, extension = os.path.splitext(i)
         if extension == ".awb":
             continue
         if name == filename:
-            shutil.copyfile("UAssetGUI\\Other\\" + filename + ".uasset", "UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename] + "\\" + i)
+            shutil.copyfile(asset_dir + "\\" + file_to_path[filename] + "\\" + i, mod_dir + "\\" + file_to_path[filename] + "\\" + i)
     #Append the HCA data to the AWB's header
-    with open("UAssetGUI\\Other\\" + filename + ".awb", "rb") as inputfile, open("UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename] + "\\" + filename + ".awb", "wb") as outfile:
+    with open(asset_dir + "\\" + file_to_path[filename] + "\\" + filename + ".awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path[filename] + "\\" + filename + ".awb", "wb") as outfile:
         offset = inputfile.read().find(str.encode("HCA"))
         inputfile.seek(0)
         outfile.write(inputfile.read(offset))
         with open("Data\\Music\\" + filename + ".hca", "rb") as hca:
             outfile.write(hca.read())
 
-def remove_level_actor(filename, search):
-    #While replacing actors is a complex process removing them is as simple as changing their names to some dummy text via hex editing
-    destination = "UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename] + "\\" + filename
-    for i in ["umap", "uexp"]:
-        shutil.copyfile("UAssetGUI\\Other\\" + filename + "." + i, destination + "." + i)
-        with open(destination + "." + i, "r+b") as file:
-            for e in range(os.path.getsize(file.name)):
-                file.seek(e)
-                if file.read(len(search)) == str.encode(search):
-                    file.seek(e)
-                    for o in search:
-                        file.write(str.encode("X"))
+def remove_level_actor(filename, actors):
+    #While replacing actors is a complex process removing them only requires a few edits
+    if file_to_type[filename] != "Level":
+        raise "Input is not a level file"
+    remove = []
+    count = 0
+    for i in game_data[filename].Exports:
+        count += 1
+        if str(i.ObjectName) in actors:
+            i.OuterIndex = FPackageIndex(0)
+            remove.append(count)
+    for i in game_data[filename].Exports:
+        if str(i.ObjectName) == "PersistentLevel":
+            for e in remove:
+                i.IndexData.Remove(e)
 
-def change_material_hsv(filename, offset, new_hsv):
-    #Change a color in a material file at a certain offset
+def change_material_hsv(filename, parameter, new_hsv):
+    #Change a vector color in a material file
     #Here we use hsv as a base as it is easier to work with
-    destination = "UnrealPak\\Mod\\BloodstainedRotN\\" + dictionary["FileToPath"][filename] + "\\" + filename
-    for i in ["uasset", "uexp"]:
-        shutil.copyfile("UAssetGUI\\Other\\" + filename + "." + i, destination + "." + i)
-    with open(destination + ".uexp", "r+b") as file:
-        rgb = []
-        for e in range(3):
-            file.seek(offset + e*4)
-            raw = "{:08x}".format(int.from_bytes(file.read(4), "little"))
-            float = struct.unpack("!f", bytes.fromhex(raw))[0]
-            rgb.append(float)
-        hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
-        if new_hsv[0] < 0:
-            new_hue = hsv[0]
-        else:
-            new_hue = new_hsv[0]/360
-        if new_hsv[1] < 0:
-            new_sat = hsv[1]
-        else:
-            new_sat = new_hsv[1]/100
-        if new_hsv[2] < 0:
-            new_val = hsv[2]
-        else:
-            new_val = new_hsv[2]/100
-        rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
-        for e in range(3):
-            file.seek(offset + e*4)
-            raw = hex(struct.unpack("<I", struct.pack("<f", rgb[e]))[0])
-            file.write(int(raw, 16).to_bytes(4, "little"))
+    if file_to_type[filename] != "Material":
+        raise "Input is not a material file"
+    rgb = []
+    for i in game_data[filename].Exports[0].Data:
+        if str(i.Name) == "VectorParameterValues":
+            for e in i.Value:
+                if str(e.Value[0].Value[0].Value) == parameter:
+                    rgb.append(e.Value[1].Value[0].Value.R)
+                    rgb.append(e.Value[1].Value[0].Value.G)
+                    rgb.append(e.Value[1].Value[0].Value.B)
+                    hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+                    if new_hsv[0] < 0:
+                        new_hue = hsv[0]
+                    else:
+                        new_hue = new_hsv[0]/360
+                    if new_hsv[1] < 0:
+                        new_sat = hsv[1]
+                    else:
+                        new_sat = new_hsv[1]/100
+                    if new_hsv[2] < 0:
+                        new_val = hsv[2]
+                    else:
+                        new_val = new_hsv[2]/100
+                    rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
+                    e.Value[1].Value[0].Value.R = rgb[0]
+                    e.Value[1].Value[0].Value.G = rgb[1]
+                    e.Value[1].Value[0].Value.B = rgb[2]
 
 def convert_flag_to_door(door_flag, width):
     #Function by LagoLunatic
@@ -729,13 +756,13 @@ def connect_map():
             #Make it so that an area is only connected to its corresponding transition rooms when possible
             #This avoids having the next area name tag show up within the transition
             #With the exception of standalone transitions with no fallbacks as well as the first entrance transition fallback
-            if datatable["PB_DT_RoomMaster"][e]["RoomType"] == "ERoomType::Load" and e[0:6] != i[0:6] and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "None" and e != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "m03ENT_1200":
+            if datatable["PB_DT_RoomMaster"][e]["RoomType"] == "ERoomType::Load" and e[0:6] != i[0:6] and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "None" and e != "m02VIL(1200)" and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "m03ENT(1200)":
                 continue
             #The first entrance transition room is hardcoded to bring you back to the village regardless of its position on the canvas
             #Ignore that room and don't connect it to anything
             #Meanwhile the village version of that transition is always needed to trigger the curved effect of the following bridge room
             #So ignore any other transitions overlayed on top of it
-            if datatable["PB_DT_RoomMaster"][e]["SameRoom"] == "m02VIL_1200" or e == "m03ENT_1200":
+            if datatable["PB_DT_RoomMaster"][e]["SameRoom"] == "m02VIL(1200)" or e == "m03ENT(1200)":
                 continue
             #Check relative position and distance on every side of the room
             door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][e]["DoorFlag"], datatable["PB_DT_RoomMaster"][e]["AreaWidthSize"])
@@ -882,10 +909,10 @@ def is_enemy(character):
         "Main":      False,
         "Exception": False
     }
-    if character in dictionary["EnemyLocation"]:
+    if character in mod_data["EnemyLocation"]:
         dict["Enemy"] = True
         dict["Main"]  = True
-    elif character[0:5] in dictionary["EnemyLocation"] and character != "N1001_Sip":
+    elif character[0:5] in mod_data["EnemyLocation"] and character != "N1001_Sip":
         dict["Enemy"] = True
     elif character[0:5] == "N1013" or character[0:5] == "N1009" or character == "N3125":
         dict["Enemy"]     = True
@@ -894,51 +921,35 @@ def is_enemy(character):
         dict["Boss"] = True
     return dict
 
-def remove_inst(name):
+def split_fname(name):
     #Return input without its instance number
-    try:
-        inst = int(name[-1])
-        if name[-2] == "_":
-            name = name[:-2]
-    except ValueError:
-        pass
-    except IndexError:
-        pass
-    return name
+    stripped_name = name.replace(")", "").split("(")
+    if len(stripped_name) == 1:
+        return (stripped_name[0], -1)
+    else:
+        return (stripped_name[0], int(stripped_name[1]))
 
 def create_weighted_list(value, minimum, maximum, step, deviation):
     #Create a list in a range with higher odds around a specific value
     list = []
-    for i in range(minimum, maximum+1):
-        if i % step == 0:
-            min_distance = min(value-minimum, maximum-value)
-            max_distance = max(value-minimum, maximum-value)
-            if i < value:
-                weight = round((maximum-value)/(value-minimum))
-                current_distance = value-minimum
-            elif i > value:
-                weight = round((value-minimum)/(maximum-value))
-                current_distance = maximum-value
-            else:
-                if min_distance == 0:
-                    weight = max_distance
-                else:
-                    weight = round((max_distance/min_distance)/2)
-                current_distance = 1
-            if weight < 1:
-                weight = 1
-            difference = abs(i-value)
-            for e in range(weight*2**(abs(math.ceil(difference*deviation/current_distance)-deviation))):
-                list.append(i)
+    for i in [(minimum, value + 1), (value, maximum + 1)]:
+        sublist = []
+        distance = abs(i[0]-i[1])
+        new_deviation = round(deviation*(distance/(maximum-minimum)))*2
+        for e in range(i[0], i[1]):
+            if e % step == 0:
+                difference = abs(e-value)
+                for o in range(2**(abs(math.ceil(difference*new_deviation/distance)-new_deviation))):
+                    sublist.append(e)
+        list.append(sublist)
     return list
 
 def random_weighted(value, minimum, maximum, step, deviation):
-    #Randomly pick from weighted list
-    return random.choice(create_weighted_list(value, minimum, maximum, step, deviation))
+    return random.choice(random.choice(create_weighted_list(value, minimum, maximum, step, deviation)))
 
 def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
-    last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[1])
-    entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
+    last_id = split_fname(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1])[1]
+    entry_id = "Enemy(" + "{:03d}".format(last_id + 1) + ")"
     for i in datatable["PB_DT_ArchiveEnemyMaster"]:
         if datatable["PB_DT_ArchiveEnemyMaster"][i]["UniqueID"] == copy_from:
             new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][i])

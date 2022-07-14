@@ -5,8 +5,8 @@ import copy
 
 def init():
     #Declare variables
-    global ability_to_room
-    ability_to_room = {
+    global candle_to_room
+    candle_to_room = {
         "BLD_ABILITY_HIGH_JUMP":           "m12SND_026",
         "BLD_ABILITY_WATER_PROTECT":       "m11UGD_015",
         "BLD_ABILITY_BLOOD_STEAL":         "m08TWR_019",
@@ -16,53 +16,52 @@ def init():
         "BLD_ABILITY_GUILLOTINE_UMBRELLA": "m02VIL_004",
         "BLD_ABILITY_UMBRELLA_TOSS":       "m07LIB_030",
         "BLD_ABILITY_SCARLET_THRUST":      "m05SAN_016",
-        "BLD_ABILITY_SCARLET_THRUST_2":    "m51EBT_000",
+        "BLD_ABILITY_SCARLET_THRUST(2)":   "m51EBT_000",
         "BLD_ABILITY_BLOOD_PILLAR":        "m11UGD_048",
-        "BLD_ABILITY_BLOOD_PILLAR_2":      "m17RVA_007",
+        "BLD_ABILITY_BLOOD_PILLAR(2)":     "m17RVA_007",
         "BLD_ABILITY_SCARLET_CYCLONE":     "m13ARC_006",
-        "BLD_ABILITY_BLOOD_RAIN":          "m15JPN_005"
+        "BLD_ABILITY_BLOOD_RAIN":          "m15JPN_005",
+        "BLD_ABILITY_STR_UP(1)":           "m07LIB_042",
+        "BLD_ABILITY_STR_UP(2)":           "m11UGD_050",
+        "BLD_ABILITY_STR_UP(3)":           "m03ENT_024",
+        "BLD_ABILITY_STR_UP(4)":           "m17RVA_015",
+        "BLD_ABILITY_STR_UP(5)":           "m01SIP_007",
+        "BLD_ABILITY_STR_UP(6)":           "m05SAN_021",
+        "BLD_ABILITY_STR_UP(7)":           "m88BKR_001",
+        "BLD_ABILITY_STR_UP(8)":           "m10BIG_015",
+        "BLD_ABILITY_INT_UP(1)":           "m05SAN_006",
+        "BLD_ABILITY_INT_UP(2)":           "m11UGD_030",
+        "BLD_ABILITY_INT_UP(3)":           "m08TWR_019(1)",
+        "BLD_ABILITY_INT_UP(4)":           "m14TAR_006",
+        "BLD_ABILITY_INT_UP(5)":           "m07LIB_009",
+        "BLD_ABILITY_INT_UP(6)":           "m11UGD_051",
+        "BLD_ABILITY_INT_UP(7)":           "m88BKR_004",
+        "BLD_ABILITY_INT_UP(8)":           "m10BIG_014",
+        "BLD_ABILITY_CON_UP(1)":           "m05SAN_014",
+        "BLD_ABILITY_CON_UP(2)":           "m06KNG_022",
+        "BLD_ABILITY_CON_UP(3)":           "m04GDN_004",
+        "BLD_ABILITY_CON_UP(4)":           "m17RVA_004",
+        "BLD_ABILITY_CON_UP(5)":           "m15JPN_017",
+        "BLD_ABILITY_CON_UP(6)":           "m01SIP_026",
+        "BLD_ABILITY_CON_UP(7)":           "m07LIB_040",
+        "BLD_ABILITY_CON_UP(8)":           "m10BIG_002",
+        "BLD_ABILITY_MND_UP(1)":           "m02VIL_005",
+        "BLD_ABILITY_MND_UP(2)":           "m07LIB_041",
+        "BLD_ABILITY_MND_UP(3)":           "m15JPN_018",
+        "BLD_ABILITY_MND_UP(4)":           "m12SND_003",
+        "BLD_ABILITY_MND_UP(5)":           "m11UGD_010",
+        "BLD_ABILITY_MND_UP(6)":           "m05SAN_003",
+        "BLD_ABILITY_MND_UP(7)":           "m88BKR_003",
+        "BLD_ABILITY_MND_UP(8)":           "m10BIG_010",
+        "BLD_ABILITY_LCK_UP(1)":           "m11UGD_049",
+        "BLD_ABILITY_LCK_UP(2)":           "m88BKR_002",
+        "BLD_ABILITY_LCK_UP(3)":           "m11UGD_038",
+        "BLD_ABILITY_MP_REGEN_UP(1)":      "m07LIB_012",
+        "BLD_ABILITY_MP_REGEN_UP(2)":      "m08TWR_018",
+        "BLD_ABILITY_MP_REGEN_UP(3)":      "m12SND_024"
     }
-    global upgrade_to_room
-    upgrade_to_room = {
-        "BLD_ABILITY_STR_UP_1":      "m07LIB_042",
-        "BLD_ABILITY_STR_UP_2":      "m11UGD_050",
-        "BLD_ABILITY_STR_UP_3":      "m03ENT_024",
-        "BLD_ABILITY_STR_UP_4":      "m17RVA_015",
-        "BLD_ABILITY_STR_UP_5":      "m01SIP_007",
-        "BLD_ABILITY_STR_UP_6":      "m05SAN_021",
-        "BLD_ABILITY_STR_UP_7":      "m88BKR_001",
-        "BLD_ABILITY_STR_UP_8":      "m10BIG_015",
-        "BLD_ABILITY_INT_UP_1":      "m05SAN_006",
-        "BLD_ABILITY_INT_UP_2":      "m11UGD_030",
-        "BLD_ABILITY_INT_UP_3":      "m08TWR_019_1",
-        "BLD_ABILITY_INT_UP_4":      "m14TAR_006",
-        "BLD_ABILITY_INT_UP_5":      "m07LIB_009",
-        "BLD_ABILITY_INT_UP_6":      "m11UGD_051",
-        "BLD_ABILITY_INT_UP_7":      "m88BKR_004",
-        "BLD_ABILITY_INT_UP_8":      "m10BIG_014",
-        "BLD_ABILITY_CON_UP_1":      "m05SAN_014",
-        "BLD_ABILITY_CON_UP_2":      "m06KNG_022",
-        "BLD_ABILITY_CON_UP_3":      "m04GDN_004",
-        "BLD_ABILITY_CON_UP_4":      "m17RVA_004",
-        "BLD_ABILITY_CON_UP_5":      "m15JPN_017",
-        "BLD_ABILITY_CON_UP_6":      "m01SIP_026",
-        "BLD_ABILITY_CON_UP_7":      "m07LIB_040",
-        "BLD_ABILITY_CON_UP_8":      "m10BIG_002",
-        "BLD_ABILITY_MND_UP_1":      "m02VIL_005",
-        "BLD_ABILITY_MND_UP_2":      "m07LIB_041",
-        "BLD_ABILITY_MND_UP_3":      "m15JPN_018",
-        "BLD_ABILITY_MND_UP_4":      "m12SND_003",
-        "BLD_ABILITY_MND_UP_5":      "m11UGD_010",
-        "BLD_ABILITY_MND_UP_6":      "m05SAN_003",
-        "BLD_ABILITY_MND_UP_7":      "m88BKR_003",
-        "BLD_ABILITY_MND_UP_8":      "m10BIG_010",
-        "BLD_ABILITY_LCK_UP_1":      "m11UGD_049",
-        "BLD_ABILITY_LCK_UP_2":      "m88BKR_002",
-        "BLD_ABILITY_LCK_UP_3":      "m11UGD_038",
-        "BLD_ABILITY_MP_REGEN_UP_1": "m07LIB_012",
-        "BLD_ABILITY_MP_REGEN_UP_2": "m08TWR_018",
-        "BLD_ABILITY_MP_REGEN_UP_3": "m12SND_024"
-    }
+    global candle_to_room_invert
+    candle_to_room_invert = {}
     global bloodless_to_miriam
     bloodless_to_miriam = {
         "BLD_ABILITY_HIGH_JUMP":     "HighJump",  
@@ -104,48 +103,47 @@ def init():
     for i in list(bloodless_to_miriam):
         key_abilities.append(i)
         all_keys.append(i)
-    for i in ability_to_room:
+    for i in candle_to_room:
         candle_type.append(i)
-        candle_room.append(ability_to_room[i])
-    for i in upgrade_to_room:
-        candle_type.append(i)
-        candle_room.append(upgrade_to_room[i])
+        candle_room.append(candle_to_room[i])
+    for i in candle_to_room:
+        candle_to_room_invert[candle_to_room[i]] = i
 
 def extra_logic():
     #Update the logic to reflect the new starting point
     room_to_list = {}
-    gate_list = copy.deepcopy(Manager.dictionary["MapLogic"]["m05SAN_023"]["NearestGate"])
+    gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m05SAN_023"]["NearestGate"])
     previous_gate = []
     current_gate = []
     #Start by emptying gate lists in the upper cathedral rooms
-    for i in Manager.dictionary["MapLogic"]:
-        if Manager.dictionary["MapLogic"][i]["NearestGate"] == gate_list:
+    for i in Manager.mod_data["BloodlessModeMapLogic"]:
+        if Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] == gate_list:
             room_to_list[i] = current_gate
     #Then move backwards toward the first galleon room to inverse the logic
     while gate_list:
-        for i in Manager.dictionary["MapLogic"]:
+        for i in Manager.mod_data["BloodlessModeMapLogic"]:
             if i in gate_list:
                 current_gate.append(i)
         for i in current_gate:
             room_to_list[i] = []
             for e in previous_gate:
-                if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
+                if i in Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"]:
                     room_to_list[i].append(e)
-        for i in Manager.dictionary["MapLogic"]:
+        for i in Manager.mod_data["BloodlessModeMapLogic"]:
             for e in current_gate:
-                if Manager.dictionary["MapLogic"][i]["NearestGate"] == Manager.dictionary["MapLogic"][e]["NearestGate"] and i != e:
+                if Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] == Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"] and i != e:
                     room_to_list[i] = []
             for e in current_gate:
-                if Manager.dictionary["MapLogic"][i]["NearestGate"] == Manager.dictionary["MapLogic"][e]["NearestGate"] and i != e:
+                if Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] == Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"] and i != e:
                     room_to_list[i].append(e)
         previous_gate = copy.deepcopy(current_gate)
         current_gate.clear()
         gate_list.clear()
         for i in previous_gate:
-            gate_list.extend(Manager.dictionary["MapLogic"][i]["NearestGate"])
-    for i in Manager.dictionary["MapLogic"]:
+            gate_list.extend(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
+    for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if i in room_to_list:
-            Manager.dictionary["MapLogic"][i]["NearestGate"] = room_to_list[i]
+            Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] = room_to_list[i]
     #Convert doors to their actual gates
     irrelevant_list = []
     for i in irrelevant_gates:
@@ -154,79 +152,73 @@ def extra_logic():
     for i in impossible_gates:
         impossible_list.extend(Manager.convert_door_to_adjacent_room(i, impossible_gates[i]))
     #Add 8 Bit Nightmare
-    Manager.dictionary["MapLogic"]["m51EBT_000"] = {}
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["GateRoom"]             = False
-    if Manager.dictionary["MapLogic"]["m06KNG_021"]["GateRoom"]:
-        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"] = {}
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["GateRoom"]             = False
+    if Manager.mod_data["BloodlessModeMapLogic"]["m06KNG_021"]["GateRoom"]:
+        Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
     else:
-        Manager.dictionary["MapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.dictionary["MapLogic"]["m06KNG_021"]["NearestGate"])
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Doublejump"]           = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["HighJump"]             = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Invert"]               = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Deepsinker"]           = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Dimensionshift"]       = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Reflectionray"]        = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Aquastream"]           = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Bloodsteel"]           = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Swordsman"]            = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Silverbromide"]        = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["BreastplateofAguilar"] = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Keyofbacker1"]         = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
-    Manager.dictionary["MapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
+        Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m06KNG_021"]["NearestGate"])
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Doublejump"]           = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["HighJump"]             = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Invert"]               = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Deepsinker"]           = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Dimensionshift"]       = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Reflectionray"]        = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Aquastream"]           = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Bloodsteel"]           = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Swordsman"]            = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Silverbromide"]        = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["BreastplateofAguilar"] = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker1"]         = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
     #Emulate a Craftwork requirement in the garden bridge for the extended float ability
     #Normally Craftwork isn't in logic as that shard can't be moved
-    for i in Manager.dictionary["MapLogic"]:
-        Manager.dictionary["MapLogic"][i]["Demoniccapture"] = False
-    Manager.dictionary["MapLogic"]["m04GDN_006"]["Demoniccapture"] = True
-    Manager.dictionary["MapLogic"]["m04GDN_006"]["HighJump"] = True
+    for i in Manager.mod_data["BloodlessModeMapLogic"]:
+        Manager.mod_data["BloodlessModeMapLogic"][i]["Demoniccapture"] = False
+    Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["Demoniccapture"] = True
+    Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["HighJump"] = True
     #Remove gates that don't matter in Bloodless mode
     #That includes the rooms that had platforms added
-    for i in Manager.dictionary["MapLogic"]:
+    for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if i in impossible_list:
             continue
         check = True
         for e in key_abilities:
-            if Manager.dictionary["MapLogic"][i]["GateRoom"] and Manager.dictionary["MapLogic"][i][bloodless_to_miriam[e]]:
+            if Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] and Manager.mod_data["BloodlessModeMapLogic"][i][bloodless_to_miriam[e]]:
                 check = False
-        if check or i in irrelevant_list or Manager.dictionary["MapLogic"][i]["Doublejump"]:
-            Manager.dictionary["MapLogic"][i]["GateRoom"] = False
-            for e in Manager.dictionary["MapLogic"]:
-                if i in Manager.dictionary["MapLogic"][e]["NearestGate"]:
-                    Manager.dictionary["MapLogic"][e]["NearestGate"] = copy.deepcopy(Manager.dictionary["MapLogic"][i]["NearestGate"])
+        if check or i in irrelevant_list or Manager.mod_data["BloodlessModeMapLogic"][i]["Doublejump"]:
+            Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] = False
+            for e in Manager.mod_data["BloodlessModeMapLogic"]:
+                if i in Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"]:
+                    Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"] = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
     #Adding seperate gate for the upper part of Valac's room
-    Manager.dictionary["MapLogic"]["m08TWR_019_1"] = copy.deepcopy(Manager.dictionary["MapLogic"]["m08TWR_019"])
-    Manager.dictionary["MapLogic"]["m08TWR_019"]["GateRoom"] = False
-    for i in Manager.dictionary["MapLogic"]:
-        while "m08TWR_019" in Manager.dictionary["MapLogic"][i]["NearestGate"]:
-            index = Manager.dictionary["MapLogic"][i]["NearestGate"].index("m08TWR_019")
-            Manager.dictionary["MapLogic"][i]["NearestGate"][index] = "m08TWR_019_1"
+    Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019(1)"] = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019"])
+    Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019"]["GateRoom"] = False
+    for i in Manager.mod_data["BloodlessModeMapLogic"]:
+        while "m08TWR_019" in Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"]:
+            index = Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"].index("m08TWR_019")
+            Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"][index] = "m08TWR_019(1)"
 
 def candle_logic():
     #Function similar to the Miriam logic but simplified for Bloodless mode
     previous_gate = []
-    previous_room = []
-    all_rooms = []
-    requirement = []
     requirement_to_gate = {}
     #Filling list with all room names
     all_rooms = copy.deepcopy(candle_room)
-    #Filling requirement dictionary
-    for i in key_abilities:
-        requirement_to_gate[i] = []
     #Loop through all keys until they've all been assigned
     while all_keys:
         #Reset lists and dicts
-        requirement.clear()
+        requirement = []
         for i in key_abilities:
-            requirement_to_gate[i].clear()
-        previous_room.clear()
+            requirement_to_gate[i] = []
+        previous_room = []
         #Gathering upcoming gate requirements
-        for i in Manager.dictionary["MapLogic"]:
-            if Manager.dictionary["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.dictionary["MapLogic"][i]["NearestGate"]) and not i in previous_gate:
+        for i in Manager.mod_data["BloodlessModeMapLogic"]:
+            if Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"]) and not i in previous_gate:
                 for e in key_abilities:
-                    if Manager.dictionary["MapLogic"][i][bloodless_to_miriam[e]]:
+                    if Manager.mod_data["BloodlessModeMapLogic"][i][bloodless_to_miriam[e]]:
                         requirement.append(e)
                         requirement_to_gate[e].append(i)
         #Check if requirement isnt already satisfied
@@ -238,21 +230,21 @@ def candle_logic():
         if check:
             continue
         #Gathering rooms available before gate
-        for i in Manager.dictionary["MapLogic"]:
+        for i in Manager.mod_data["BloodlessModeMapLogic"]:
             #Skip if room doesn't have a candle
             if not i in candle_room:
                 continue
-            if not Manager.dictionary["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.dictionary["MapLogic"][i]["NearestGate"]) or i in previous_gate:
+            if not Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"]) or i in previous_gate:
                 #Increasing chances of late rooms
                 #Otherwise early game areas are more likely to have everything
                 gate_count = 1
-                gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][i]["NearestGate"])
+                gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
                 while gate_list:
                     nearest_gate = random.choice(gate_list)
-                    for e in Manager.dictionary["MapLogic"]:
+                    for e in Manager.mod_data["BloodlessModeMapLogic"]:
                         if e == nearest_gate:
                             gate_count += 1
-                            gate_list = copy.deepcopy(Manager.dictionary["MapLogic"][e]["NearestGate"])
+                            gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"])
                             break
                 #Making multplier more extreme with exponent
                 gate_count = round(gate_count**1.5)
@@ -302,13 +294,16 @@ def candle_shuffle():
         chosen_room = any_pick(candle_room)
         bloodless_datatable[i] = chosen_room
 
+def update_shard_candles():
+    #All of Bloodless' abilities are stored inside of shard candles
+    #Just like for Miriam those are defined inside of the level files
+    for i in bloodless_datatable:
+        Manager.search_and_replace_string(Manager.split_fname(bloodless_datatable[i])[0] + "_Gimmick", "BloodlessAbilityGimmick", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_room_invert[bloodless_datatable[i]], "EPBBloodlessAbilityType::" + i)
+
 def any_pick(item_array):
     item = random.choice(item_array)
     item_array.remove(item)
     return item
-
-def get_datatable():
-    return bloodless_datatable
 
 def create_log(seed, map):
     #Log compatible with the map editor to show key item locations
@@ -318,11 +313,11 @@ def create_log(seed, map):
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
     for i in key_order:
-        log["Key"][Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)]] = []
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)]] = []
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)]].append(Manager.remove_inst(bloodless_datatable[i]))
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]].append(Manager.split_fname(bloodless_datatable[i])[0])
     return log
 
 def create_log_string(seed, map):
@@ -337,11 +332,11 @@ def create_log_string(seed, map):
     log_string += "Map: " + map_name + "\n"
     log_string += "Key:\n"
     for i in key_order:
-        log_string += "  " + Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]] + ": " + bloodless_datatable[i] + "\n"
     for i in bloodless_datatable:
         if i in key_order:
             continue
-        if i in upgrade_to_room:
+        if "_UP(" in i:
             break
-        log_string += "  " + Manager.dictionary["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]] + ": " + bloodless_datatable[i] + "\n"
     return log_string

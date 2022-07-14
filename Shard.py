@@ -49,40 +49,40 @@ def init():
 def default_shard():
     #Recalculate default shard power in a more convenient way for balance
     for i in Manager.datatable["PB_DT_ShardMaster"]:
-        if not i in Manager.dictionary["ShardBase"]:
+        if not i in Manager.mod_data["ShardBase"]:
             continue
-        base = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * Manager.dictionary["ShardBase"][i]["Base"]
+        base = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * Manager.mod_data["ShardBase"][i]["Base"]
         if i in skip_list or i == "Healing":
             balance = 1.0
         else:
             balance = (average_power/base)**correction
         Manager.datatable["PB_DT_ShardMaster"][i]["minGradeValue"] = round(base * balance, 3)
-        Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(base * balance * Manager.dictionary["ShardBase"][i]["Grade"], 3)
+        Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(base * balance * Manager.mod_data["ShardBase"][i]["Grade"], 3)
 
 def rand_shard(scale):
     for i in Manager.datatable["PB_DT_ShardMaster"]:
         #Only randomize shards that have an entry in shard base
-        if not i in Manager.dictionary["ShardBase"]:
+        if not i in Manager.mod_data["ShardBase"]:
             continue
         if i in skip_list:
             continue
-        original_cost      = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"]
-        original_doin_cost = Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"]
+        original_cost      = int(Manager.datatable["PB_DT_ShardMaster"][i]["useMP"])
+        original_doin_cost = int(Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"])
         #Reduce the range for shards that can be pulsed
         if i in special_list or i == "Healing":
             reduction = 3
         else:
             reduction = 1
         #Randome magic cost first
-        multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 4)/original_cost
+        multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
         Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * multiplier)
         #Riga Doin explosion is shared with Riga Storeama
         if i == "LigaStreyma":
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] * multiplier)
         #Randomize power based on magic cost
         if not scale:
-            multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 4)/original_cost
-        new_base = original_cost * Manager.dictionary["ShardBase"][i]["Base"] * multiplier
+            multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
+        new_base = original_cost * Manager.mod_data["ShardBase"][i]["Base"] * multiplier
         #Prevent power from scaling too high or too low
         if i == "Healing":
             balance = 1.0
@@ -91,13 +91,13 @@ def rand_shard(scale):
         else:
             balance = (average_power/new_base)**correction
         Manager.datatable["PB_DT_ShardMaster"][i]["minGradeValue"] = round(new_base * balance, 3)
-        Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(new_base * balance * Manager.dictionary["ShardBase"][i]["Grade"], 3)
+        Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(new_base * balance * Manager.mod_data["ShardBase"][i]["Grade"], 3)
         #Riga Doin explosion is shared with Riga Storeama
         if i == "LigaStreyma":
-            doin_base = original_doin_cost * Manager.dictionary["ShardBase"]["LigaDoin"]["Base"] * multiplier
+            doin_base = original_doin_cost * Manager.mod_data["ShardBase"]["LigaDoin"]["Base"] * multiplier
             balance   = (average_power/doin_base)**correction
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["minGradeValue"] = round(doin_base * balance, 3)
-            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(doin_base * balance * Manager.dictionary["ShardBase"]["LigaDoin"]["Grade"], 3)
+            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(doin_base * balance * Manager.mod_data["ShardBase"]["LigaDoin"]["Grade"], 3)
 
 def eye_max_range():
     #Give Detective's Eye infinite range

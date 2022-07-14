@@ -52,5 +52,5 @@ def create_log():
         if i == "Dummy":
             continue
         if Manager.datatable["PB_DT_BookMaster"][i]["IslibraryBook"]:
-            log[Manager.dictionary["ItemTranslation"][i]] = Manager.datatable["PB_DT_BookMaster"][i]["RoomTraverseThreshold"]
+            log[Manager.mod_data["ItemTranslation"][i]] = Manager.datatable["PB_DT_BookMaster"][i]["RoomTraverseThreshold"]
     return log
