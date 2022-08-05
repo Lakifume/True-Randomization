@@ -125,6 +125,11 @@ logic_mode = False
 area_mode = False
 assign_mode = False
 key_mode = False
+
+right_held = False
+mid_held   = False
+x1_held    = False
+x2_held    = False
     
 with open("Data\\Constant\\ConnectedRooms.json", "r", encoding="utf8") as file_reader:
     connected_room = json.load(file_reader)
@@ -135,6 +140,8 @@ with open("Data\\Translation\\MusicTranslation.json", "r", encoding="utf8") as f
 with open("Data\\Translation\\PlayTranslation.json", "r", encoding="utf8") as file_reader:
     play_translate = json.load(file_reader)
 
+music_id.append(None)
+music_name.append("None")
 for i in music_translate:
     music_id.append(i)
     music_name.append(music_translate[i])
@@ -195,10 +202,11 @@ class Logic:
         self.celeste = celeste
 
 class Door:
-    def __init__(self, x_block, z_block, direction_part):
+    def __init__(self, x_block, z_block, direction_part, breakable):
         self.x_block = x_block
         self.z_block = z_block
         self.direction_part = direction_part
+        self.breakable = breakable
 
 class Void:
     def __init__(self, x_block, z_block):
@@ -227,11 +235,14 @@ class RoomItem(QGraphicsRectItem):
         
         self.setPen(outline)
         self.setBrush(QColor(fill[:1] + opacity + fill[1:]))
+        self.setToolTip(room_data.name)
 
     def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-        if event.button() != Qt.LeftButton:
+        if right_held or mid_held or x1_held or x2_held:
             return
+        #if event.button() != Qt.LeftButton:
+        #    return
+        super().mousePressEvent(event)
         #Normal mode selection
         for i in self.scene().selectedItems():
             if restrictions and not search_mode and not logic_mode and not area_mode and not key_mode:
@@ -264,19 +275,29 @@ class RoomItem(QGraphicsRectItem):
                     for i in self.childItems():
                         if type(i) == QGraphicsRectItem:
                             i.setBrush(QColor("#ffffff"))
-
+    
+    def mouseMoveEvent(self, event):
+        if right_held or mid_held or x1_held or x2_held:
+            return
+        super().mouseMoveEvent(event)
+    
     def mouseReleaseEvent(self, event):
-        super().mouseReleaseEvent(event)
+        #if right_held or mid_held or x1_held or x2_held:
+        #    return
         if event.button() != Qt.LeftButton:
             return
+        super().mouseReleaseEvent(event)
+        #Place room
         for i in self.scene().selectedItems():
             self.apply_round(i)
     
     def mouseDoubleClickEvent(self, event):
-        #Select all rooms belonging to the same area
-        super().mouseDoubleClickEvent(event)
-        if event.button() != Qt.LeftButton:
+        if right_held or mid_held or x1_held or x2_held:
             return
+        #if event.button() != Qt.LeftButton:
+        #    return
+        super().mouseDoubleClickEvent(event)
+        #Select all rooms belonging to the same area
         if self.room_data.area != "EAreaID::None" and not assign_mode:
             for i in self.room_list:
                 if i.room_data.area == self.room_data.area:
@@ -315,10 +336,11 @@ class Main(QMainWindow):
         self.scene = QGraphicsScene(self)
         self.view = QGraphicsView(self.scene, self) 
         self.scene.selectionChanged.connect(self.selection_event)
+        self.view.setDragMode(QGraphicsView.RubberBandDrag)
+        self.scene.installEventFilter(self)
         
         self.view.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-        self.view.setDragMode(QGraphicsView.RubberBandDrag)
         self.view.scale(1, -1)
         self.current_zoom = 1
         self.setCentralWidget(self.view)
@@ -508,7 +530,8 @@ class Main(QMainWindow):
         #BoxContent
         
         self.gate_toggle = QPushButton("Gate Toggle")
-        self.gate_toggle.setToolTip("Toggle whether selected room is a gate or not.")
+        self.gate_toggle.setShortcut(QKeySequence(Qt.Key_G))
+        self.gate_toggle.setToolTip("Toggle whether selected room is a gate or not.\nShortcut: G")
         self.gate_toggle.clicked.connect(self.gate_toggle_action)
         gate_box_layout.addWidget(self.gate_toggle)
         
@@ -573,13 +596,15 @@ class Main(QMainWindow):
         gate_box_layout.addWidget(self.check_box_14)
         
         self.assign_mode = QPushButton("Assign Mode")
-        self.assign_mode.setToolTip("Select gates to assign to selected room in this mode.")
+        self.assign_mode.setShortcut(QKeySequence(Qt.Key_A))
+        self.assign_mode.setToolTip("Select gates to assign to selected room in this mode.\nShortcut: A")
         self.assign_mode.setCheckable(True)
         self.assign_mode.clicked.connect(self.assign_mode_action)
         gate_box_layout.addWidget(self.assign_mode)
         
         self.unassign_all = QPushButton("Unassign all")
-        self.unassign_all.setToolTip("Empty gate list of all rooms.")
+        self.unassign_all.setShortcut(QKeySequence(Qt.Key_U))
+        self.unassign_all.setToolTip("Empty gate list of all rooms.\nShortcut: U")
         self.unassign_all.clicked.connect(self.unassign_all_action)
         gate_box_layout.addWidget(self.unassign_all)
         
@@ -626,6 +651,39 @@ class Main(QMainWindow):
         palette.setBrush(QPalette.Window, background)
         self.show()
         self.setPalette(palette)
+    
+    def eventFilter(self, obj, event):
+        global right_held
+        global mid_held
+        global x1_held
+        global x2_held
+        if event.type() in [QEvent.GraphicsSceneMousePress, QEvent.GraphicsSceneMouseDoubleClick]:
+            if event.button() == Qt.LeftButton and not right_held and not mid_held and not x1_held and not x2_held:
+                self.view.setDragMode(QGraphicsView.RubberBandDrag)
+            if event.button() == Qt.RightButton:
+                self.view.setDragMode(QGraphicsView.NoDrag)
+                right_held = True
+            if event.button() == Qt.MiddleButton:
+                self.view.setDragMode(QGraphicsView.NoDrag)
+                mid_held = True
+            if event.button() == Qt.XButton1:
+                self.view.setDragMode(QGraphicsView.NoDrag)
+                x1_held = True
+            if event.button() == Qt.XButton2:
+                self.view.setDragMode(QGraphicsView.NoDrag)
+                x2_held = True
+        elif event.type() == QEvent.GraphicsSceneMouseRelease:
+            if event.button() == Qt.LeftButton and not right_held and not mid_held and not x1_held and not x2_held:
+                self.view.setDragMode(QGraphicsView.NoDrag)
+            if event.button() == Qt.RightButton:
+                right_held = False
+            if event.button() == Qt.MiddleButton:
+                mid_held = False
+            if event.button() == Qt.XButton1:
+                x1_held = False
+            if event.button() == Qt.XButton2:
+                x2_held = False
+        return super().eventFilter(obj, event)
     
     def open_file(self):
         self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="Custom", filter="*.json"))[0]
@@ -795,7 +853,8 @@ class Main(QMainWindow):
             box.setWindowTitle("Error")
             box.setIcon(QMessageBox.Critical)
             try:
-                with open("Key\\KeyLocation.json", "r", encoding="utf8") as file_reader:
+                log_path = os.path.abspath(os.path.join("", os.pardir)) + "\\SpoilerLog\\KeyLocation.json"
+                with open(log_path, "r", encoding="utf8") as file_reader:
                     self.log = json.load(file_reader)
                 if not self.log["Map"] and name.split("/")[-1] != "PB_DT_RoomMaster":
                     box.setText("Current key location is meant for the default map.")
@@ -853,7 +912,7 @@ class Main(QMainWindow):
     def guidelines(self):
         box = QMessageBox(self)
         box.setWindowTitle("Map guidelines")
-        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\nAcceptable:\n\n-having a non-downward entrance lead to an empty space\n-connecting a standard room to a transition room directly (except for m03ENT1201)\n-leaving the galleon untouched due to its complexity (note the 2 different heights of sideways entrances)\n\nPreferable:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n\nNecessary:\n\n-having the \"Use restrictions\" option enabled while building your map\n-not having any downward entrance lead to an empty space\n-not overlapping any rooms except for the semi-transparent ones")
+        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n-having the \"Use restrictions\" option enabled while building your map\n-not overlapping any rooms except for the semi-transparent ones\n\nAdditionally here are some useful things to know when building maps:\n\n-transition rooms that are connected directly into a submerged room can only be entered if the player has Deep Sinker\n-a few bosses can softlock if their rooms are placed in undesirable spots, refer to the Boss restrictions page for more info\n-room m03ENT_1200 has a hardcoded transition taking you back to the village regardless of its placement, so the randomizer script will ignore this room when connecting the map.")
         box.exec()
     
     def restrictions(self):
@@ -1567,7 +1626,8 @@ class Main(QMainWindow):
                 z_block = tile_index // width
             for direction_part in Direction:
                 if (direction & direction_part.value) != 0:
-                    door = Door(x_block, z_block, direction_part)
+                    breakable = (direction & (direction_part.value << 16)) != 0
+                    door = Door(x_block, z_block, direction_part, breakable)
                     door_list.append(door)
         return door_list
     
@@ -1675,9 +1735,9 @@ class Main(QMainWindow):
             #RoomGroup
             
             for e in connected_room:
-                if room_data.name in connected_room[e]["Room"]:
-                    group_list = connected_room[e]["Room"]
-                    can_move = connected_room[e]["CanMove"]
+                if room_data.name in e["Room"]:
+                    group_list = e["Room"]
+                    can_move = e["CanMove"]
                     break
             
             #RoomOpacity
@@ -1726,7 +1786,7 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m04GDN_001" or room_data.name == "m10BIG_000":
+            if room_data.name in ["m04GDN_001", "m10BIG_000"]:
                 icon = self.scene.addPixmap(QPixmap("Data\\portal.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
@@ -1756,6 +1816,16 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
                 icon.setParentItem(room)
+            if room_data.name in ["m09TRN_001", "m09TRN_004"]:
+                icon = self.scene.addPixmap(QPixmap("Data\\gate.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
+            if room_data.name == "m03ENT_1200":
+                icon = self.scene.addPixmap(QPixmap("Data\\cross.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width/2 - 6, room_data.height/2 + TILEHEIGHT/2 - 1.5)
+                icon.setParentItem(room)
             
             #Wall
             
@@ -1774,31 +1844,26 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 13.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m03ENT_013":
-                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
-                icon.setParentItem(room)
             if room_data.name == "m05SAN_003":
                 icon = self.scene.addPixmap(QPixmap("Data\\wall_horizontal.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, TILEHEIGHT*8 + 6)
+                icon.setParentItem(room)
+            if room_data.name == "m05SAN_009":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
+                icon.setTransform(QTransform.fromScale(1, -1))
+                icon.setPos(room_data.width/2 - 6, TILEHEIGHT*4 + 11)
                 icon.setParentItem(room)
             if room_data.name == "m05SAN_017":
                 icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 1, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m05SAN_019" or room_data.name == "m07LIB_005":
-                icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
+            if room_data.name == "m05SAN_019":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(room_data.width -18.5, TILEHEIGHT - 1.5)
+                icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-                if room_data.name == "m05SAN_019":
-                    icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-                    icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
-                    icon.setParentItem(room)
             if room_data.name == "m05SAN_021":
                 icon = self.scene.addPixmap(QPixmap("Data\\one_way_right.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
@@ -1809,17 +1874,17 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 13.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m06KNG_015" or room_data.name == "m07LIB_029":
-                icon = self.scene.addPixmap(QPixmap("Data\\one_way_up.png"))
+            if room_data.name == "m07LIB_005":
+                icon = self.scene.addPixmap(QPixmap("Data\\one_way_down.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(room_data.width/2 - 6, room_data.height - 1.5)
+                icon.setPos(room_data.width -18.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m07LIB_006" or room_data.name == "m11UGD_045":
+            if room_data.name in ["m07LIB_006", "m11UGD_045"]:
                 icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width/2 - 6, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m07LIB_008" or room_data.name == "m07LIB_014" or room_data.name == "m11UGD_016" or room_data.name == "m18ICE_016":
+            if room_data.name in ["m07LIB_008", "m07LIB_014", "m11UGD_016", "m18ICE_016"]:
                 icon = self.scene.addPixmap(QPixmap("Data\\hole.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 8.5, room_data.height - 1.5)
@@ -1869,7 +1934,7 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
                 icon.setParentItem(room)
-            if room_data.name == "m15JPN_010" or room_data.name == "m17RVA_005":
+            if room_data.name in ["m15JPN_010", "m17RVA_005"]:
                 icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(room_data.width - 13.5, room_data.height - 1.5)
@@ -1887,32 +1952,32 @@ class Main(QMainWindow):
             
             #Water
             
-            if room_data.name == "m11UGD_021" or room_data.name == "m11UGD_022" or room_data.name == "m11UGD_023" or room_data.name == "m11UGD_024" or room_data.name == "m11UGD_025" or room_data.name == "m11UGD_026" or room_data.name == "m11UGD_044" or room_data.name == "m11UGD_045":
+            if room_data.name in ["m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_026", "m11UGD_044", "m11UGD_045"]:
                 for e in range(round(room_data.width/TILEWIDTH)):
                     for o in range(round(room_data.height/TILEHEIGHT)):
                         icon = self.scene.addPixmap(QPixmap("Data\\bubble.png"))
                         icon.setTransform(QTransform.fromScale(1, -1))
                         icon.setPos(e*TILEWIDTH + 6, o*TILEHEIGHT + 13.5)
                         icon.setParentItem(room)
-            if room_data.name == "m11UGD_005" or room_data.name == "m11UGD_036":
+            if room_data.name in ["m11UGD_005", "m11UGD_036"]:
                 for e in range(round(room_data.width/TILEWIDTH)):
                     icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
                     icon.setPos(e*TILEWIDTH + 6, 20.5)
                     icon.setParentItem(room)
-            if room_data.name == "m11UGD_019" or room_data.name == "m11UGD_040":
+            if room_data.name in ["m11UGD_019", "m11UGD_040"]:
                 for e in range(round(room_data.width/TILEWIDTH)):
                     icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
                     icon.setPos(e*TILEWIDTH + 6, 28.5)
                     icon.setParentItem(room)
-            if room_data.name == "m11UGD_042" or room_data.name == "m11UGD_046":
+            if room_data.name in ["m11UGD_042", "m11UGD_046"]:
                 for e in range(round(room_data.width/TILEWIDTH)):
                     icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
                     icon.setPos(e*TILEWIDTH + 6, 43.5)
                     icon.setParentItem(room)
-            if room_data.name == "m11UGD_043":
+            if room_data.name in ["m11UGD_043"]:
                 for e in range(round(room_data.width/TILEWIDTH)-1):
                     icon = self.scene.addPixmap(QPixmap("Data\\wave.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
@@ -2026,7 +2091,7 @@ class Main(QMainWindow):
             
             #Text
             
-            text = self.scene.addText(room_data.name.replace('_', ''), "Impact")
+            text = self.scene.addText(room_data.name.replace("_", ""), "Impact")
             text.setDefaultTextColor(QColor("#ffffff"))
             text.setTransform(QTransform.fromScale(0.25, -0.5))
             text.setPos(room_data.width/2 - text.document().size().width()/8, room_data.height/2 + TILEHEIGHT/2 - 0.5)
@@ -2042,10 +2107,10 @@ class Main(QMainWindow):
         for i in self.room_list:
             self.json_file["MapData"][i.room_data.name]["RoomType"] = i.room_data.room_type
             self.json_file["MapData"][i.room_data.name]["RoomPath"] = i.room_data.room_path
-            self.json_file["MapData"][i.room_data.name]["OffsetX"] = i.pos().x() * 12.6 / TILEWIDTH
-            self.json_file["MapData"][i.room_data.name]["OffsetZ"] = i.pos().y() * 7.2 / TILEHEIGHT
-            self.json_file["MapData"][i.room_data.name]["BgmID"] = i.room_data.music
-            self.json_file["MapData"][i.room_data.name]["BgmType"] = i.room_data.play
+            self.json_file["MapData"][i.room_data.name]["OffsetX"]  = i.pos().x() * 12.6 / TILEWIDTH
+            self.json_file["MapData"][i.room_data.name]["OffsetZ"]  = i.pos().y() * 7.2 / TILEHEIGHT
+            self.json_file["MapData"][i.room_data.name]["BgmID"]    = i.room_data.music
+            self.json_file["MapData"][i.room_data.name]["BgmType"]  = i.room_data.play
             if self.json_file["MapData"][i.room_data.name]["RoomType"] in ["ERoomType::Save", "ERoomType::Warp"]:
                 if self.json_file["MapData"][i.room_data.name]["RoomPath"] == "ERoomPath::Left":
                     self.json_file["MapData"][i.room_data.name]["DoorFlag"] = [1, 1]
@@ -2058,13 +2123,13 @@ class Main(QMainWindow):
             else:
                 self.json_file["MapData"][i.room_data.name]["Unused"] = False
         #VillageFix
-        self.json_file["MapData"]["m02VIL_099"]["OffsetX"] = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
-        self.json_file["MapData"]["m02VIL_099"]["OffsetZ"] = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
+        self.json_file["MapData"]["m02VIL_099"]["OffsetX"]  = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
+        self.json_file["MapData"]["m02VIL_099"]["OffsetZ"]  = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
         self.json_file["MapData"]["m02VIL_100"]["OffsetX"] = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
         self.json_file["MapData"]["m02VIL_100"]["OffsetZ"] = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
         #IceFix
-        self.json_file["MapData"]["m18ICE_020"]["OffsetX"] = self.json_file["MapData"]["m18ICE_019"]["OffsetX"]
-        self.json_file["MapData"]["m18ICE_020"]["OffsetZ"] = self.json_file["MapData"]["m18ICE_019"]["OffsetZ"]
+        self.json_file["MapData"]["m18ICE_020"]["OffsetX"]  = self.json_file["MapData"]["m18ICE_019"]["OffsetX"]
+        self.json_file["MapData"]["m18ICE_020"]["OffsetZ"]  = self.json_file["MapData"]["m18ICE_019"]["OffsetZ"]
     
     def update_logic(self):
         for i in self.room_list:
@@ -2077,23 +2142,23 @@ class Main(QMainWindow):
                         continue
                     if i.index in e.logic_data.gate_list:
                         e.logic_data.gate_list.remove(i.index)
-            self.json_file["KeyLogic"][i.room_data.name]["GateRoom"] = i.logic_data.is_gate
-            self.json_file["KeyLogic"][i.room_data.name]["NearestGate"] = self.convert_index_to_gate(i.logic_data.gate_list)
-            self.json_file["KeyLogic"][i.room_data.name]["Doublejump"] = i.logic_data.double_jump
-            self.json_file["KeyLogic"][i.room_data.name]["HighJump"] = i.logic_data.high_jump
-            self.json_file["KeyLogic"][i.room_data.name]["Invert"] = i.logic_data.invert
-            self.json_file["KeyLogic"][i.room_data.name]["Deepsinker"] = i.logic_data.deepsinker
-            self.json_file["KeyLogic"][i.room_data.name]["Dimensionshift"] = i.logic_data.dimension_shift
-            self.json_file["KeyLogic"][i.room_data.name]["Reflectionray"] = i.logic_data.reflector_ray
-            self.json_file["KeyLogic"][i.room_data.name]["Aquastream"] = i.logic_data.aqua_stream
-            self.json_file["KeyLogic"][i.room_data.name]["Bloodsteel"] = i.logic_data.blood_steal
-            self.json_file["KeyLogic"][i.room_data.name]["Swordsman"] = i.logic_data.zangetsuto
-            self.json_file["KeyLogic"][i.room_data.name]["Silverbromide"] = i.logic_data.silver_bromide
+            self.json_file["KeyLogic"][i.room_data.name]["GateRoom"]             = i.logic_data.is_gate
+            self.json_file["KeyLogic"][i.room_data.name]["NearestGate"]          = self.convert_index_to_gate(i.logic_data.gate_list)
+            self.json_file["KeyLogic"][i.room_data.name]["Doublejump"]           = i.logic_data.double_jump
+            self.json_file["KeyLogic"][i.room_data.name]["HighJump"]             = i.logic_data.high_jump
+            self.json_file["KeyLogic"][i.room_data.name]["Invert"]               = i.logic_data.invert
+            self.json_file["KeyLogic"][i.room_data.name]["Deepsinker"]           = i.logic_data.deepsinker
+            self.json_file["KeyLogic"][i.room_data.name]["Dimensionshift"]       = i.logic_data.dimension_shift
+            self.json_file["KeyLogic"][i.room_data.name]["Reflectionray"]        = i.logic_data.reflector_ray
+            self.json_file["KeyLogic"][i.room_data.name]["Aquastream"]           = i.logic_data.aqua_stream
+            self.json_file["KeyLogic"][i.room_data.name]["Bloodsteel"]           = i.logic_data.blood_steal
+            self.json_file["KeyLogic"][i.room_data.name]["Swordsman"]            = i.logic_data.zangetsuto
+            self.json_file["KeyLogic"][i.room_data.name]["Silverbromide"]        = i.logic_data.silver_bromide
             self.json_file["KeyLogic"][i.room_data.name]["BreastplateofAguilar"] = i.logic_data.aegis_plate
-            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker1"] = i.logic_data.carpenter
-            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker2"] = i.logic_data.warhorse
-            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker3"] = i.logic_data.millionaire
-            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker4"] = i.logic_data.celeste
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker1"]         = i.logic_data.carpenter
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker2"]         = i.logic_data.warhorse
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker3"]         = i.logic_data.millionaire
+            self.json_file["KeyLogic"][i.room_data.name]["Keyofbacker4"]         = i.logic_data.celeste
     
     def update_order(self):
         self.json_file["AreaOrder"].clear()
