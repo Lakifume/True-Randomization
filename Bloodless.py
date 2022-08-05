@@ -4,7 +4,6 @@ import os
 import copy
 
 def init():
-    #Declare variables
     global candle_to_room
     candle_to_room = {
         "BLD_ABILITY_HIGH_JUMP":           "m12SND_026",
@@ -16,52 +15,57 @@ def init():
         "BLD_ABILITY_GUILLOTINE_UMBRELLA": "m02VIL_004",
         "BLD_ABILITY_UMBRELLA_TOSS":       "m07LIB_030",
         "BLD_ABILITY_SCARLET_THRUST":      "m05SAN_016",
-        "BLD_ABILITY_SCARLET_THRUST(2)":   "m51EBT_000",
+        "BLD_ABILITY_SCARLET_THRUST_2":    "m51EBT_000",
         "BLD_ABILITY_BLOOD_PILLAR":        "m11UGD_048",
-        "BLD_ABILITY_BLOOD_PILLAR(2)":     "m17RVA_007",
+        "BLD_ABILITY_BLOOD_PILLAR_2":      "m17RVA_007",
         "BLD_ABILITY_SCARLET_CYCLONE":     "m13ARC_006",
         "BLD_ABILITY_BLOOD_RAIN":          "m15JPN_005",
-        "BLD_ABILITY_STR_UP(1)":           "m07LIB_042",
-        "BLD_ABILITY_STR_UP(2)":           "m11UGD_050",
-        "BLD_ABILITY_STR_UP(3)":           "m03ENT_024",
-        "BLD_ABILITY_STR_UP(4)":           "m17RVA_015",
-        "BLD_ABILITY_STR_UP(5)":           "m01SIP_007",
-        "BLD_ABILITY_STR_UP(6)":           "m05SAN_021",
-        "BLD_ABILITY_STR_UP(7)":           "m88BKR_001",
-        "BLD_ABILITY_STR_UP(8)":           "m10BIG_015",
-        "BLD_ABILITY_INT_UP(1)":           "m05SAN_006",
-        "BLD_ABILITY_INT_UP(2)":           "m11UGD_030",
-        "BLD_ABILITY_INT_UP(3)":           "m08TWR_019(1)",
-        "BLD_ABILITY_INT_UP(4)":           "m14TAR_006",
-        "BLD_ABILITY_INT_UP(5)":           "m07LIB_009",
-        "BLD_ABILITY_INT_UP(6)":           "m11UGD_051",
-        "BLD_ABILITY_INT_UP(7)":           "m88BKR_004",
-        "BLD_ABILITY_INT_UP(8)":           "m10BIG_014",
-        "BLD_ABILITY_CON_UP(1)":           "m05SAN_014",
-        "BLD_ABILITY_CON_UP(2)":           "m06KNG_022",
-        "BLD_ABILITY_CON_UP(3)":           "m04GDN_004",
-        "BLD_ABILITY_CON_UP(4)":           "m17RVA_004",
-        "BLD_ABILITY_CON_UP(5)":           "m15JPN_017",
-        "BLD_ABILITY_CON_UP(6)":           "m01SIP_026",
-        "BLD_ABILITY_CON_UP(7)":           "m07LIB_040",
-        "BLD_ABILITY_CON_UP(8)":           "m10BIG_002",
-        "BLD_ABILITY_MND_UP(1)":           "m02VIL_005",
-        "BLD_ABILITY_MND_UP(2)":           "m07LIB_041",
-        "BLD_ABILITY_MND_UP(3)":           "m15JPN_018",
-        "BLD_ABILITY_MND_UP(4)":           "m12SND_003",
-        "BLD_ABILITY_MND_UP(5)":           "m11UGD_010",
-        "BLD_ABILITY_MND_UP(6)":           "m05SAN_003",
-        "BLD_ABILITY_MND_UP(7)":           "m88BKR_003",
-        "BLD_ABILITY_MND_UP(8)":           "m10BIG_010",
-        "BLD_ABILITY_LCK_UP(1)":           "m11UGD_049",
-        "BLD_ABILITY_LCK_UP(2)":           "m88BKR_002",
-        "BLD_ABILITY_LCK_UP(3)":           "m11UGD_038",
-        "BLD_ABILITY_MP_REGEN_UP(1)":      "m07LIB_012",
-        "BLD_ABILITY_MP_REGEN_UP(2)":      "m08TWR_018",
-        "BLD_ABILITY_MP_REGEN_UP(3)":      "m12SND_024"
+        "BLD_ABILITY_STR_UP_1":            "m07LIB_042",
+        "BLD_ABILITY_STR_UP_2":            "m11UGD_050",
+        "BLD_ABILITY_STR_UP_3":            "m03ENT_024",
+        "BLD_ABILITY_STR_UP_4":            "m17RVA_015",
+        "BLD_ABILITY_STR_UP_5":            "m01SIP_007",
+        "BLD_ABILITY_STR_UP_6":            "m05SAN_021",
+        "BLD_ABILITY_STR_UP_7":            "m88BKR_001",
+        "BLD_ABILITY_STR_UP_8":            "m10BIG_015",
+        "BLD_ABILITY_INT_UP_1":            "m05SAN_006",
+        "BLD_ABILITY_INT_UP_2":            "m11UGD_030",
+        "BLD_ABILITY_INT_UP_3":            "m08TWR_019_1",
+        "BLD_ABILITY_INT_UP_4":            "m14TAR_006",
+        "BLD_ABILITY_INT_UP_5":            "m07LIB_009",
+        "BLD_ABILITY_INT_UP_6":            "m11UGD_051",
+        "BLD_ABILITY_INT_UP_7":            "m88BKR_004",
+        "BLD_ABILITY_INT_UP_8":            "m10BIG_014",
+        "BLD_ABILITY_CON_UP_1":            "m05SAN_014",
+        "BLD_ABILITY_CON_UP_2":            "m06KNG_022",
+        "BLD_ABILITY_CON_UP_3":            "m04GDN_004",
+        "BLD_ABILITY_CON_UP_4":            "m17RVA_004",
+        "BLD_ABILITY_CON_UP_5":            "m15JPN_017",
+        "BLD_ABILITY_CON_UP_6":            "m01SIP_026",
+        "BLD_ABILITY_CON_UP_7":            "m07LIB_040",
+        "BLD_ABILITY_CON_UP_8":            "m10BIG_002",
+        "BLD_ABILITY_MND_UP_1":            "m02VIL_005",
+        "BLD_ABILITY_MND_UP_2":            "m07LIB_041",
+        "BLD_ABILITY_MND_UP_3":            "m15JPN_018",
+        "BLD_ABILITY_MND_UP_4":            "m12SND_003",
+        "BLD_ABILITY_MND_UP_5":            "m11UGD_010",
+        "BLD_ABILITY_MND_UP_6":            "m05SAN_003",
+        "BLD_ABILITY_MND_UP_7":            "m88BKR_003",
+        "BLD_ABILITY_MND_UP_8":            "m10BIG_010",
+        "BLD_ABILITY_LCK_UP_1":            "m11UGD_049",
+        "BLD_ABILITY_LCK_UP_2":            "m88BKR_002",
+        "BLD_ABILITY_LCK_UP_3":            "m11UGD_038",
+        "BLD_ABILITY_MP_REGEN_UP_1":       "m07LIB_012",
+        "BLD_ABILITY_MP_REGEN_UP_2":       "m08TWR_018",
+        "BLD_ABILITY_MP_REGEN_UP_3":       "m12SND_024"
     }
     global candle_to_room_invert
     candle_to_room_invert = {}
+    global room_to_requirement
+    room_to_requirement = {
+        "m05SAN_021":   ["BLD_ABILITY_HIGH_JUMP"],
+        "m08TWR_019_1": ["BLD_ABILITY_HIGH_JUMP"]
+    }
     global bloodless_to_miriam
     bloodless_to_miriam = {
         "BLD_ABILITY_HIGH_JUMP":     "HighJump",  
@@ -69,22 +73,23 @@ def init():
         "BLD_ABILITY_BLOOD_STEAL":   "Bloodsteel",
         "BLD_ABILITY_FLOATING_UP":   "Demoniccapture",
     }
-    global irrelevant_gates
-    irrelevant_gates = {
-        "m05SAN_003": [12, 4],
-        "m07LIB_022": [2, 1],
-        "m07LIB_023": [5, 5],
-        "m07LIB_044": [6, 4],
-        "m11UGD_003": [8, 4, 13, 1, 14, 4]
+    global irrelevant_doors
+    irrelevant_doors = {
+        "SAN_003_1_5_RIGHT",
+        "LIB_022_0_1_LEFT",
+        "LIB_023_0_4_LEFT",
+        "LIB_023_0_4_RIGHT",
+        "LIB_044_2_1_RIGHT",
+        "UGD_003_1_3_RIGHT",
+        "UGD_003_0_6_LEFT",
+        "UGD_003_1_6_RIGHT"
     }
-    global impossible_gates
-    impossible_gates = {
-        "m05SAN_003": [17, 1],
-        "m07LIB_008": [2, 4],
-        "m07LIB_014": [1, 4],
-        "m11UGD_056": [4, 4],
-        "m10BIG_000": []
-    }
+    global requirement_doors
+    requirement_doors = [
+        "SAN_003_0_8_LEFT",
+        "UGD_056_0_3_LEFT",
+        "UGD_056_0_3_RIGHT"
+    ]
     global all_keys
     all_keys = []
     global key_order
@@ -99,8 +104,7 @@ def init():
     candle_room = []
     global bloodless_datatable
     bloodless_datatable = {}
-    #Process variables
-    for i in list(bloodless_to_miriam):
+    for i in bloodless_to_miriam:
         key_abilities.append(i)
         all_keys.append(i)
     for i in candle_to_room:
@@ -144,13 +148,6 @@ def extra_logic():
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if i in room_to_list:
             Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] = room_to_list[i]
-    #Convert doors to their actual gates
-    irrelevant_list = []
-    for i in irrelevant_gates:
-        irrelevant_list.extend(Manager.convert_door_to_adjacent_room(i, irrelevant_gates[i]))
-    impossible_list = []
-    for i in impossible_gates:
-        impossible_list.extend(Manager.convert_door_to_adjacent_room(i, impossible_gates[i]))
     #Add 8 Bit Nightmare
     Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"] = {}
     Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["GateRoom"]             = False
@@ -179,27 +176,33 @@ def extra_logic():
         Manager.mod_data["BloodlessModeMapLogic"][i]["Demoniccapture"] = False
     Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["Demoniccapture"] = True
     Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["HighJump"] = True
+    #Convert doors to their actual gates
+    irrelevant_gates = []
+    for i in irrelevant_doors:
+        irrelevant_gates.extend(Manager.convert_door_to_adjacent_room(i))
+    requirement_gates = []
+    for i in requirement_doors:
+        requirement_gates.extend(Manager.convert_door_to_adjacent_room(i))
+    #Since the missing tori warps were added for extra characters some gates act differently
+    for i in requirement_gates:
+        if i in Manager.mod_data["BloodlessModeMapLogic"]:
+            Manager.mod_data["BloodlessModeMapLogic"][i]["HighJump"] = True
     #Remove gates that don't matter in Bloodless mode
     #That includes the rooms that had platforms added
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
-        if i in impossible_list:
+        if Manager.mod_data["BloodlessModeMapLogic"][i]["Swordsman"] or i in requirement_gates:
             continue
         check = True
         for e in key_abilities:
-            if Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] and Manager.mod_data["BloodlessModeMapLogic"][i][bloodless_to_miriam[e]]:
+            if Manager.mod_data["BloodlessModeMapLogic"][i][bloodless_to_miriam[e]]:
                 check = False
-        if check or i in irrelevant_list or Manager.mod_data["BloodlessModeMapLogic"][i]["Doublejump"]:
+        if check or i in irrelevant_gates or Manager.mod_data["BloodlessModeMapLogic"][i]["Doublejump"]:
             Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] = False
             for e in Manager.mod_data["BloodlessModeMapLogic"]:
                 if i in Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"]:
                     Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"] = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
     #Adding seperate gate for the upper part of Valac's room
-    Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019(1)"] = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019"])
-    Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019"]["GateRoom"] = False
-    for i in Manager.mod_data["BloodlessModeMapLogic"]:
-        while "m08TWR_019" in Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"]:
-            index = Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"].index("m08TWR_019")
-            Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"][index] = "m08TWR_019(1)"
+    Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019_1"] = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m08TWR_019"])
 
 def candle_logic():
     #Function similar to the Miriam logic but simplified for Bloodless mode
@@ -275,11 +278,17 @@ def logic_choice(chosen_item, room_list):
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)
     #Choosing room to place item in
-    chosen_room = random.choice(room_list)
-    while chosen_room in list(key_ability_to_location.values()):
+    while True:
         chosen_room = random.choice(room_list)
-    #Updating key location
-    key_ability_to_location[chosen_item] = chosen_room
+        if not chosen_room in list(key_ability_to_location.values()):
+            if chosen_room in room_to_requirement:
+                for i in room_to_requirement[chosen_room]:
+                    if i in key_ability_to_location:
+                        key_ability_to_location[chosen_item] = chosen_room
+                        break
+            else:
+                key_ability_to_location[chosen_item] = chosen_room
+                break
 
 def candle_shuffle():
     candle_logic()
@@ -298,7 +307,7 @@ def update_shard_candles():
     #All of Bloodless' abilities are stored inside of shard candles
     #Just like for Miriam those are defined inside of the level files
     for i in bloodless_datatable:
-        Manager.search_and_replace_string(Manager.split_fname(bloodless_datatable[i])[0] + "_Gimmick", "BloodlessAbilityGimmick", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_room_invert[bloodless_datatable[i]], "EPBBloodlessAbilityType::" + i)
+        Manager.search_and_replace_string(Manager.remove_inst(bloodless_datatable[i]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_room_invert[bloodless_datatable[i]], "EPBBloodlessAbilityType::" + i)
 
 def any_pick(item_array):
     item = random.choice(item_array)
@@ -313,11 +322,11 @@ def create_log(seed, map):
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
     for i in key_order:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]] = []
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]] = []
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]]].append(Manager.split_fname(bloodless_datatable[i])[0])
+        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]].append(Manager.remove_inst(bloodless_datatable[i]))
     return log
 
 def create_log_string(seed, map):
@@ -332,11 +341,11 @@ def create_log_string(seed, map):
     log_string += "Map: " + map_name + "\n"
     log_string += "Key:\n"
     for i in key_order:
-        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
     for i in bloodless_datatable:
         if i in key_order:
             continue
-        if "_UP(" in i:
+        if "_UP_" in i:
             break
-        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.split_fname(i)[0]] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
     return log_string

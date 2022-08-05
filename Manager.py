@@ -24,9 +24,9 @@ for i in file_to_path:
         file_to_type[i] = "Level"
     elif "StringTable" in file_to_path[i]:
         file_to_type[i] = "StringTable"
-    elif "Material" in file_to_path[i]:
+    elif "Material" in file_to_path[i] and not "Texture" in file_to_path[i]:
         file_to_type[i] = "Material"
-    elif "Texture" in file_to_path[i] or "UI" in file_to_path[i] and not "StartupSelecter" in file_to_path[i]:
+    elif "Texture" in file_to_path[i] or "UI" in file_to_path[i] and not "StartupSelecter" in file_to_path[i] and not "Title" in file_to_path[i]:
         file_to_type[i] = "Texture"
     elif "Sound" in file_to_path[i]:
         file_to_type[i] = "Sound"
@@ -41,6 +41,7 @@ asset_dir = "Game"
 #Open UAssetAPI module
 sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
 clr.AddReference("UAssetAPI")
+clr.AddReference("UAssetSnippet")
 
 from UAssetAPI import *
 from UAssetAPI.FieldTypes import *
@@ -54,6 +55,7 @@ from UAssetAPI.PropertyTypes.Structs import *
 from UAssetAPI.PropertyTypes.Structs.Movies import *
 from UAssetAPI.UnrealTypes import *
 from UAssetAPI.Unversioned import *
+from UAssetSnippet import *
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -85,21 +87,323 @@ OppositeDirection = {
 }
 
 class Door:
-    def __init__(self, x_block, z_block, direction_part, breakable):
+    def __init__(self, room, x_block, z_block, direction_part, breakable):
+        self.room = room
         self.x_block = x_block
         self.z_block = z_block
         self.direction_part = direction_part
         self.breakable = breakable
 
 def init():
+    global actor_to_properties
+    actor_to_properties = {
+        "PBEasyTreasureBox_BP_C": {
+            "Room": "m01SIP_002",
+            "Index": 63
+        },
+        "PBEasyTreasureBox_BP_C(Gold)": {
+            "Room": "m08TWR_019",
+            "Index": 989
+        },
+        "HPMaxUp_C": {
+            "Room": "m04GDN_002",
+            "Index": 16
+        },
+        "MPMaxUp_C": {
+            "Room": "m01SIP_025",
+            "Index": 16
+        },
+        "BulletMaxUp_C": {
+            "Room": "m01SIP_024",
+            "Index": 2
+        },
+        "PBBossDoor_BP_C": {
+            "Room": "m15JPN_015",
+            "Index": 34
+        },
+        "BP_AreaDoor_C(Left)": {
+            "Room": "m11UGD_014",
+            "Index": 1
+        },
+        "BP_AreaDoor_C(Right)": {
+            "Room": "m04GDN_016",
+            "Index": 1
+        },
+        "ReadableBookShelf_C": {
+            "Room": "m01SIP_005",
+            "Index": 163
+        },
+        "BP_EventDoor_C": {
+            "Room": "m01SIP_000",
+            "Index": 8
+        },
+        "ToriiWarp_BP_C": {
+            "Room": "m07LIB_006",
+            "Index": 142
+        },
+        "B_COM_DamegeWall_1_C": {
+            "Room": "m03ENT_000",
+            "Index": 0
+        },
+        "BP_DM_BaseLantern_ShardChild2_C": {
+            "Room": "m05SAN_000",
+            "Index": 16
+        },
+        "BP_DM_BloodlessAbilityGimmick_C": {
+            "Room": "m01SIP_000",
+            "Index": 7
+        }
+    }
+    global boss_door_rooms
+    boss_door_rooms = [
+        "m03ENT_011",
+        "m03ENT_014",
+        "m05SAN_011",
+        "m05SAN_022",
+        "m07LIB_010",
+        "m07LIB_037",
+        "m07LIB_039",
+        "m08TWR_019",
+        "m13ARC_002",
+        "m13ARC_006",
+        "m14TAR_003",
+        "m14TAR_005",
+        "m15JPN_015",
+        "m17RVA_007",
+        "m17RVA_009",
+        "m18ICE_002",
+        "m18ICE_005",
+        "m18ICE_010",
+        "m18ICE_017"
+    ]
+    global area_door_rooms
+    area_door_rooms = [
+        "m02VIL_012",
+        "m03ENT_000",
+        "m03ENT_007",
+        "m03ENT_008",
+        "m03ENT_016",
+        "m03ENT_018",
+        "m03ENT_019",
+        "m04GDN_000",
+        "m04GDN_003",
+        "m04GDN_015",
+        "m04GDN_016",
+        "m04GDN_017",
+        "m05SAN_000",
+        "m05SAN_001",
+        "m05SAN_003",
+        "m05SAN_010",
+        "m05SAN_021",
+        "m05SAN_024",
+        "m06KNG_000",
+        "m06KNG_008",
+        "m07LIB_000",
+        "m07LIB_021",
+        "m07LIB_039",
+        "m08TWR_003",
+        "m08TWR_017",
+        "m09TRN_000",
+        "m09TRN_005",
+        "m10BIG_018",
+        "m11UGD_000",
+        "m11UGD_014",
+        "m11UGD_026",
+        "m11UGD_033",
+        "m11UGD_036",
+        "m11UGD_046",
+        "m11UGD_055",
+        "m11UGD_057",
+        "m12SND_000",
+        "m12SND_011",
+        "m13ARC_000",
+        "m14TAR_000",
+        "m14TAR_009",
+        "m15JPN_000",
+        "m15JPN_007",
+        "m17RVA_000",
+        "m17RVA_014",
+        "m18ICE_000"
+    ]
+    global bookshelf_rooms
+    bookshelf_rooms = [
+        "m01SIP_005",
+        "m01SIP_012",
+        "m02VIL_007",
+        "m03ENT_002",
+        "m03ENT_004",
+        "m03ENT_005",
+        "m03ENT_011",
+        "m03ENT_012",
+        "m04GDN_005",
+        "m04GDN_006",
+        "m04GDN_011",
+        "m05SAN_000",
+        "m05SAN_003",
+        "m05SAN_005",
+        "m05SAN_009",
+        "m05SAN_021",
+        "m06KNG_003",
+        "m06KNG_015",
+        "m06KNG_018",
+        "m07LIB_000",
+        "m07LIB_010",
+        "m07LIB_018",
+        "m07LIB_036",
+        "m08TWR_000",
+        "m08TWR_003",
+        "m08TWR_010",
+        "m08TWR_014",
+        "m09TRN_005",
+        "m10BIG_009",
+        "m11UGD_000",
+        "m11UGD_006",
+        "m11UGD_032",
+        "m12SND_021",
+        "m13ARC_002",
+        "m13ARC_006",
+        "m14TAR_001",
+        "m15JPN_015",
+        "m17RVA_007",
+        "m18ICE_002"
+    ]
+    global rotating_rooms
+    rotating_rooms = [
+        "m02VIL_008",
+        "m02VIL_011",
+        "m08TWR_017",
+        "m08TWR_018",
+        "m08TWR_019",
+        "m09TRN_001",
+        "m12SND_025",
+        "m12SND_026",
+        "m12SND_027"
+    ]
+    global wall_to_gimmick_flag
+    wall_to_gimmick_flag = {
+        "SIP_006_0_0_RIGHT_BOTTOM": "SIP_006_DestructibleWall",
+        "SIP_006_0_2_RIGHT":        "SIP_017_BreakWallCannon",
+        "SIP_017_0_0_LEFT":         "SIP_017_BreakWallCannon",
+        "VIL_006_3_0_BOTTOM":       "VIL_006_HardFloor1F",
+        "VIL_009_0_0_LEFT_BOTTOM":  "VIL_009_DestructibleWall",
+        "ENT_018_0_0_BOTTOM":       "ENT_018_DestructibleFloor",
+        "GDN_013_0_0_LEFT":         "GDN_013_DestructibleWall",
+        "SAN_019_1_0_BOTTOM":       "SAN_019_DestructibleFloor",
+        "KNG_013_0_0_LEFT":         "KNG_013_DestructibleWall",
+        "KNG_015_0_2_TOP":          "KNG_015_DestructibleRoof",
+        "KNG_017_0_0_LEFT":         "KNG_017_DestructibleWall",
+        "LIB_000_0_2_TOP":          "LIB_005_StepSwitch",
+        "LIB_005_0_0_BOTTOM":       "LIB_005_StepSwitch",
+        "LIB_023_0_2_RIGHT":        "LIB_023_StepSwitch",
+        "LIB_029_1_1_TOP":          "LIB_029_DestructibleCeil",
+        "LIB_032_0_1_TOP":          "LIB_032_StepSwitch",
+        "LIB_041_0_0_BOTTOM":       "LIB_032_StepSwitch",
+        "UGD_003_1_3_RIGHT":        "UGD_003_DestructibleWall1",
+        "UGD_003_1_0_RIGHT":        "UGD_003_DestructibleWall2",
+        "UGD_042_1_0_RIGHT":        "UGD_042_DestructibleWall",
+        "SND_002_0_0_LEFT":         "SND_002_DestructibleWall",
+        "ARC_003_0_0_RIGHT":        "ARC_002_DestructibleWall",
+        "ARC_006_0_0_BOTTOM":       "ARC_006_DestructibleFloor",
+        "JPN_003_0_0_LEFT":         "JPN_003_DestructibleWall",
+        "RVA_003_1_0_RIGHT":        "RVA_003_DestructibleWall",
+        "RVA_014_0_0_RIGHT":        "RVA_014_DestructibleWall"
+    }
+    global special_doors
+    special_doors = [
+        "VIL_008_3_0_RIGHT",
+        "VIL_008_3_0_BOTTOM_RIGHT",
+        "VIL_011_5_0_RIGHT",
+        "VIL_011_5_0_TOP_RIGHT",
+        "GDN_009_0_0_LEFT",
+        "GDN_009_0_1_LEFT",
+        "GDN_009_2_0_RIGHT",
+        "SAN_015_0_0_LEFT",
+        "SAN_015_1_0_RIGHT",
+        "SAN_017_0_0_LEFT",
+        "SAN_017_1_0_RIGHT",
+        "SAN_018_0_0_LEFT",
+        "SAN_018_1_0_RIGHT",
+        "SAN_020_0_0_LEFT",
+        "SAN_020_1_0_RIGHT",
+        "SAN_020_0_1_LEFT",
+        "SAN_020_1_1_RIGHT"
+    ]
+    global floorless_doors
+    floorless_doors = [
+        "VIL_006_0_1_LEFT",
+        "SAN_009_0_1_LEFT",
+        "SAN_009_1_1_RIGHT",
+        "SAN_021_0_1_LEFT",
+        "SAN_021_1_1_RIGHT",
+        "KNG_010_1_1_RIGHT",
+        "KNG_013_0_0_LEFT",
+        "KNG_017_0_0_LEFT",
+        "LIB_003_0_1_RIGHT",
+        "LIB_023_0_0_LEFT",
+        "LIB_023_0_0_RIGHT",
+        "UGD_006_0_2_LEFT",
+        "UGD_016_0_1_RIGHT",
+        "UGD_019_0_2_LEFT",
+        "UGD_019_1_2_RIGHT",
+        "UGD_021_0_0_LEFT",
+        "UGD_029_0_1_LEFT",
+        "UGD_056_0_3_RIGHT",
+        "ARC_002_1_1_RIGHT",
+        "ARC_003_0_0_RIGHT",
+        "JPN_010_0_0_LEFT",
+        "JPN_010_0_1_LEFT",
+        "JPN_010_3_0_RIGHT",
+        "JPN_011_0_0_RIGHT",
+        "JPN_012_0_0_LEFT",
+        "JPN_012_3_0_RIGHT",
+        "JPN_014_0_0_LEFT",
+        "JPN_014_3_0_RIGHT",
+        "JPN_015_0_0_RIGHT",
+        "JPN_015_0_1_LEFT",
+        "JPN_015_0_1_RIGHT",
+        "RVA_001_0_1_LEFT",
+        "ICE_005_0_2_LEFT",
+        "ICE_016_0_1_RIGHT"
+    ]
+    global room_to_boss
+    room_to_boss = {
+        "m03ENT_013": "N1011",
+        "m05SAN_012": "N1003",
+        "m07LIB_011": "N2004",
+        "m13ARC_005": "N1006",
+        "m07LIB_038": "N2008",
+        "m05SAN_023": "N1002",
+        "m14TAR_004": "N2007",
+        "m17RVA_008": "N2006",
+        "m15JPN_016": "N1011_STRONG",
+        "m18ICE_004": "N2012",
+        "m18ICE_018": "N1008",
+        "m18ICE_019": "N1009_Enemy"
+    }
+    global map_connections
+    map_connections = {}
+    global map_doors
+    map_doors = {}
+    global custom_actor_prefix
+    custom_actor_prefix = "TR_"
     global datatable
     datatable = {}
     global original_datatable
     original_datatable = {}
     global stringtable
     stringtable = {}
-    global used_doors
-    used_doors = []
+    global key_items
+    key_items = [
+        "Swordsman",
+        "Silverbromide",
+        "BreastplateofAguilar",
+        "Keyofbacker1",
+        "Keyofbacker2",
+        "Keyofbacker3",
+        "Keyofbacker4",
+        "MonarchCrown",
+        "Certificationboard"
+    ]
     global bit_weapons
     bit_weapons = [
         "CoolShoesOfMrNarita",
@@ -123,6 +427,169 @@ def init():
         "WhipsOfLightDarkness",
         "TrustMusket"
     ]
+    global material_to_offset
+    material_to_offset = {
+        "MI_N1001_Body": [
+            0x110E,
+            0x113B,
+            0x1175,
+            0x11D5,
+            0x8BDD,
+            0x8C0A,
+            0x8C44,
+            0x8CA4
+        ],
+        "MI_N1001_Crystal": [
+            0x1CC9,
+            0x1CF6,
+            0x1D30,
+            0x1D90,
+            0x1DF6,
+            0x1E23,
+            0x1E5D,
+            0x1EBD,
+            0x1A0CE,
+            0x1A0FB,
+            0x1A135,
+            0x1A195,
+            0x1A1FB,
+            0x1A228,
+            0x1A262,
+            0x1A2C2
+        ],
+        "MI_N1001_Eye1": [
+            0x104A,
+            0x1077,
+            0x10B1,
+            0x1111,
+            0x86D1,
+            0x86FE,
+            0x8738,
+            0x8798
+        ],
+        "MI_N1001_Eye2": [
+            0x104A,
+            0x1077,
+            0x10B1,
+            0x1111,
+            0x86D2,
+            0x86FF,
+            0x8739,
+            0x8799
+        ],
+        "MI_N1001_Face": [
+            0x104A,
+            0x1077,
+            0x10B1,
+            0x1111,
+            0x85A1,
+            0x85CE,
+            0x8608,
+            0x8668
+        ],
+        "MI_N1001_Hair": [
+            0x104A,
+            0x1077,
+            0x10B1,
+            0x1111,
+            0x86D1,
+            0x86FE,
+            0x8738,
+            0x8798
+        ],
+        "MI_N1001_Mouth": [
+            0x104A,
+            0x1077,
+            0x10B1,
+            0x1111,
+            0x86D2,
+            0x86FF,
+            0x8739,
+            0x8799
+        ],
+        "MI_N1001_tongue": [
+            0x1ABD,
+            0x1AEA,
+            0x1B24,
+            0x1B84,
+            0x13A24,
+            0x13A51,
+            0x13A8B,
+            0x13AEB
+        ],
+        "MI_N2012": [
+            0x1AC2,
+            0x1E48,
+            0xAA36,
+            0xADBC
+        ],
+        "MI_N2012_Sharded": [
+            0x1AC2,
+            0x1E48,
+            0xAA36,
+            0xADBC
+        ],
+        "MI_N2012_Sword": [
+            0x1AC2,
+            0x1E48,
+            0xAA36,
+            0xADBC
+        ],
+        "MI_N2012_glass": [
+            0x2185,
+            0x250B,
+            0x25D4,
+            0x2601,
+            0x263B,
+            0x266A,
+            0x2697,
+            0x26D1,
+            0x18879,
+            0x18BFF,
+            0x18CC8,
+            0x18CF5,
+            0x18D2F,
+            0x18D5E,
+            0x18D8B,
+            0x18DC5
+        ],
+        "MI_N2004_body": [
+            0x1B4E,
+            0x1ED4,
+            0x1F9D,
+            0x1FCA,
+            0x2004,
+            0x2033,
+            0x2060,
+            0x209A,
+            0x10E2B,
+            0x111B1,
+            0x1127A,
+            0x112A7,
+            0x112E1,
+            0x11310,
+            0x1133D,
+            0x11377
+        ],
+        "M_Mbs004_all_Inst": [
+            0x2185,
+            0x250B,
+            0x25D4,
+            0x2601,
+            0x263B,
+            0x266A,
+            0x2697,
+            0x26D1,
+            0x1887A,
+            0x18C00,
+            0x18CC9,
+            0x18CF6,
+            0x18D30,
+            0x18D5F,
+            0x18D8C,
+            0x18DC6
+        ]
+    }
 
 def load_game_data():
     global game_data
@@ -136,8 +603,8 @@ def load_game_data():
                 extension = ".umap"
             else:
                 extension = ".uasset"
-            game_data[i] = UAsset(asset_dir + "\\" + file_to_path[i] + "\\" + i + extension, UE4Version(517))
-            #Store extra data for convenience
+            game_data[i] = UAsset(asset_dir + "\\" + file_to_path[i] + "\\" + i.split("(")[0] + extension, UE4Version.VER_UE4_22)
+            #Store struct data types for later on
             if file_to_type[i] == "DataTable":
                 for e in game_data[i].Exports[0].Table.Data:
                     for o in e.Value:
@@ -209,7 +676,44 @@ def load_map(path):
       "m18ICE"
     ]
 
+def get_map_info():
+    #Keep track of every door connection for multi purpose
+    for i in datatable["PB_DT_RoomMaster"]:
+        map_connections[i] = {}
+        doors = convert_flag_to_door(i, datatable["PB_DT_RoomMaster"][i]["DoorFlag"], datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
+        for e in doors:
+            door_string = "_".join([e.room[3:], str(e.x_block), str(e.z_block), str(e.direction_part).split(".")[-1]])
+            map_doors[door_string] = e
+            map_connections[i][door_string] = []
+    for i in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][i]["Unused"]:
+            continue
+        for e in datatable["PB_DT_RoomMaster"]:
+            if datatable["PB_DT_RoomMaster"][e]["Unused"]:
+                continue
+            if datatable["PB_DT_RoomMaster"][i]["OutOfMap"] != datatable["PB_DT_RoomMaster"][e]["OutOfMap"]:
+                continue
+            is_adjacent(i, e)
+
+def randomizer_events():
+    #Some events need to be triggered by default to avoid conflicts or tedium
+    #Galleon cannon wall
+    datatable["PB_DT_GimmickFlagMaster"]["SIP_008_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    #Librarian easter egg
+    datatable["PB_DT_GimmickFlagMaster"]["LIB_009_PushUpOD_Second"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["LIB_009_PushUpOD_First"]["Id"]
+    #Tower cutscene/garden red moon removal
+    datatable["PB_DT_EventFlagMaster"]["Event_07_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+    datatable["PB_DT_EventFlagMaster"]["Event_19_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+
 def fix_custom_map():
+    #Trigger a few events by default
+    datatable["PB_DT_GimmickFlagMaster"]["ENT_000_FallStatue"]["Id"]       = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    datatable["PB_DT_GimmickFlagMaster"]["ENT_007_ZangetuJump"]["Id"]      = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    datatable["PB_DT_GimmickFlagMaster"]["KNG_015_DestructibleRoof"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    datatable["PB_DT_GimmickFlagMaster"]["LIB_029_DestructibleCeil"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    datatable["PB_DT_GimmickFlagMaster"]["TRN_002_LeverDoor"]["Id"]        = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    if not "SIP_006_0_2_RIGHT" in map_connections["m01SIP_017"]["SIP_017_0_0_LEFT"]:
+        datatable["PB_DT_GimmickFlagMaster"]["SIP_017_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #The two underground rooms with very specific shapes only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
@@ -318,8 +822,10 @@ def read_datatable(struct):
         value = str(struct.EnumValue)
     elif type == "FloatProperty":
         value = round(struct.Value, 3)
-    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty", "TextProperty"] and struct.Value:
+    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty"] and struct.Value:
         value = str(struct.Value)
+    elif type == "TextProperty":
+        value = str(struct.CultureInvariantString)
     else:
         value = struct.Value
     return value
@@ -338,10 +844,10 @@ def patch_datatable(file, entry, data, value):
             elif sub_type == "ByteProperty":
                 sub_struct = BytePropertyData()
                 sub_struct.ByteType = BytePropertyType.FName
-                sub_struct.EnumValue = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+                sub_struct.EnumValue = FName.FromString(game_data[file], i)
             elif sub_type == "EnumProperty":
                 sub_struct = EnumPropertyData()
-                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+                sub_struct.Value = FName.FromString(game_data[file], i)
             elif sub_type == "FloatProperty":
                 sub_struct = FloatPropertyData()
                 sub_struct.Value = i
@@ -350,10 +856,10 @@ def patch_datatable(file, entry, data, value):
                 sub_struct.Value = i
             elif sub_type == "NameProperty":
                 sub_struct = NamePropertyData()
-                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+                sub_struct.Value = FName.FromString(game_data[file], i)
             elif sub_type == "SoftObjectProperty":
                 sub_struct = SoftObjectPropertyData()
-                sub_struct.Value = FName(game_data[file], split_fname(i)[0], split_fname(i)[1] + 1)
+                sub_struct.Value = FName.FromString(game_data[file], i)
             elif sub_type == "StrProperty":
                 sub_struct = StrPropertyData()
                 sub_struct.Value = FString(i)
@@ -363,9 +869,9 @@ def patch_datatable(file, entry, data, value):
                 for e in i:
                     sub_sub_type = str(sub_struct.Value[count].PropertyType)
                     if sub_sub_type == "ByteProperty":
-                        sub_struct.Value[count].EnumValue = FName(game_data[file], split_fname(i[e])[0], split_fname(i[e])[1] + 1)
+                        sub_struct.Value[count].EnumValue = FName.FromString(game_data[file], i[e])
                     elif sub_sub_type in ["NameProperty", "EnumProperty"]:
-                        sub_struct.Value[count].Value = FName(game_data[file], split_fname(i[e])[0], split_fname(i[e])[1] + 1)
+                        sub_struct.Value[count].Value = FName.FromString(game_data[file], i[e])
                     elif sub_sub_type == "StrProperty":
                         sub_struct.Value[count].Value = FString(i[e])
                     else:
@@ -373,22 +879,24 @@ def patch_datatable(file, entry, data, value):
                     count += 1
             elif sub_type == "TextProperty":
                 sub_struct = TextPropertyData()
-                sub_struct.Value = FString(i)
+                sub_struct.CultureInvariantString = FString(i)
             new_list.append(sub_struct)
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = new_list
     elif type == "ByteProperty":
-        game_data[file].Exports[0].Table.Data[entry].Value[data].EnumValue = FName(game_data[file], split_fname(value)[0], split_fname(value)[1] + 1)
+        game_data[file].Exports[0].Table.Data[entry].Value[data].EnumValue = FName.FromString(game_data[file], value)
     elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName(game_data[file], split_fname(value)[0], split_fname(value)[1] + 1)
-    elif type in ["StrProperty", "TextProperty"] and value:
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName.FromString(game_data[file], value)
+    elif type == "StrProperty" and value:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
+    elif type == "TextProperty" and value:
+        game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value)
     else:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = value
 
 def append_datatable_entry(file, entry):
     #Append a new datatable entry to the end to be edited later on
     new_entry = game_data[file].Exports[0].Table.Data[0].Clone()
-    new_entry.Name = FName(game_data[file], split_fname(entry)[0], split_fname(entry)[1] + 1)
+    new_entry.Name = FName.FromString(game_data[file], entry)
     game_data[file].Exports[0].Table.Data.Add(new_entry)
 
 def apply_tweaks():
@@ -463,7 +971,13 @@ def apply_tweaks():
             datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "ArmsRecipe020"
     #Remove the minimal damage addition on attacks
     for i in datatable["PB_DT_DamageMaster"]:
-        datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
+        if i == "N3108_SUICIDE":
+            datatable["PB_DT_DamageMaster"][i]["SA_Correction"]  = 0.0
+            datatable["PB_DT_DamageMaster"][i]["STR_Correction"] = 0.0
+            datatable["PB_DT_DamageMaster"][i]["INT_Correction"] = 0.0
+            datatable["PB_DT_DamageMaster"][i]["FixedDamage"]    = 7777.0
+        else:
+            datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
     #Increase default drop rates
     for i in datatable["PB_DT_DropRateMaster"]:
         #Keep dulla head drops relatively low due to their spawn frequency
@@ -481,6 +995,9 @@ def apply_tweaks():
             datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] < 100.0:
             datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+        #Make coin type match the amount
+        if datatable["PB_DT_DropRateMaster"][i]["CoinOverride"] > 0:
+            datatable["PB_DT_DropRateMaster"][i]["CoinType"] = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][i]["CoinOverride"])
     #Loop through all items
     for i in datatable["PB_DT_ItemMaster"]:
         #Remove dishes from shop to prevent heal spam
@@ -506,6 +1023,9 @@ def apply_tweaks():
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
     #Update Jinrai cost description
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
+    #Slightly change Igniculus' descriptions to match other familiar's
+    stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
+    stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
     #Add Breeder and Greedling to the enemy archives
     add_enemy_to_archive("N3125", ["SYS_SEN_AreaName021"], None, "N3124")
     add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
@@ -519,19 +1039,94 @@ def apply_tweaks():
     #Give all bosses level 66
     for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
         i.Value.Value = 66
-    #Starting equipment test
-    #sub_struct = NamePropertyData()
-    #sub_struct.Name = FName(game_data["PBExtraModeInfo_BP"], "EffectiveShard")
-    #sub_struct.Value = FName(game_data["PBExtraModeInfo_BP"], "Accelerator")
-    #game_data["PBExtraModeInfo_BP"].Exports[1].Data[0].Value.Add(sub_struct)
+    #Make the second train gate a regular gate rather than a debug
+    game_data["m09TRN_004_Gimmick"].Exports[257].Data[18].Value = False
+    #Add the missing gate warps for the extra characters
+    #That way impassable gates are no longer a problem
+    add_extra_mode_warp("m04GDN_013_Gimmick", FVector(2460, 0, 2100), FRotator(180,   0,   0), FVector(3080, 0, 1800), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m05SAN_003_Gimmick", FVector( 220, 0, 5940), FRotator(  0,   0, 180), FVector(2300, 0, 6000), FRotator(  0, 180,   0))
+    add_extra_mode_warp("m05SAN_003_Gimmick", FVector(1400, 0,  900), FRotator(180,   0,   0), FVector(1400, 0,   60), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m07LIB_008_Gimmick", FVector(1200, 0,  960), FRotator(  0,   0,   0), FVector( 840, 0, 1380), FRotator(180,   0,   0))
+    add_extra_mode_warp("m07LIB_012_Gimmick", FVector(1080, 0,  480), FRotator(  0, 180,   0), FVector( 940, 0,  180), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m07LIB_014_Gimmick", FVector( 540, 0,  450), FRotator(-90, 180,   0), FVector(1080, 0,  240), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m07LIB_022_Gimmick", FVector( 420, 0,  720), FRotator(180,   0,   0), FVector( 520, 0,  600), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m07LIB_035_Gimmick", FVector( 420, 0, 1520), FRotator(-90, 180,   0), FVector( 540, 0, 1680), FRotator( 90, 180,   0))
+    add_extra_mode_warp("m08TWR_016_Gimmick", FVector( 600, 0,  240), FRotator(  0, 180,   0), FVector( 600, 0, -180), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m11UGD_025_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m11UGD_056_Gimmick", FVector( 880, 0, 2220), FRotator(180,   0,   0), FVector(1050, 0, 2400), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m11UGD_056_Gimmick", FVector( 600, 0, 1300), FRotator(-90, 180,   0), FVector( 660, 0, 1500), FRotator( 90, 180,   0))
+    add_extra_mode_warp("m12SND_006_Gimmick", FVector( 660, 0,   60), FRotator(  0,   0,   0), FVector( 420, 0,   60), FRotator(  0, 180,   0))
+    add_extra_mode_warp("m13ARC_006_Gimmick", FVector( 600, 0,  960), FRotator(  0,   0,   0), FVector( 420, 0,  960), FRotator(  0, 180,   0))
+    add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1180, 0,   75), FRotator(  0,   0,   0))#
+    add_extra_mode_warp("m17RVA_001_Gimmick", FVector( 800, 0, 2080), FRotator(  0,   0, 180), FVector( 540, 0, 1800), FRotator(  0, 180,   0))
+    add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
+    add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
+    #Add the missing Bloodless candle that was accidentally removed in a recent game update
+    add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
+    #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
+    #That way you can at least save once before the game truly starts
+    remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
+    #Also remove the bone mortes from that one crowded room in galleon
+    remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
+    #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
+    #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
+    #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
+    remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
+    #Add more spikes in return
+    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7140), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 7380), FRotator(0, 0, 0), FVector(1, 1, -1), {})
+    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7860), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 8760), FRotator(0, 0, 0), FVector(1, 1, -1), {})
+    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    #With this mod vanilla rando is pointless and obselete so remove its widget
+    remove_vanilla_rando()
 
-def search_and_replace_string(filename, entry_keyword, data, old_value, new_value):
+def deseema_fix():
+    #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
+    #Add a shard candle for it so that it becomes a guaranteed
+    add_level_actor("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(720, -60, 390), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_015_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_015_Gimmick"], "ShortcutLantarn009")})
+    datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn009"] = {}
+    datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn009"]["Id"] = 186
+
+def search_and_replace_string(filename, class_name, data, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
     for i in game_data[filename].Exports:
-        if entry_keyword in str(i.ObjectName):
+        if class_name == str(game_data[filename].Imports[abs(int(str(i.ClassIndex))) - 1].ObjectName):
             for e in i.Data:
                 if str(e.Name) == data and str(e.Value) == old_value:
-                    e.Value = FName(game_data[filename], split_fname(new_value)[0], split_fname(new_value)[1] + 1)
+                    e.Value = FName.FromString(game_data[filename], new_value)
+
+def change_lip_pointer(event, event_replacement):
+    #Simply swap the file's name in the name map and save as the new name
+    event = "en_" + event + "_LIP"
+    event_replacement = "en_" + event_replacement + "_LIP"
+    
+    if event_replacement + ".uasset" in os.listdir("Data\\LipSync"):
+        event_replacement_data = UAsset("Data\\LipSync\\" + event_replacement + ".uasset", UE4Version(517))
+        index = event_replacement_data.SearchNameReference(FString(event_replacement))
+        event_replacement_data.SetNameReference(index, FString(event))
+        index = event_replacement_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + event_replacement))
+        event_replacement_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + event))
+        event_replacement_data.Write(mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
+    elif event + ".uasset" in os.listdir("Data\\LipSync"):
+        event_data = UAsset("Data\\LipSync\\" + event + ".uasset", UE4Version(517))
+        for i in event_data.Exports:
+            if str(i.ObjectName) == event:
+                i.Data.Clear()
+        event_data.Write(mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
+
+def change_portrait_pointer(portrait, portrait_replacement):
+    #Simply swap the file's name in the name map and save as the new name
+    portrait_replacement_data = UAsset(asset_dir + "\\" + file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version(517))
+    index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
+    portrait_replacement_data.SetNameReference(index, FString(portrait))
+    index = portrait_replacement_data.SearchNameReference(FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait_replacement))
+    portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
+    portrait_replacement_data.Write(mod_dir + "\\" + file_to_path[portrait] + "\\" + portrait + ".uasset")
+
+def add_starting_pickup(drop_id):
+    #Overlay an upgrade on top of Miriam's starting position to instantly get its content when starting a game
+    add_level_actor("m01SIP_000_Gimmick", "HPMaxUp_C", FVector(817, 100, 146), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data["m01SIP_000_Gimmick"], drop_id)})
 
 def update_descriptions():
     #Add magical stats to descriptions
@@ -553,7 +1148,493 @@ def update_descriptions():
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
+def update_map_doors():
+    #Place doors next to their corresponding transitions if the adjacent room is of a special type
+    #Do this even for the default map as some rooms are missing boss doors
+    #Boss doors
+    #Remove originals
+    for i in boss_door_rooms:
+        filename = i + "_Gimmick"
+        remove_level_class(filename, "PBBossDoor_BP_C")
+    #Add new
+    for i in room_to_boss:
+        for e in map_connections[i]:
+            for o in map_connections[i][e]:
+                if o in special_doors:
+                    continue
+                if map_doors[o].room in room_to_boss:
+                    continue
+                if not map_doors[o].room in mod_data["MapLogic"]:
+                    continue
+                filename = map_doors[o].room + "_Gimmick"
+                location = FVector(0, 0, 0)
+                rotation = FRotator(0, 0, 0)
+                scale    = FVector(1, 3, 1)
+                properties = {}
+                properties["BossID"] = FName.FromString(game_data[filename], room_to_boss[i])
+                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                    rotation.Yaw = -180
+                    properties["IsRight"] = False
+                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260
+                    properties["IsRight"] = True
+                location.Z = map_doors[o].z_block*720 + 240.0
+                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                    location.Z -= 180.0
+                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                    location.Z += 180.0
+                add_level_actor(filename, "PBBossDoor_BP_C", location, rotation, scale, properties)
+                #If the door is a breakable wall we don't want the boss door to overlay it, so break it by default
+                if o in wall_to_gimmick_flag:
+                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    #Area doors
+    #Remove originals
+    for i in area_door_rooms:
+        filename = i + "_Gimmick"
+        remove_level_class(filename, "BP_AreaDoor_C")
+    #Add new
+    doors_done = []
+    for i in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Load":
+            continue
+        for e in map_connections[i]:
+            for o in map_connections[i][e]:
+                if o in doors_done:
+                    continue
+                if o in special_doors:
+                    continue
+                if map_doors[o].room in room_to_boss:
+                    continue
+                if not map_doors[o].room in mod_data["MapLogic"]:
+                    continue
+                #If the door is too close to a cutscene disable the event to prevent softlocks
+                if map_doors[o].room == "m03ENT_006":
+                    datatable["PB_DT_EventFlagMaster"]["Event_05_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+                if o == "ARC_001_0_0_LEFT":
+                    datatable["PB_DT_EventFlagMaster"]["Event_09_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+                if o == "TAR_000_0_0_LEFT":
+                    datatable["PB_DT_EventFlagMaster"]["Event_12_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+                #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
+                if o in floorless_doors:
+                    x_offset = -10
+                else:
+                    x_offset = 40
+                filename = map_doors[o].room + "_Gimmick"
+                location = FVector(x_offset, -180, 0)
+                rotation = FRotator(0, 0, 0)
+                scale    = FVector(1, 1, 1)
+                properties = {}
+                properties["IsInvertingOpen"] = False
+                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                    properties["IsOpenedLeft"] = False
+                    class_name = "BP_AreaDoor_C(Left)"
+                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260 - x_offset
+                    properties["IsOpenedLeft"] = True
+                    class_name = "BP_AreaDoor_C(Right)"
+                location.Z = map_doors[o].z_block*720 + 240.0
+                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                    location.Z -= 180.0
+                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                    location.Z += 180.0
+                add_level_actor(filename, class_name, location, rotation, scale, properties)
+                #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
+                if o in wall_to_gimmick_flag:
+                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                #Since transition rooms are double make sure that a door only gets added once
+                doors_done.append(o)
+
+def update_map_indicators():
+    #Place a bookshelf in front of every save and warp point to make map traversal easier
+    #Only do it for custom maps as the default map already has bookshelves with text
+    #Remove originals
+    for i in bookshelf_rooms:
+        filename = i + "_Gimmick"
+        remove_level_class(filename, "ReadableBookShelf_C")
+    #Add new
+    doors_done = []
+    for i in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Save" and datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Warp":
+            continue
+        for e in map_connections[i]:
+            for o in map_connections[i][e]:
+                if o in special_doors:
+                    continue
+                if map_doors[o].room in room_to_boss:
+                    continue
+                if not map_doors[o].room in mod_data["MapLogic"]:
+                    continue
+                if o in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
+                    continue
+                filename = map_doors[o].room + "_Gimmick"
+                location = FVector(-80, -120, 0)
+                rotation = FRotator(0, 0, 0)
+                scale    = FVector(1, 1, 1)
+                properties = {}
+                properties["DiaryID"] = FName.FromString(game_data[filename], "None")
+                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                    rotation.Yaw = -30
+                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260 - 50
+                    rotation.Yaw = 30
+                location.Z = map_doors[o].z_block*720 + 240.0
+                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                    location.Z -= 180.0
+                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                    location.Z += 180.0
+                add_level_actor(filename, "ReadableBookShelf_C", location, rotation, scale, properties)
+    #Fill empty entrances with an impassable door to prevent softlocks
+    #Add new
+    door_height = 240
+    door_width = 44
+    for i in map_connections:
+        for e in map_connections[i]:
+            if map_connections[i][e]:
+                continue
+            if e in special_doors:
+                continue
+            if i in room_to_boss:
+                continue
+            if not i in mod_data["MapLogic"]:
+                continue
+            filename = i + "_Gimmick"
+            location = FVector(0, -360, 0)
+            rotation = FRotator(0, 0, 0)
+            scale    = FVector(1, 1, 1)
+           #Global direction
+            if map_doors[e].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                location.X = -18
+                location.Z = map_doors[e].z_block*720 + door_height
+            if map_doors[e].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                location.X = datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*1260 + 18
+                location.Z = map_doors[e].z_block*720 + door_height
+            if map_doors[e].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
+                location.X = map_doors[e].x_block*1260 + 510.0
+                location.Z = datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"]*720 - 5
+                rotation.Pitch = -90
+            if map_doors[e].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
+                location.X = map_doors[e].x_block*1260 + 510.0
+                location.Z = 5
+                rotation.Pitch = -90
+            #Sub direction
+            if map_doors[e].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                    location.Z -= door_height
+                elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
+                    location.Z -= door_height
+                    scale.X = 4.25
+                    scale.Z = 4.25
+                    location.X -= (door_width*scale.Z - door_width)/2 - door_width
+                    location.Z -= door_height*scale.Z - door_height
+                else:
+                    location.Z += 180
+            if map_doors[e].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                    location.Z += door_height
+                elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
+                    location.Z += door_height
+                    scale.X = 4.25
+                    scale.Z = 4.25
+                    if map_doors[e].direction_part == Direction.LEFT_TOP:
+                        location.X -= (door_width*scale.Z - door_width)/2 - door_width
+                    else:
+                        location.X += (door_width*scale.Z - door_width)/2 - door_width
+                else:
+                    location.Z += 180
+            if map_doors[e].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
+                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                    location.X -= 510
+                else:
+                    location.X -= 370
+            if map_doors[e].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
+                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                    location.X += 510
+                else:
+                    location.X += 370
+            add_level_actor(filename, "BP_EventDoor_C", location, rotation, scale, {"CommonFlag": FName.FromString(game_data[filename], "EGameCommonFlag::None")})
+
+def update_room_containers(room):
+    #Some rooms have chests that are best to leave alone
+    if room == "m01SIP_000":
+        return
+    #One of the ship rooms has its actors defined in its bg file instead of gimmick
+    if room == "m01SIP_007":
+        filename = room + "_BG"
+    else:
+        filename = room + "_Gimmick"
+    room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
+    for i in range(len(game_data[filename].Exports)):
+        old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
+        #Check if it is a golden chest
+        if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[i].Data[4].Name) == "IsAutoMaterial":
+            old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
+        #Pure miriam is considered a different class but honestly it's the same as regular chests
+        if old_class_name == "PBPureMiriamTreasureBox_BP_C":
+            old_class_name = "PBEasyTreasureBox_BP_C"
+        if old_class_name in ["PBEasyTreasureBox_BP_C", "PBEasyTreasureBox_BP_C(Gold)", "HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+            #Gather old actor properties
+            location = FVector(0, 0, 0)
+            rotation = FRotator(0, 0, 0)
+            scale    = FVector(1, 1, 1)
+            safety_chest = False
+            gimmick_id = ""
+            for e in game_data[filename].Exports[i].Data:
+                if str(e.Name) in ["DropItemID", "DropRateID"]:
+                    drop_id = str(e.Value)
+                if str(e.Name) == "IsRandomizerSafetyChest":
+                    safety_chest = e.Value
+                if str(e.Name) == "OptionalGimmickID":
+                    gimmick_id = str(e.Value)
+                if str(e.Name) == "EventRootComponent":
+                    root_index = int(str(e.Value)) - 1
+                    for o in game_data[filename].Exports[root_index].Data:
+                        if str(o.Name) == "RelativeLocation":
+                            location = o.Value[0].Value
+                        if str(o.Name) == "RelativeRotation":
+                            rotation = o.Value[0].Value
+                        if str(o.Name) == "RelativeScale3D":
+                            scale    = o.Value[0].Value
+            if not drop_id in datatable["PB_DT_DropRateMaster"]:
+                continue
+            if safety_chest:
+                continue
+            if datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxHPUP":
+                new_class_name = "HPMaxUp_C"
+            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxMPUP":
+                new_class_name = "MPMaxUp_C"
+            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxBulletUP":
+                new_class_name = "BulletMaxUp_C"
+            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] in key_items:
+                new_class_name = "PBEasyTreasureBox_BP_C(Gold)"
+            else:
+                new_class_name = "PBEasyTreasureBox_BP_C"
+            #Check if container mismatches item type
+            if old_class_name == new_class_name:
+                continue
+            #Correct container transform when necessary
+            #The upgrades up the castle bridge are on the wrong plane
+            if room == "m02VIL_008":
+                location.X -= 50
+            #If the room is a rotating 3d one then use the forward vector to shift position
+            elif room in rotating_rooms:
+                forward_vector = (math.cos(math.radians(rotation.Pitch))*math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Pitch))*math.cos(math.radians(rotation.Yaw)))
+                if "PBEasyTreasureBox_BP_C" in new_class_name and old_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+                    location.X -= forward_vector[0]*120
+                    location.Y -= forward_vector[1]*120
+                if new_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"] and "PBEasyTreasureBox_BP_C" in old_class_name:
+                    location.X += forward_vector[0]*120
+                    location.Y += forward_vector[1]*120
+            #Otherwise give the container a set transform
+            else:
+                if "PBEasyTreasureBox_BP_C" in new_class_name and old_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+                    location.Y = -120
+                    #Slightly rotate the chest to be facing the center of the room
+                    if location.X < room_width*0.45:
+                        rotation.Yaw = -30
+                    elif location.X > room_width*0.55:
+                        rotation.Yaw = 30
+                    else:
+                        rotation.Yaw = 0
+                    #Drop chest down to the floor if it is in a bell
+                    if drop_id == "Treasurebox_SAN003_4":
+                        location.Z = 4080
+                    elif drop_id == "Treasurebox_SAN019_3":
+                        location.Z = 120
+                    elif drop_id == "Treasurebox_SAN021_4":
+                        location.Z = 420
+                if new_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"] and "PBEasyTreasureBox_BP_C" in old_class_name:
+                    #If it used to be the chest under the bridge move it to Benjamin's room for the extra characters
+                    if drop_id == "Treasurebox_JPN002_1":
+                        location.X = 1860
+                        location.Z = 60
+                    location.Y = 0
+                    rotation.Yaw = 0
+            properties = {}
+            if "PBEasyTreasureBox_BP_C" in new_class_name:
+                properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
+                properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
+                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst(drop_id))
+                if gimmick_id:
+                    properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
+            else:
+                properties["DropRateID"]   = FName.FromString(game_data[filename], drop_id)
+            #Removing chests like any other actor currently causes crashes so instead move the original way offscreen
+            #Hopefully this is only temporary
+            if "PBEasyTreasureBox_BP_C":
+                for e in game_data[filename].Exports[i].Data:
+                    if str(e.Name) in ["DropItemID", "ItemID"]:
+                        e.Value = FName.FromString(game_data[filename], "AAAA_Shard")
+                game_data[filename].Exports[root_index].Data[0].Value[0].Value = FVector(-999, 0, 0)
+            else:
+                remove_level_actor(filename, i)
+            add_level_actor(filename, new_class_name, location, rotation, scale, properties)
+
+def update_map_connections():
+    #The game map requires you to manually input a list of which rooms can be transitioned into from the current room
+    #Doing this via the map editor would only add long load times upon saving a map so do it here instead
+    #Fill same room field for rooms that are overlayed perfectly
+    #Not sure if it serves any actual purpose in-game but it does help for the following adjacent room check
+    for i in datatable["PB_DT_RoomMaster"]:
+        datatable["PB_DT_RoomMaster"][i]["SameRoom"] = "None"
+        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+            continue
+        for e in datatable["PB_DT_RoomMaster"]:
+            if datatable["PB_DT_RoomMaster"][e]["OutOfMap"]:
+                continue
+            if datatable["PB_DT_RoomMaster"][i]["OffsetX"] == datatable["PB_DT_RoomMaster"][e]["OffsetX"] and datatable["PB_DT_RoomMaster"][i]["OffsetZ"] == datatable["PB_DT_RoomMaster"][e]["OffsetZ"] and i != e:
+                datatable["PB_DT_RoomMaster"][i]["SameRoom"] = e
+                break
+    #Fill adjacent room lists
+    for i in datatable["PB_DT_RoomMaster"]:
+        doors = []
+        for e in map_connections[i]:
+            if map_connections[i][e]:
+                doors.append(map_doors[e])
+        datatable["PB_DT_RoomMaster"][i]["DoorFlag"] = convert_door_to_flag(doors, datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
+        adjacent = []
+        for e in map_connections[i]:
+            for o in map_connections[i][e]:
+                #Transition rooms in Bloodstained come by pair, each belonging to an area
+                #Make it so that an area is only connected to its corresponding transition rooms when possible
+                #This avoids having the next area name tag show up within the transition
+                #With the exception of standalone transitions with no fallbacks as well as the first entrance transition fallback
+                if datatable["PB_DT_RoomMaster"][map_doors[o].room]["RoomType"] == "ERoomType::Load" and map_doors[o].room[0:6] != i[0:6] and datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] != "None" and map_doors[o].room != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] != "m03ENT_1200":
+                    continue
+                #The first entrance transition room is hardcoded to bring you back to the village regardless of its position on the canvas
+                #Ignore that room and don't connect it to anything
+                #Meanwhile the village version of that transition is always needed to trigger the curved effect of the following bridge room
+                #So ignore any other transitions overlayed on top of it
+                if datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] == "m02VIL_1200" or map_doors[o].room == "m03ENT_1200":
+                    continue
+                if not map_doors[o].room in adjacent:
+                    adjacent.append(map_doors[o].room)
+        datatable["PB_DT_RoomMaster"][i]["AdjacentRoomName"] = adjacent
+    #Some rooms need specific setups
+    #Connect Vepar room to its overlayed village counterpart
+    datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].append("m02VIL_000")
+    #Some tower rooms are overlayed and need to be connected manually as the above script ignores all overlayed rooms
+    datatable["PB_DT_RoomMaster"]["m08TWR_000"]["AdjacentRoomName"].append("m08TWR_017")
+    datatable["PB_DT_RoomMaster"]["m08TWR_005"]["AdjacentRoomName"].append("m08TWR_018")
+    datatable["PB_DT_RoomMaster"]["m08TWR_006"]["AdjacentRoomName"].append("m08TWR_018")
+    datatable["PB_DT_RoomMaster"]["m08TWR_016"]["AdjacentRoomName"].append("m08TWR_019")
+    
+    datatable["PB_DT_RoomMaster"]["m08TWR_017"]["AdjacentRoomName"].append("m08TWR_000")
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"].append("m08TWR_005")
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"].append("m08TWR_006")
+    datatable["PB_DT_RoomMaster"]["m08TWR_019"]["AdjacentRoomName"].append("m08TWR_016")
+    
+    datatable["PB_DT_RoomMaster"]["m08TWR_000"]["DoorFlag"].insert(0, 1)
+    datatable["PB_DT_RoomMaster"]["m08TWR_000"]["DoorFlag"].insert(0, 1)
+    datatable["PB_DT_RoomMaster"]["m08TWR_005"]["DoorFlag"].append(4)
+    datatable["PB_DT_RoomMaster"]["m08TWR_005"]["DoorFlag"].append(4)
+    datatable["PB_DT_RoomMaster"]["m08TWR_006"]["DoorFlag"].insert(0, 1)
+    datatable["PB_DT_RoomMaster"]["m08TWR_006"]["DoorFlag"].insert(0, 1)
+    datatable["PB_DT_RoomMaster"]["m08TWR_016"]["DoorFlag"].insert(0, 4)
+    datatable["PB_DT_RoomMaster"]["m08TWR_016"]["DoorFlag"].insert(0, 2)
+    
+    datatable["PB_DT_RoomMaster"]["m08TWR_017"]["DoorFlag"].append(18)
+    datatable["PB_DT_RoomMaster"]["m08TWR_017"]["DoorFlag"].append(8)
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(3)
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(2)
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(34)
+    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(8)
+    datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(39)
+    datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(8)
+    #Extra mode rooms
+    datatable["PB_DT_RoomMaster"]["m53BRV_000"]["AdjacentRoomName"].append("m53BRV_001")
+    datatable["PB_DT_RoomMaster"]["m53BRV_001"]["AdjacentRoomName"].append("m53BRV_002")
+    datatable["PB_DT_RoomMaster"]["m53BRV_001"]["AdjacentRoomName"].append("m53BRV_022")
+    datatable["PB_DT_RoomMaster"]["m53BRV_002"]["AdjacentRoomName"].append("m53BRV_003")
+    datatable["PB_DT_RoomMaster"]["m53BRV_022"]["AdjacentRoomName"].append("m53BRV_003")
+    datatable["PB_DT_RoomMaster"]["m53BRV_003"]["AdjacentRoomName"].append("m53BRV_004")
+    datatable["PB_DT_RoomMaster"]["m53BRV_003"]["AdjacentRoomName"].append("m53BRV_024")
+    datatable["PB_DT_RoomMaster"]["m53BRV_004"]["AdjacentRoomName"].append("m53BRV_005")
+    datatable["PB_DT_RoomMaster"]["m53BRV_024"]["AdjacentRoomName"].append("m53BRV_005")
+    datatable["PB_DT_RoomMaster"]["m53BRV_005"]["AdjacentRoomName"].append("m53BRV_026")
+    datatable["PB_DT_RoomMaster"]["m53BRV_026"]["AdjacentRoomName"].append("m53BRV_101")
+    datatable["PB_DT_RoomMaster"]["m53BRV_026"]["AdjacentRoomName"].append("m53BRV_121")
+    
+    datatable["PB_DT_RoomMaster"]["m50BRM_000"]["AdjacentRoomName"].append("m50BRM_001")
+    datatable["PB_DT_RoomMaster"]["m50BRM_020"]["AdjacentRoomName"].append("m50BRM_001")
+    datatable["PB_DT_RoomMaster"]["m50BRM_001"]["AdjacentRoomName"].append("m50BRM_002")
+    datatable["PB_DT_RoomMaster"]["m50BRM_001"]["AdjacentRoomName"].append("m50BRM_022")
+    datatable["PB_DT_RoomMaster"]["m50BRM_002"]["AdjacentRoomName"].append("m50BRM_003")
+    datatable["PB_DT_RoomMaster"]["m50BRM_022"]["AdjacentRoomName"].append("m50BRM_003")
+    datatable["PB_DT_RoomMaster"]["m50BRM_003"]["AdjacentRoomName"].append("m50BRM_004")
+    datatable["PB_DT_RoomMaster"]["m50BRM_003"]["AdjacentRoomName"].append("m50BRM_024")
+    datatable["PB_DT_RoomMaster"]["m50BRM_004"]["AdjacentRoomName"].append("m50BRM_005")
+    datatable["PB_DT_RoomMaster"]["m50BRM_024"]["AdjacentRoomName"].append("m50BRM_005")
+    datatable["PB_DT_RoomMaster"]["m50BRM_005"]["AdjacentRoomName"].append("m50BRM_006")
+    datatable["PB_DT_RoomMaster"]["m50BRM_005"]["AdjacentRoomName"].append("m50BRM_026")
+    datatable["PB_DT_RoomMaster"]["m50BRM_006"]["AdjacentRoomName"].append("m50BRM_007")
+    datatable["PB_DT_RoomMaster"]["m50BRM_026"]["AdjacentRoomName"].append("m50BRM_007")
+    datatable["PB_DT_RoomMaster"]["m50BRM_007"]["AdjacentRoomName"].append("m50BRM_008")
+    datatable["PB_DT_RoomMaster"]["m50BRM_007"]["AdjacentRoomName"].append("m50BRM_028")
+    datatable["PB_DT_RoomMaster"]["m50BRM_008"]["AdjacentRoomName"].append("m50BRM_009")
+    datatable["PB_DT_RoomMaster"]["m50BRM_028"]["AdjacentRoomName"].append("m50BRM_009")
+    datatable["PB_DT_RoomMaster"]["m50BRM_009"]["AdjacentRoomName"].append("m50BRM_101")
+    datatable["PB_DT_RoomMaster"]["m50BRM_009"]["AdjacentRoomName"].append("m50BRM_121")
+    
+    datatable["PB_DT_RoomMaster"]["m50BRM_050"]["AdjacentRoomName"].append("m50BRM_051")
+    datatable["PB_DT_RoomMaster"]["m50BRM_070"]["AdjacentRoomName"].append("m50BRM_051")
+    datatable["PB_DT_RoomMaster"]["m50BRM_051"]["AdjacentRoomName"].append("m50BRM_052")
+    datatable["PB_DT_RoomMaster"]["m50BRM_051"]["AdjacentRoomName"].append("m50BRM_072")
+    datatable["PB_DT_RoomMaster"]["m50BRM_052"]["AdjacentRoomName"].append("m50BRM_053")
+    datatable["PB_DT_RoomMaster"]["m50BRM_072"]["AdjacentRoomName"].append("m50BRM_053")
+    datatable["PB_DT_RoomMaster"]["m50BRM_053"]["AdjacentRoomName"].append("m50BRM_054")
+    datatable["PB_DT_RoomMaster"]["m50BRM_053"]["AdjacentRoomName"].append("m50BRM_074")
+    datatable["PB_DT_RoomMaster"]["m50BRM_054"]["AdjacentRoomName"].append("m50BRM_055")
+    datatable["PB_DT_RoomMaster"]["m50BRM_074"]["AdjacentRoomName"].append("m50BRM_055")
+    datatable["PB_DT_RoomMaster"]["m50BRM_055"]["AdjacentRoomName"].append("m50BRM_056")
+    datatable["PB_DT_RoomMaster"]["m50BRM_055"]["AdjacentRoomName"].append("m50BRM_076")
+    datatable["PB_DT_RoomMaster"]["m50BRM_056"]["AdjacentRoomName"].append("m50BRM_057")
+    datatable["PB_DT_RoomMaster"]["m50BRM_076"]["AdjacentRoomName"].append("m50BRM_057")
+    datatable["PB_DT_RoomMaster"]["m50BRM_057"]["AdjacentRoomName"].append("m50BRM_058")
+    datatable["PB_DT_RoomMaster"]["m50BRM_057"]["AdjacentRoomName"].append("m50BRM_078")
+    datatable["PB_DT_RoomMaster"]["m50BRM_058"]["AdjacentRoomName"].append("m50BRM_059")
+    datatable["PB_DT_RoomMaster"]["m50BRM_078"]["AdjacentRoomName"].append("m50BRM_059")
+    datatable["PB_DT_RoomMaster"]["m50BRM_059"]["AdjacentRoomName"].append("m50BRM_151")
+    datatable["PB_DT_RoomMaster"]["m50BRM_059"]["AdjacentRoomName"].append("m50BRM_171")
+    #Fix bad ending cutscene not transitioning to the village
+    if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"]:
+        datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"].append("m02VIL_099")
+    #Fix good ending cutscene not transitioning to the village
+    if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"]:
+        datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"].append("m02VIL_099")
+    #Give overlayed rooms the same door flag as their counterparts
+    datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
+    datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
+
+def remove_vanilla_rando():
+    for i in [293, 294]:
+        new_list = []
+        count = 0
+        for e in game_data["TitleExtraMenu"].Exports[i].Data[0].Value:
+            if count != 2:
+                new_list.append(e)
+            count += 1
+        game_data["TitleExtraMenu"].Exports[i].Data[0].Value = new_list
+    stringtable["PBSystemStringTable"]["SYS_SEN_ModeRogueDungeon"] = "DELETED"
+
+def show_mod_stats(seed, mod_version):
+    game_version = str(game_data["VersionNumber"].Exports[6].Data[0].CultureInvariantString)
+    mod_stats = "Bloodstained " + game_version + "\r\nTrue Randomization v" + mod_version
+    height = 0.4
+    if seed:
+        mod_stats += "\r\nSeed # " + seed
+        height = 0.66
+    for i in range(2):
+        game_data["VersionNumber"].Exports[4 + i].Data[0].Value[2].Value[0].X = 19
+        game_data["VersionNumber"].Exports[4 + i].Data[0].Value[2].Value[0].Y = height
+        game_data["VersionNumber"].Exports[6 + i].Data[0].CultureInvariantString = FString(mod_stats)
+        game_data["VersionNumber"].Exports[6 + i].Data[1].Value[2].Value = 16
+        game_data["VersionNumber"].Exports[6 + i].Data[2].EnumValue = FName(game_data["VersionNumber"], "ETextJustify::Left")
+        struct = struct = FloatPropertyData(FName(game_data["VersionNumber"], "LineHeightPercentage"))
+        struct.Value = 0.6
+        game_data["VersionNumber"].Exports[6 + i].Data.Add(struct)
+
 def remove_difficulties(current):
+    #Ensure that in game difficulty never mismatches the mod's
     new_list = []
     sub_struct = BytePropertyData()
     sub_struct.ByteType = BytePropertyType.FName
@@ -562,6 +1643,7 @@ def remove_difficulties(current):
     game_data["DifficultSelecter"].Exports[2].Data[1].Value = new_list
 
 def default_nightmare_cheatcode():
+    #Set the nightmare cheatcode as the default name entry in case the user hasn't unlocked the higher difficulties yet
     game_data["EntryNameSetter"].Exports[110].Data[0].CultureInvariantString = FString("NIGHTMARE")
     game_data["EntryNameSetter"].Exports[110].Data[1].CultureInvariantString = FString("NIGHTMARE")
     game_data["EntryNameSetter"].Exports[111].Data[2].CultureInvariantString = FString("NIGHTMARE")
@@ -573,13 +1655,12 @@ def write_log(filename, log):
 
 def write_files():
     #Dump all uasset objects to files
-    for i in file_to_type:
-        if file_to_type[i] in load_types:
-            if file_to_type[i] == "Level":
-                extension = ".umap"
-            else:
-                extension = ".uasset"
-            game_data[i].Write(mod_dir + "\\" + file_to_path[i] + "\\" + i + extension)
+    for i in game_data:
+        if file_to_type[i] == "Level":
+            extension = ".umap"
+        else:
+            extension = ".uasset"
+        game_data[i].Write(mod_dir + "\\" + file_to_path[i] + "\\" + i.split("(")[0] + extension)
 
 def remove_unchanged():
     #Since uasset objects cannot be compared successfully we need to compare the files after they've been written
@@ -608,7 +1689,7 @@ def import_texture(filename):
     os.system("cmd /c python\python.exe src\main.py \"" + absolute_asset_dir  + "\\" + filename + ".uasset\" \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_mod_dir + "\" --mode=inject --version=4.22")
     os.chdir(root)
     
-    #UE4 DDS Tools does output an error but it does not interrupt the program if a texture fails to convert so do it from here
+    #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here
     if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
         raise FileNotFoundError(filename + ".dds failed to inject")
 
@@ -628,74 +1709,212 @@ def import_music(filename):
         with open("Data\\Music\\" + filename + ".hca", "rb") as hca:
             outfile.write(hca.read())
 
-def remove_level_actor(filename, actors):
-    #While replacing actors is a complex process removing them only requires a few edits
-    if file_to_type[filename] != "Level":
-        raise "Input is not a level file"
-    remove = []
+def export_name_to_index(filename, export_name):
     count = 0
     for i in game_data[filename].Exports:
+        if str(i.ObjectName) == export_name:
+            return count
         count += 1
-        if str(i.ObjectName) in actors:
-            i.OuterIndex = FPackageIndex(0)
-            remove.append(count)
-    for i in game_data[filename].Exports:
-        if str(i.ObjectName) == "PersistentLevel":
-            for e in remove:
-                i.IndexData.Remove(e)
+    raise "Export not found"
+
+def add_level_actor(filename, actor_class, location, rotation, scale, properties):
+    actor_index = len(game_data[filename].Exports)
+    #Name the new actor based on the class
+    short_class = actor_class.replace(")", "").split("(")[0]
+    short_class = short_class.split("_")
+    if short_class[-1] == "C":
+        short_class.pop()
+    short_class = "_".join(short_class)
+    actor_name = custom_actor_prefix + short_class + "_" + str(actor_index + 1)
+    snippet = UAssetSnippet(game_data[actor_to_properties[actor_class]["Room"] + "_Gimmick"], actor_to_properties[actor_class]["Index"])
+    snippet.AddToUAsset(game_data[filename], actor_name)
+    #Change class parameters
+    for i in game_data[filename].Exports[actor_index].Data:
+        if str(i.Name) in properties:
+            if str(i.PropertyType) == "ByteProperty":
+                i.EnumValue = properties[str(i.Name)]
+            else:
+                i.Value = properties[str(i.Name)]
+            del properties[str(i.Name)]
+        if str(i.Name) == "ActorLabel":
+            i.Value = FString(remove_inst(actor_name))
+        if str(i.Name) == "RootComponent":
+            root_index = int(str(i.Value)) - 1
+            game_data[filename].Exports[root_index].Data.Clear()
+            if location.X != 0 or location.Y != 0 or location.Z != 0:
+                struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
+                sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "RelativeLocation"))
+                sub_struct.Value = location
+                struct.Value.Add(sub_struct)
+                game_data[filename].Exports[root_index].Data.Add(struct)
+            if rotation.Pitch != 0 or rotation.Yaw != 0 or rotation.Roll != 0:
+                struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeRotation"), FName.FromString(game_data[filename], "Rotator"))
+                sub_struct = RotatorPropertyData(FName.FromString(game_data[filename], "RelativeRotation"))
+                sub_struct.Value = rotation
+                struct.Value.Add(sub_struct)
+                game_data[filename].Exports[root_index].Data.Add(struct)
+            if scale.X != 1 or scale.Y != 1 or scale.Z != 1:
+                struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeScale3D"), FName.FromString(game_data[filename], "Vector"))
+                sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "RelativeScale3D"))
+                sub_struct.Value = scale
+                struct.Value.Add(sub_struct)
+                game_data[filename].Exports[root_index].Data.Add(struct)
+    #Add parameters that are missing
+    for i in properties:
+        if type(properties[i]) is bool:
+            struct = BoolPropertyData(FName.FromString(game_data[filename], i))
+            struct.Value = properties[i]
+        elif "::" in str(properties[i]):
+            struct = BytePropertyData(FName.FromString(game_data[filename], i))
+            struct.ByteType = BytePropertyType.FName
+            struct.EnumType = FName.FromString(game_data[filename], str(properties[i]).split("::")[0])
+            struct.EnumValue = properties[i]
+        else:
+            struct = NamePropertyData(FName.FromString(game_data[filename], i))
+            struct.Value = properties[i]
+        game_data[filename].Exports[actor_index].Data.Add(struct)
+
+def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_location, warp_2_rotation):
+    warp_1_index = len(game_data[filename].Exports)
+    add_level_actor(filename, "ToriiWarp_BP_C", warp_1_location, warp_1_rotation, FVector(1, 1, 1), {})
+    warp_2_index = int(str(game_data[filename].Exports[warp_1_index].Data[12].Value)) - 1
+    root_index = int(str(game_data[filename].Exports[warp_2_index].Data[14].Value)) - 1
+    game_data[filename].Exports[root_index].Data.Clear()
+    if warp_2_location.X != 0 or warp_2_location.Y != 0 or warp_2_location.Z != 0:
+        struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
+        sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "RelativeLocation"))
+        sub_struct.Value = warp_2_location
+        struct.Value.Add(sub_struct)
+        game_data[filename].Exports[root_index].Data.Add(struct)
+    if warp_2_rotation.Pitch != 0 or warp_2_rotation.Yaw != 0 or warp_2_rotation.Roll != 0:
+        struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeRotation"), FName.FromString(game_data[filename], "Rotator"))
+        sub_struct = RotatorPropertyData(FName.FromString(game_data[filename], "RelativeRotation"))
+        sub_struct.Value = warp_2_rotation
+        struct.Value.Add(sub_struct)
+        game_data[filename].Exports[root_index].Data.Add(struct)
+    warp_1_event_index = int(str(game_data[filename].Exports[warp_1_index].Data[3].Value)) - 1
+    warp_2_event_index = int(str(game_data[filename].Exports[warp_2_index].Data[3].Value)) - 1
+    game_data[filename].Exports[warp_1_event_index].Data[2].Value = game_data[filename].Exports[warp_1_index].ObjectName
+    game_data[filename].Exports[warp_1_event_index].Data[3].Value = game_data[filename].Exports[warp_2_index].ObjectName
+    game_data[filename].Exports[warp_2_event_index].Data[2].Value = game_data[filename].Exports[warp_2_index].ObjectName
+    game_data[filename].Exports[warp_2_event_index].Data[3].Value = game_data[filename].Exports[warp_1_index].ObjectName
+
+def remove_level_actor(filename, index):
+    #Remove actor at index
+    if file_to_type[filename] != "Level":
+        raise "Input is not a level file"
+    level_index = export_name_to_index(filename, "PersistentLevel")
+    game_data[filename].Exports[index].OuterIndex = FPackageIndex(0)
+    game_data[filename].Exports[level_index].IndexData.Remove(index + 1)
+
+def remove_level_class(filename, name):
+    #Remove all actors of class
+    if file_to_type[filename] != "Level":
+        raise "Input is not a level file"
+    level_index = export_name_to_index(filename, "PersistentLevel")
+    for i in range(len(game_data[filename].Exports)):
+        class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
+        if class_name == name:
+            game_data[filename].Exports[i].OuterIndex = FPackageIndex(0)
+            game_data[filename].Exports[level_index].IndexData.Remove(i + 1)
 
 def change_material_hsv(filename, parameter, new_hsv):
     #Change a vector color in a material file
     #Here we use hsv as a base as it is easier to work with
     if file_to_type[filename] != "Material":
         raise "Input is not a material file"
-    rgb = []
-    for i in game_data[filename].Exports[0].Data:
-        if str(i.Name) == "VectorParameterValues":
-            for e in i.Value:
-                if str(e.Value[0].Value[0].Value) == parameter:
-                    rgb.append(e.Value[1].Value[0].Value.R)
-                    rgb.append(e.Value[1].Value[0].Value.G)
-                    rgb.append(e.Value[1].Value[0].Value.B)
-                    hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
-                    if new_hsv[0] < 0:
-                        new_hue = hsv[0]
-                    else:
-                        new_hue = new_hsv[0]/360
-                    if new_hsv[1] < 0:
-                        new_sat = hsv[1]
-                    else:
-                        new_sat = new_hsv[1]/100
-                    if new_hsv[2] < 0:
-                        new_val = hsv[2]
-                    else:
-                        new_val = new_hsv[2]/100
-                    rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
-                    e.Value[1].Value[0].Value.R = rgb[0]
-                    e.Value[1].Value[0].Value.G = rgb[1]
-                    e.Value[1].Value[0].Value.B = rgb[2]
+    #Some color properties are not parsed by UAssetAPI and end up in extra data
+    #Hex edit in that case
+    if filename in material_to_offset:
+        for i in material_to_offset[filename]:
+            #Check if given offset is valid
+            string = ""
+            for e in range(12):
+                string += "{:02x}".format(game_data[filename].Exports[0].Extras[i + e]).upper()
+            if string != "0000000000000002FFFFFFFF":
+                raise "Material offset invalid"
+            #Get rgb
+            rgb = []
+            for e in range(3):
+                list = []
+                for o in range(4):
+                    list.insert(0, "{:02x}".format(game_data[filename].Exports[0].Extras[i + 12 + e*4 + o]).upper())
+                string = ""
+                for o in list:
+                    string += o
+                rgb.append(struct.unpack("!f", bytes.fromhex(string))[0])
+            #Convert
+            hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+            if new_hsv[0] < 0:
+                new_hue = hsv[0]
+            else:
+                new_hue = new_hsv[0]/360
+            if new_hsv[1] < 0:
+                new_sat = hsv[1]
+            else:
+                new_sat = new_hsv[1]/100
+            if new_hsv[2] < 0:
+                new_val = hsv[2]
+            else:
+                new_val = new_hsv[2]/100
+            rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
+            #Write rgb
+            for e in range(3):
+                string = "{:08x}".format(struct.unpack("<I", struct.pack("<f", rgb[e]))[0]).upper()
+                list = []
+                for o in range(0, len(string), 2):
+                    list.insert(0, string[o] + string[o + 1])
+                for o in range(4):
+                    game_data[filename].Exports[0].Extras[i + 12 + e*4 + o] = int(list[o], 16)
+    #Otherwise change color through the exports
+    else:
+        for i in game_data[filename].Exports[0].Data:
+            if str(i.Name) == "VectorParameterValues":
+                for e in i.Value:
+                    if str(e.Value[0].Value[0].Value) == parameter:
+                        rgb = []
+                        rgb.append(e.Value[1].Value[0].Value.R)
+                        rgb.append(e.Value[1].Value[0].Value.G)
+                        rgb.append(e.Value[1].Value[0].Value.B)
+                        hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
+                        if new_hsv[0] < 0:
+                            new_hue = hsv[0]
+                        else:
+                            new_hue = new_hsv[0]/360
+                        if new_hsv[1] < 0:
+                            new_sat = hsv[1]
+                        else:
+                            new_sat = new_hsv[1]/100
+                        if new_hsv[2] < 0:
+                            new_val = hsv[2]
+                        else:
+                            new_val = new_hsv[2]/100
+                        rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
+                        e.Value[1].Value[0].Value.R = rgb[0]
+                        e.Value[1].Value[0].Value.G = rgb[1]
+                        e.Value[1].Value[0].Value.B = rgb[2]
 
-def convert_flag_to_door(door_flag, width):
+def convert_flag_to_door(room_name, door_flag, room_width):
     #Function by LagoLunatic
     door_list = []
     for i in range(0, len(door_flag), 2):
         tile_index = door_flag[i]
         direction = door_flag[i+1]
         tile_index -= 1
-        if width == 0:
+        if room_width == 0:
             x_block = tile_index
             z_block = 0
         else:
-            x_block = tile_index % width
-            z_block = tile_index // width
+            x_block = tile_index % room_width
+            z_block = tile_index // room_width
         for direction_part in Direction:
             if (direction & direction_part.value) != 0:
                 breakable = (direction & (direction_part.value << 16)) != 0
-                door = Door(x_block, z_block, direction_part, breakable)
+                door = Door(room_name, x_block, z_block, direction_part, breakable)
                 door_list.append(door)
     return door_list
 
-def convert_door_to_flag(door_list, width):
+def convert_door_to_flag(door_list, room_width):
     #Function by LagoLunatic
     door_flags_by_coords = OrderedDict()
     for door in door_list:
@@ -709,197 +1928,82 @@ def convert_door_to_flag(door_list, width):
         
     door_flag = []
     for (x, z), dir_flags in door_flags_by_coords.items():
-        tile_index_in_room = z*width + x
+        tile_index_in_room = z*room_width + x
         tile_index_in_room += 1
-        door_flag += [tile_index_in_room, dir_flags]
+        door_flag.extend([tile_index_in_room, dir_flags])
     return door_flag
 
-def convert_door_to_adjacent_room(room, door_flag):
-    adjacent = [room]
-    door_1 = convert_flag_to_door(door_flag, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
-    for i in datatable["PB_DT_RoomMaster"]:
-        door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][i]["DoorFlag"], datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
-        if is_adjacent(room, i, door_1, door_2):
-            adjacent.append(i)
+def convert_door_to_adjacent_room(door):
+    #Return a door's adjacent rooms, including the room that it belongs to
+    if door in datatable["PB_DT_RoomMaster"]:
+        return [door]
+    adjacent = [map_doors[door].room]
+    for i in map_connections[map_doors[door].room][door]:
+        adjacent.append(map_doors[i].room)
     return adjacent
 
-def connect_map():
-    #The game map requires you to manually input a list of which rooms can be transitioned into from the current room
-    #Doing this via the map editor would only add long load times upon saving a map so do it here instead
-    #Fill same room field for rooms that are overlayed perfectly
-    #Not sure if it serves any actual purpose in-game but it does help for the following adjacent room check
-    for i in datatable["PB_DT_RoomMaster"]:
-        datatable["PB_DT_RoomMaster"][i]["SameRoom"] = "None"
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-            continue
-        for e in datatable["PB_DT_RoomMaster"]:
-            if datatable["PB_DT_RoomMaster"][e]["OutOfMap"]:
-                continue
-            if datatable["PB_DT_RoomMaster"][i]["OffsetX"] == datatable["PB_DT_RoomMaster"][e]["OffsetX"] and datatable["PB_DT_RoomMaster"][i]["OffsetZ"] == datatable["PB_DT_RoomMaster"][e]["OffsetZ"] and i != e:
-                datatable["PB_DT_RoomMaster"][i]["SameRoom"] = e
-                break
-    #Fill adjacent room lists
-    for i in datatable["PB_DT_RoomMaster"]:
-        #Start by making sure the list is empty
-        datatable["PB_DT_RoomMaster"][i]["AdjacentRoomName"] = []
-        used_doors.clear()
-        #If a room is unused delete all of its door flags
-        if datatable["PB_DT_RoomMaster"][i]["Unused"]:
-            datatable["PB_DT_RoomMaster"][i]["DoorFlag"].clear()
-            continue
-        door_1 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][i]["DoorFlag"], datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
-        for e in datatable["PB_DT_RoomMaster"]:
-            #Skip if rooms are not within the same map "layer" or if a room is unused
-            if datatable["PB_DT_RoomMaster"][i]["OutOfMap"] != datatable["PB_DT_RoomMaster"][e]["OutOfMap"] or datatable["PB_DT_RoomMaster"][e]["Unused"]:
-                continue
-            #Transition rooms in Bloodstained come by pair, each belonging to an area
-            #Make it so that an area is only connected to its corresponding transition rooms when possible
-            #This avoids having the next area name tag show up within the transition
-            #With the exception of standalone transitions with no fallbacks as well as the first entrance transition fallback
-            if datatable["PB_DT_RoomMaster"][e]["RoomType"] == "ERoomType::Load" and e[0:6] != i[0:6] and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "None" and e != "m02VIL(1200)" and datatable["PB_DT_RoomMaster"][e]["SameRoom"] != "m03ENT(1200)":
-                continue
-            #The first entrance transition room is hardcoded to bring you back to the village regardless of its position on the canvas
-            #Ignore that room and don't connect it to anything
-            #Meanwhile the village version of that transition is always needed to trigger the curved effect of the following bridge room
-            #So ignore any other transitions overlayed on top of it
-            if datatable["PB_DT_RoomMaster"][e]["SameRoom"] == "m02VIL(1200)" or e == "m03ENT(1200)":
-                continue
-            #Check relative position and distance on every side of the room
-            door_2 = convert_flag_to_door(datatable["PB_DT_RoomMaster"][e]["DoorFlag"], datatable["PB_DT_RoomMaster"][e]["AreaWidthSize"])
-            if is_adjacent(i, e, door_1, door_2):
-                datatable["PB_DT_RoomMaster"][i]["AdjacentRoomName"].append(e)
-        #If a room transition leads nowhere remove its door flag to make it obvious that it is unused
-        for e in list(door_1):
-            if not e in used_doors:
-                door_1.remove(e)
-        datatable["PB_DT_RoomMaster"][i]["DoorFlag"] = convert_door_to_flag(door_1, datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
-    #Some rooms need specific setups
-    #Vepar's room should not be permanently connected to village
-    if "m02VIL_001" in datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].remove("m02VIL_001")
-    if "m01SIP_022" in datatable["PB_DT_RoomMaster"]["m02VIL_001"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m02VIL_001"]["AdjacentRoomName"].remove("m01SIP_022")
-    if not "m02VIL_000" in datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].append("m02VIL_000")
-    #Some tower rooms are overlayed and need to be connected manually as the above script ignores all overlayed rooms
-    if not "m08TWR_017" in datatable["PB_DT_RoomMaster"]["m08TWR_000"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_000"]["AdjacentRoomName"].append("m08TWR_017")
-    if not "m08TWR_018" in datatable["PB_DT_RoomMaster"]["m08TWR_005"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_005"]["AdjacentRoomName"].append("m08TWR_018")
-    if not "m08TWR_018" in datatable["PB_DT_RoomMaster"]["m08TWR_006"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_006"]["AdjacentRoomName"].append("m08TWR_018")
-    if not "m08TWR_019" in datatable["PB_DT_RoomMaster"]["m08TWR_016"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_016"]["AdjacentRoomName"].append("m08TWR_019")
-    
-    if not "m08TWR_000" in datatable["PB_DT_RoomMaster"]["m08TWR_017"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_017"]["AdjacentRoomName"].append("m08TWR_000")
-    if not "m08TWR_005" in datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"].append("m08TWR_005")
-    if not "m08TWR_006" in datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_018"]["AdjacentRoomName"].append("m08TWR_006")
-    if not "m08TWR_016" in datatable["PB_DT_RoomMaster"]["m08TWR_019"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m08TWR_019"]["AdjacentRoomName"].append("m08TWR_016")
-    
-    datatable["PB_DT_RoomMaster"]["m08TWR_000"]["DoorFlag"].insert(0, 1)
-    datatable["PB_DT_RoomMaster"]["m08TWR_000"]["DoorFlag"].insert(0, 1)
-    datatable["PB_DT_RoomMaster"]["m08TWR_005"]["DoorFlag"].append(4)
-    datatable["PB_DT_RoomMaster"]["m08TWR_005"]["DoorFlag"].append(4)
-    datatable["PB_DT_RoomMaster"]["m08TWR_006"]["DoorFlag"].insert(0, 1)
-    datatable["PB_DT_RoomMaster"]["m08TWR_006"]["DoorFlag"].insert(0, 1)
-    datatable["PB_DT_RoomMaster"]["m08TWR_016"]["DoorFlag"].insert(0, 4)
-    datatable["PB_DT_RoomMaster"]["m08TWR_016"]["DoorFlag"].insert(0, 2)
-    
-    datatable["PB_DT_RoomMaster"]["m08TWR_017"]["DoorFlag"].append(18)
-    datatable["PB_DT_RoomMaster"]["m08TWR_017"]["DoorFlag"].append(8)
-    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(3)
-    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(2)
-    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(34)
-    datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(8)
-    datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(39)
-    datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(8)
-    #Fix bad ending cutscene not transitioning to the village
-    if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"].append("m02VIL_099")
-    #Fix good ending cutscene not transitioning to the village
-    if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"]:
-        datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"].append("m02VIL_099")
-    #Give the unused Glacial Tomb room the same doors as Dominique's room
-    #Otherwise that room hides the doors of the used one
-    datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = [2, 4]
+def is_adjacent(room_1, room_2):
+    if left_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+        door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
+    elif bottom_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+        door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
+    elif right_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+        door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
+    elif top_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+        door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
 
-def is_adjacent(i, e, door_1, door_2):
-    if left_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-            return True
-        else:
-            return door_vertical_check(door_1, door_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
-    elif bottom_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-            return True
-        else:
-            return door_horizontal_check(door_1, door_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
-    elif right_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-            return True
-        else:
-            return door_vertical_check(door_1, door_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP, datatable["PB_DT_RoomMaster"][i]["OffsetZ"], datatable["PB_DT_RoomMaster"][e]["OffsetZ"])
-    elif top_check(datatable["PB_DT_RoomMaster"][i], datatable["PB_DT_RoomMaster"][e]):
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
-            return True
-        else:
-            return door_horizontal_check(door_1, door_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT, datatable["PB_DT_RoomMaster"][i]["OffsetX"], datatable["PB_DT_RoomMaster"][e]["OffsetX"])
+def left_check(room_1, room_2):
+    return bool(room_2["OffsetX"] == round(room_1["OffsetX"] - 12.6 * room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
 
-def left_check(i, e):
-    return bool(e["OffsetX"] == round(i["OffsetX"] - 12.6 * e["AreaWidthSize"], 1) and round(i["OffsetZ"] - 7.2 * (e["AreaHeightSize"] - 1), 1) <= e["OffsetZ"] <= round(i["OffsetZ"] + 7.2 * (i["AreaHeightSize"] - 1), 1))
+def bottom_check(room_1, room_2):
+    return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - 7.2 * room_2["AreaHeightSize"], 1))
 
-def bottom_check(i, e):
-    return bool(round(i["OffsetX"] - 12.6 * (e["AreaWidthSize"] - 1), 1) <= e["OffsetX"] <= round(i["OffsetX"] + 12.6 * (i["AreaWidthSize"] - 1), 1) and e["OffsetZ"] == round(i["OffsetZ"] - 7.2 * e["AreaHeightSize"], 1))
+def right_check(room_1, room_2):
+    return bool(room_2["OffsetX"] == round(room_1["OffsetX"] + 12.6 * room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
 
-def right_check(i, e):
-    return bool(e["OffsetX"] == round(i["OffsetX"] + 12.6 * i["AreaWidthSize"], 1) and round(i["OffsetZ"] - 7.2 * (e["AreaHeightSize"] - 1), 1) <= e["OffsetZ"] <= round(i["OffsetZ"] + 7.2 * (i["AreaHeightSize"] - 1), 1))
+def top_check(room_1, room_2):
+    return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + 7.2 * room_1["AreaHeightSize"], 1))
 
-def top_check(i, e):
-    return bool(round(i["OffsetX"] - 12.6 * (e["AreaWidthSize"] - 1), 1) <= e["OffsetX"] <= round(i["OffsetX"] + 12.6 * (i["AreaWidthSize"] - 1), 1) and e["OffsetZ"] == round(i["OffsetZ"] + 7.2 * i["AreaHeightSize"], 1))
+def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
+    for i in map_connections[room_1]:
+        if map_doors[i].direction_part == direction_1:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_1] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][i].append(e)
+        elif map_doors[i].direction_part == direction_2:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_2] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][i].append(e)
+        elif map_doors[i].direction_part == direction_3:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_3] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][i].append(e)
 
-def door_vertical_check(door_1, door_2, direction_1, direction_2, direction_3, offset_1, offset_2):
-    check = False
-    for i in door_1:
-        if i.direction_part == direction_1:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_1] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
-                    used_doors.append(i)
-                    check = True
-        elif i.direction_part == direction_2:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_2] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
-                    used_doors.append(i)
-                    check = True
-        elif i.direction_part == direction_3:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_3] and i.z_block == (e.z_block + round((offset_2 - offset_1)/7.2)):
-                    used_doors.append(i)
-                    check = True
-    return check
+def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3):
+    for i in map_connections[room_1]:
+        if map_doors[i].direction_part == direction_1:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_1] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][i].append(e)
+        elif map_doors[i].direction_part == direction_2:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_2] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][i].append(e)
+        elif map_doors[i].direction_part == direction_3:
+            for e in map_connections[room_2]:
+                if map_doors[e].direction_part == OppositeDirection[direction_3] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][i].append(e)
 
-def door_horizontal_check(door_1, door_2, direction_1, direction_2, direction_3, offset_1, offset_2):
-    check = False
-    for i in door_1:
-        if i.direction_part == direction_1:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_1] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
-                    used_doors.append(i)
-                    check = True
-        elif i.direction_part == direction_2:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_2] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
-                    used_doors.append(i)
-                    check = True
-        elif i.direction_part == direction_3:
-            for e in door_2:
-                if e.direction_part == OppositeDirection[direction_3] and i.x_block == (e.x_block + round((offset_2 - offset_1)/12.6)):
-                    used_doors.append(i)
-                    check = True
-    return check
+def remove_inst(name):
+    #Return a string without its instance number the same way Unreal does it
+    name = name.split("_")
+    if name[-1][0] != "0":
+        try:
+            int(name[-1])
+            name.pop()
+        except ValueError:
+            pass
+    return "_".join(name)
 
 def is_enemy(character):
     #Check if input entry is an enemy and what type
@@ -917,17 +2021,10 @@ def is_enemy(character):
     elif character[0:5] == "N1013" or character[0:5] == "N1009" or character == "N3125":
         dict["Enemy"]     = True
         dict["Exception"] = True
-    if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS":
-        dict["Boss"] = True
+    if character in datatable["PB_DT_CharacterParameterMaster"]:
+        if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS":
+            dict["Boss"] = True
     return dict
-
-def split_fname(name):
-    #Return input without its instance number
-    stripped_name = name.replace(")", "").split("(")
-    if len(stripped_name) == 1:
-        return (stripped_name[0], -1)
-    else:
-        return (stripped_name[0], int(stripped_name[1]))
 
 def create_weighted_list(value, minimum, maximum, step, deviation):
     #Create a list in a range with higher odds around a specific value
@@ -948,8 +2045,8 @@ def random_weighted(value, minimum, maximum, step, deviation):
     return random.choice(random.choice(create_weighted_list(value, minimum, maximum, step, deviation)))
 
 def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
-    last_id = split_fname(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1])[1]
-    entry_id = "Enemy(" + "{:03d}".format(last_id + 1) + ")"
+    last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[-1])
+    entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
     for i in datatable["PB_DT_ArchiveEnemyMaster"]:
         if datatable["PB_DT_ArchiveEnemyMaster"][i]["UniqueID"] == copy_from:
             new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][i])

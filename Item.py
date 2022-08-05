@@ -7,368 +7,368 @@ from collections import OrderedDict
 
 def init():
     #Declare variables
-    global chest_to_seed
-    chest_to_seed = {
-        "PotionMaterial": "Treasurebox_SIP000_Tutorial",
-        "Qu07_Last": "Qu07_Last",
-        "Swordsman": "Swordsman",
-        "Treasurebox_SIP000_Tutorial": "Treasurebox_SIP011(4)",
-        "Treasurebox_SIP002(1)": "Treasurebox_SIP005(2)",
-        "Treasurebox_SIP003(1)": "Treasurebox_LIB009(1)",
-        "Treasurebox_SIP004(1)": "Treasurebox_GDN006(5)",
-        "Treasurebox_SIP005(1)": "Treasurebox_ENT002(1)",
-        "Treasurebox_SIP005(2)": "Treasurebox_SIP002(1)",
-        "Treasurebox_SIP006(1)": "Treasurebox_LIB022(1)",
-        "Treasurebox_SIP007(1)": "Treasurebox_KNG017(1)",
-        "Treasurebox_SIP007(2)": "Treasurebox_SIP011(3)",
-        "Treasurebox_SIP009(1)": "Treasurebox_JPN011(1)",
-        "Treasurebox_SIP011(1)": "Treasurebox_SIP014(1)",
-        "Treasurebox_SIP011(2)": "Treasurebox_TWR015(1)",
-        "Treasurebox_SIP011(3)": "Treasurebox_TWR000(3)",
-        "Treasurebox_SIP011(4)": "PotionMaterial",
-        "Treasurebox_SIP012(1)": "Treasurebox_TAR007(1)",
-        "Treasurebox_SIP013(1)": "Treasurebox_RVA001(2)",
-        "Treasurebox_SIP014(1)": "Treasurebox_UGD051(1)",
-        "Treasurebox_SIP015(1)": "Treasurebox_ARC000(1)",
-        "Treasurebox_SIP016(1)": "Treasurebox_SAN024(1)",
-        "Treasurebox_SIP017(1)": "Treasurebox_RVA011(2)",
-        "Treasurebox_SIP018(1)": "Treasurebox_SIP016(1)",
-        "Treasurebox_SIP019(1)": "Treasurebox_UGD025(1)",
-        "Treasurebox_SIP020(1)": "Treasurebox_RVA015(1)",
-        "Treasurebox_SIP021(2)": "Treasurebox_BIG011(1)",
-        "Treasurebox_SIP024(1)": "Treasurebox_ENT014(2)",
-        "Treasurebox_SIP024(2)": "Treasurebox_TWR009(1)",
-        "Treasurebox_SIP025(1)": "Treasurebox_UGD009(4)",
-        "Treasurebox_SIP025(2)": "Treasurebox_SAN015(2)",
-        "Treasurebox_SIP026(1)": "Treasurebox_SAN005(1)",
-        "Treasurebox_VIL001(1)": "Treasurebox_UGD044(2)",
-        "Treasurebox_VIL003(1)": "Treasurebox_LIB009(2)",
-        "Treasurebox_VIL005(1)": "Treasurebox_JPN018(1)",
-        "Treasurebox_VIL006(1)": "Treasurebox_TWR017(5)",
-        "Treasurebox_VIL006(2)": "Treasurebox_VIL006(2)",
-        "Treasurebox_VIL006(3)": "Treasurebox_UGD044(1)",
-        "Treasurebox_VIL006(4)": "Treasurebox_ENT020(2)",
-        "Treasurebox_VIL007(1)": "Treasurebox_SAN003(1)",
-        "Treasurebox_VIL008(1)": "Treasurebox_TRN002(3)",
-        "Treasurebox_VIL008(2)": "Treasurebox_SAN003(5)",
-        "Treasurebox_VIL010(1)": "Treasurebox_ENT015(1)",
-        "Treasurebox_ENT002(1)": "Treasurebox_TWR019(2)",
-        "Treasurebox_ENT002(2)": "Treasurebox_ENT018(1)",
-        "Treasurebox_ENT002(3)": "Treasurebox_GDN012(1)",
-        "Treasurebox_ENT004(1)": "Treasurebox_VIL001(1)",
-        "Treasurebox_ENT005(1)": "Treasurebox_ENT005(1)",
-        "Treasurebox_ENT005(2)": "Treasurebox_TWR018(8)",
-        "Treasurebox_ENT007(1)": "Treasurebox_VIL008(2)",
-        "Treasurebox_ENT007(2)": "Treasurebox_UGD052(1)",
-        "Treasurebox_ENT007(3)": "Treasurebox_SIP007(1)",
-        "Treasurebox_ENT009(1)": "Treasurebox_GDN004(1)",
-        "Treasurebox_ENT011(1)": "Treasurebox_SAN009(2)",
-        "Treasurebox_ENT014(1)": "Treasurebox_SAN003(3)",
-        "Treasurebox_ENT014(2)": "Treasurebox_SAN016(5)",
-        "Treasurebox_ENT014(3)": "Treasurebox_SND016(1)",
-        "Treasurebox_ENT018(1)": "Treasurebox_SND011(1)",
-        "Treasurebox_ENT018(2)": "Treasurebox_BIG002(1)",
-        "Treasurebox_ENT020(1)": "Treasurebox_GDN006(1)",
-        "Treasurebox_ENT020(2)": "Treasurebox_ARC004(1)",
-        "Treasurebox_ENT021(1)": "Treasurebox_ARC006(2)",
-        "Treasurebox_ENT022(1)": "Treasurebox_ENT020(1)",
-        "Treasurebox_ENT024(1)": "Treasurebox_LIB032(1)",
-        "Treasurebox_ENT024(2)": "Treasurebox_ARC007(2)",
-        "Treasurebox_ENT024(3)": "Treasurebox_BIG012(1)",
-        "Treasurebox_GDN002(1)": "Treasurebox_TWR019(4)",
-        "Treasurebox_GDN004(1)": "Treasurebox_TRN002(4)",
-        "Treasurebox_GDN006(1)": "Treasurebox_LIB040(1)",
-        "Treasurebox_GDN006(2)": "Treasurebox_PureMiriam_Hair",
-        "Treasurebox_GDN006(3)": "Treasurebox_SAN019(3)",
-        "Treasurebox_GDN006(4)": "Treasurebox_VIL008(1)",
-        "Treasurebox_GDN006(5)": "Treasurebox_ICE003(1)",
-        "Treasurebox_GDN007(1)": "Treasurebox_GDN007(1)",
-        "Treasurebox_GDN009(1)": "Treasurebox_SAN017(1)",
-        "Treasurebox_GDN009(2)": "Treasurebox_SIP025(2)",
-        "Treasurebox_GDN010(1)": "Treasurebox_ICE006(1)",
-        "Treasurebox_GDN012(1)": "Treasurebox_ENT004(1)",
-        "Treasurebox_GDN012(2)": "Treasurebox_GDN009(2)",
-        "Treasurebox_GDN013(1)": "Treasurebox_TWR004(1)",
-        "Treasurebox_GDN013(2)": "Treasurebox_KNG002(1)",
-        "Treasurebox_GDN013(3)": "Treasurebox_SAN021(4)",
-        "Treasurebox_GDN013(4)": "Treasurebox_UGD038(1)",
-        "Treasurebox_GDN014(1)": "Treasurebox_UGD049(1)",
-        "Treasurebox_SAN003(1)": "Treasurebox_SIP011(1)",
-        "Treasurebox_SAN003(2)": "Treasurebox_ARC003(1)",
-        "Treasurebox_SAN003(3)": "Treasurebox_ENT008(1)",
-        "Treasurebox_SAN003(4)": "Treasurebox_BIG006(5)",
-        "Treasurebox_SAN003(5)": "Treasurebox_TWR019(3)",
-        "Treasurebox_SAN003(6)": "Treasurebox_KNG018(3)",
-        "Treasurebox_SAN003(7)": "Treasurebox_UGD033(1)",
-        "Treasurebox_SAN003(8)": "Treasurebox_TWR018(7)",
-        "Treasurebox_SAN005(1)": "Treasurebox_SND003(1)",
-        "Treasurebox_SAN005(2)": "Treasurebox_SAN003(8)",
-        "Treasurebox_SAN009(1)": "Treasurebox_TWR018(2)",
-        "Treasurebox_SAN009(2)": "Treasurebox_UGD053(1)",
-        "Treasurebox_SAN013(1)": "Treasurebox_ARC006(1)",
-        "Treasurebox_SAN013(2)": "Treasurebox_ENT007(1)",
-        "Treasurebox_SAN014(1)": "Treasurebox_SIP004(1)",
-        "Treasurebox_SAN015(2)": "Treasurebox_SND008(2)",
-        "Treasurebox_SAN015(3)": "Treasurebox_TRN002(1)",
-        "Treasurebox_SAN016(1)": "Treasurebox_SND000(1)",
-        "Treasurebox_SAN016(2)": "Treasurebox_UGD035(1)",
-        "Treasurebox_SAN016(3)": "Treasurebox_RVA001(1)",
-        "Treasurebox_SAN016(4)": "Treasurebox_SAN016(4)",
-        "Treasurebox_SAN016(5)": "Treasurebox_SAN003(6)",
-        "Treasurebox_SAN017(1)": "Treasurebox_ENT024(1)",
-        "Treasurebox_SAN019(1)": "Treasurebox_JPN004(1)",
-        "Treasurebox_SAN019(2)": "Treasurebox_SIP025(1)",
-        "Treasurebox_SAN019(3)": "Treasurebox_SAN013(2)",
-        "Treasurebox_SAN020(1)": "Treasurebox_SAN003(7)",
-        "Treasurebox_SAN021(1)": "Treasurebox_ICE013(1)",
-        "Treasurebox_SAN021(2)": "Treasurebox_SAN021(2)",
-        "Treasurebox_SAN021(3)": "Treasurebox_GDN002(1)",
-        "Treasurebox_SAN021(4)": "Treasurebox_GDN006(3)",
-        "Treasurebox_SAN021(5)": "Treasurebox_KNG017(3)",
-        "Treasurebox_SAN024(1)": "Treasurebox_SIP024(2)",
-        "Treasurebox_TWR000(1)": "Treasurebox_RVA003(2)",
-        "Treasurebox_TWR003(1)": "Treasurebox_ENT012(1)",
-        "Treasurebox_TWR004(1)": "Treasurebox_GDN013(1)",
-        "Treasurebox_TWR005(1)": "Treasurebox_LIB011(1)",
-        "Treasurebox_TWR006(1)": "Treasurebox_UGD023(1)",
-        "Treasurebox_TWR008(1)": "Treasurebox_BIG014(1)",
-        "Treasurebox_TWR009(1)": "Treasurebox_SIP018(1)",
-        "Treasurebox_TWR010(1)": "Treasurebox_KNG005(1)",
-        "Treasurebox_TWR012(1)": "Treasurebox_UGD018(1)",
-        "Treasurebox_TWR013(1)": "Treasurebox_ENT014(1)",
-        "Treasurebox_TWR016(1)": "Treasurebox_SAN005(4)",
-        "Treasurebox_TWR017(1)": "Treasurebox_KNG012(1)",
-        "Treasurebox_TWR017(2)": "Treasurebox_BIG005(1)",
-        "Treasurebox_TWR017(3)": "Treasurebox_ENT007(2)",
-        "Treasurebox_TWR017(4)": "Treasurebox_RVA006(1)",
-        "Treasurebox_TWR017(5)": "Treasurebox_LIB043(1)",
-        "Treasurebox_TWR017(6)": "Treasurebox_SAN021(3)",
-        "Treasurebox_TWR017(7)": "Treasurebox_TRN002(2)",
-        "Treasurebox_TWR018(1)": "Treasurebox_GDN010(1)",
-        "Treasurebox_TWR018(2)": "Treasurebox_UGD009(2)",
-        "Treasurebox_TWR018(3)": "Treasurebox_SND018(1)",
-        "Treasurebox_TWR018(4)": "Treasurebox_SAN003(2)",
-        "Treasurebox_TWR018(5)": "Treasurebox_PureMiriam_Sword",
-        "Treasurebox_TWR018(6)": "Treasurebox_GDN009(1)",
-        "Treasurebox_TWR018(7)": "Treasurebox_KNG018(2)",
-        "Treasurebox_TWR018(8)": "Treasurebox_GDN013(3)",
-        "Treasurebox_TWR019(1)": "Treasurebox_SAN021(1)",
-        "Treasurebox_TWR019(2)": "Treasurebox_SAN014(1)",
-        "Treasurebox_TWR019(4)": "Treasurebox_GDN012(2)",
-        "Treasurebox_LIB001(1)": "Treasurebox_UGD047(1)",
-        "Treasurebox_LIB002(1)": "Treasurebox_TWR017(4)",
-        "Treasurebox_LIB007(1)": "Treasurebox_GDN014(1)",
-        "Treasurebox_LIB009(1)": "Treasurebox_VIL006(1)",
-        "Treasurebox_LIB009(2)": "Treasurebox_VIL003(1)",
-        "Treasurebox_LIB011(1)": "Treasurebox_SIP006(1)",
-        "Treasurebox_LIB012(1)": "Treasurebox_ICE003(2)",
-        "Treasurebox_LIB017(1)": "Treasurebox_JPN000(1)",
-        "Treasurebox_LIB019(1)": "Treasurebox_LIB002(1)",
-        "Treasurebox_LIB022(1)": "Treasurebox_SIP026(1)",
-        "Treasurebox_LIB030(1)": "Treasurebox_ARC005(1)",
-        "Treasurebox_LIB032(1)": "Treasurebox_LIB019(1)",
-        "Treasurebox_LIB033(1)": "Treasurebox_SAN009(3)",
-        "Treasurebox_LIB040(1)": "Treasurebox_ENT022(1)",
-        "Treasurebox_LIB043(1)": "Treasurebox_UGD010(1)",
-        "Treasurebox_TRN002(1)": "Treasurebox_TWR017(7)",
-        "Treasurebox_TRN002(2)": "Treasurebox_ENT024(2)",
-        "Treasurebox_TRN002(3)": "Treasurebox_UGD003(3)",
-        "Treasurebox_TRN002(4)": "Treasurebox_ENT007(3)",
-        "Treasurebox_TRN002(5)": "Treasurebox_JPN010(2)",
-        "Treasurebox_KNG002(1)": "Treasurebox_UGD040(1)",
-        "Treasurebox_KNG002(2)": "Treasurebox_TWR008(1)",
-        "Treasurebox_KNG003(1)": "Treasurebox_ENT002(2)",
-        "Treasurebox_KNG006(1)": "Treasurebox_JPN001(1)",
-        "Treasurebox_KNG010(1)": "Treasurebox_UGD012(1)",
-        "Treasurebox_KNG011(1)": "Treasurebox_KNG018(4)",
-        "Treasurebox_KNG012(1)": "Treasurebox_ENT009(1)",
-        "Treasurebox_KNG012(2)": "Treasurebox_UGD009(1)",
-        "Treasurebox_KNG016(1)": "Treasurebox_UGD048(1)",
-        "Treasurebox_KNG017(1)": "Treasurebox_ICE008(1)",
-        "Treasurebox_KNG017(2)": "Treasurebox_TWR019(1)",
-        "Treasurebox_KNG017(3)": "Treasurebox_ENT002(3)",
-        "Treasurebox_KNG017(4)": "Treasurebox_UGD003(2)",
-        "Treasurebox_KNG017(5)": "Treasurebox_KNG017(5)",
-        "Treasurebox_KNG018(2)": "Treasurebox_KNG018(1)",
-        "Treasurebox_KNG018(3)": "Treasurebox_LIB012(1)",
-        "Treasurebox_KNG018(4)": "Treasurebox_KNG002(2)",
-        "Treasurebox_KNG021(1)": "Treasurebox_RVA005(2)",
-        "Treasurebox_KNG022(1)": "Treasurebox_UGD050(1)",
-        "Treasurebox_UGD001(1)": "Treasurebox_KNG016(1)",
-        "Treasurebox_UGD003(1)": "Treasurebox_SND005(1)",
-        "Treasurebox_UGD003(2)": "Treasurebox_VIL006(3)",
-        "Treasurebox_UGD003(3)": "Treasurebox_KNG017(4)",
-        "Treasurebox_UGD003(4)": "Treasurebox_SND001(1)",
-        "Treasurebox_UGD005(1)": "Treasurebox_ICE014(1)",
-        "Treasurebox_UGD005(2)": "Treasurebox_SND021(1)",
-        "Treasurebox_UGD007(1)": "Treasurebox_GDN006(2)",
-        "Treasurebox_UGD009(1)": "Treasurebox_LIB018(1)",
-        "Treasurebox_UGD009(2)": "Treasurebox_ENT011(1)",
-        "Treasurebox_UGD009(3)": "Treasurebox_UGD048(2)",
-        "Treasurebox_UGD009(4)": "Treasurebox_SIP019(1)",
-        "Treasurebox_UGD010(1)": "Treasurebox_SAN013(1)",
-        "Treasurebox_UGD011(1)": "Treasurebox_UGD011(1)",
-        "Treasurebox_UGD021(1)": "Treasurebox_BIG006(1)",
-        "Treasurebox_UGD024(1)": "Treasurebox_UGD005(1)",
-        "Treasurebox_UGD024(2)": "Treasurebox_UGD020(1)",
-        "Treasurebox_UGD024(3)": "Treasurebox_UGD024(3)",
-        "Treasurebox_UGD025(1)": "Treasurebox_BIG006(3)",
-        "Treasurebox_UGD025(2)": "Treasurebox_RVA004(1)",
-        "Treasurebox_UGD025(3)": "Treasurebox_UGD036(1)",
-        "Treasurebox_UGD027(1)": "Treasurebox_UGD032(1)",
-        "Treasurebox_UGD030(1)": "Treasurebox_SND019(1)",
-        "Treasurebox_UGD031(1)": "Treasurebox_KNG022(1)",
-        "Treasurebox_UGD031(2)": "Treasurebox_TWR017(3)",
-        "Treasurebox_UGD036(1)": "Treasurebox_ICE011(1)",
-        "Treasurebox_UGD036(2)": "Treasurebox_TWR018(1)",
-        "Treasurebox_UGD038(1)": "Treasurebox_UGD045(1)",
-        "Treasurebox_UGD040(1)": "Treasurebox_BIG010(1)",
-        "Treasurebox_UGD041(1)": "Treasurebox_TAR009(1)",
-        "Treasurebox_UGD042(1)": "Treasurebox_SND026(1)",
-        "Treasurebox_UGD044(1)": "Treasurebox_UGD047(2)",
-        "Treasurebox_UGD044(2)": "Treasurebox_TRN002(5)",
-        "Treasurebox_UGD046(1)": "Treasurebox_UGD046(1)",
-        "Treasurebox_UGD046(2)": "Treasurebox_ICE008(2)",
-        "Treasurebox_UGD047(2)": "Treasurebox_KNG021(3)",
-        "Treasurebox_UGD048(1)": "Treasurebox_SND008(1)",
-        "Treasurebox_UGD050(1)": "Treasurebox_UGD025(2)",
-        "Treasurebox_UGD051(1)": "Treasurebox_TWR017(1)",
-        "Treasurebox_UGD052(1)": "Treasurebox_ENT011(2)",
-        "Treasurebox_UGD052(2)": "Treasurebox_SND010(1)",
-        "Treasurebox_UGD053(1)": "Treasurebox_JPN005(1)",
-        "Treasurebox_UGD054(1)": "Treasurebox_JPN008(1)",
-        "Treasurebox_UGD056(1)": "Treasurebox_JPN002(1)",
-        "Treasurebox_SND002(1)": "Treasurebox_SAN005(3)",
-        "Treasurebox_SND003(1)": "Treasurebox_TWR005(1)",
-        "Treasurebox_SND004(1)": "Treasurebox_KNG021(1)",
-        "Treasurebox_SND006(1)": "Treasurebox_UGD031(1)",
-        "Treasurebox_SND008(1)": "Treasurebox_SAN019(1)",
-        "Treasurebox_SND008(2)": "Treasurebox_KNG021(2)",
-        "Treasurebox_SND009(1)": "Treasurebox_SIP009(1)",
-        "Treasurebox_SND010(1)": "Treasurebox_SND014(1)",
-        "Treasurebox_SND010(2)": "Treasurebox_TWR017(6)",
-        "Treasurebox_SND013(1)": "Treasurebox_JPN003(1)",
-        "Treasurebox_SND015(1)": "Treasurebox_RVA014(1)",
-        "Treasurebox_SND016(1)": "Treasurebox_ENT021(1)",
-        "Treasurebox_SND017(1)": "Treasurebox_TAR003(1)",
-        "Treasurebox_SND018(1)": "Treasurebox_BIG016(1)",
-        "Treasurebox_SND019(1)": "Treasurebox_ICE010(1)",
-        "Treasurebox_SND020(1)": "Treasurebox_RVA009(1)",
-        "Treasurebox_SND024(1)": "Treasurebox_UGD057(1)",
-        "Treasurebox_SND025(1)": "Treasurebox_RVA003(1)",
-        "Treasurebox_ARC000(1)": "Treasurebox_UGD026(1)",
-        "Treasurebox_ARC002(1)": "Treasurebox_UGD019(1)",
-        "Treasurebox_ARC003(1)": "Treasurebox_UGD007(1)",
-        "Treasurebox_ARC004(1)": "Treasurebox_BIG012(3)",
-        "Treasurebox_ARC006(1)": "Treasurebox_SND006(1)",
-        "Treasurebox_ARC006(2)": "Treasurebox_SIP024(1)",
-        "Treasurebox_ARC007(1)": "Treasurebox_SIP003(1)",
-        "Treasurebox_ARC007(2)": "Treasurebox_ENT014(3)",
-        "Treasurebox_TAR001(1)": "Treasurebox_TAR005(1)",
-        "Treasurebox_TAR002(1)": "N3106_2ND_Treasure",
-        "Treasurebox_TAR006(1)": "Treasurebox_PureMiriam_Dress",
-        "Treasurebox_TAR007(1)": "Treasurebox_ICE001(2)",
-        "Treasurebox_TAR010(1)": "Treasurebox_UGD015(1)",
-        "Treasurebox_JPN002(1)": "Treasurebox_UGD056(1)",
-        "Treasurebox_JPN002(2)": "Treasurebox_JPN002(2)",
-        "Treasurebox_JPN004(1)": "Treasurebox_TWR018(4)",
-        "Treasurebox_JPN005(1)": "Treasurebox_TWR018(6)",
-        "Treasurebox_JPN009(1)": "Treasurebox_UGD001(1)",
-        "Treasurebox_JPN010(1)": "Treasurebox_SIP015(1)",
-        "Treasurebox_JPN010(2)": "Treasurebox_SAN021(5)",
-        "Treasurebox_JPN013(1)": "N3106_1ST_Treasure",
-        "Treasurebox_JPN015(1)": "Treasurebox_SAN016(1)",
-        "Treasurebox_JPN017(1)": "Treasurebox_VIL005(1)",
-        "Treasurebox_JPN018(1)": "Treasurebox_ARC007(1)",
-        "Treasurebox_RVA001(1)": "Treasurebox_ENT018(2)",
-        "Treasurebox_RVA001(2)": "Treasurebox_SIP013(1)",
-        "Treasurebox_RVA002(1)": "Treasurebox_UGD052(2)",
-        "Treasurebox_RVA004(1)": "Treasurebox_JPN017(1)",
-        "Treasurebox_RVA006(1)": "Treasurebox_JPN009(1)",
-        "Treasurebox_RVA010(1)": "Treasurebox_UGD037(1)",
-        "Treasurebox_RVA011(1)": "Treasurebox_RVA011(1)",
-        "Treasurebox_RVA011(2)": "Treasurebox_VIL010(1)",
-        "Treasurebox_RVA012(1)": "Treasurebox_SND027(1)",
-        "Treasurebox_RVA015(1)": "Treasurebox_TWR003(1)",
-        "Treasurebox_BIG002(1)": "Treasurebox_UGD022(1)",
-        "Treasurebox_BIG005(1)": "Treasurebox_LIB042(1)",
-        "Treasurebox_BIG006(1)": "Treasurebox_SND009(1)",
-        "Treasurebox_BIG006(2)": "Treasurebox_KNG017(2)",
-        "Treasurebox_BIG006(3)": "Treasurebox_SAN019(2)",
-        "Treasurebox_BIG006(4)": "Treasurebox_BIG008(1)",
-        "Treasurebox_BIG006(5)": "Treasurebox_SAN005(2)",
-        "Treasurebox_BIG006(6)": "Treasurebox_ENT005(2)",
-        "Treasurebox_BIG007(1)": "Treasurebox_SND012(1)",
-        "Treasurebox_BIG008(1)": "Treasurebox_BIG006(4)",
-        "Treasurebox_BIG010(1)": "Treasurebox_UGD029(1)",
-        "Treasurebox_BIG011(1)": "Treasurebox_SIP021(2)",
-        "Treasurebox_BIG012(1)": "Treasurebox_SIP017(1)",
-        "Treasurebox_BIG012(2)": "Treasurebox_UGD039(1)",
-        "Treasurebox_BIG012(3)": "Treasurebox_SND010(2)",
-        "Treasurebox_BIG013(1)": "Treasurebox_KNG003(1)",
-        "Treasurebox_BIG014(1)": "Treasurebox_KNG011(1)",
-        "Treasurebox_BIG016(1)": "Treasurebox_JPN010(1)",
-        "Treasurebox_BIG016(2)": "Treasurebox_TWR012(1)",
-        "Treasurebox_BIG016(3)": "Treasurebox_GDN013(4)",
-        "Treasurebox_ICE001(1)": "Treasurebox_TWR006(2)",
-        "Treasurebox_ICE001(2)": "Treasurebox_UGD036(2)",
-        "Treasurebox_ICE002(1)": "Treasurebox_SND007(1)",
-        "Treasurebox_ICE003(1)": "Treasurebox_SIP005(1)",
-        "Treasurebox_ICE003(2)": "Treasurebox_VIL006(4)",
-        "Treasurebox_ICE006(1)": "Treasurebox_UGD016(1)",
-        "Treasurebox_ICE008(1)": "Treasurebox_VIL007(1)",
-        "Treasurebox_ICE008(2)": "Treasurebox_RVA005(1)",
-        "Treasurebox_ICE010(1)": "Treasurebox_ENT024(3)",
-        "Treasurebox_ICE011(1)": "Treasurebox_GDN013(2)",
-        "Treasurebox_ICE013(1)": "Treasurebox_BIG006(2)",
-        "Treasurebox_ICE014(1)": "Treasurebox_SND020(1)",
-        "Treasurebox_PureMiriam_Hair": "Treasurebox_SAN009(1)",
-        "Treasurebox_PureMiriam_Tiare": "Treasurebox_PureMiriam_Tiare",
-        "Treasurebox_PureMiriam_Dress": "Treasurebox_TAR006(1)",
-        "Treasurebox_PureMiriam_Sword": "Treasurebox_SAN000(1)",
-        "Wall_SIP004(1)": "Wall_BIG012(1)",
-        "Wall_SIP009(1)": "Wall_LIB004(1)",
-        "Wall_SIP014(1)": "Wall_UGD031(1)",
-        "Wall_SIP016(1)": "Wall_ICE003(1)",
-        "Wall_ENT002(1)": "Wall_TRN005(1)",
-        "Wall_ENT012(1)": "Wall_TWR013(1)",
-        "Wall_GDN006(1)": "Wall_GDN006(1)",
-        "Wall_SAN000(1)": "Wall_UGD006(1)",
-        "Wall_SAN005(1)": "Wall_RVA011(1)",
-        "Wall_SAN019(1)": "Wall_LIB025(1)",
-        "Wall_KNG000(1)": "Wall_SND001(1)",
-        "Wall_KNG007(1)": "Wall_RVA003(1)",
-        "Wall_LIB004(1)": "Wall_ICE010(1)",
-        "Wall_LIB019(1)": "Wall_UGD012(1)",
-        "Wall_LIB025(1)": "Wall_TWR006(1)",
-        "Wall_TWR006(1)": "Wall_UGD020(1)",
-        "Wall_TWR013(1)": "Wall_ENT012(1)",
-        "Wall_TWR016(1)": "Wall_TWR016(1)",
-        "Wall_TRN005(1)": "Wall_SIP009(1)",
-        "Wall_UGD000(1)": "Wall_ENT002(1)",
-        "Wall_UGD003(1)": "Wall_UGD003(1)",
-        "Wall_UGD006(1)": "Wall_SND019(1)",
-        "Wall_UGD012(1)": "Wall_SAN005(1)",
-        "Wall_UGD020(1)": "Wall_BIG016(1)",
-        "Wall_UGD031(1)": "Wall_SIP014(1)",
-        "Wall_UGD037(1)": "Wall_ICE017(1)",
-        "Wall_UGD046(1)": "Wall_TAR007(1)",
-        "Wall_UGD056(1)": "Wall_UGD056(1)",
-        "Wall_SND001(1)": "Wall_SAN019(1)",
-        "Wall_SND019(1)": "Wall_KNG007(1)",
-        "Wall_TAR007(1)": "Wall_UGD046(1)",
-        "Wall_JPN011(1)": "Wall_KNG000(1)",
-        "Wall_JPN013(1)": "Wall_JPN013(1)",
-        "Wall_RVA011(1)": "Wall_SIP016(1)",
-        "Wall_BIG002(1)": "Wall_BIG002(1)",
-        "Wall_BIG012(1)": "Wall_UGD000(1)",
-        "Wall_BIG016(1)": "Wall_JPN011(1)",
-        "Wall_ICE003(1)": "Wall_LIB019(1)",
-        "Wall_ICE010(1)": "Wall_SIP004(1)",
-        "Wall_ICE017(1)": "Wall_SAN000(1)",
-        "N3106_1ST_Treasure": "Treasurebox_ARC002(1)",
-        "N3106_2ND_Treasure": "Treasurebox_KNG006(1)"
-    }
+    global used_chests
+    used_chests = [
+        "PotionMaterial",
+        "Qu07_Last",
+        "Swordsman",
+        "Treasurebox_SIP000_Tutorial",
+        "Treasurebox_SIP002_1",
+        "Treasurebox_SIP003_1",
+        "Treasurebox_SIP004_1",
+        "Treasurebox_SIP005_1",
+        "Treasurebox_SIP005_2",
+        "Treasurebox_SIP006_1",
+        "Treasurebox_SIP007_1",
+        "Treasurebox_SIP007_2",
+        "Treasurebox_SIP009_1",
+        "Treasurebox_SIP011_1",
+        "Treasurebox_SIP011_2",
+        "Treasurebox_SIP011_3",
+        "Treasurebox_SIP011_4",
+        "Treasurebox_SIP012_1",
+        "Treasurebox_SIP013_1",
+        "Treasurebox_SIP014_1",
+        "Treasurebox_SIP015_1",
+        "Treasurebox_SIP016_1",
+        "Treasurebox_SIP017_1",
+        "Treasurebox_SIP018_1",
+        "Treasurebox_SIP019_1",
+        "Treasurebox_SIP020_1",
+        "Treasurebox_SIP021_2",
+        "Treasurebox_SIP024_1",
+        "Treasurebox_SIP024_2",
+        "Treasurebox_SIP025_1",
+        "Treasurebox_SIP025_2",
+        "Treasurebox_SIP026_1",
+        "Treasurebox_VIL001_1",
+        "Treasurebox_VIL003_1",
+        "Treasurebox_VIL005_1",
+        "Treasurebox_VIL006_1",
+        "Treasurebox_VIL006_2",
+        "Treasurebox_VIL006_3",
+        "Treasurebox_VIL006_4",
+        "Treasurebox_VIL007_1",
+        "Treasurebox_VIL008_1",
+        "Treasurebox_VIL008_2",
+        "Treasurebox_VIL010_1",
+        "Treasurebox_ENT002_1",
+        "Treasurebox_ENT002_2",
+        "Treasurebox_ENT002_3",
+        "Treasurebox_ENT004_1",
+        "Treasurebox_ENT005_1",
+        "Treasurebox_ENT005_2",
+        "Treasurebox_ENT007_1",
+        "Treasurebox_ENT007_2",
+        "Treasurebox_ENT007_3",
+        "Treasurebox_ENT009_1",
+        "Treasurebox_ENT011_1",
+        "Treasurebox_ENT014_1",
+        "Treasurebox_ENT014_2",
+        "Treasurebox_ENT014_3",
+        "Treasurebox_ENT018_1",
+        "Treasurebox_ENT018_2",
+        "Treasurebox_ENT020_1",
+        "Treasurebox_ENT020_2",
+        "Treasurebox_ENT021_1",
+        "Treasurebox_ENT022_1",
+        "Treasurebox_ENT024_1",
+        "Treasurebox_ENT024_2",
+        "Treasurebox_ENT024_3",
+        "Treasurebox_GDN002_1",
+        "Treasurebox_GDN004_1",
+        "Treasurebox_GDN006_1",
+        "Treasurebox_GDN006_2",
+        "Treasurebox_GDN006_3",
+        "Treasurebox_GDN006_4",
+        "Treasurebox_GDN006_5",
+        "Treasurebox_GDN007_1",
+        "Treasurebox_GDN009_1",
+        "Treasurebox_GDN009_2",
+        "Treasurebox_GDN010_1",
+        "Treasurebox_GDN012_1",
+        "Treasurebox_GDN012_2",
+        "Treasurebox_GDN013_1",
+        "Treasurebox_GDN013_2",
+        "Treasurebox_GDN013_3",
+        "Treasurebox_GDN013_4",
+        "Treasurebox_GDN014_1",
+        "Treasurebox_SAN003_1",
+        "Treasurebox_SAN003_2",
+        "Treasurebox_SAN003_3",
+        "Treasurebox_SAN003_4",
+        "Treasurebox_SAN003_5",
+        "Treasurebox_SAN003_6",
+        "Treasurebox_SAN003_7",
+        "Treasurebox_SAN003_8",
+        "Treasurebox_SAN005_1",
+        "Treasurebox_SAN005_2",
+        "Treasurebox_SAN009_1",
+        "Treasurebox_SAN009_2",
+        "Treasurebox_SAN013_1",
+        "Treasurebox_SAN013_2",
+        "Treasurebox_SAN014_1",
+        "Treasurebox_SAN015_2",
+        "Treasurebox_SAN015_3",
+        "Treasurebox_SAN016_1",
+        "Treasurebox_SAN016_2",
+        "Treasurebox_SAN016_3",
+        "Treasurebox_SAN016_4",
+        "Treasurebox_SAN016_5",
+        "Treasurebox_SAN017_1",
+        "Treasurebox_SAN019_1",
+        "Treasurebox_SAN019_2",
+        "Treasurebox_SAN019_3",
+        "Treasurebox_SAN020_1",
+        "Treasurebox_SAN021_1",
+        "Treasurebox_SAN021_2",
+        "Treasurebox_SAN021_3",
+        "Treasurebox_SAN021_4",
+        "Treasurebox_SAN021_5",
+        "Treasurebox_SAN024_1",
+        "Treasurebox_TWR000_1",
+        "Treasurebox_TWR003_1",
+        "Treasurebox_TWR004_1",
+        "Treasurebox_TWR005_1",
+        "Treasurebox_TWR006_1",
+        "Treasurebox_TWR008_1",
+        "Treasurebox_TWR009_1",
+        "Treasurebox_TWR010_1",
+        "Treasurebox_TWR012_1",
+        "Treasurebox_TWR013_1",
+        "Treasurebox_TWR016_1",
+        "Treasurebox_TWR017_1",
+        "Treasurebox_TWR017_2",
+        "Treasurebox_TWR017_3",
+        "Treasurebox_TWR017_4",
+        "Treasurebox_TWR017_5",
+        "Treasurebox_TWR017_6",
+        "Treasurebox_TWR017_7",
+        "Treasurebox_TWR018_1",
+        "Treasurebox_TWR018_2",
+        "Treasurebox_TWR018_3",
+        "Treasurebox_TWR018_4",
+        "Treasurebox_TWR018_5",
+        "Treasurebox_TWR018_6",
+        "Treasurebox_TWR018_7",
+        "Treasurebox_TWR018_8",
+        "Treasurebox_TWR019_1",
+        "Treasurebox_TWR019_2",
+        "Treasurebox_TWR019_4",
+        "Treasurebox_LIB001_1",
+        "Treasurebox_LIB002_1",
+        "Treasurebox_LIB007_1",
+        "Treasurebox_LIB009_1",
+        "Treasurebox_LIB009_2",
+        "Treasurebox_LIB011_1",
+        "Treasurebox_LIB012_1",
+        "Treasurebox_LIB017_1",
+        "Treasurebox_LIB019_1",
+        "Treasurebox_LIB022_1",
+        "Treasurebox_LIB030_1",
+        "Treasurebox_LIB032_1",
+        "Treasurebox_LIB033_1",
+        "Treasurebox_LIB040_1",
+        "Treasurebox_LIB043_1",
+        "Treasurebox_TRN002_1",
+        "Treasurebox_TRN002_2",
+        "Treasurebox_TRN002_3",
+        "Treasurebox_TRN002_4",
+        "Treasurebox_TRN002_5",
+        "Treasurebox_KNG002_1",
+        "Treasurebox_KNG002_2",
+        "Treasurebox_KNG003_1",
+        "Treasurebox_KNG006_1",
+        "Treasurebox_KNG010_1",
+        "Treasurebox_KNG011_1",
+        "Treasurebox_KNG012_1",
+        "Treasurebox_KNG012_2",
+        "Treasurebox_KNG016_1",
+        "Treasurebox_KNG017_1",
+        "Treasurebox_KNG017_2",
+        "Treasurebox_KNG017_3",
+        "Treasurebox_KNG017_4",
+        "Treasurebox_KNG017_5",
+        "Treasurebox_KNG018_2",
+        "Treasurebox_KNG018_3",
+        "Treasurebox_KNG018_4",
+        "Treasurebox_KNG021_1",
+        "Treasurebox_KNG022_1",
+        "Treasurebox_UGD001_1",
+        "Treasurebox_UGD003_1",
+        "Treasurebox_UGD003_2",
+        "Treasurebox_UGD003_3",
+        "Treasurebox_UGD003_4",
+        "Treasurebox_UGD005_1",
+        "Treasurebox_UGD005_2",
+        "Treasurebox_UGD007_1",
+        "Treasurebox_UGD009_1",
+        "Treasurebox_UGD009_2",
+        "Treasurebox_UGD009_3",
+        "Treasurebox_UGD009_4",
+        "Treasurebox_UGD010_1",
+        "Treasurebox_UGD011_1",
+        "Treasurebox_UGD021_1",
+        "Treasurebox_UGD024_1",
+        "Treasurebox_UGD024_2",
+        "Treasurebox_UGD024_3",
+        "Treasurebox_UGD025_1",
+        "Treasurebox_UGD025_2",
+        "Treasurebox_UGD025_3",
+        "Treasurebox_UGD027_1",
+        "Treasurebox_UGD030_1",
+        "Treasurebox_UGD031_1",
+        "Treasurebox_UGD031_2",
+        "Treasurebox_UGD036_1",
+        "Treasurebox_UGD036_2",
+        "Treasurebox_UGD038_1",
+        "Treasurebox_UGD040_1",
+        "Treasurebox_UGD041_1",
+        "Treasurebox_UGD042_1",
+        "Treasurebox_UGD044_1",
+        "Treasurebox_UGD044_2",
+        "Treasurebox_UGD046_1",
+        "Treasurebox_UGD046_2",
+        "Treasurebox_UGD047_2",
+        "Treasurebox_UGD048_1",
+        "Treasurebox_UGD050_1",
+        "Treasurebox_UGD051_1",
+        "Treasurebox_UGD052_1",
+        "Treasurebox_UGD052_2",
+        "Treasurebox_UGD053_1",
+        "Treasurebox_UGD054_1",
+        "Treasurebox_UGD056_1",
+        "Treasurebox_SND002_1",
+        "Treasurebox_SND003_1",
+        "Treasurebox_SND004_1",
+        "Treasurebox_SND006_1",
+        "Treasurebox_SND008_1",
+        "Treasurebox_SND008_2",
+        "Treasurebox_SND009_1",
+        "Treasurebox_SND010_1",
+        "Treasurebox_SND010_2",
+        "Treasurebox_SND013_1",
+        "Treasurebox_SND015_1",
+        "Treasurebox_SND016_1",
+        "Treasurebox_SND017_1",
+        "Treasurebox_SND018_1",
+        "Treasurebox_SND019_1",
+        "Treasurebox_SND020_1",
+        "Treasurebox_SND024_1",
+        "Treasurebox_SND025_1",
+        "Treasurebox_ARC000_1",
+        "Treasurebox_ARC002_1",
+        "Treasurebox_ARC003_1",
+        "Treasurebox_ARC004_1",
+        "Treasurebox_ARC006_1",
+        "Treasurebox_ARC006_2",
+        "Treasurebox_ARC007_1",
+        "Treasurebox_ARC007_2",
+        "Treasurebox_TAR001_1",
+        "Treasurebox_TAR002_1",
+        "Treasurebox_TAR006_1",
+        "Treasurebox_TAR007_1",
+        "Treasurebox_TAR010_1",
+        "Treasurebox_JPN002_1",
+        "Treasurebox_JPN002_2",
+        "Treasurebox_JPN004_1",
+        "Treasurebox_JPN005_1",
+        "Treasurebox_JPN009_1",
+        "Treasurebox_JPN010_1",
+        "Treasurebox_JPN010_2",
+        "Treasurebox_JPN013_1",
+        "Treasurebox_JPN015_1",
+        "Treasurebox_JPN017_1",
+        "Treasurebox_JPN018_1",
+        "Treasurebox_RVA001_1",
+        "Treasurebox_RVA001_2",
+        "Treasurebox_RVA002_1",
+        "Treasurebox_RVA004_1",
+        "Treasurebox_RVA006_1",
+        "Treasurebox_RVA010_1",
+        "Treasurebox_RVA011_1",
+        "Treasurebox_RVA011_2",
+        "Treasurebox_RVA012_1",
+        "Treasurebox_RVA015_1",
+        "Treasurebox_BIG002_1",
+        "Treasurebox_BIG005_1",
+        "Treasurebox_BIG006_1",
+        "Treasurebox_BIG006_2",
+        "Treasurebox_BIG006_3",
+        "Treasurebox_BIG006_4",
+        "Treasurebox_BIG006_5",
+        "Treasurebox_BIG006_6",
+        "Treasurebox_BIG007_1",
+        "Treasurebox_BIG008_1",
+        "Treasurebox_BIG010_1",
+        "Treasurebox_BIG011_1",
+        "Treasurebox_BIG012_1",
+        "Treasurebox_BIG012_2",
+        "Treasurebox_BIG012_3",
+        "Treasurebox_BIG013_1",
+        "Treasurebox_BIG014_1",
+        "Treasurebox_BIG016_1",
+        "Treasurebox_BIG016_2",
+        "Treasurebox_BIG016_3",
+        "Treasurebox_ICE001_1",
+        "Treasurebox_ICE001_2",
+        "Treasurebox_ICE002_1",
+        "Treasurebox_ICE003_1",
+        "Treasurebox_ICE003_2",
+        "Treasurebox_ICE006_1",
+        "Treasurebox_ICE008_1",
+        "Treasurebox_ICE008_2",
+        "Treasurebox_ICE010_1",
+        "Treasurebox_ICE011_1",
+        "Treasurebox_ICE013_1",
+        "Treasurebox_ICE014_1",
+        "Treasurebox_PureMiriam_Hair",
+        "Treasurebox_PureMiriam_Tiare",
+        "Treasurebox_PureMiriam_Dress",
+        "Treasurebox_PureMiriam_Sword",
+        "Wall_SIP004_1",
+        "Wall_SIP009_1",
+        "Wall_SIP014_1",
+        "Wall_SIP016_1",
+        "Wall_ENT002_1",
+        "Wall_ENT012_1",
+        "Wall_GDN006_1",
+        "Wall_SAN000_1",
+        "Wall_SAN005_1",
+        "Wall_SAN019_1",
+        "Wall_KNG000_1",
+        "Wall_KNG007_1",
+        "Wall_LIB004_1",
+        "Wall_LIB019_1",
+        "Wall_LIB025_1",
+        "Wall_TWR006_1",
+        "Wall_TWR013_1",
+        "Wall_TWR016_1",
+        "Wall_TRN005_1",
+        "Wall_UGD000_1",
+        "Wall_UGD003_1",
+        "Wall_UGD006_1",
+        "Wall_UGD012_1",
+        "Wall_UGD020_1",
+        "Wall_UGD031_1",
+        "Wall_UGD037_1",
+        "Wall_UGD046_1",
+        "Wall_UGD056_1",
+        "Wall_SND001_1",
+        "Wall_SND019_1",
+        "Wall_TAR007_1",
+        "Wall_JPN011_1",
+        "Wall_JPN013_1",
+        "Wall_RVA011_1",
+        "Wall_BIG002_1",
+        "Wall_BIG012_1",
+        "Wall_BIG016_1",
+        "Wall_ICE003_1",
+        "Wall_ICE010_1",
+        "Wall_ICE017_1",
+        "N3106_1ST_Treasure",
+        "N3106_2ND_Treasure"
+    ]
     global room_to_area
     room_to_area = {
         "SIP": "m01",
@@ -401,16 +401,58 @@ def init():
         "N3106_1ST_Treasure":           "m88BKR_004",
         "N3106_2ND_Treasure":           "m88BKR_004"
     }
-    global room_to_special_chest
-    room_to_special_chest = {
-        "m02VIL_005": ["PotionMaterial"],
-        "m02VIL_003": ["Qu07_Last"],
-        "m15JPN_016": ["Swordsman"],
-        "m01SIP_003": ["Treasurebox_PureMiriam_Hair"],
-        "m10BIG_011": ["Treasurebox_PureMiriam_Tiare"],
-        "m08TWR_019": ["Treasurebox_PureMiriam_Dress"],
-        "m08TWR_016": ["Treasurebox_PureMiriam_Sword"],
-        "m88BKR_004": ["N3106_1ST_Treasure", "N3106_2ND_Treasure"]
+    global chest_to_requirement
+    chest_to_requirement = {
+        "Treasurebox_PureMiriam_Hair":  ["HighJump", "Invert"],
+        "Treasurebox_SIP014_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Wall_SIP014_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_GDN013_1":         ["Invert", "Dimensionshift"],
+        "Treasurebox_SAN003_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN003_8":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN015_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN015_3":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN016_3":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN016_4":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN019_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN019_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN021_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN021_5":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_KNG018_4":         ["HighJump", "Invert", "Dimensionshift"],
+        "Treasurebox_LIB009_1":         ["HighJump", "Invert"],
+        "Treasurebox_LIB009_2":         ["HighJump", "Invert"],
+        "Treasurebox_LIB012_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_LIB022_1":         ["Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_TWR005_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_PureMiriam_Sword": ["Dimensionshift"],
+        "Treasurebox_PureMiriam_Dress": ["HighJump", "Invert"],
+        "Treasurebox_TRN002_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_TRN002_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_TRN002_3":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_BIG012_2":         ["HighJump", "Invert", "Dimensionshift"],
+        "Treasurebox_UGD005_1":         ["Deepsinker"],
+        "Treasurebox_UGD005_2":         ["Deepsinker"],
+        "Treasurebox_UGD009_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_UGD021_1":         ["Deepsinker"],
+        "Treasurebox_UGD024_1":         ["Deepsinker"],
+        "Treasurebox_UGD024_2":         ["Deepsinker"],
+        "Treasurebox_UGD024_3":         ["Deepsinker"],
+        "Treasurebox_UGD025_1":         ["Deepsinker"],
+        "Treasurebox_UGD025_2":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_UGD025_3":         ["Deepsinker"],
+        "Treasurebox_UGD036_1":         ["Deepsinker"],
+        "Treasurebox_UGD040_1":         ["Deepsinker"],
+        "Treasurebox_UGD042_1":         ["Deepsinker"],
+        "Treasurebox_UGD044_1":         ["Deepsinker"],
+        "Treasurebox_UGD044_2":         ["Deepsinker"],
+        "Treasurebox_UGD046_2":         ["Deepsinker"],
+        "Treasurebox_SND006_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_SND017_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_ARC006_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_TAR006_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_JPN002_1":         ["Dimensionshift"],
+        "Treasurebox_RVA001_2":         ["Dimensionshift"],
+        "Treasurebox_RVA011_1":         ["Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"]
     }
     global boss_rooms
     boss_rooms = [
@@ -470,6 +512,33 @@ def init():
     key_item_to_location = {}
     global key_shard_to_location
     key_shard_to_location = {}
+    global free_drop_entries
+    free_drop_entries = [
+        "Tresurebox_SAN000_01",
+        "Tresurebox_SAN000_02",
+        "Tresurebox_SAN_Tunic",
+        "Tresurebox_SAN003_02",
+        "Tresurebox_SAN003_03",
+        "Tresurebox_SAN003_04",
+        "Tresurebox_SAN016_01",
+        "Tresurebox_SAN016_02",
+        "Tresurebox_SAN017_01",
+        "Tresurebox_SAN019_01",
+        "Tresurebox_SAN_Spear",
+        "Tresurebox_SAN_Shoes",
+        "Tresurebox_SAN_Awhip",
+        "Tresurebox_SAN_Dull",
+        "Tresurebox_SAN_Claymore",
+        "Tresurebox_SAN_Headband",
+        "Tresurebox_SAN_Morgenstern",
+        "Tresurebox_SAN_Baselard",
+        "Tresurebox_SAN_High_Potion_1",
+        "Tresurebox_SAN_High_Potion_2",
+        "Tresurebox_SAN_High_Potion_3",
+        "Tresurebox_SAN_High_Ether_1",
+        "Tresurebox_SAN_High_Ether_2",
+        "Tresurebox_SAN_High_Ether_3"
+    ]
     #Pool
     global chest_type
     chest_type = []
@@ -683,14 +752,6 @@ def hard_enemy_logic():
     Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m08TWR_013")
     Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m11UGD_013")
 
-def story_chest():
-    #While not meant for story mode adapt the chest pointers if the player wants to mess around
-    for i in chest_to_seed:
-        chest_to_seed[i] = i
-    #Also don't randomize the starting shards that are immediately required in that mode
-    enemy_skip_list.append("N3006")
-    enemy_skip_list.append("N3005")
-
 def remove_infinite():
     #These specific gears grant the player an infinite source of something which generally ends up defining the meta and dominating runs
     #If the player is up for variety and challenge remove those from the pool so that they can never be found
@@ -703,29 +764,15 @@ def remove_infinite():
     while "Recyclehat" in Manager.mod_data["QuestRequirement"]["Memento"]["ItemPool"]:
         Manager.mod_data["QuestRequirement"]["Memento"]["ItemPool"].remove("Recyclehat")
 
-def give_shortcut():
-    #Start the player with all shortcut slots since it is a quality of life more than an ability
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareItemId"] = "Shortcut"
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareItemQuantity"] = 7
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareItemRate"] = 100.0
-    while "Shortcut" in Manager.mod_data["ShardDrop"]["ItemPool"]:
-        Manager.mod_data["ShardDrop"]["ItemPool"].remove("Shortcut")
-    
-def give_eye():
-    #Start the player with Detective's Eye so that missing breakable walls isn't an issue
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["CommonItemId"] = "SkilledDetectiveeye"
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["CommonItemQuantity"] = 1
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["CommonRate"] = 100.0
-    while "Detectiveeye" in Manager.mod_data["ShardDrop"]["ItemPool"]:
-        Manager.mod_data["ShardDrop"]["ItemPool"].remove("Detectiveeye")
-
-def give_extra(shard):
-    #Start the player with a specific shard by putting it in the Village Key container
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientId"] = shard
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientQuantity"] = 1
-    Manager.datatable["PB_DT_DropRateMaster"]["VillageKeyBox"]["RareIngredientRate"] = 100.0
-    while shard in Manager.mod_data["ShardDrop"]["ItemPool"]:
-        Manager.mod_data["ShardDrop"]["ItemPool"].remove(shard)
+def give_extra(item, quantity):
+    if not free_drop_entries:
+        raise "Out of free drop entries"
+    entry = free_drop_entries[0]
+    free_drop_entries.remove(entry)
+    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemId"] = item
+    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemQuantity"] = quantity
+    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemRate"] = 100.0
+    Manager.add_starting_pickup(entry)
 
 def no_shard_craft():
     #If shards are randomized then disable the possiblity to manually craft shards so that they aren't always available
@@ -734,11 +781,6 @@ def no_shard_craft():
     for i in Manager.datatable["PB_DT_CraftMaster"]:
         if Manager.datatable["PB_DT_CraftMaster"][i]["Type"] == "ECraftType::Craft" and Manager.datatable["PB_DT_CraftMaster"][i]["CraftItemId"] in Manager.mod_data["ShardDrop"]["ItemPool"]:
             Manager.datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "Medal019"
-
-def deseema_fix():
-    #If item are not randomized then quickly fix the aqua stream progression logic by giving Deseema increased drop chances
-    Manager.datatable["PB_DT_DropRateMaster"]["N3022_Shard"]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
-    Manager.datatable["PB_DT_DropRateMaster"]["N3022_Shard"]["ShardRate"]        = Manager.mod_data["ShardDrop"]["ItemRate"]*3
 
 def key_logic():
     #Place all key items with logic so that the game is always beatable
@@ -813,17 +855,6 @@ def key_logic():
             logic_choice(chosen_item, all_rooms)
         #Update previous gate
         previous_gate.extend(requirement_to_gate[chosen_item])
-    #Convert room to container
-    for i in key_item_to_location:
-        key_item_to_location[i] = random.choice(room_to_chests(key_item_to_location[i]))
-    for i in key_shard_to_location:
-        enemy_list = room_to_enemies(key_shard_to_location[i])
-        #Checking if enemy isn't already taken
-        chosen_enemy = random.choice(enemy_list)
-        while chosen_enemy in list(key_shard_to_location.values()):
-            chosen_enemy = random.choice(enemy_list)
-        #Changing
-        key_shard_to_location[i] = chosen_enemy
 
 def previous_in_nearest(previous_gate, nearest_gate):
     if not nearest_gate:
@@ -850,54 +881,42 @@ def logic_choice(chosen_item, room_list):
     #Choosing room to place item in
     while True:
         chosen_room = random.choice(room_list)
-        if chosen_room in list(key_item_to_location.values()) or chosen_room in list(key_shard_to_location.values()) or chosen_room in ["m01SIP_000", "m01SIP_020"]:
+        if chosen_room in ["m01SIP_000", "m01SIP_020"]:
             continue
-        #Checking if room has chest
+        #Choosing container to place item in
         if chosen_item in key_items:
-            if room_chest_check(chosen_room):
+            chest_list = room_to_available_chests(chosen_room)
+            if chest_list:
+                key_item_to_location[chosen_item] = random.choice(chest_list)
                 break
-        #Checking if room has enemy
         if chosen_item in key_shards:
-            if room_enemy_check(chosen_room):
+            enemy_list = room_to_available_enemies(chosen_room)
+            if enemy_list:
+                key_shard_to_location[chosen_item] = random.choice(enemy_list)
                 break
-    #Updating key location
-    if chosen_item in key_items:
-        key_item_to_location[chosen_item] = chosen_room
-    if chosen_item in key_shards:
-        key_shard_to_location[chosen_item] = chosen_room
 
-def room_chest_check(room):
-    for i in chest_to_seed:
-        #Checking if chest corresponds to room
-        if chest_to_room(i) == room:
-            return True
-    return False
-
-def room_enemy_check(room):
-    for i in Manager.mod_data["EnemyLocation"]:
-        #Checking if enemy weilds a shard and is in room
-        if not i in enemy_skip_list and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
-            #Checking if enemy isn't in an already assigned room
-            for e in key_shard_to_location:
-                if key_shard_to_location[e] in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
-                    return False
-            return True
-    return False
-
-def room_to_chests(room):
+def room_to_available_chests(room):
     chest_list = []
-    for i in chest_to_seed:
-        if room[3:].replace("_", "") in i:
-            chest_list.append(i)
-        elif room in room_to_special_chest:
-            if i in room_to_special_chest[room]:
+    for i in used_chests:
+        if chest_to_room(i) == room and not i in list(key_item_to_location.values()):
+            if i in chest_to_requirement:
+                for e in chest_to_requirement[i]:
+                    if e in key_item_to_location:
+                        if i == "Treasurebox_UGD025_2":
+                            if "Deepsinker" in key_item_to_location:
+                                chest_list.append(i)
+                                break
+                        else:
+                            chest_list.append(i)
+                            break
+            else:
                 chest_list.append(i)
     return chest_list
 
-def room_to_enemies(room):
+def room_to_available_enemies(room):
     enemy_list = []
     for i in Manager.mod_data["EnemyLocation"]:
-        if not i in enemy_skip_list and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
+        if not i in enemy_skip_list and not i in list(key_shard_to_location.values()) and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
             #Increasing chances of uncommon enemies
             #Otherwise shards tend to mostly end up on bats an whatnot
             for o in range(math.ceil(36/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
@@ -914,7 +933,7 @@ def rand_overworld_key():
         patch_key_shard_entry(i, key_shard_to_location[i])
     #Other keys
     for i in other_key:
-        patch_key_item_entry(i, random.choice(list(chest_to_seed)))
+        patch_key_item_entry(i, random.choice(used_chests))
 
 def rand_overworld_shard():
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
@@ -949,11 +968,15 @@ def rand_overworld_pool(waystone):
     patch_start_chest_entry()
     #Vepar chest
     if waystone:
-        patch_key_item_entry("Waystone", "Treasurebox_SIP020(1)")
+        patch_key_item_entry("Waystone", "Treasurebox_SIP020_1")
     else:
-        patch_key_item_entry("Potion", "Treasurebox_SIP020(1)")
+        patch_key_item_entry("Potion", "Treasurebox_SIP020_1")
     #Johannes mats
     patch_chest_entry(random.choice(blue_chest_type), "PotionMaterial")
+    #100% chest
+    patch_chest_entry(random.choice(green_chest_type), "Treasurebox_VIL005_1")
+    #8 bit nightmare chest
+    patch_chest_entry(random.choice(green_chest_type), "Treasurebox_KNG021_1")
     #Final Benjamin reward
     patch_chest_entry(random.choice(green_chest_type), "Qu07_Last")
     #Ultimate Zangetsu reward
@@ -964,13 +987,15 @@ def rand_overworld_pool(waystone):
     patch_chest_entry(random.choice(green_chest_type), "N3106_2ND_Treasure")
     #Upgrades
     for i in range(30):
-        patch_key_item_entry("MaxHPUP", random.choice(list(chest_to_seed)))
+        patch_key_item_entry("MaxHPUP", random.choice(used_chests))
     for i in range(30):
-        patch_key_item_entry("MaxMPUP", random.choice(list(chest_to_seed)))
-    for i in range(22):
-        patch_key_item_entry("MaxBulletUP", random.choice(list(chest_to_seed)))
+        patch_key_item_entry("MaxMPUP", random.choice(used_chests))
+    for i in range(24):
+        patch_key_item_entry("MaxBulletUP", random.choice(used_chests))
     #Item pool
-    for i in list(chest_to_seed):
+    chest_pool = copy.deepcopy(used_chests)
+    random.shuffle(chest_pool)
+    for i in chest_pool:
         patch_chest_entry(random.choice(chest_type), i)
     #Enemy pool
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
@@ -1006,8 +1031,6 @@ def rand_overworld_pool(waystone):
             Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"]     = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonIngredientRate"]
 
 def empty_drop_entry(container):
-    if not "Shard" in container:
-        container = chest_to_seed[container]
     Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = "None"
     Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = 0
     Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = 0.0
@@ -1027,10 +1050,10 @@ def empty_drop_entry(container):
 
 def patch_key_item_entry(item, container):
     empty_drop_entry(container)
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemId"] = item
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemQuantity"] = 1
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemRate"] = 100.0
-    del chest_to_seed[container]
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = item
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = 1
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = 100.0
+    used_chests.remove(container)
     
 def patch_key_shard_entry(shard, enemy):
     #Assign a key shard to an entry
@@ -1053,47 +1076,47 @@ def patch_start_chest_entry():
     #Randomize the very first chest so that it is always a weapon
     container = "Treasurebox_SIP000_Tutorial"
     empty_drop_entry(container)
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"]["Weapon"]["ItemPool"], Manager.mod_data["ItemDrop"]["Weapon"]["IsUnique"], "Weapon")
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemQuantity"] = Manager.mod_data["ItemDrop"]["Weapon"]["ItemQuantity"]
-    Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemRate"] = Manager.mod_data["ItemDrop"]["Weapon"]["ItemRate"]
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"]["Weapon"]["ItemPool"], Manager.mod_data["ItemDrop"]["Weapon"]["IsUnique"], "Weapon")
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["ItemDrop"]["Weapon"]["ItemQuantity"]
+    Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = Manager.mod_data["ItemDrop"]["Weapon"]["ItemRate"]
     #Give extra bullets if the starting weapon is a gun
-    if Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemId"] in gun_list:
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonItemId"] = any_pick(Manager.mod_data["ItemDrop"]["Bullet"]["ItemPool"], Manager.mod_data["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemQuantity"]*3
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonRate"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemRate"]
-    del chest_to_seed[container]
+    if Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] in gun_list:
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"] = any_pick(Manager.mod_data["ItemDrop"]["Bullet"]["ItemPool"], Manager.mod_data["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemQuantity"]*3
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemRate"]
+    used_chests.remove(container)
 
 def patch_chest_entry(item_type, container):
     #Randomize chest items based on item types
-    if not container in chest_to_seed:
+    if not container in used_chests:
         return
     empty_drop_entry(container)
     if Manager.mod_data["ItemDrop"][item_type]["ChestColor"] == "Blue":
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareIngredientId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareIngredientQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareIngredientRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonIngredientId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonIngredientQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CommonIngredientRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinOverride"] = random.choice(coin)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinType"] = "EDropCoin::D" + str(Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinOverride"])
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinRate"] = 0.0
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["AreaChangeTreasureFlag"] = True
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], False, item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinOverride"] = random.choice(coin)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinType"] = "EDropCoin::D" + str(Manager.datatable["PB_DT_DropRateMaster"][container]["CoinOverride"])
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinRate"] = 0.0
+        Manager.datatable["PB_DT_DropRateMaster"][container]["AreaChangeTreasureFlag"] = True
     elif Manager.mod_data["ItemDrop"][item_type]["ChestColor"] == "Red":
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinOverride"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinType"] = "EDropCoin::D2000"
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["CoinRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinOverride"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinType"] = "EDropCoin::D2000"
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CoinRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
     else:
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
-        Manager.datatable["PB_DT_DropRateMaster"][chest_to_seed[container]]["RareItemRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
-    del chest_to_seed[container]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]
+        Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = Manager.mod_data["ItemDrop"][item_type]["ItemRate"]
+    used_chests.remove(container)
     
 def patch_enemy_entry(item_type, item_rate, container):
     #Randomize enemy drops in a varied fashion while slightly favouring one item type
@@ -1307,6 +1330,12 @@ def replace_silver_bromide():
         if Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] == "Silverbromide":
             Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] = "Certificationboard"
 
+def update_container_types():
+    for i in Manager.mod_data["MapLogic"]:
+        if i == "m19K2C_000":
+            continue
+        Manager.update_room_containers(i)
+
 def update_boss_crystal_color():
     #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
     #So update it manually in the material files
@@ -1324,7 +1353,8 @@ def update_shard_candles():
     #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
     for i in ["Shortcut", "Deepsinker", "FamiliaSilverKnight"]:
         for e in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
-            Manager.search_and_replace_string(e + "_Gimmick", "ShardChild", "ShardID", i, Manager.datatable["PB_DT_DropRateMaster"][i + "_Shard"]["ShardId"])
+            Manager.search_and_replace_string(e + "_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", i, Manager.datatable["PB_DT_DropRateMaster"][i + "_Shard"]["ShardId"])
+    Manager.search_and_replace_string("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", i, Manager.datatable["PB_DT_DropRateMaster"]["N3022_Shard"]["ShardId"])
 
 def any_pick(item_array, remove, item_type):
     #Function for picking and remove an item at random

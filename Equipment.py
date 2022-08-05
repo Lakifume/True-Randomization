@@ -4,7 +4,6 @@ import random
 import copy
 
 def init():
-    #Declare variables
     global cheat_equip
     cheat_equip = [
         "HumptyDumpty",
@@ -98,20 +97,15 @@ def init():
     }
     global stat_pool
     stat_pool = []
-    #Process variables
-    #Instead of calling random weighted on cheat equipment stat we manually make a specific list setup
-    #We want the random stats to favor positives but also to have a greater range of negatives
-    stat_int = -60
-    for i in range(60 + 30 + 1):
-        if stat_int < 0:
-            for e in range(2**(abs(math.ceil(abs(stat_int)/12)-5))):
-                stat_pool.append(stat_int)
-        elif stat_int > 0:
-            for e in range(2**(abs(math.ceil(stat_int/6)-5))*8):
-                stat_pool.append(stat_int)
-        stat_int += 1
-    for i in range(len(stat_pool)*4):
-        stat_pool.append(0)
+    positives = Manager.create_weighted_list(0,   0, 30, 1, 3)[1]
+    negatives = Manager.create_weighted_list(0, -60,  0, 1, 3)[0]
+    zeros = [0]
+    for i in range(4):
+        stat_pool.append(positives)
+    for i in range(1):
+        stat_pool.append(negatives)
+    for i in range(15):
+        stat_pool.append(zeros)
 
 def zangetsu_black_belt():
     #Playable Zangetsu has the Black Belt on by default giving him extra stats
@@ -156,15 +150,17 @@ def rand_all_weapon():
         if i in ["KillerBoots", "Decapitator", "Swordbreaker", "Adrastea"] or Manager.datatable["PB_DT_WeaponMaster"][i]["FLA"] or Manager.datatable["PB_DT_WeaponMaster"][i]["LIG"] or Manager.datatable["PB_DT_WeaponMaster"][i]["UniqeValue"] != 0.0:
             reduction = 0.9
         elif i in ["Liddyl", "SwordWhip", "BradBlingerLv1"]:
-            reduction = Manager.datatable["PB_DT_WeaponMaster"]["SwordWhip"]["MeleeAttack"]/weapon_type_to_max_value["ShortSword"][1]
+            reduction = 23/weapon_type_to_max_value["ShortSword"][1]
         elif i == "OutsiderKnightSword":
-            reduction = Manager.datatable["PB_DT_WeaponMaster"]["OutsiderKnightSword"]["MeleeAttack"]/weapon_type_to_max_value["LargeSword"][1]
+            reduction = 13/weapon_type_to_max_value["LargeSword"][1]
         elif i in ["RemoteDart", "OracleBlade"]:
-            reduction = Manager.datatable["PB_DT_WeaponMaster"]["OracleBlade"]["MeleeAttack"]/weapon_type_to_max_value["ShortSword"][1]
+            reduction = 30/weapon_type_to_max_value["ShortSword"][1]
         elif i in ["WalalSoulimo", "ValralAltar"]:
-            reduction = Manager.datatable["PB_DT_WeaponMaster"]["ValralAltar"]["MeleeAttack"]/weapon_type_to_max_value["ShortSword"][1]
+            reduction = 12/weapon_type_to_max_value["ShortSword"][1]
         elif i == "Truesixteenthnight":
-            reduction = Manager.datatable["PB_DT_WeaponMaster"]["Truesixteenthnight"]["MeleeAttack"]/weapon_type_to_max_value["JapaneseSword"][1]
+            reduction = 49/weapon_type_to_max_value["JapaneseSword"][1]
+        elif Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] == "Stone":
+            reduction = 0.6
         elif Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] != "None":
             reduction = 0.8
         else:
@@ -193,7 +189,7 @@ def rand_cheat_equip():
                 #Avoid having direct attack stats as this would favor rapid weapons over slow ones
                 if stat_to_property[e] == "Attack":
                     continue
-                Manager.datatable["PB_DT_ArmorMaster"][i][e] = random.choice(stat_pool)
+                Manager.datatable["PB_DT_ArmorMaster"][i][e] = random.choice(random.choice(stat_pool))
 
 def rand_cheat_weapon():
     #Cheat weapons stats are completely random
@@ -202,7 +198,9 @@ def rand_cheat_weapon():
         if i in cheat_weapon:
             min = weapon_type_to_max_value[Manager.datatable["PB_DT_WeaponMaster"][i]["WeaponType"].split("::")[1]][0]
             max = weapon_type_to_max_value[Manager.datatable["PB_DT_WeaponMaster"][i]["WeaponType"].split("::")[1]][1]
-            if Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] != "None":
+            if Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] == "Stone":
+                reduction = 0.6
+            elif Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] != "None":
                 reduction = 0.8
             else:
                 reduction = 1.0

@@ -399,6 +399,8 @@ def stat_scale(entry):
             stat_num -= 25.0
         if stat_num < 0.0:
             stat_num = 0.0
+        if e == "STO" and stat_num < 50.0:
+            stat_num = 50.0
         Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e] = stat_num
 
 def rand_stat(entry):
@@ -451,21 +453,18 @@ def rand_stat(entry):
             Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][e]
 
 def update_special_properties():
-    for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if not Manager.is_enemy(i)["Enemy"]:
-            continue
-        #Make sure Vepar always has double health in Bloodless mode otherwise the fight is too short
-        if i[0:5] == "N1001":
-            Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyHPOverride"] = int(calculate_stat(i, Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
-        #Add a bit of defense to the stronger final boss
-        elif i[0:5] in ["N1009", "N1013"]:
-            for e in ["CON", "MND"]:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] += (Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] - 45)*2
-                if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] < 60:
-                    Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 60
-                if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] > 80:
-                    Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 80
-                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e] += round((Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] - 60)/10)
+    #Make sure Vepar always has double health in Bloodless mode otherwise the fight is too short
+    for i in ["N1001", "N1001_HEAD"]:
+        Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyHPOverride"] = int(calculate_stat(i, Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
+    #Add a bit of defense to the stronger final boss
+    for i in ["N1009_Enemy", "N1013_Bael", "N1013_Cat", "N1013_Frog", "N1009_Bael", "N1013_BaelHead", "N1013_Dominique"]:
+        for e in ["CON", "MND"]:
+            Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] += (Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] - 45)*2
+            if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] < 60:
+                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 60
+            if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] > 80:
+                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 80
+            Manager.datatable["PB_DT_CharacterParameterMaster"][i][e] += round((Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] - 60)/10)
     #Update Gebel's health threshold for the red moon based on his level
     Manager.datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(calculate_stat("N1012", Manager.datatable["PB_DT_CharacterParameterMaster"]["N1012"]["DefaultEnemyLevel"], "MaxHP")*0.15)
 
@@ -489,6 +488,8 @@ def create_log():
     return log
 
 def calculate_stat(entry, level, stat_name):
+    #Calculate a stat based on the enemy's level in a way nearly identical to how the game calculates it
+    #Though sometimes it can be 1 unit off
     return int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name + "99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])/98)*(level-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])
 
 def hard_patterns():

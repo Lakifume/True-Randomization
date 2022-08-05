@@ -1,10 +1,10 @@
 #Import subclasses
+import Manager
 import Bloodless
 import Enemy
 import Equipment
 import Item
 import Library
-import Manager
 import Shard
 import Sound
 #Import GUI
@@ -86,7 +86,7 @@ presets = {
         True ,
         True ,
         True ,
-        False,
+        True ,
         False
     ],
     "Race": [
@@ -108,7 +108,7 @@ presets = {
         False,
         True ,
         True ,
-        False,
+        True ,
         False,
         False
     ],
@@ -132,7 +132,7 @@ presets = {
         True ,
         True ,
         True ,
-        False,
+        True ,
         False
     ],
     "Risk": [
@@ -155,11 +155,11 @@ presets = {
         True ,
         True ,
         True ,
-        False,
+        True ,
         False
     ],
     "Blood": [
-        False,
+        True,
         False,
         False,
         False,
@@ -177,9 +177,9 @@ presets = {
         False,
         True ,
         True ,
-        False,
         True ,
-        False
+        False,
+        True
     ]
 }
 
@@ -187,6 +187,7 @@ modified_files = {
     "DataTable": {
         "Files": [
             "PB_DT_AmmunitionMaster",
+            "PB_DT_ArchiveEnemyMaster",
             "PB_DT_ArmorMaster",
             "PB_DT_ArtsCommandMaster",
             "PB_DT_BallisticMaster",
@@ -202,8 +203,11 @@ modified_files = {
             "PB_DT_CraftMaster",
             "PB_DT_DamageMaster",
             "PB_DT_DialogueTableItems",
+            "PB_DT_DialogueTextMaster",
             "PB_DT_DropRateMaster",
             "PB_DT_EnchantParameterType",
+            "PB_DT_EventFlagMaster",
+            "PB_DT_GimmickFlagMaster",
             "PB_DT_ItemMaster",
             "PB_DT_QuestMaster",
             "PB_DT_RoomMaster",
@@ -221,8 +225,7 @@ modified_files = {
     },
     "Blueprint": {
         "Files": [
-            "PBExtraModeInfo_BP",
-            "mXXXXX_XXX_Gimmick"
+            "PBExtraModeInfo_BP"
         ]
     },
     "Texture": {
@@ -267,7 +270,7 @@ def writing_and_exit():
 
 class Signaller(QObject):
     progress = Signal(int)
-    finished = Signal(str)
+    finished = Signal()
 
 class Generate(QThread):
     def __init__(self, progress_bar, seed, map):
@@ -284,17 +287,18 @@ class Generate(QThread):
         #Initialize directories
         
         #Mod
+        if os.path.isdir(Manager.mod_dir):
+            shutil.rmtree(Manager.mod_dir)
         for i in list(Manager.file_to_path.values()):
             if not os.path.isdir(Manager.mod_dir + "\\" + i):
                 os.makedirs(Manager.mod_dir + "\\" + i)
+        if not os.path.isdir(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync"):
+            os.makedirs(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync")
         
         #Logs
-        if not os.path.isdir("SpoilerLog"):
-            os.makedirs("SpoilerLog")
-        for file in os.listdir("SpoilerLog"):
-            file_path = os.path.join("SpoilerLog", file)
-            if os.path.isfile(file_path):
-                os.remove(file_path)
+        if os.path.isdir("SpoilerLog"):
+            shutil.rmtree("SpoilerLog")
+        os.makedirs("SpoilerLog")
         
         #Open files
         
@@ -314,7 +318,7 @@ class Generate(QThread):
         current += 1
         self.signaller.progress.emit(current)
         
-        self.progress_bar.setLabelText("Randomizing...")
+        self.progress_bar.setLabelText("Editing data...")
         
         #Init classes
         
@@ -344,12 +348,24 @@ class Generate(QThread):
         else:
             self.map = ""
         Manager.load_map(self.map)
+        Manager.get_map_info()
         
         #Hue
         
         random.seed(self.seed)
         miriam_hue   = random.choice(os.listdir("Data\\Texture\\Miriam"))
         zangetsu_hue = random.choice(os.listdir("Data\\Texture\\Zangetsu"))
+        
+        #Portraits
+        
+        portraits = []
+        for i in os.listdir(Manager.asset_dir + "\\" + Manager.file_to_path["Ml_N3100_picture_001"]):
+            name, extension = os.path.splitext(i)
+            portraits.append(name)
+        random.seed(self.seed)
+        new_list = copy.deepcopy(portraits)
+        random.shuffle(new_list)
+        portrait_replacement = dict(zip(portraits, new_list))
         
         #Datatables
         
@@ -361,39 +377,37 @@ class Generate(QThread):
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.hard_enemy_logic()
         
-        if config.getboolean("GameMode", "bRandomizer"):
-            Item.give_shortcut()
-            Item.give_eye()
-            Shard.eye_max_range()
-            Item.unlock_all_quest()
-            Item.all_hair_in_shop()
-        else:
-            Item.story_chest()
-        
-        if config.getboolean("StartWith", "bDoubleJump"):
-            Item.give_extra("Doublejump")
-        elif config.getboolean("StartWith", "bAccelerator"):
-            Item.give_extra("Accelerator")
-        
         if config.getboolean("ItemRandomization", "bRemoveInfinites"):
             Item.remove_infinite()
         
+        if config.getboolean("StartWith", "bDoubleJump"):
+            Item.give_extra("Doublejump", 1)
+        elif config.getboolean("StartWith", "bAccelerator"):
+            Item.give_extra("Accelerator", 1)
+        
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed)
+            Item.unlock_all_quest()
+            Item.all_hair_in_shop()
             Item.no_key_in_shop()
             Item.no_shard_craft()
+            Item.give_extra("Shortcut", 7)
+            Item.give_extra("SkilledDetectiveeye", 1)
+            Shard.eye_max_range()
             Item.extra_logic()
             Item.rand_overworld_key()
             Item.rand_overworld_pool(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
             Item.rand_overworld_shard()
+            Manager.randomizer_events()
+            Manager.remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
+            Manager.remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
+        else:
+            Manager.deseema_fix()
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
             Bloodless.extra_logic()
             Bloodless.candle_shuffle()
-        
-        if not config.getboolean("ItemRandomization", "bOverworldPool"):
-            Item.deseema_fix()
         
         if config.getboolean("ItemRandomization", "bQuestPool"):
             random.seed(self.seed)
@@ -479,25 +493,26 @@ class Generate(QThread):
             Enemy.zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             Equipment.zangetsu_black_belt()
         
+        Item.update_container_types()
         Item.update_boss_crystal_color()
         Item.update_shard_candles()
         Bloodless.update_shard_candles()
         Enemy.update_special_properties()
         Equipment.update_special_properties()
         Manager.update_descriptions()
+        Manager.update_map_connections()
+        Manager.update_map_doors()
+        if self.map:
+            Manager.update_map_indicators()
         
-        if self.seed:
-            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Menu_RandomSeed"]            = "Seed # " + str(self.seed)
-            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Randomizer_ConfirmSeed"]     = "Confirm Settings for Seed # " + str(self.seed)
-            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_RandomizerManual_Title"]     = "Enter 17791"
-            Manager.stringtable["PBSystemStringTable"]["SYS_SEN_RandomizerSelect_Customize"] = "XXX"
+        #Display game version, mod version and seed on the title screen
+        Manager.show_mod_stats(str(self.seed), config.get("Misc", "sVersion"))
         
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            Manager.write_log("KeyLocation", Item.create_log(self.seed, self.map))
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             Manager.write_log("KeyLocation", Bloodless.create_log(self.seed, self.map))
+        elif config.getboolean("ItemRandomization", "bOverworldPool"):
+            Manager.write_log("KeyLocation", Item.create_log(self.seed, self.map))
         
-        Manager.connect_map()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -509,19 +524,17 @@ class Generate(QThread):
         current += 1
         self.signaller.progress.emit(current)
         
+        #Convert data
+        
+        self.progress_bar.setLabelText("Writing lip sync...")
+        
+        Sound.update_lip_movement()
+        current += 1
+        self.signaller.progress.emit(current)
+        
         #Write files
         
         self.progress_bar.setLabelText("Writing files...")
-        
-        #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
-        #That way you can at least save once before the game truly starts
-        Manager.remove_level_actor("m01SIP_001_Enemy_Hard", ["Chr_N3015(1040)"])
-        #Also remove the bone mortes from that one crowded room in galleon
-        Manager.remove_level_actor("m01SIP_014_Enemy_Hard", ["Chr_N3004(4)", "Chr_N3005"])
-        #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
-        #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
-        #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
-        Manager.remove_level_actor("m03ENT_000_Gimmick", ["BP_IronMaiden(766)", "BP_IronMaiden3"])
         
         Manager.write_files()
         
@@ -566,6 +579,7 @@ class Generate(QThread):
             
             for i in os.listdir("Data\\Texture\\Miriam\\" + miriam_hue):
                 os.remove("Data\\Texture\\" + i)
+        
         if config.getboolean("GraphicRandomization", "bZangetsuColor"):
             for i in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
                 shutil.copyfile("Data\\Texture\\Zangetsu\\" + zangetsu_hue + "\\" + i, "Data\\Texture\\" + i)
@@ -578,6 +592,10 @@ class Generate(QThread):
             
             for i in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
                 os.remove("Data\\Texture\\" + i)
+        
+        if config.getboolean("GraphicRandomization", "bBackerPortraits"):
+            for i in portrait_replacement:
+                Manager.change_portrait_pointer(i, portrait_replacement[i])
         
         Manager.remove_unchanged()
         current += 1
@@ -615,7 +633,7 @@ class Generate(QThread):
         self.signaller.progress.emit(current)
         
         self.progress_bar.setLabelText("Done")
-        self.signaller.finished.emit(self.map)
+        self.signaller.finished.emit()
 
 class Update(QThread):
     def __init__(self, progress_bar, api):
@@ -676,9 +694,10 @@ class Update(QThread):
         sys.exit()
 
 class Import(QThread):
-    def __init__(self):
+    def __init__(self, asset_list):
         QThread.__init__(self)
         self.signaller = Signaller()
+        self.asset_list = asset_list
 
     def run(self):
         current = 0
@@ -686,21 +705,21 @@ class Import(QThread):
         
         #Extract specific assets from the game's pak using UModel
         
-        if os.path.isdir(Manager.asset_dir):
+        if os.path.isdir(Manager.asset_dir) and self.asset_list == list(Manager.file_to_path):
             shutil.rmtree(Manager.asset_dir)
         
-        for i in Manager.file_to_path:
+        for i in self.asset_list:
             output_path = os.path.abspath("")
             
             root = os.getcwd()
             os.chdir("Tools\\UModel")
-            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[i] + "\\" + i + "\"")
+            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[i] + "\\" + i.split("(")[0] + "\"")
             os.chdir(root)
             
             current += 1
             self.signaller.progress.emit(current)
         
-        self.signaller.finished.emit("")
+        self.signaller.finished.emit()
 
 #GUI
 
@@ -794,14 +813,10 @@ class Main(QWidget):
         self.box_9.setLayout(box_9_grid)
         grid.addWidget(self.box_9, 3, 3, 1, 2)
         
-        box_10_left = QVBoxLayout()
-        box_10_right = QVBoxLayout()
-        box_10_box = QHBoxLayout()
-        box_10_box.addLayout(box_10_left)
-        box_10_box.addLayout(box_10_right)
+        box_10_grid = QGridLayout()
         self.box_10 = QGroupBox("Extra Randomization")
-        self.box_10.setLayout(box_10_box)
-        grid.addWidget(self.box_10, 4, 3, 2, 2)
+        self.box_10.setLayout(box_10_grid)
+        grid.addWidget(self.box_10, 4, 3, 1, 2)
         
         box_11_grid = QGridLayout()
         box_11 = QGroupBox("Game Difficulty")
@@ -819,7 +834,7 @@ class Main(QWidget):
         box_13 = QGroupBox("Game Mode")
         box_13.setToolTip("Select the in-game mode this file is meant for.")
         box_13.setLayout(box_13_grid)
-        grid.addWidget(box_13, 6, 3, 1, 2)
+        #grid.addWidget(box_13, 6, 3, 1, 2)
         
         box_17_grid = QGridLayout()
         box_17 = QGroupBox("Special Mode")
@@ -881,17 +896,17 @@ class Main(QWidget):
         box_1_grid.addWidget(self.check_box_1, 0, 0)
         checkbox_list.append(self.check_box_1)
 
-        self.check_box_2 = QCheckBox("Shop Pool")
-        self.check_box_2.setToolTip("Randomize all items sold at the shop.")
-        self.check_box_2.stateChanged.connect(self.check_box_2_changed)
-        box_1_grid.addWidget(self.check_box_2, 1, 0)
-        checkbox_list.append(self.check_box_2)
-
         self.check_box_16 = QCheckBox("Quest Pool")
         self.check_box_16.setToolTip("Randomize all quest rewards.")
         self.check_box_16.stateChanged.connect(self.check_box_16_changed)
-        box_1_grid.addWidget(self.check_box_16, 2, 0)
+        box_1_grid.addWidget(self.check_box_16, 1, 0)
         checkbox_list.append(self.check_box_16)
+
+        self.check_box_2 = QCheckBox("Shop Pool")
+        self.check_box_2.setToolTip("Randomize all items sold at the shop.")
+        self.check_box_2.stateChanged.connect(self.check_box_2_changed)
+        box_1_grid.addWidget(self.check_box_2, 2, 0)
+        checkbox_list.append(self.check_box_2)
 
         self.check_box_17 = QCheckBox("Quest Requirements")
         self.check_box_17.setToolTip("Randomize the requirements for Susie, Abigail and Lindsay's quests.\nBenjamin will still ask you for waystones.")
@@ -983,8 +998,14 @@ class Main(QWidget):
         box_8_grid.addWidget(self.check_box_14, 1, 0)
         checkbox_list.append(self.check_box_14)
 
+        self.check_box_24 = QCheckBox("Backer Portraits")
+        self.check_box_24.setToolTip("Shuffle backer paintings.")
+        self.check_box_24.stateChanged.connect(self.check_box_24_changed)
+        box_8_grid.addWidget(self.check_box_24, 0, 1)
+        checkbox_list.append(self.check_box_24)
+
         self.check_box_15 = QCheckBox("Dialogues")
-        self.check_box_15.setToolTip("Randomize all conversation lines in the game. Characters\nwill still retain their actual voice (let's not get weird).")
+        self.check_box_15.setToolTip("Randomize all conversation lines in the game. Characters\nwill still retain their actual voice (let's not get weird).\nCurrently only supports english.")
         self.check_box_15.stateChanged.connect(self.check_box_15_changed)
         box_9_grid.addWidget(self.check_box_15, 0, 0)
         checkbox_list.append(self.check_box_15)
@@ -992,15 +1013,8 @@ class Main(QWidget):
         self.check_box_21 = QCheckBox("Bloodless Candles")
         self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
-        box_10_left.addWidget(self.check_box_21)
+        box_10_grid.addWidget(self.check_box_21, 0, 0)
         checkbox_list.append(self.check_box_21)
-
-        self.check_box_22 = QCheckBox("Coming Soon")
-        self.check_box_22.setToolTip("™")
-        #self.check_box_22.stateChanged.connect(self.check_box_22_changed)
-        self.check_box_22.setEnabled(False)
-        box_10_left.addWidget(self.check_box_22)
-        checkbox_list.append(self.check_box_22)
         
         #RadioButtons
         
@@ -1162,6 +1176,8 @@ class Main(QWidget):
             self.check_box_13.setChecked(True)
         if config.getboolean("GraphicRandomization", "bZangetsuColor"):
             self.check_box_14.setChecked(True)
+        if config.getboolean("GraphicRandomization", "bBackerPortraits"):
+            self.check_box_24.setChecked(True)
         if config.getboolean("SoundRandomization", "bDialogues"):
             self.check_box_15.setChecked(True)
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
@@ -1181,10 +1197,10 @@ class Main(QWidget):
         else:
             self.radio_button_13.setChecked(True)
         
-        if config.getboolean("GameMode", "bRandomizer"):
-            self.radio_button_4.setChecked(True)
-        else:
-            self.radio_button_6.setChecked(True)
+        #if config.getboolean("GameMode", "bRandomizer"):
+        #    self.radio_button_4.setChecked(True)
+        #else:
+        #    self.radio_button_6.setChecked(True)
         
         if config.getboolean("SpecialMode", "bNone"):
             self.radio_button_14.setChecked(True)
@@ -1205,7 +1221,7 @@ class Main(QWidget):
         #Text field
         
         self.output_field = QLineEdit(config.get("Misc", "sGamePath"))
-        self.output_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks)")
+        self.output_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks).")
         self.output_field.textChanged[str].connect(self.new_output)
         box_14_grid.addWidget(self.output_field, 0, 0)
         
@@ -1272,33 +1288,12 @@ class Main(QWidget):
             self.check_box_1.setStyleSheet("color: " + item_color)
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #Uncheck extra
-            self.check_box_21.setChecked(False)
-            self.check_box_22.setChecked(False)
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bOverworldPool", "false")
             self.check_box_1.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
-
-    def check_box_2_changed(self):
-        self.matches_preset()
-        if self.check_box_2.isChecked():
-            config.set("ItemRandomization", "bShopPool", "true")
-            self.check_box_2.setStyleSheet("color: " + item_color)
-            if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
-                self.box_1.setStyleSheet("color: " + item_color)
-            #Uncheck extra
-            self.check_box_21.setChecked(False)
-            self.check_box_22.setChecked(False)
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
-        else:
-            config.set("ItemRandomization", "bShopPool", "false")
-            self.check_box_2.setStyleSheet("color: #ffffff")
-            self.box_1.setStyleSheet("color: #ffffff")
+            self.check_box_16.setChecked(False)
+            self.check_box_2.setChecked(False)
         self.fix_background_glitch()
 
     def check_box_16_changed(self):
@@ -1308,14 +1303,26 @@ class Main(QWidget):
             self.check_box_16.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #Uncheck extra
-            self.check_box_21.setChecked(False)
-            self.check_box_22.setChecked(False)
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
+            self.check_box_1.setChecked(True)
         else:
             config.set("ItemRandomization", "bQuestPool", "false")
             self.check_box_16.setStyleSheet("color: #ffffff")
+            self.box_1.setStyleSheet("color: #ffffff")
+            self.check_box_2.setChecked(False)
+        self.fix_background_glitch()
+
+    def check_box_2_changed(self):
+        self.matches_preset()
+        if self.check_box_2.isChecked():
+            config.set("ItemRandomization", "bShopPool", "true")
+            self.check_box_2.setStyleSheet("color: " + item_color)
+            if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
+                self.box_1.setStyleSheet("color: " + item_color)
+            self.check_box_1.setChecked(True)
+            self.check_box_16.setChecked(True)
+        else:
+            config.set("ItemRandomization", "bShopPool", "false")
+            self.check_box_2.setStyleSheet("color: #ffffff")
             self.box_1.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
 
@@ -1326,11 +1333,6 @@ class Main(QWidget):
             self.check_box_17.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #Uncheck extra
-            self.check_box_21.setChecked(False)
-            self.check_box_22.setChecked(False)
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bQuestRequirements", "false")
             self.check_box_17.setStyleSheet("color: #ffffff")
@@ -1344,11 +1346,6 @@ class Main(QWidget):
             self.check_box_18.setStyleSheet("color: " + item_color)
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
                 self.box_1.setStyleSheet("color: " + item_color)
-            #Uncheck extra
-            self.check_box_21.setChecked(False)
-            self.check_box_22.setChecked(False)
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("ItemRandomization", "bRemoveInfinites", "false")
             self.check_box_18.setStyleSheet("color: #ffffff")
@@ -1516,7 +1513,7 @@ class Main(QWidget):
         if self.check_box_13.isChecked():
             config.set("GraphicRandomization", "bMiriamColor", "true")
             self.check_box_13.setStyleSheet("color: " + graphic_color)
-            if self.check_box_14.isChecked():
+            if self.check_box_14.isChecked() and self.check_box_24.isChecked():
                 self.box_8.setStyleSheet("color: " + graphic_color)
             self.add_to_list("UI"     , "Face_Miriam"      , [])
             self.add_to_list("Texture", "T_Body01_01_Color", [])
@@ -1535,7 +1532,7 @@ class Main(QWidget):
         if self.check_box_14.isChecked():
             config.set("GraphicRandomization", "bZangetsuColor", "true")
             self.check_box_14.setStyleSheet("color: " + graphic_color)
-            if self.check_box_13.isChecked():
+            if self.check_box_13.isChecked() and self.check_box_24.isChecked():
                 self.box_8.setStyleSheet("color: " + graphic_color)
             self.add_to_list("UI"     , "Face_Zangetsu"      , [])
             self.add_to_list("Texture", "T_N1011_body_color" , [])
@@ -1550,6 +1547,21 @@ class Main(QWidget):
             self.remove_from_list("Texture", "T_N1011_body_color" , [])
             self.remove_from_list("Texture", "T_N1011_face_color" , [])
             self.remove_from_list("Texture", "T_N1011_equip_color", [])
+            self.remove_from_list("Texture", "T_Tknife05_Base"    , [])
+        self.fix_background_glitch()
+
+    def check_box_24_changed(self):
+        self.matches_preset()
+        if self.check_box_24.isChecked():
+            config.set("GraphicRandomization", "bBackerPortraits", "true")
+            self.check_box_24.setStyleSheet("color: " + graphic_color)
+            if self.check_box_13.isChecked() and self.check_box_14.isChecked():
+                self.box_8.setStyleSheet("color: " + graphic_color)
+            self.add_to_list("Texture", "T_Tknife05_Base"    , [])
+        else:
+            config.set("GraphicRandomization", "bBackerPortraits", "false")
+            self.check_box_24.setStyleSheet("color: #ffffff")
+            self.box_8.setStyleSheet("color: #ffffff")
             self.remove_from_list("Texture", "T_Tknife05_Base"    , [])
         self.fix_background_glitch()
 
@@ -1570,16 +1582,7 @@ class Main(QWidget):
         if self.check_box_21.isChecked():
             config.set("ExtraRandomization", "bBloodlessCandles", "true")
             self.check_box_21.setStyleSheet("color: " + extra_color)
-            if self.check_box_22.isChecked():
-                self.box_10.setStyleSheet("color: " + extra_color)
-            #Uncheck item
-            self.check_box_1.setChecked(False)
-            self.check_box_2.setChecked(False)
-            self.check_box_16.setChecked(False)
-            self.check_box_17.setChecked(False)
-            self.check_box_18.setChecked(False)
-            #Check story
-            self.radio_button_6.setChecked(True)
+            self.box_10.setStyleSheet("color: " + extra_color)
         else:
             config.set("ExtraRandomization", "bBloodlessCandles", "false")
             self.check_box_21.setStyleSheet("color: #ffffff")
@@ -1609,26 +1612,18 @@ class Main(QWidget):
             config.set("StartWith", "bNothing", "false")
             config.set("StartWith", "bDoubleJump", "true")
             config.set("StartWith", "bAccelerator", "false")
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
         else:
             config.set("StartWith", "bNothing", "false")
             config.set("StartWith", "bDoubleJump", "false")
             config.set("StartWith", "bAccelerator", "true")
-            #Check randomizer
-            self.radio_button_4.setChecked(True)
 
     def radio_button_group_2_checked(self):
         if self.radio_button_4.isChecked():
             config.set("GameMode", "bRandomizer", "true")
             config.set("GameMode", "bStory", "false")
-            #Check special none
-            self.radio_button_14.setChecked(True)
         else:
             config.set("GameMode", "bRandomizer", "false")
             config.set("GameMode", "bStory", "true")
-            #Check start nothing
-            self.radio_button_11.setChecked(True)
     
     def radio_button_group_6_checked(self):
         if self.radio_button_14.isChecked():
@@ -1641,8 +1636,6 @@ class Main(QWidget):
             config.set("SpecialMode", "bNone", "false")
             config.set("SpecialMode", "bCustom", "true")
             config.set("SpecialMode", "bProgressive", "false")
-            #Check story
-            self.radio_button_6.setChecked(True)
             #Fix background
             self.fix_background_glitch()
         else:
@@ -1650,8 +1643,6 @@ class Main(QWidget):
             config.set("SpecialMode", "bNone", "false")
             config.set("SpecialMode", "bCustom", "false")
             config.set("SpecialMode", "bProgressive", "true")
-            #Check story
-            self.radio_button_6.setChecked(True)
     
     def fix_background_glitch(self):
         try:
@@ -1773,7 +1764,7 @@ class Main(QWidget):
         self.setEnabled(False)
         QApplication.processEvents()
         
-        self.progress_bar = QProgressDialog("Initializing...", None, 0, 6, self)
+        self.progress_bar = QProgressDialog("Initializing...", None, 0, 7, self)
         self.progress_bar.setWindowTitle("Status")
         self.progress_bar.setWindowModality(Qt.WindowModal)
         
@@ -1782,15 +1773,15 @@ class Main(QWidget):
         self.worker.signaller.finished.connect(self.generate_finished)
         self.worker.start()
     
-    def import_assets(self, finished):
+    def import_assets(self, asset_list, finished):
         self.setEnabled(False)
         QApplication.processEvents()
         
-        self.progress_bar = QProgressDialog("Importing assets...", None, 0, len(list(Manager.file_to_path)), self)
+        self.progress_bar = QProgressDialog("Importing assets...", None, 0, len(asset_list), self)
         self.progress_bar.setWindowTitle("Status")
         self.progress_bar.setWindowModality(Qt.WindowModal)
         
-        self.worker = Import()
+        self.worker = Import(asset_list)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(finished)
         self.worker.start()
@@ -1798,13 +1789,11 @@ class Main(QWidget):
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
     
-    def generate_finished(self, map):
+    def generate_finished(self):
         box = QMessageBox(self)
         box.setWindowTitle("Done")
         text = "Pak file generated !"
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            text += "\n\nMake absolutely sure to use existing seed 17791 in the game randomizer for this to work."
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             text += "\n\nTo access Bloodless mode enter BLOODLESS as the in-game file username."
         box.setText(text)
         box.exec()
@@ -1862,6 +1851,8 @@ class Main(QWidget):
         else:
             self.map_test = ""
         Manager.load_map(self.map_test)
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            Manager.get_map_info()
         
         if self.map_test:
             Item.unused_room_check()
@@ -1881,10 +1872,10 @@ class Main(QWidget):
         
         box = QMessageBox(self)
         box.setWindowTitle("Test")
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
-            box.setText(Item.create_log_string(self.seed_test, self.map_test))
-        elif config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             box.setText(Bloodless.create_log_string(self.seed_test, self.map_test))
+        elif config.getboolean("ItemRandomization", "bOverworldPool"):
+            box.setText(Item.create_log_string(self.seed_test, self.map_test))
         else:
             box.setText("No keys to randomize")
         box.exec()
@@ -1922,7 +1913,7 @@ class Main(QWidget):
         #Check if path is valid
         
         if not config.get("Misc", "sGamePath") or not os.path.isdir(config.get("Misc", "sGamePath")) or config.get("Misc", "sGamePath").split("\\")[-1] != "Paks":
-            self.error("Game path invalid.")
+            self.error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
             return
         
         #Prompt seed options
@@ -1936,23 +1927,36 @@ class Main(QWidget):
             if not self.seed:
                 return
         
-        #Start
+        #Check if every asset is already cached
         
-        if os.path.isdir(Manager.asset_dir):
-            self.generate_pak()
+        if os.path.isdir(Manager.asset_dir): 
+            cached_assets = []
+            for root, dirs, files in os.walk(Manager.asset_dir):
+                for file in files:
+                    name, extension = os.path.splitext(file)
+                    cached_assets.append(name)
+            cached_assets = list(dict.fromkeys(cached_assets))
+            asset_list = []
+            for i in Manager.file_to_path:
+                if not i in cached_assets:
+                    asset_list.append(i)
         else:
-            self.import_assets(self.generate_pak)
+            asset_list = list(Manager.file_to_path)
+        if asset_list:
+            self.import_assets(asset_list, self.generate_pak)
+        else:
+            self.generate_pak()
     
     def button_6_clicked(self):
         #Check if path is valid
         
         if not config.get("Misc", "sGamePath") or not os.path.isdir(config.get("Misc", "sGamePath")) or config.get("Misc", "sGamePath").split("\\")[-1] != "Paks":
-            self.error("Game path invalid.")
+            self.error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
             return
         
         #Start
         
-        self.import_assets(self.import_finished)
+        self.import_assets(list(Manager.file_to_path), self.import_finished)
     
     def button_7_clicked(self):
         label1_image = QLabel()
@@ -1981,14 +1985,14 @@ class Main(QWidget):
         label4_image.setScaledContents(True)
         label4_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
         label4_text = QLabel()
-        label4_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">BadmoonZ</span><br/>Randomizer researcher<br/><a href=\"https://github.com/BadmoonzZ/Bloodstained\"><font face=Cambria color=#25c04e>Github</font></a>")
+        label4_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
         label4_text.setOpenExternalLinks(True)
         label5_image = QLabel()
         label5_image.setPixmap(QPixmap("Data\\profile5.png"))
         label5_image.setScaledContents(True)
         label5_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
         label5_text = QLabel()
-        label5_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
+        label5_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#25c04e>Github</font></a>")
         label5_text.setOpenExternalLinks(True)
         label6_image = QLabel()
         label6_image.setPixmap(QPixmap("Data\\profile6.png"))
