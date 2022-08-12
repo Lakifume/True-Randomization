@@ -1225,6 +1225,8 @@ def update_map_doors():
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
+                if map_doors[o].room in room_to_backer:
+                    continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
                 filename = map_doors[o].room + "_Gimmick"
@@ -1273,6 +1275,8 @@ def update_map_doors():
                 if o in door_skip:
                     continue
                 if map_doors[o].room in room_to_boss:
+                    continue
+                if map_doors[o].room in room_to_backer:
                     continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
@@ -1334,6 +1338,8 @@ def update_map_doors():
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
+                if map_doors[o].room in room_to_backer:
+                    continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
                 #If the door is too close to a cutscene disable the event to prevent softlocks
@@ -1392,6 +1398,8 @@ def update_map_indicators():
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
+                if map_doors[o].room in room_to_backer:
+                    continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
                 if o in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
@@ -1427,6 +1435,8 @@ def update_map_indicators():
             if e in door_skip:
                 continue
             if i in room_to_boss:
+                continue
+            if i in room_to_backer:
                 continue
             if not i in mod_data["MapLogic"]:
                 continue
