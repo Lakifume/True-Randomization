@@ -54,7 +54,7 @@ def init():
     global weapon_type_to_max_value
     weapon_type_to_max_value = {
         "Boots":         [ 8, 45],
-        "Knife":         [ 8, 45],
+        "Knife":         [10, 52],
         "Rapir":         [12, 52],
         "ShortSword":    [12, 58],
         "Club":          [12, 58],
@@ -147,18 +147,28 @@ def rand_all_weapon():
         min = weapon_type_to_max_value[Manager.datatable["PB_DT_WeaponMaster"][i]["WeaponType"].split("::")[1]][0]
         max = weapon_type_to_max_value[Manager.datatable["PB_DT_WeaponMaster"][i]["WeaponType"].split("::")[1]][1]
         #Apply reductions to weapons with special properties to not make them super broken
-        if i in ["KillerBoots", "Decapitator", "Swordbreaker", "Adrastea"] or Manager.datatable["PB_DT_WeaponMaster"][i]["FLA"] or Manager.datatable["PB_DT_WeaponMaster"][i]["LIG"] or Manager.datatable["PB_DT_WeaponMaster"][i]["UniqeValue"] != 0.0:
+        if i == "Juwuse":
+            reduction = 0.85
+        elif i in ["KillerBoots", "Decapitator"]:
             reduction = 0.9
+        elif i in ["Swordbreaker", "Adrastea"]:
+            reduction = 0.8
         elif i in ["Liddyl", "SwordWhip", "BradBlingerLv1"]:
             reduction = 23/weapon_type_to_max_value["ShortSword"][1]
         elif i == "OutsiderKnightSword":
-            reduction = 13/weapon_type_to_max_value["LargeSword"][1]
+            reduction = 13/32
         elif i in ["RemoteDart", "OracleBlade"]:
             reduction = 30/weapon_type_to_max_value["ShortSword"][1]
         elif i in ["WalalSoulimo", "ValralAltar"]:
             reduction = 12/weapon_type_to_max_value["ShortSword"][1]
         elif i == "Truesixteenthnight":
             reduction = 49/weapon_type_to_max_value["JapaneseSword"][1]
+        elif Manager.datatable["PB_DT_WeaponMaster"][i]["FLA"]:
+            reduction = 0.9
+        elif Manager.datatable["PB_DT_WeaponMaster"][i]["LIG"]:
+            reduction = 0.8
+        elif Manager.datatable["PB_DT_WeaponMaster"][i]["UniqeValue"] != 0.0:
+            reduction = 0.9
         elif Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] == "Stone":
             reduction = 0.6
         elif Manager.datatable["PB_DT_WeaponMaster"][i]["SpecialEffectId"] != "None":

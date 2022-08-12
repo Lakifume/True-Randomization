@@ -475,6 +475,7 @@ def init():
         "m51EBT_000",
         "m88BKR_001",
         "m88BKR_002",
+        "m88BKR_003",
         "m88BKR_004"
     ]
     global all_keys
@@ -502,11 +503,6 @@ def init():
         "Reflectionray",
         "Aquastream",
         "Bloodsteel"
-    ]
-    global other_key
-    other_key = [
-        "ShipMap",
-        "DiscountCard"
     ]
     global key_item_to_location
     key_item_to_location = {}
@@ -931,9 +927,6 @@ def rand_overworld_key():
     #Key shards
     for i in key_shards:
         patch_key_shard_entry(i, key_shard_to_location[i])
-    #Other keys
-    for i in other_key:
-        patch_key_item_entry(i, random.choice(used_chests))
 
 def rand_overworld_shard():
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
@@ -1071,6 +1064,12 @@ def patch_key_shard_entry(shard, enemy):
         elif i.split("_")[0] == enemy:
             Manager.datatable["PB_DT_DropRateMaster"][i]["ShardId"] = "None"
             Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = 0.0
+    if enemy == "Shortcut":
+        for i in range(6):
+            Manager.datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn" + "{:03d}".format(i + 2)]["Id"] = Manager.datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn001"]["Id"]
+    if enemy == "FamiliaSilverKnight":
+        for i in range(8):
+            Manager.datatable["PB_DT_GimmickFlagMaster"]["FamilierLantarn" + "{:03d}".format(i + 2)]["Id"] = Manager.datatable["PB_DT_GimmickFlagMaster"]["FamilierLantarn001"]["Id"]
 
 def patch_start_chest_entry():
     #Randomize the very first chest so that it is always a weapon
@@ -1351,10 +1350,9 @@ def update_boss_crystal_color():
 def update_shard_candles():
     #While candle shards have entries in DropRateMaster they are completely ignored by the game
     #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
-    for i in ["Shortcut", "Deepsinker", "FamiliaSilverKnight"]:
+    for i in ["Shortcut", "Deepsinker", "FamiliaSilverKnight", "Aquastream", "FamiliaIgniculus"]:
         for e in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
             Manager.search_and_replace_string(e + "_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", i, Manager.datatable["PB_DT_DropRateMaster"][i + "_Shard"]["ShardId"])
-    Manager.search_and_replace_string("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", i, Manager.datatable["PB_DT_DropRateMaster"]["N3022_Shard"]["ShardId"])
 
 def any_pick(item_array, remove, item_type):
     #Function for picking and remove an item at random

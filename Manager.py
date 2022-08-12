@@ -52,7 +52,6 @@ from UAssetAPI.Kismet.Bytecode.Expressions import *
 from UAssetAPI.PropertyTypes import *
 from UAssetAPI.PropertyTypes.Objects import *
 from UAssetAPI.PropertyTypes.Structs import *
-from UAssetAPI.PropertyTypes.Structs.Movies import *
 from UAssetAPI.UnrealTypes import *
 from UAssetAPI.Unversioned import *
 from UAssetSnippet import *
@@ -105,6 +104,10 @@ def init():
             "Room": "m08TWR_019",
             "Index": 989
         },
+        "PBPureMiriamTreasureBox_BP_C": {
+            "Room": "m01SIP_003",
+            "Index": 134
+        },
         "HPMaxUp_C": {
             "Room": "m04GDN_002",
             "Index": 16
@@ -121,6 +124,10 @@ def init():
             "Room": "m15JPN_015",
             "Index": 34
         },
+        "PBBakkerDoor_BP_C": {
+            "Room": "m15JPN_011",
+            "Index": 80
+        },
         "BP_AreaDoor_C(Left)": {
             "Room": "m11UGD_014",
             "Index": 1
@@ -133,9 +140,9 @@ def init():
             "Room": "m01SIP_005",
             "Index": 163
         },
-        "BP_EventDoor_C": {
-            "Room": "m01SIP_000",
-            "Index": 8
+        "BP_SwitchDoor_C": {
+            "Room": "m11UGD_015",
+            "Index": 3
         },
         "ToriiWarp_BP_C": {
             "Room": "m07LIB_006",
@@ -175,6 +182,13 @@ def init():
         "m18ICE_005",
         "m18ICE_010",
         "m18ICE_017"
+    ]
+    global backer_door_rooms
+    backer_door_rooms = [
+        "m04GDN_006",
+        "m06KNG_013",
+        "m07LIB_036",
+        "m15JPN_011"
     ]
     global area_door_rooms
     area_door_rooms = [
@@ -308,12 +322,19 @@ def init():
         "RVA_003_1_0_RIGHT":        "RVA_003_DestructibleWall",
         "RVA_014_0_0_RIGHT":        "RVA_014_DestructibleWall"
     }
-    global special_doors
-    special_doors = [
+    global door_skip
+    door_skip = [
         "VIL_008_3_0_RIGHT",
         "VIL_008_3_0_BOTTOM_RIGHT",
         "VIL_011_5_0_RIGHT",
         "VIL_011_5_0_TOP_RIGHT",
+        "TWR_017_3_0_RIGHT",
+        "SND_025_0_0_LEFT",
+        "SND_026_0_0_LEFT",
+        "SND_027_0_0_LEFT"
+    ]
+    global special_doors
+    special_doors = [
         "GDN_009_0_0_LEFT",
         "GDN_009_0_1_LEFT",
         "GDN_009_2_0_RIGHT",
@@ -330,7 +351,10 @@ def init():
     ]
     global floorless_doors
     floorless_doors = [
+        "SIP_006_0_2_RIGHT",
+        "SIP_017_0_0_LEFT",
         "VIL_006_0_1_LEFT",
+        "GDN_006_0_0_LEFT",
         "SAN_009_0_1_LEFT",
         "SAN_009_1_1_RIGHT",
         "SAN_021_0_1_LEFT",
@@ -379,6 +403,13 @@ def init():
         "m18ICE_004": "N2012",
         "m18ICE_018": "N1008",
         "m18ICE_019": "N1009_Enemy"
+    }
+    global room_to_backer
+    room_to_backer = {
+        "m88BKR_001": ("N3107", 2),
+        "m88BKR_002": ("N3108", 3),
+        "m88BKR_003": ( "None", 4),
+        "m88BKR_004": ("N3106", 1)
     }
     global map_connections
     map_connections = {}
@@ -629,6 +660,11 @@ def load_map(path):
         json_file = json.load(file_reader)
     if "PB_DT_RoomMaster" in datatable:
         for i in json_file["MapData"]:
+            if not i in datatable["PB_DT_RoomMaster"]:
+                area_save_room = json_file["MapData"][i]["AreaID"].split("::")[-1] + "_1000"
+                datatable["PB_DT_RoomMaster"][i] = copy.deepcopy(datatable["PB_DT_RoomMaster"][area_save_room])
+                datatable["PB_DT_RoomMaster"][i]["LevelName"] = i
+                add_room_file(i)
             for e in json_file["MapData"][i]:
                 datatable["PB_DT_RoomMaster"][i][e] = json_file["MapData"][i][e]
     else:
@@ -928,6 +964,10 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(99/datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]))
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/5)*5
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
+            #Make experience a portion of health
+            if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(4/3))
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             #Expand expertise point range that scales with level
             #In vanilla the range is too small and barely makes a difference
             if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
@@ -937,6 +977,9 @@ def apply_tweaks():
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
         else:
+            if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(2/3))
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
                 datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 10
                 datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
@@ -944,10 +987,6 @@ def apply_tweaks():
         #Make level 1 health based off of level 99 health
         datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/100) + 2.0
         datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP"]
-        #Make experience 80% of health
-        if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
-            datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*0.8)
-            datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
         #Give all enemies a luck stat which reduces the chances of critting them
         #Originally only Gebel, Valefar and OD have one
         if datatable["PB_DT_CharacterParameterMaster"][i]["LUC"] == 0 and i != "N1008":
@@ -1063,6 +1102,23 @@ def apply_tweaks():
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
     #Add the missing Bloodless candle that was accidentally removed in a recent game update
     add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
+    #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
+    #Add a shard candle for it so that it becomes a guaranteed
+    add_level_actor("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(720, -60, 390), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_015_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_015_Gimmick"], "AquastreamLantarn001")})
+    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"] = {}
+    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 186
+    datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
+    datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"]["ShardId"] = "Aquastream"
+    #Add a shard candle for Igniculus in Celeste's room
+    #That way Celeste key becomes relevant and Igniculus can be obtained in story mode
+    add_level_actor("m88BKR_003_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(660, -120, 315), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m88BKR_003_Gimmick"], "FamiliaIgniculus"), "GimmickFlag": FName(game_data["m88BKR_003_Gimmick"], "IgniculusLantarn001")})
+    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"] = {}
+    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = 187
+    datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["FamiliaArcher_Shard"])
+    datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"]["ShardId"] = "FamiliaIgniculus"
+    #The HavePatchPureMiriam gimmick flag triggers as soon as a Pure Miriam chest is loaded in a room
+    #So place one in the first ship room for this flag to trigger as soon as the game starts
+    add_level_actor("m01SIP_000_Gimmick", "PBPureMiriamTreasureBox_BP_C", FVector(-999, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropItemID": FName(game_data["m01SIP_000_Gimmick"], "AAAA_Shard"), "ItemID": FName(game_data["m01SIP_000_Gimmick"], "AAAA_Shard")})
     #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
     #That way you can at least save once before the game truly starts
     remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
@@ -1073,20 +1129,15 @@ def apply_tweaks():
     #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
     remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
     #Add more spikes in return
-    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7140), FRotator(0, 0, 0), FVector(1, 1,  1), {})
-    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 7380), FRotator(0, 0, 0), FVector(1, 1, -1), {})
-    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7860), FRotator(0, 0, 0), FVector(1, 1,  1), {})
-    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 8760), FRotator(0, 0, 0), FVector(1, 1, -1), {})
-    #add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7140), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 7380), FRotator(0, 0, 0), FVector(1, 1, -1), {})
+    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7860), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 8760), FRotator(0, 0, 0), FVector(1, 1, -1), {})
+    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    #Remove the few forced transitions that aren't necessary at all
+    remove_hardcoded_transitions()
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
-
-def deseema_fix():
-    #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
-    #Add a shard candle for it so that it becomes a guaranteed
-    add_level_actor("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(720, -60, 390), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_015_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_015_Gimmick"], "ShortcutLantarn009")})
-    datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn009"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn009"]["Id"] = 186
 
 def search_and_replace_string(filename, class_name, data, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
@@ -1124,6 +1175,16 @@ def change_portrait_pointer(portrait, portrait_replacement):
     portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
     portrait_replacement_data.Write(mod_dir + "\\" + file_to_path[portrait] + "\\" + portrait + ".uasset")
 
+def add_room_file(room):
+    area_path = "ACT" + room[1:3] + "_" + room[3:6]
+    new_file = UAsset(asset_dir + "\\" + file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version(517))
+    index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
+    new_file.SetNameReference(index, FString(room + "_RV"))
+    index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
+    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+    new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
+    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+
 def add_starting_pickup(drop_id):
     #Overlay an upgrade on top of Miriam's starting position to instantly get its content when starting a game
     add_level_actor("m01SIP_000_Gimmick", "HPMaxUp_C", FVector(817, 100, 146), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data["m01SIP_000_Gimmick"], drop_id)})
@@ -1160,7 +1221,7 @@ def update_map_doors():
     for i in room_to_boss:
         for e in map_connections[i]:
             for o in map_connections[i][e]:
-                if o in special_doors:
+                if o in door_skip:
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
@@ -1175,9 +1236,13 @@ def update_map_doors():
                 if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -180
                     properties["IsRight"] = False
+                    if o in special_doors:
+                        rotation.Yaw += 15
                 if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
                     location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260
                     properties["IsRight"] = True
+                    if o in special_doors:
+                        rotation.Yaw -= 15
                 location.Z = map_doors[o].z_block*720 + 240.0
                 if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
@@ -1187,6 +1252,68 @@ def update_map_doors():
                 #If the door is a breakable wall we don't want the boss door to overlay it, so break it by default
                 if o in wall_to_gimmick_flag:
                     datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                #Remove the magic door in that one galleon room so that it never overlays with anything
+                if o == "SIP_002_0_0_RIGHT":
+                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+    #Backer doors
+    #Remove originals
+    for i in backer_door_rooms:
+        filename = i + "_Gimmick"
+        for e in range(len(game_data[filename].Exports)):
+            class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[e].ClassIndex))) - 1].ObjectName)
+            if class_name == "PBBakkerDoor_BP_C":
+                for o in game_data[filename].Exports[e].Data:
+                    if str(o.Name) == "RootComponent":
+                        root_index = int(str(o.Value)) - 1
+                game_data[filename].Exports[root_index].Data[0].Value[0].Value = FVector(-999, 0, 0)
+    #Add new
+    for i in room_to_backer:
+        for e in map_connections[i]:
+            for o in map_connections[i][e]:
+                if o in door_skip:
+                    continue
+                if map_doors[o].room in room_to_boss:
+                    continue
+                if not map_doors[o].room in mod_data["MapLogic"]:
+                    continue
+                filename = map_doors[o].room + "_Gimmick"
+                location = FVector(0, 0, 0)
+                rotation = FRotator(0, 0, 0)
+                scale    = FVector(1, 3, 1)
+                properties = {}
+                properties["BossID"]     = FName.FromString(game_data[filename], room_to_backer[i][0])
+                properties["KeyItemID"]  = FName.FromString(game_data[filename], "Keyofbacker" + str(room_to_backer[i][1]))
+                properties["TutorialID"] = FName.FromString(game_data[filename], "KeyDoor" + "{:02x}".format(room_to_backer[i][1]))
+                if room_to_backer[i][0] == "None":
+                    properties["IsMusicBoxRoom"] =  True
+                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                    rotation.Yaw = -180
+                    if o in special_doors:
+                        rotation.Yaw += 15
+                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260
+                    if o in special_doors:
+                        rotation.Yaw -= 15
+                location.Z = map_doors[o].z_block*720 + 240.0
+                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                    location.Z -= 180.0
+                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                    location.Z += 180.0
+                actor_index = len(game_data[filename].Exports)
+                add_level_actor(filename, "PBBakkerDoor_BP_C", location, rotation, scale, properties)
+                #Fix a snippet issue causing a crash
+                open_timeline_index = int(str(game_data[filename].Exports[actor_index].Data[3].Value)) - 1
+                close_timeline_index = int(str(game_data[filename].Exports[actor_index].Data[2].Value)) - 1
+                open_curve_float_index = abs(int(str(game_data[filename].Exports[open_timeline_index].Data[0].Value[1].Value[0].Value[0].Value))) - 1
+                close_curve_float_index = abs(int(str(game_data[filename].Exports[close_timeline_index].Data[0].Value[1].Value[0].Value[0].Value))) - 1
+                game_data[filename].Imports[open_curve_float_index].ObjectName = FName.FromString(game_data[filename], "CurveFloat_0")
+                game_data[filename].Imports[close_curve_float_index].ObjectName = FName.FromString(game_data[filename], "CurveFloat_0_1")
+                #If the door is a breakable wall we don't want the backer door to overlay it, so break it by default
+                if o in wall_to_gimmick_flag:
+                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                #Remove the magic door in that one galleon room so that it never overlays with anything
+                if o == "SIP_002_0_0_RIGHT":
+                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
     #Area doors
     #Remove originals
     for i in area_door_rooms:
@@ -1195,11 +1322,13 @@ def update_map_doors():
     #Add new
     doors_done = []
     for i in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Load":
+        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Load" or i == "m03ENT_1200":
             continue
         for e in map_connections[i]:
             for o in map_connections[i][e]:
                 if o in doors_done:
+                    continue
+                if o in door_skip:
                     continue
                 if o in special_doors:
                     continue
@@ -1216,7 +1345,7 @@ def update_map_doors():
                     datatable["PB_DT_EventFlagMaster"]["Event_12_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
                 #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
                 if o in floorless_doors:
-                    x_offset = -10
+                    x_offset = -20
                 else:
                     x_offset = 40
                 filename = map_doors[o].room + "_Gimmick"
@@ -1226,11 +1355,9 @@ def update_map_doors():
                 properties = {}
                 properties["IsInvertingOpen"] = False
                 if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
-                    properties["IsOpenedLeft"] = False
                     class_name = "BP_AreaDoor_C(Left)"
                 if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
                     location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260 - x_offset
-                    properties["IsOpenedLeft"] = True
                     class_name = "BP_AreaDoor_C(Right)"
                 location.Z = map_doors[o].z_block*720 + 240.0
                 if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
@@ -1241,6 +1368,9 @@ def update_map_doors():
                 #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
                 if o in wall_to_gimmick_flag:
                     datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                #Remove the magic door in that one galleon room so that it never overlays with anything
+                if o == "SIP_002_0_0_RIGHT":
+                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
                 #Since transition rooms are double make sure that a door only gets added once
                 doors_done.append(o)
 
@@ -1258,7 +1388,7 @@ def update_map_indicators():
             continue
         for e in map_connections[i]:
             for o in map_connections[i][e]:
-                if o in special_doors:
+                if o in door_skip:
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
@@ -1283,15 +1413,18 @@ def update_map_indicators():
                 if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "ReadableBookShelf_C", location, rotation, scale, properties)
+                #Remove the magic door in that one galleon room so that it never overlays with anything
+                if o == "SIP_002_0_0_RIGHT":
+                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
     #Fill empty entrances with an impassable door to prevent softlocks
     #Add new
     door_height = 240
     door_width = 44
     for i in map_connections:
         for e in map_connections[i]:
-            if map_connections[i][e]:
+            if map_connections[i][e] and map_connections[i][e] != "m03ENT_1200":
                 continue
-            if e in special_doors:
+            if e in door_skip:
                 continue
             if i in room_to_boss:
                 continue
@@ -1305,17 +1438,25 @@ def update_map_indicators():
             if map_doors[e].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                 location.X = -18
                 location.Z = map_doors[e].z_block*720 + door_height
+                lever_offset = -160
+                if e in special_doors:
+                    rotation.Yaw += 20
             if map_doors[e].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
                 location.X = datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*1260 + 18
                 location.Z = map_doors[e].z_block*720 + door_height
+                lever_offset = 160
+                if e in special_doors:
+                    rotation.Yaw -= 20
             if map_doors[e].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
                 location.X = map_doors[e].x_block*1260 + 510.0
                 location.Z = datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"]*720 - 5
                 rotation.Pitch = -90
+                lever_offset = -160
             if map_doors[e].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
                 location.X = map_doors[e].x_block*1260 + 510.0
                 location.Z = 5
                 rotation.Pitch = -90
+                lever_offset = 160
             #Sub direction
             if map_doors[e].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                 if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
@@ -1351,7 +1492,12 @@ def update_map_indicators():
                     location.X += 510
                 else:
                     location.X += 370
-            add_level_actor(filename, "BP_EventDoor_C", location, rotation, scale, {"CommonFlag": FName.FromString(game_data[filename], "EGameCommonFlag::None")})
+            lever_index = len(game_data[filename].Exports) + 1
+            add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
+            game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(lever_offset, 360, 0)
+            #Remove the magic door in that one galleon room so that it never overlays with anything
+            if e == "SIP_002_0_0_RIGHT":
+                remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
 
 def update_room_containers(room):
     #Some rooms have chests that are best to leave alone
@@ -1385,7 +1531,7 @@ def update_room_containers(room):
                     safety_chest = e.Value
                 if str(e.Name) == "OptionalGimmickID":
                     gimmick_id = str(e.Value)
-                if str(e.Name) == "EventRootComponent":
+                if str(e.Name) == "RootComponent":
                     root_index = int(str(e.Value)) - 1
                     for o in game_data[filename].Exports[root_index].Data:
                         if str(o.Name) == "RelativeLocation":
@@ -1604,6 +1750,11 @@ def update_map_connections():
     #Give overlayed rooms the same door flag as their counterparts
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
     datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
+
+def remove_hardcoded_transitions():
+    for i in game_data:
+        if file_to_type[i] == "Level" and i.split("_")[-1] == "RV":
+            remove_level_class(i, "RoomChange_C")
 
 def remove_vanilla_rando():
     for i in [293, 294]:
@@ -2018,11 +2169,11 @@ def is_enemy(character):
         dict["Main"]  = True
     elif character[0:5] in mod_data["EnemyLocation"] and character != "N1001_Sip":
         dict["Enemy"] = True
-    elif character[0:5] == "N1013" or character[0:5] == "N1009" or character == "N3125":
+    elif character[0:5] in ["N1009", "N1013"] or character == "N3125":
         dict["Enemy"]     = True
         dict["Exception"] = True
     if character in datatable["PB_DT_CharacterParameterMaster"]:
-        if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS":
+        if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]:
             dict["Boss"] = True
     return dict
 

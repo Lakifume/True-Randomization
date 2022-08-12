@@ -240,7 +240,7 @@ modified_files = {
     },
     "UI": {
         "Files": [
-            "frameMiriam",
+            "WindowMinimap02",
             "icon"
         ]
     },
@@ -401,8 +401,6 @@ class Generate(QThread):
             Manager.randomizer_events()
             Manager.remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
             Manager.remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
-        else:
-            Manager.deseema_fix()
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
@@ -543,9 +541,17 @@ class Generate(QThread):
         #Import the new music over one of the few unused slots, the slot ID is already referenced in the RoomMaster under MapEdit
         Manager.import_music("ACT50_BRM")
         
-        #Edit the health bar frame slightly to give an easy visual cue to tell if someone is using the mod or not
+        #Edit the minimap outline to give an easy visual cue to tell if someone is using the mod or not and what difficulty they're on
         #This is especially useful on twitch as this difference is even visible from stream previews
-        Manager.import_texture("frameMiriam")
+        if config.getboolean("GameDifficulty", "bNormal"):
+            shutil.copyfile("Data\\Texture\\Difficulty\\Normal\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
+        elif config.getboolean("GameDifficulty", "bHard"):
+            shutil.copyfile("Data\\Texture\\Difficulty\\Hard\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
+        elif config.getboolean("GameDifficulty", "bNightmare"):
+            shutil.copyfile("Data\\Texture\\Difficulty\\Nightmare\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
+        Manager.import_texture("WindowMinimap02")
+        os.remove("Data\\Texture\\WindowMinimap02.dds")
+        
         #Edit the file that contains all the icons in the game to give 8 bit weapons unique icons per rank
         #Otherwise it is almost impossible to tell which tier the weapon you're looking at actually is
         Manager.import_texture("icon")
