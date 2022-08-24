@@ -565,13 +565,19 @@ class Generate(QThread):
         Manager.import_texture("m51_EBT_Block_01")
         Manager.import_texture("m51_EBT_Door")
         
+        #Give the new dullahammer a unique color scheme
+        Manager.import_texture("T_N3127_Body_Color")
+        Manager.import_texture("T_N3127_Uni_Color")
+        
         #Most map icons have fixed positions on the canvas and will not adapt to the position of the rooms
         #Might be possible to edit them via a blueprint but that's not worth it so remove them if custom map is chosen
         if self.map:
-            Manager.import_texture("icon_8bitCrown")
+            Manager.import_texture("icon_map_journey_")
             Manager.import_texture("Map_Icon_Keyperson")
             Manager.import_texture("Map_Icon_RootBox")
             Manager.import_texture("Map_StartingPoint")
+        if self.map or config.getboolean("ItemRandomization", "bOverworldPool"):
+            Manager.import_texture("icon_8bitCrown")
         
         #Import chosen hues for Miriam and Zangetsu
         #While it is technically not necessary to first copy the textures out of the chosen folder we do it so that the random hue does not show up on the terminal
@@ -669,11 +675,16 @@ class Update(QThread):
         
         shutil.rmtree("Data")
         shutil.rmtree("MapEdit\\Data")
-        shutil.rmtree("Tools")
+        shutil.rmtree("Tools\\UE4 DDS Tools")
+        shutil.rmtree("Tools\\UModel")
+        shutil.rmtree("Tools\\UnrealPak")
         
         #Extract
         
         os.rename(exe_name, "delete.me")
+        os.rename("Tools\\UAssetAPI\\Newtonsoft.Json.dll",    "Tools\\UAssetAPI\\delete1.me")
+        os.rename("Tools\\UAssetAPI\\UAssetAPI.dll",          "Tools\\UAssetAPI\\delete2.me")
+        os.rename("Tools\\UAssetAPI\\UAssetSnippet.dll", "Tools\\UAssetAPI\\delete3.me")
         with zipfile.ZipFile(zip_name, "r") as zip_ref:
             zip_ref.extractall("")
         os.remove(zip_name)
@@ -2045,6 +2056,12 @@ class Main(QWidget):
     def check_for_updates(self):
         if os.path.isfile("delete.me"):
             os.remove("delete.me")
+        if os.path.isfile("Tools\\UAssetAPI\\delete1.me"):
+            os.remove("Tools\\UAssetAPI\\delete1.me")
+        if os.path.isfile("Tools\\UAssetAPI\\delete2.me"):
+            os.remove("Tools\\UAssetAPI\\delete2.me")
+        if os.path.isfile("Tools\\UAssetAPI\\delete3.me"):
+            os.remove("Tools\\UAssetAPI\\delete3.me")
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:

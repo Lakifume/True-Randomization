@@ -432,19 +432,10 @@ def rand_stat(entry):
     #Main entry
     elif Manager.is_enemy(entry)["Main"]:
         #Use the original resistances to create an average to base the random resistances off of
-        #Though create an exception for the final boss to favor the one with the higher level
-        if entry[0:5] in ["N1009", "N1013"]:
-            average = 12.5
-            average += (Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] - 45)*1.25
-            if average < 12.5:
-                average = 12.5
-            if average > 25:
-                average = 25
-        else:
-            average = 0
-            for e in stat:
-                average += Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e]
-            average = average/len(stat)
+        average = 0
+        for e in stat:
+            average += Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e]
+        average = average/len(stat)
         for e in stat:
             Manager.datatable["PB_DT_CharacterParameterMaster"][entry][e] = Manager.random_weighted(round(average), -100, 100, 5, 4)
     #Sub entry

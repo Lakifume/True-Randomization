@@ -367,7 +367,20 @@ def init():
         "Wall_ICE010_1",
         "Wall_ICE017_1",
         "N3106_1ST_Treasure",
-        "N3106_2ND_Treasure"
+        "N3106_2ND_Treasure",
+        "Treasurebox_JRN001_1",
+        "Treasurebox_JRN001_2",
+        "Treasurebox_JRN001_3",
+        "Treasurebox_JRN002_1",
+        "Treasurebox_JRN004_1"
+    ]
+    global keyless_chests
+    keyless_chests = [
+        "Treasurebox_SIP000_Tutorial",
+        "Treasurebox_SIP020_1",
+        "N3106_1ST_Treasure",
+        "N3106_2ND_Treasure",
+        "Treasurebox_JRN002_1"
     ]
     global room_to_area
     room_to_area = {
@@ -387,7 +400,9 @@ def init():
         "TAR": "m14",
         "JPN": "m15",
         "RVA": "m17",
-        "ICE": "m18"
+        "ICE": "m18",
+        "K2C": "m19",
+        "JRN": "m20"
     }
     global special_chest_to_room
     special_chest_to_room = {
@@ -452,7 +467,10 @@ def init():
         "Treasurebox_JPN002_1":         ["Dimensionshift"],
         "Treasurebox_RVA001_2":         ["Dimensionshift"],
         "Treasurebox_RVA011_1":         ["Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"]
+        "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_JRN001_1":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_JRN001_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"]
     }
     global boss_rooms
     boss_rooms = [
@@ -472,6 +490,8 @@ def init():
         "m18ICE_004",
         "m18ICE_018",
         "m19K2C_000",
+        "m20JRN_003",
+        "m20JRN_004",
         "m51EBT_000",
         "m88BKR_001",
         "m88BKR_002",
@@ -699,7 +719,7 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
-    #Same goes for Kingdom 2 Crown's connection to the train
+    #Kingdom 2 Crown
     #Also add Crown of Creation to the logic manually
     for i in Manager.mod_data["MapLogic"]:
         Manager.mod_data["MapLogic"][i]["MonarchCrown"] = False
@@ -725,6 +745,47 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker3"]         = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker4"]         = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["MonarchCrown"]         = True
+    #Journey
+    Manager.mod_data["MapLogic"]["m20JRN_000"] = {}
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["GateRoom"]             = True
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["NearestGate"]          = []
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Doublejump"]           = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["HighJump"]             = True
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Invert"]               = True
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Deepsinker"]           = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Dimensionshift"]       = True
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Reflectionray"]        = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Aquastream"]           = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Bloodsteel"]           = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Swordsman"]            = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Silverbromide"]        = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["BreastplateofAguilar"] = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker1"]         = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker2"]         = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker3"]         = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker4"]         = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["MonarchCrown"]         = False
+    for i in range(4):
+        room_name = "m20JRN_00" + str(i + 1)
+        Manager.mod_data["MapLogic"][room_name] = {}
+        Manager.mod_data["MapLogic"][room_name]["GateRoom"]             = False
+        Manager.mod_data["MapLogic"][room_name]["NearestGate"]          = ["m20JRN_000"]
+        Manager.mod_data["MapLogic"][room_name]["Doublejump"]           = False
+        Manager.mod_data["MapLogic"][room_name]["HighJump"]             = False
+        Manager.mod_data["MapLogic"][room_name]["Invert"]               = False
+        Manager.mod_data["MapLogic"][room_name]["Deepsinker"]           = False
+        Manager.mod_data["MapLogic"][room_name]["Dimensionshift"]       = False
+        Manager.mod_data["MapLogic"][room_name]["Reflectionray"]        = False
+        Manager.mod_data["MapLogic"][room_name]["Aquastream"]           = False
+        Manager.mod_data["MapLogic"][room_name]["Bloodsteel"]           = False
+        Manager.mod_data["MapLogic"][room_name]["Swordsman"]            = False
+        Manager.mod_data["MapLogic"][room_name]["Silverbromide"]        = False
+        Manager.mod_data["MapLogic"][room_name]["BreastplateofAguilar"] = False
+        Manager.mod_data["MapLogic"][room_name]["Keyofbacker1"]         = False
+        Manager.mod_data["MapLogic"][room_name]["Keyofbacker2"]         = False
+        Manager.mod_data["MapLogic"][room_name]["Keyofbacker3"]         = False
+        Manager.mod_data["MapLogic"][room_name]["Keyofbacker4"]         = False
+        Manager.mod_data["MapLogic"][room_name]["MonarchCrown"]         = False
     #Benjamin's last reward appears if you've completed all his quests which is not guaranteed to be possible early on
     #Gebel's Glasses chest only appears if you to get 1 copy of every shard
     #OD can only be fought if the Tome of Conquest was obtained
@@ -773,9 +834,8 @@ def give_extra(item, quantity):
 def no_shard_craft():
     #If shards are randomized then disable the possiblity to manually craft shards so that they aren't always available
     #This is because there is currently no way to randomize which shards are craftable
-    Manager.datatable["PB_DT_CraftMaster"]["HighJump"]["OpenKeyRecipeID"] = "Medal019"
     for i in Manager.datatable["PB_DT_CraftMaster"]:
-        if Manager.datatable["PB_DT_CraftMaster"][i]["Type"] == "ECraftType::Craft" and Manager.datatable["PB_DT_CraftMaster"][i]["CraftItemId"] in Manager.mod_data["ShardDrop"]["ItemPool"]:
+        if Manager.datatable["PB_DT_CraftMaster"][i]["Type"] == "ECraftType::Craft" and Manager.datatable["PB_DT_CraftMaster"][i]["CraftItemId"] in Manager.datatable["PB_DT_ShardMaster"]:
             Manager.datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "Medal019"
 
 def key_logic():
@@ -799,6 +859,12 @@ def key_logic():
         #Gathering upcoming gate requirements
         for i in Manager.mod_data["MapLogic"]:
             if Manager.mod_data["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["MapLogic"][i]["NearestGate"]) and not i in previous_gate:
+                #If Zangetsuto gate then check if garden portal and Gebel room are accessible
+                if Manager.mod_data["MapLogic"][i]["Swordsman"] and not zangetsuto_gate_avaliable(previous_gate):
+                    continue
+                #If Journey area then check if desert room and post portal are accessible
+                if i == "m20JRN_000" and not journey_area_available(previous_gate):
+                    continue
                 for e in key_items:
                     if Manager.mod_data["MapLogic"][i][e]:
                         requirement.append(e)
@@ -852,6 +918,32 @@ def key_logic():
         #Update previous gate
         previous_gate.extend(requirement_to_gate[chosen_item])
 
+def zangetsuto_gate_avaliable(previous_gate):
+    if Manager.mod_data["MapLogic"]["m04GDN_001"]["GateRoom"]:
+        nearest_gate_1 = ["m04GDN_001"]
+    else:
+        nearest_gate_1 = copy.deepcopy(Manager.mod_data["MapLogic"]["m04GDN_001"]["NearestGate"])
+    if Manager.mod_data["MapLogic"]["m06KNG_020"]["GateRoom"]:
+        nearest_gate_2 = ["m06KNG_020"]
+    else:
+        nearest_gate_2 = copy.deepcopy(Manager.mod_data["MapLogic"]["m06KNG_020"]["NearestGate"])
+    if previous_in_nearest(previous_gate, nearest_gate_1) and previous_in_nearest(previous_gate, nearest_gate_2):
+        return True
+    return False
+
+def journey_area_available(previous_gate):
+    if Manager.mod_data["MapLogic"]["m10BIG_000"]["GateRoom"]:
+        nearest_gate_1 = ["m10BIG_000"]
+    else:
+        nearest_gate_1 = copy.deepcopy(Manager.mod_data["MapLogic"]["m10BIG_000"]["NearestGate"])
+    if Manager.mod_data["MapLogic"]["m12SND_025"]["GateRoom"]:
+        nearest_gate_2 = ["m12SND_025"]
+    else:
+        nearest_gate_2 = copy.deepcopy(Manager.mod_data["MapLogic"]["m12SND_025"]["NearestGate"])
+    if previous_in_nearest(previous_gate, nearest_gate_1) and previous_in_nearest(previous_gate, nearest_gate_2):
+        return True
+    return False
+
 def previous_in_nearest(previous_gate, nearest_gate):
     if not nearest_gate:
         return True
@@ -877,8 +969,6 @@ def logic_choice(chosen_item, room_list):
     #Choosing room to place item in
     while True:
         chosen_room = random.choice(room_list)
-        if chosen_room in ["m01SIP_000", "m01SIP_020"]:
-            continue
         #Choosing container to place item in
         if chosen_item in key_items:
             chest_list = room_to_available_chests(chosen_room)
@@ -894,7 +984,7 @@ def logic_choice(chosen_item, room_list):
 def room_to_available_chests(room):
     chest_list = []
     for i in used_chests:
-        if chest_to_room(i) == room and not i in list(key_item_to_location.values()):
+        if chest_to_room(i) == room and not i in list(key_item_to_location.values()) and not i in keyless_chests:
             if i in chest_to_requirement:
                 for e in chest_to_requirement[i]:
                     if e in key_item_to_location:
@@ -978,13 +1068,24 @@ def rand_overworld_pool(waystone):
     patch_chest_entry(random.choice(green_chest_type), "N3106_1ST_Treasure")
     #Carpenter's second chest
     patch_chest_entry(random.choice(green_chest_type), "N3106_2ND_Treasure")
+    #Journey's last chest
+    patch_chest_entry(random.choice(green_chest_type), "Treasurebox_JRN004_1")
     #Upgrades
     for i in range(30):
-        patch_key_item_entry("MaxHPUP", random.choice(used_chests))
+        chosen = random.choice(used_chests)
+        while "JRN" in chosen:
+            chosen = random.choice(used_chests)
+        patch_key_item_entry("MaxHPUP", chosen)
     for i in range(30):
-        patch_key_item_entry("MaxMPUP", random.choice(used_chests))
+        chosen = random.choice(used_chests)
+        while "JRN" in chosen:
+            chosen = random.choice(used_chests)
+        patch_key_item_entry("MaxMPUP", chosen)
     for i in range(24):
-        patch_key_item_entry("MaxBulletUP", random.choice(used_chests))
+        chosen = random.choice(used_chests)
+        while "JRN" in chosen:
+            chosen = random.choice(used_chests)
+        patch_key_item_entry("MaxBulletUP", chosen)
     #Item pool
     chest_pool = copy.deepcopy(used_chests)
     random.shuffle(chest_pool)
@@ -1064,6 +1165,7 @@ def patch_key_shard_entry(shard, enemy):
         elif i.split("_")[0] == enemy:
             Manager.datatable["PB_DT_DropRateMaster"][i]["ShardId"] = "None"
             Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = 0.0
+    #If the key shard ends up in mutliple candles make them all disappear once one has been acquired
     if enemy == "Shortcut":
         for i in range(6):
             Manager.datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn" + "{:03d}".format(i + 2)]["Id"] = Manager.datatable["PB_DT_GimmickFlagMaster"]["ShortcutLantarn001"]["Id"]
@@ -1199,7 +1301,7 @@ def rand_quest_requirement():
     for i in range(19):
         chosen = any_pick(all_enemies, True, "None")
         #Don't pick IGA, Miriam, or shard candles
-        while chosen[0] != "N" or chosen in ["N2013", "N0000"]:
+        while chosen in ["N2013", "N0000"] or chosen in Manager.datatable["PB_DT_ShardMaster"]:
             chosen = any_pick(all_enemies, True, "None")
         enemy_requirement.append(chosen)
     #Order them by level, appending bosses at the end
@@ -1341,7 +1443,7 @@ def update_boss_crystal_color():
     for i in Manager.file_to_path:
         if Manager.file_to_type[i] == "Material":
             enemy_id = Manager.file_to_path[i].split("\\")[-2]
-            if Manager.is_enemy(enemy_id)["Enemy"]:
+            if Manager.is_enemy(enemy_id)["Enemy"] and Manager.is_enemy(enemy_id)["Boss"] or enemy_id == "N2008":
                 shard_name = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
                 shard_type = Manager.datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
                 shard_hsv  = shard_type_to_hsv[shard_type.split("::")[-1]]

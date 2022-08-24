@@ -24,7 +24,7 @@ for i in file_to_path:
         file_to_type[i] = "Level"
     elif "StringTable" in file_to_path[i]:
         file_to_type[i] = "StringTable"
-    elif "Material" in file_to_path[i] and not "Texture" in file_to_path[i]:
+    elif "Material" in file_to_path[i]:
         file_to_type[i] = "Material"
     elif "Texture" in file_to_path[i] or "UI" in file_to_path[i] and not "StartupSelecter" in file_to_path[i] and not "Title" in file_to_path[i]:
         file_to_type[i] = "Texture"
@@ -161,6 +161,12 @@ def init():
             "Index": 7
         }
     }
+    global room_to_gimmick
+    room_to_gimmick = {
+        "m01SIP_007": "m01SIP_007_BG",
+        "m20JRN_003": "m20JRN_003_Setting",
+        "m20JRN_004": "m20JRN_004_BG"
+    }
     global boss_door_rooms
     boss_door_rooms = [
         "m03ENT_011",
@@ -182,6 +188,8 @@ def init():
         "m18ICE_005",
         "m18ICE_010",
         "m18ICE_017"
+        #"m20JRN_002",
+        #"m20JRN_004"
     ]
     global backer_door_rooms
     backer_door_rooms = [
@@ -403,6 +411,7 @@ def init():
         "m18ICE_004": "N2012",
         "m18ICE_018": "N1008",
         "m18ICE_019": "N1009_Enemy"
+        #"m20JRN_003": "N2017"
     }
     global room_to_backer
     room_to_backer = {
@@ -750,6 +759,11 @@ def fix_custom_map():
     datatable["PB_DT_GimmickFlagMaster"]["TRN_002_LeverDoor"]["Id"]        = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     if not "SIP_006_0_2_RIGHT" in map_connections["m01SIP_017"]["SIP_017_0_0_LEFT"]:
         datatable["PB_DT_GimmickFlagMaster"]["SIP_017_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    #Remove the few forced transitions that aren't necessary at all
+    for i in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
+        remove_level_class(i + "_RV", "RoomChange_C")
+    #Make Bathin's room enterable from the left
+    bathin_left_entrance_fix()
     #The two underground rooms with very specific shapes only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
@@ -965,8 +979,12 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/5)*5
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
             #Make experience a portion of health
+            if i[0:5] in ["N3106", "N3107", "N3108"]:
+                multiplier = 1
+            else:
+                multiplier = (4/3)
             if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(4/3))
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             #Expand expertise point range that scales with level
             #In vanilla the range is too small and barely makes a difference
@@ -1065,9 +1083,19 @@ def apply_tweaks():
     #Slightly change Igniculus' descriptions to match other familiar's
     stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
     stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
-    #Add Breeder and Greedling to the enemy archives
-    add_enemy_to_archive("N3125", ["SYS_SEN_AreaName021"], None, "N3124")
+    #Add DLCs to the enemy archives
     add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
+    add_enemy_to_archive("N2017", [], None, "N2008")
+    #Give the new dullahammer a unique name and look
+    datatable["PB_DT_CharacterParameterMaster"]["N3127"]["NameStrKey"] = "ENEMY_NAME_N3127"
+    stringtable["PBMasterStringTable"]["ENEMY_NAME_N3127"] = mod_data["EnemyTranslation"]["N3127"]
+    change_material_hsv("MI_N3127_Eye", "EmissiveColor" , (215, 100, 100))
+    change_material_hsv("MI_N3127_Eye", "HighlightColor", (215,  65, 100))
+    #Give Guardian his own shard drop
+    datatable["PB_DT_CharacterMaster"]["N2017"]["ItemDrop"] = "N2017_Shard"
+    datatable["PB_DT_DropRateMaster"]["N2017_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
+    datatable["PB_DT_DropRateMaster"]["N2017_Shard"]["ShardId"] = "TissRosain"
+    datatable["PB_DT_CraftMaster"]["TissRosain"]["OpenKeyRecipeID"] = "Medal019"
     #Rebalance boss rush mode a bit
     #Remove all consumables from inventory
     for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
@@ -1080,6 +1108,10 @@ def apply_tweaks():
         i.Value.Value = 66
     #Make the second train gate a regular gate rather than a debug
     game_data["m09TRN_004_Gimmick"].Exports[257].Data[18].Value = False
+    #Give the lever door in upper cathedral its own gimmick flag instead of being shared with the hall one
+    game_data["m05SAN_017_Gimmick"].Exports[1].Data[7].Value = FName(game_data["m05SAN_017_Gimmick"], "SAN_017_LockDoor")
+    datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"] = {}
+    datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"]["Id"] = 186
     #Add the missing gate warps for the extra characters
     #That way impassable gates are no longer a problem
     add_extra_mode_warp("m04GDN_013_Gimmick", FVector(2460, 0, 2100), FRotator(180,   0,   0), FVector(3080, 0, 1800), FRotator(  0,   0,   0))
@@ -1096,7 +1128,7 @@ def apply_tweaks():
     add_extra_mode_warp("m11UGD_056_Gimmick", FVector( 600, 0, 1300), FRotator(-90, 180,   0), FVector( 660, 0, 1500), FRotator( 90, 180,   0))
     add_extra_mode_warp("m12SND_006_Gimmick", FVector( 660, 0,   60), FRotator(  0,   0,   0), FVector( 420, 0,   60), FRotator(  0, 180,   0))
     add_extra_mode_warp("m13ARC_006_Gimmick", FVector( 600, 0,  960), FRotator(  0,   0,   0), FVector( 420, 0,  960), FRotator(  0, 180,   0))
-    add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1180, 0,   75), FRotator(  0,   0,   0))#
+    add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1180, 0,   75), FRotator(  0,   0,   0))
     add_extra_mode_warp("m17RVA_001_Gimmick", FVector( 800, 0, 2080), FRotator(  0,   0, 180), FVector( 540, 0, 1800), FRotator(  0, 180,   0))
     add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
@@ -1106,14 +1138,14 @@ def apply_tweaks():
     #Add a shard candle for it so that it becomes a guaranteed
     add_level_actor("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(720, -60, 390), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_015_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_015_Gimmick"], "AquastreamLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 186
+    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 187
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"]["ShardId"] = "Aquastream"
     #Add a shard candle for Igniculus in Celeste's room
     #That way Celeste key becomes relevant and Igniculus can be obtained in story mode
     add_level_actor("m88BKR_003_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(660, -120, 315), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m88BKR_003_Gimmick"], "FamiliaIgniculus"), "GimmickFlag": FName(game_data["m88BKR_003_Gimmick"], "IgniculusLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = 187
+    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = 188
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["FamiliaArcher_Shard"])
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"]["ShardId"] = "FamiliaIgniculus"
     #The HavePatchPureMiriam gimmick flag triggers as soon as a Pure Miriam chest is loaded in a room
@@ -1122,8 +1154,10 @@ def apply_tweaks():
     #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
     #That way you can at least save once before the game truly starts
     remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
+    mod_data["EnemyLocation"]["N3015"]["HardModeRooms"].remove("m01SIP_001")
     #Also remove the bone mortes from that one crowded room in galleon
     remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
+    mod_data["EnemyLocation"]["N3004"]["HardModeRooms"].remove("m01SIP_014")
     #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
     #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
     #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
@@ -1134,8 +1168,6 @@ def apply_tweaks():
     add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7860), FRotator(0, 0, 0), FVector(1, 1,  1), {})
     add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 8760), FRotator(0, 0, 0), FVector(1, 1, -1), {})
     add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
-    #Remove the few forced transitions that aren't necessary at all
-    remove_hardcoded_transitions()
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
 
@@ -1229,7 +1261,10 @@ def update_map_doors():
                     continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
-                filename = map_doors[o].room + "_Gimmick"
+                if map_doors[o].room in room_to_gimmick:
+                    filename = room_to_gimmick[map_doors[o].room]
+                else:
+                    filename = map_doors[o].room + "_Gimmick"
                 location = FVector(0, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
@@ -1280,7 +1315,10 @@ def update_map_doors():
                     continue
                 if not map_doors[o].room in mod_data["MapLogic"]:
                     continue
-                filename = map_doors[o].room + "_Gimmick"
+                if map_doors[o].room in room_to_gimmick:
+                    filename = room_to_gimmick[map_doors[o].room]
+                else:
+                    filename = map_doors[o].room + "_Gimmick"
                 location = FVector(0, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
@@ -1354,7 +1392,10 @@ def update_map_doors():
                     x_offset = -20
                 else:
                     x_offset = 40
-                filename = map_doors[o].room + "_Gimmick"
+                if map_doors[o].room in room_to_gimmick:
+                    filename = room_to_gimmick[map_doors[o].room]
+                else:
+                    filename = map_doors[o].room + "_Gimmick"
                 location = FVector(x_offset, -180, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
@@ -1404,7 +1445,10 @@ def update_map_indicators():
                     continue
                 if o in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
                     continue
-                filename = map_doors[o].room + "_Gimmick"
+                if map_doors[o].room in room_to_gimmick:
+                    filename = room_to_gimmick[map_doors[o].room]
+                else:
+                    filename = map_doors[o].room + "_Gimmick"
                 location = FVector(-80, -120, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
@@ -1440,7 +1484,10 @@ def update_map_indicators():
                 continue
             if not i in mod_data["MapLogic"]:
                 continue
-            filename = i + "_Gimmick"
+            if i in room_to_gimmick:
+                filename = room_to_gimmick[i]
+            else:
+                filename = i + "_Gimmick"
             location = FVector(0, -360, 0)
             rotation = FRotator(0, 0, 0)
             scale    = FVector(1, 1, 1)
@@ -1510,14 +1557,16 @@ def update_map_indicators():
                 remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
 
 def update_room_containers(room):
-    #Some rooms have chests that are best to leave alone
+    #Don't change the containers for starting items
     if room == "m01SIP_000":
         return
-    #One of the ship rooms has its actors defined in its bg file instead of gimmick
-    if room == "m01SIP_007":
-        filename = room + "_BG"
+    #Some rooms have their actors defined in their bg file instead of gimmick
+    if room in room_to_gimmick:
+        filename = room_to_gimmick[room]
     else:
         filename = room + "_Gimmick"
+    if not filename in game_data:
+        return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for i in range(len(game_data[filename].Exports)):
         old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
@@ -1594,6 +1643,8 @@ def update_room_containers(room):
                     #Drop chest down to the floor if it is in a bell
                     if drop_id == "Treasurebox_SAN003_4":
                         location.Z = 4080
+                    elif drop_id == "Treasurebox_SAN003_5":
+                        location.Z = 6600
                     elif drop_id == "Treasurebox_SAN019_3":
                         location.Z = 120
                     elif drop_id == "Treasurebox_SAN021_4":
@@ -1761,10 +1812,57 @@ def update_map_connections():
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
     datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
 
-def remove_hardcoded_transitions():
-    for i in game_data:
-        if file_to_type[i] == "Level" and i.split("_")[-1] == "RV":
-            remove_level_class(i, "RoomChange_C")
+def bathin_left_entrance_fix():
+    #If Bathin's intro event triggers when the player entered the room from the left they will be stuck in an endless walk cycle
+    #To fix this add a special door to warp the player in the room's player start instead
+    for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
+        room = map_doors[i].room
+        area_path = "ACT" + room[1:3] + "_" + room[3:6]
+        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version(517))
+        index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
+        new_file.SetNameReference(index, FString(room + "_RV"))
+        index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
+        new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+        new_file.Exports[9].Data[1].Value = FName.FromString(new_file, room)
+        #Correct the room dimension settings
+        new_file.Exports[0].Data[2].Value[0].Value  = FVector( 630*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],   0, 360*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        #Change the door's properties
+        new_file.Exports[2].Data[0].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 0, 720*map_doors[i].z_block + 360)
+        new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
+        new_file.Exports[8].Data[0].Value = FName.FromString(new_file, room[3:])
+        new_file.Exports[8].Data[1].Value = FName.FromString(new_file, "dummy")
+        new_file.Exports[8].Data[2].Value = FName.FromString(new_file, "dummy")
+        new_file.Exports[8].Data[3].Value = FName.FromString(new_file, "m13ARC_005")
+        new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+    #Get Bathin's adjacent room while prioritizing the same area
+    for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
+        room = map_doors[i].room
+        adjacent_room = room
+        if datatable["PB_DT_RoomMaster"][room]["AreaID"] == datatable["PB_DT_RoomMaster"]["m13ARC_005"]["AreaID"]:
+            break
+    #Also add one more door in the boss room to have a proper transition
+    room = "m13ARC_005"
+    area_path = "ACT" + room[1:3] + "_" + room[3:6]
+    new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version(517))
+    index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
+    new_file.SetNameReference(index, FString(room + "_RV"))
+    index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
+    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+    new_file.Exports[9].Data[1].Value = FName.FromString(new_file, room)
+    #Correct the room dimension settings
+    new_file.Exports[0].Data[2].Value[0].Value  = FVector( 630*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],   0, 360*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+    new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+    new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+    #Change the door's properties
+    new_file.Exports[2].Data[0].Value[0].Value  = FVector(0, 0, 360)
+    new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
+    new_file.Exports[8].Data[0].Value = FName.FromString(new_file, "ARC_005")
+    new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
+    new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
+    new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
+    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
 def remove_vanilla_rando():
     for i in [293, 294]:
@@ -1776,6 +1874,7 @@ def remove_vanilla_rando():
             count += 1
         game_data["TitleExtraMenu"].Exports[i].Data[0].Value = new_list
     stringtable["PBSystemStringTable"]["SYS_SEN_ModeRogueDungeon"] = "DELETED"
+    stringtable["PBSystemStringTable"]["SYS_MSG_OpenRogueDungeonMode"] = "Story Mode completed."
 
 def show_mod_stats(seed, mod_version):
     game_version = str(game_data["VersionNumber"].Exports[6].Data[0].CultureInvariantString)
