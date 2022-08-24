@@ -1028,7 +1028,7 @@ class Main(QMainWindow):
     def how_to(self):
         box = QMessageBox(self)
         box.setWindowTitle("How to use")
-        box.setText("Map Editor:\n\nThis editor allows you to fully customize the layout of the game's map. You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.\nSave your creations to the Custom folder for them to be picked by the randomizer.\n\nLogic Editor:\n\nOnce you've finished laying out a map you can use the logic editor tool to guide the randomizer in its key item placement to prevent unbeatable seeds on your map.\nEach gate represents a room that is an obstacle to the player's progression which must be connected to other previous gates and linked to the rooms that it leads to.\nThe randomizer will look for the first set of gates at the start of the game then move onto the next and so on until every key item is placed based on this consecution of requirements.\nThe graphical cues of this mode are:\n\n-Dark fill: standard non-gate rooms\n-White fill: Gate rooms that selected room is connected to\n-Blue outline: rooms that have no requirement to get to\n-Green outline: rooms that are connected to selected gate\n-Red outline: rooms that are being assigned a gate in assign mode\n\nArea Order:\n\nA simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
+        box.setText("Map Editor:\n\nThis editor allows you to fully customize the layout of the game's map. You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.\nSave your creations to the Custom folder for them to be picked by the randomizer.\n\nLogic Editor:\n\nOnce you've finished laying out a map you can use the logic editor tool to guide the randomizer in its key item placement to prevent unbeatable seeds on your map.\nEach gate represents a room that is an obstacle to the player's progression which must be connected to other previous gates and linked to the rooms that it leads to.\nThe randomizer will look for the first set of gates at the start of the game then move onto the next and so on until every key item is placed based on this consecution of requirements.\nBy default the list of requirements checks for x OR y items, to create a check for x AND y items simply chain several gates back to back.\nThe graphical cues of this mode are:\n\n-Dark fill: standard non-gate rooms\n-White fill: Gate rooms that selected room is connected to\n-Blue outline: rooms that have no requirement to get to\n-Green outline: rooms that are connected to selected gate\n-Red outline: rooms that are being assigned a gate in assign mode\n\nArea Order:\n\nA simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
         box.exec()
     
     def guidelines(self):
@@ -2101,11 +2101,6 @@ class Main(QMainWindow):
             icon = self.scene.addPixmap(QPixmap("Data\\wall_vertical.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width - 8.5, room.room_data.height - 1.5)
-            icon.setParentItem(room)
-        if room.room_data.name == "m13ARC_005":
-            icon = self.scene.addPixmap(QPixmap("Data\\one_way_left.png"))
-            icon.setTransform(QTransform.fromScale(1, -1))
-            icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m15JPN_010", "m17RVA_005"]:
             icon = self.scene.addPixmap(QPixmap("Data\\ceiling_hole.png"))
