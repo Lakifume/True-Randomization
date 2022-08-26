@@ -8,6 +8,9 @@ A fan project in the form of a Python program that aims to give Bloodstained the
 
 Requirements:
 * latest version of Python
+* latest version of Python.psutil
+* latest version of Python.pythonnet
+* latest version of Python.requests
 * latest version of PySide6
 * latest version of Pyinstaller
 
