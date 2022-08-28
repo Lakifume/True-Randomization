@@ -196,6 +196,7 @@ modified_files = {
             "PB_DT_BRVAttackDamage",
             "PB_DT_BRVCharacterParameters",
             "PB_DT_BulletMaster",
+            "PB_DT_CharacterMaster",
             "PB_DT_CharacterParameterMaster",
             "PB_DT_CharaUniqueParameterMaster",
             "PB_DT_CollisionMaster",
@@ -235,7 +236,9 @@ modified_files = {
             "m51_EBT_Block",
             "m51_EBT_Block_00",
             "m51_EBT_Block_01",
-            "m51_EBT_Door"
+            "m51_EBT_Door",
+            "T_N3127_Body_Color",
+            "T_N3127_Uni_Color"
         ]
     },
     "UI": {
@@ -392,7 +395,6 @@ class Generate(QThread):
             Item.no_key_in_shop()
             Item.no_shard_craft()
             Item.give_extra("Shortcut", 7)
-            Item.give_extra("SkilledDetectiveeye", 1)
             Shard.eye_max_range()
             Item.extra_logic()
             Item.rand_overworld_key()

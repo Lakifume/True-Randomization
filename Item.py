@@ -379,8 +379,7 @@ def init():
         "Treasurebox_SIP000_Tutorial",
         "Treasurebox_SIP020_1",
         "N3106_1ST_Treasure",
-        "N3106_2ND_Treasure",
-        "Treasurebox_JRN002_1"
+        "N3106_2ND_Treasure"
     ]
     global room_to_area
     room_to_area = {
@@ -421,6 +420,7 @@ def init():
         "Treasurebox_PureMiriam_Hair":  ["HighJump", "Invert"],
         "Treasurebox_SIP014_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Wall_SIP014_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_VIL006_4":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_GDN013_1":         ["Invert", "Dimensionshift"],
         "Treasurebox_SAN003_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN003_8":         ["Dimensionshift", "Reflectionray"],
@@ -591,8 +591,6 @@ def init():
     thousand = []
     global ten_thousand
     ten_thousand = []
-    #Skip lists
-    #Bosses that softlock if they are given a different shard
     global enemy_skip_list
     enemy_skip_list = [
         "N1003",
@@ -601,9 +599,25 @@ def init():
     ]
     global shop_skip_list
     shop_skip_list = [
+        "Potion",
+        "Ether",
+        "Waystone",
+	    "SeedCorn",
+	    "SeedRice",
+	    "SeedPotato",
+        "8BitCoin",
+        "16BitCoin",
+        "32BitCoin"
+    ]
+    global price_skip_list
+    price_skip_list = [
+        "Potion",
+        "Ether",
         "Waystone"
     ]
-    #Galleon
+    Manager.mod_data["ItemDrop"]["Potion"]["ShopRatio"]      -= 3
+    Manager.mod_data["ItemDrop"]["CookingMat"]["ShopRatio"]  -= 3
+    Manager.mod_data["ItemDrop"]["StandardMat"]["ShopRatio"] -= 3
     global gun_list
     gun_list = [
         "Musketon",
@@ -786,18 +800,15 @@ def extra_logic():
         Manager.mod_data["MapLogic"][room_name]["Keyofbacker3"]         = False
         Manager.mod_data["MapLogic"][room_name]["Keyofbacker4"]         = False
         Manager.mod_data["MapLogic"][room_name]["MonarchCrown"]         = False
-    #Benjamin's last reward appears if you've completed all his quests which is not guaranteed to be possible early on
-    #Gebel's Glasses chest only appears if you to get 1 copy of every shard
-    #OD can only be fought if the Tome of Conquest was obtained
-    #Make sure none of these are required
+    #OD can only be fought if the Tome of Conquest was obtained which can never be guaranteed
     if Manager.mod_data["MapLogic"]["m18ICE_019"]["GateRoom"]:
-        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"]      = ["m18ICE_019"]
-        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"]      = ["m18ICE_019"]
-        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"]      = ["m18ICE_019"]
+        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"] = ["m18ICE_019"]
+        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"] = ["m18ICE_019"]
+        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"] = ["m18ICE_019"]
     else:
-        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
+        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
 
 def hard_enemy_logic():
     #On hard mode some rooms have extra enemies so update the location info
@@ -1372,10 +1383,12 @@ def all_hair_in_shop():
     Manager.datatable["PB_DT_ItemMaster"]["Worldfashionfirstissue"]["buyPrice"]  = 100
     Manager.datatable["PB_DT_ItemMaster"]["Worldfashionfirstissue"]["Producted"] = "Event_01_001_0000"
     shop_skip_list.append("Worldfashionfirstissue")
+    price_skip_list.append("Worldfashionfirstissue")
     for i in range(11):
         Manager.datatable["PB_DT_ItemMaster"]["WorldfashionNo" + "{:02d}".format(i + 2)]["buyPrice"]  = 100
         Manager.datatable["PB_DT_ItemMaster"]["WorldfashionNo" + "{:02d}".format(i + 2)]["Producted"] = "Event_01_001_0000"
         shop_skip_list.append("WorldfashionNo" + "{:02d}".format(i + 2))
+        price_skip_list.append("WorldfashionNo" + "{:02d}".format(i + 2))
 
 def no_key_in_shop():
     #Remove all key items from shop
@@ -1385,11 +1398,6 @@ def no_key_in_shop():
     Manager.datatable["PB_DT_ItemMaster"]["MonarchCrown"]["sellPrice"] = 0
 
 def rand_shop_pool():
-    #Unchanged items are guaranteed so update the shop number
-    for i in Manager.mod_data["ItemDrop"]:
-        for e in shop_skip_list:
-            if e in Manager.mod_data["ItemDrop"][i]["ItemPool"]:
-                Manager.mod_data["ItemDrop"][i]["ShopRatio"] -= 1
     #Reset shop event
     for i in Manager.datatable["PB_DT_ItemMaster"]:
         if i in shop_skip_list:
@@ -1407,7 +1415,7 @@ def rand_shop_pool():
 def rand_shop_price(scale):
     price_range = Manager.create_weighted_list(100, 1, 10000, 1, 3)
     for i in Manager.datatable["PB_DT_ItemMaster"]:
-        if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] == 0 or i in shop_skip_list:
+        if Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"] == 0 or i in price_skip_list:
             continue
         #Buy
         buy_price = Manager.datatable["PB_DT_ItemMaster"][i]["buyPrice"]

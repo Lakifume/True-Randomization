@@ -188,8 +188,6 @@ def init():
         "m18ICE_005",
         "m18ICE_010",
         "m18ICE_017"
-        #"m20JRN_002",
-        #"m20JRN_004"
     ]
     global backer_door_rooms
     backer_door_rooms = [
@@ -411,7 +409,6 @@ def init():
         "m18ICE_004": "N2012",
         "m18ICE_018": "N1008",
         "m18ICE_019": "N1009_Enemy"
-        #"m20JRN_003": "N2017"
     }
     global room_to_backer
     room_to_backer = {
@@ -1035,8 +1032,13 @@ def apply_tweaks():
             datatable["PB_DT_DamageMaster"][i]["FixedDamage"]    = 7777.0
         else:
             datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
-    #Increase default drop rates
+    #Loop through drops
     for i in datatable["PB_DT_DropRateMaster"]:
+        #Increase default drop rates
+        if datatable["PB_DT_DropRateMaster"][i]["AreaChangeTreasureFlag"]:
+            drop_rate = mod_data["ItemDrop"]["StandardMat"]["ItemRate"]
+        else:
+            drop_rate = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]
         #Keep dulla head drops relatively low due to their spawn frequency
         if i.split("_")[0] in ["N3090", "N3099"]:
             drop_rate_multiplier = 0.5
@@ -1044,14 +1046,9 @@ def apply_tweaks():
             drop_rate_multiplier = 1.0
         if 0.0 < datatable["PB_DT_DropRateMaster"][i]["ShardRate"] < 100.0:
             datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = mod_data["ShardDrop"]["ItemRate"]*drop_rate_multiplier
-        if 0.0 < datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
-        if 0.0 < datatable["PB_DT_DropRateMaster"][i]["CommonRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["CommonRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
-        if 0.0 < datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
-        if 0.0 < datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*drop_rate_multiplier
+        for e in ["RareItemRate", "CommonRate", "RareIngredientRate", "CommonIngredientRate"]:
+            if 0.0 < datatable["PB_DT_DropRateMaster"][i][e] < 100.0:
+                datatable["PB_DT_DropRateMaster"][i][e] = drop_rate*drop_rate_multiplier
         #Make coin type match the amount
         if datatable["PB_DT_DropRateMaster"][i]["CoinOverride"] > 0:
             datatable["PB_DT_DropRateMaster"][i]["CoinType"] = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][i]["CoinOverride"])
@@ -1170,6 +1167,16 @@ def apply_tweaks():
     add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
+    #Store original enemy stats for convenience
+    global original_enemy_stats
+    original_enemy_stats = {}
+    for i in datatable["PB_DT_CharacterParameterMaster"]:
+        original_enemy_stats[i] = {}
+        original_enemy_stats[i]["Level"] = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
+        original_enemy_stats[i]["POI"] = datatable["PB_DT_CharacterParameterMaster"][i]["POI"]
+        original_enemy_stats[i]["CUR"] = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
+        original_enemy_stats[i]["STO"] = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
+        original_enemy_stats[i]["SLO"] = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
 
 def search_and_replace_string(filename, class_name, data, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
@@ -1247,7 +1254,10 @@ def update_map_doors():
     #Boss doors
     #Remove originals
     for i in boss_door_rooms:
-        filename = i + "_Gimmick"
+        if i in room_to_gimmick:
+            filename = room_to_gimmick[i]
+        else:
+            filename = i + "_Gimmick"
         remove_level_class(filename, "PBBossDoor_BP_C")
     #Add new
     for i in room_to_boss:
@@ -1295,7 +1305,10 @@ def update_map_doors():
     #Backer doors
     #Remove originals
     for i in backer_door_rooms:
-        filename = i + "_Gimmick"
+        if i in room_to_gimmick:
+            filename = room_to_gimmick[i]
+        else:
+            filename = i + "_Gimmick"
         for e in range(len(game_data[filename].Exports)):
             class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[e].ClassIndex))) - 1].ObjectName)
             if class_name == "PBBakkerDoor_BP_C":
@@ -1359,7 +1372,10 @@ def update_map_doors():
     #Area doors
     #Remove originals
     for i in area_door_rooms:
-        filename = i + "_Gimmick"
+        if i in room_to_gimmick:
+            filename = room_to_gimmick[i]
+        else:
+            filename = i + "_Gimmick"
         remove_level_class(filename, "BP_AreaDoor_C")
     #Add new
     doors_done = []
@@ -1426,7 +1442,10 @@ def update_map_indicators():
     #Only do it for custom maps as the default map already has bookshelves with text
     #Remove originals
     for i in bookshelf_rooms:
-        filename = i + "_Gimmick"
+        if i in room_to_gimmick:
+            filename = room_to_gimmick[i]
+        else:
+            filename = i + "_Gimmick"
         remove_level_class(filename, "ReadableBookShelf_C")
     #Add new
     doors_done = []
@@ -1560,13 +1579,10 @@ def update_room_containers(room):
     #Don't change the containers for starting items
     if room == "m01SIP_000":
         return
-    #Some rooms have their actors defined in their bg file instead of gimmick
     if room in room_to_gimmick:
         filename = room_to_gimmick[room]
     else:
         filename = room + "_Gimmick"
-    if not filename in game_data:
-        return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for i in range(len(game_data[filename].Exports)):
         old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
@@ -1674,6 +1690,9 @@ def update_room_containers(room):
                 game_data[filename].Exports[root_index].Data[0].Value[0].Value = FVector(-999, 0, 0)
             else:
                 remove_level_actor(filename, i)
+            #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
+            if room == "m20JRN_002":
+                filename = "m20JRN_002_BG"
             add_level_actor(filename, new_class_name, location, rotation, scale, properties)
 
 def update_map_connections():

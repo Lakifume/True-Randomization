@@ -376,26 +376,26 @@ def patch_level(value, entry, extra):
 
 def stat_scale(entry):
     for e in second_stat:
-        stat_num = Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry][e]
+        stat_num = Manager.original_enemy_stats[entry][e]
         #Bosses should always be immune to stone
         if e == "STO" and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] == "EPBStoneType::Boss":
             continue
         #If an enemy is by default immune to all status effects keep it that way
-        if Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["POI"] == 100.0 and Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["CUR"] == 100.0 and Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] >= 99.0 and Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["SLO"] == 100.0:
+        if Manager.original_enemy_stats[entry]["POI"] == 100.0 and Manager.original_enemy_stats[entry]["CUR"] == 100.0 and Manager.original_enemy_stats[entry]["STO"] >= 99.0 and Manager.original_enemy_stats[entry]["SLO"] == 100.0:
             continue
         #Gain
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]:
+        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_enemy_stats[entry]["Level"]:
             stat_num += 25.0
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] + ((99 - Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]) * 0.5):
+        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_enemy_stats[entry]["Level"] + ((99 - Manager.original_enemy_stats[entry]["Level"]) * 0.5):
             stat_num += 25.0
         if stat_num > 100.0:
             stat_num = 100.0
         if e == "STO" and stat_num > 99.9:
             stat_num = 99.9
         #Loss
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]:
+        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_enemy_stats[entry]["Level"]:
             stat_num = math.ceil(stat_num - 25.0)
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] * 0.5:
+        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_enemy_stats[entry]["Level"] * 0.5:
             stat_num -= 25.0
         if stat_num < 0.0:
             stat_num = 0.0
