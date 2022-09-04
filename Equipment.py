@@ -149,6 +149,8 @@ def rand_all_weapon():
         #Apply reductions to weapons with special properties to not make them super broken
         if i == "Juwuse":
             reduction = 0.85
+        elif "SteamFlatWideEnd" in i or "ChargeWideEnd" in i:
+            reduction = 1.1
         elif i in ["KillerBoots", "Decapitator"]:
             reduction = 0.9
         elif i in ["Swordbreaker", "Adrastea"]:
@@ -158,7 +160,7 @@ def rand_all_weapon():
         elif i == "OutsiderKnightSword":
             reduction = 13/32
         elif i in ["RemoteDart", "OracleBlade"]:
-            reduction = 30/weapon_type_to_max_value["ShortSword"][1]
+            reduction = 25/weapon_type_to_max_value["ShortSword"][1]
         elif i in ["WalalSoulimo", "ValralAltar"]:
             reduction = 12/weapon_type_to_max_value["ShortSword"][1]
         elif i == "Truesixteenthnight":

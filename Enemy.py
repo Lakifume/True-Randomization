@@ -43,6 +43,8 @@ def init():
         "N1004":        2218,
         "N1008":        2554
     }
+    global enemy_replacement
+    enemy_replacement = {}
 
 def convert_area_to_progress():
     #Adapt the area order of Bloodless mode based on her starting position
@@ -64,7 +66,7 @@ def convert_area_to_progress():
     for i in range(remainder_range):
         Manager.mod_data["BloodlessModeMapOrder"].append(Manager.mod_data["MapOrder"][remainder_index + direction*i])
     if len(Manager.mod_data["BloodlessModeMapOrder"]) != len(Manager.mod_data["MapOrder"]):
-        raise IndexError
+        raise IndexError("Bloodless map order mismatches regular map order length")
     #Convert area list to difficulty scale
     for i in ["", "Original", "BloodlessMode", "BloodlessModeOriginal"]:
         entry = i + "MapOrder"
@@ -96,7 +98,7 @@ def convert_area_to_progress():
             if area_to_progress["MapOrder"][current_area] == i + 1.0:
                 new_boss_order.append(e)
     if len(new_boss_order) != len(zangetsu_exp):
-        raise IndexError
+        raise IndexError("New Zangetsu boss order mismatches original exp order length")
     values = list(zangetsu_exp.values())
     zangetsu_exp.clear()
     zangetsu_exp.update(dict(zip(new_boss_order, values)))
@@ -342,6 +344,30 @@ def rand_enemy_resist():
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:
         if Manager.is_enemy(i)["Enemy"]:
             rand_stat(i)
+
+def rand_enemy_placement():
+    #Randomize in a dictionary
+    enemy_category = {}
+    for i in Manager.mod_data["EnemyLocation"]:
+        enemy_category[Manager.mod_data["EnemyLocation"][i]["Category"]] = []
+    for i in Manager.mod_data["EnemyLocation"]:
+        enemy_category[Manager.mod_data["EnemyLocation"][i]["Category"]].append(i)
+    del enemy_category["None"]
+    #Make ground and air categories shared
+    enemy_category["Ground"].extend(enemy_category["Air"])
+    del enemy_category["Air"]
+    enemy_category["GroundBig"].extend(enemy_category["AirBig"])
+    del enemy_category["AirBig"]
+    enemy_category["GroundSmall"].extend(enemy_category["AirSmall"])
+    del enemy_category["AirSmall"]
+    #Shuffle enemies within each category
+    for i in enemy_category:
+        new_list = copy.deepcopy(enemy_category[i])
+        random.shuffle(new_list)
+        new_dict = dict(zip(enemy_category[i], new_list))
+        enemy_replacement.update(new_dict)
+    for i in enemy_replacement:
+        print(i + "::" + enemy_replacement[i])
 
 def patch_level(value, entry, extra):
     #Make Dom's level be the inverse of the chosen value

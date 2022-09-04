@@ -32,7 +32,7 @@ for i in file_to_path:
         file_to_type[i] = "Sound"
     else:
         file_to_type[i] = "Blueprint"
-load_types = ["DataTable", "Level", "StringTable", "Blueprint", "Material"]
+load_types = ["DataTable", "Level", "StringTable", "Blueprint", "Material", "Sound"]
 simplify_types = ["DataTable", "StringTable"]
 
 mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
@@ -159,6 +159,81 @@ def init():
         "BP_DM_BloodlessAbilityGimmick_C": {
             "Room": "m01SIP_000",
             "Index": 7
+        }
+    }
+    global classic_item_to_properties
+    classic_item_to_properties = {
+        "BP_PBC_ItemCommonMoneyMedium_C": {
+            "Level": "Stage_00",
+            "Index": [0, 9]
+        },
+        "BP_PBC_ItemCommonMoneySmall_C": {
+            "Level": "Stage_00",
+            "Index": [1, 10]
+        },
+        "BP_PBC_ItemCommonMPLarge_C": {
+            "Level": "Stage_00",
+            "Index": [2, 11]
+        },
+        "BP_PBC_ItemCommonMPSmall_C": {
+            "Level": "Stage_00",
+            "Index": [3, 12]
+        },
+        "BP_PBC_ItemCommonWeaponDagger_C": {
+            "Level": "Stage_00",
+            "Index": [4, 13]
+        },
+        "BP_PBC_ItemCommonMagicKillAll_C": {
+            "Level": "Stage_01",
+            "Index": [0, 28]
+        },
+        "BP_PBC_ItemCommonMoneyLarge_C": {
+            "Level": "Stage_01",
+            "Index": [1, 29]
+        },
+        "BP_PBC_ItemCommonPotionInvisible_C": {
+            "Level": "Stage_01",
+            "Index": [5, 33]
+        },
+        "BP_PBC_ItemCommonWeaponBoneArc_C": {
+            "Level": "Stage_01",
+            "Index": [6, 34]
+        },
+        "BP_PBC_ItemCommonWeaponRuinousRood_C": {
+            "Level": "Stage_01",
+            "Index": [8, 36]
+        },
+        "BP_PBC_ItemCommonWeaponUnholyFire_C": {
+            "Level": "Stage_01",
+            "Index": [9, 37]
+        },
+        "BP_PBC_ItemCommonMagicTimeShard_C": {
+            "Level": "Stage_02",
+            "Index": [9, 37]
+        },
+        "BP_PBC_ItemSecretCrown_C": {
+            "Level": "Stage_02",
+            "Index": [14, 46]
+        },
+        "BP_PBC_ItemSecretGoblet_C": {
+            "Level": "Stage_03",
+            "Index": [10, 39]
+        },
+        "BP_PBC_ItemSpecialExtraLife_C": {
+            "Level": "Stage_03",
+            "Index": [11, 40]
+        },
+        "BP_PBC_ItemTreasureChest_C": {
+            "Level": "Stage_04",
+            "Index": [11, 41]
+        },
+        "BP_PBC_ItemSecretLuckyCat_C": {
+            "Level": "Stage_5A",
+            "Index": [10, 43]
+        },
+        "BP_PBC_ItemSpecialFood_C": {
+            "Level": "Stage_5B",
+            "Index": [9, 33]
         }
     }
     global room_to_gimmick
@@ -977,7 +1052,7 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
             #Make experience a portion of health
             if i[0:5] in ["N3106", "N3107", "N3108"]:
-                multiplier = 1
+                multiplier = (3/3)
             else:
                 multiplier = (4/3)
             if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
@@ -992,8 +1067,12 @@ def apply_tweaks():
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
         else:
+            if i == "N3003":
+                multiplier = (1/3)
+            else:
+                multiplier = (2/3)
             if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(2/3))
+                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
                 datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 10
@@ -1073,6 +1152,12 @@ def apply_tweaks():
         datatable["PB_DT_ShardMaster"][i]["ShardColorOverride"] = "EShardColor::None"
         #Make all shards ignore standstill
         datatable["PB_DT_ShardMaster"][i]["IsStopByAccelWorld"] = False
+    #Give magic attack if a weapon has an elemental attribute
+    for i in datatable["PB_DT_WeaponMaster"]:
+        for e in ["FLA", "ICE", "LIG", "HOL", "DAR"]:
+            if datatable["PB_DT_WeaponMaster"][i][e]:
+                datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]
+                break
     #Rename the second Zangetsu boss so that he isn't confused with the first
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
     #Update Jinrai cost description
@@ -1081,7 +1166,7 @@ def apply_tweaks():
     stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
     stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
     #Add DLCs to the enemy archives
-    add_enemy_to_archive("N2016", ["SYS_SEN_AreaName021"], None, "N2015")
+    add_enemy_to_archive("N2016", [], None, "N2015")
     add_enemy_to_archive("N2017", [], None, "N2008")
     #Give the new dullahammer a unique name and look
     datatable["PB_DT_CharacterParameterMaster"]["N3127"]["NameStrKey"] = "ENEMY_NAME_N3127"
@@ -1186,10 +1271,76 @@ def search_and_replace_string(filename, class_name, data, old_value, new_value):
                 if str(e.Name) == data and str(e.Value) == old_value:
                     e.Value = FName.FromString(game_data[filename], new_value)
 
-def change_lip_pointer(event, event_replacement):
+def rand_classic_drops():
+    #Convert the drop dictionary to a wheighted list
+    classic_pool = []
+    for i in mod_data["ClassicDrop"]:
+        for e in range(mod_data["ClassicDrop"][i]):
+            classic_pool.append(i)
+    #Search for any instance of SpawnItemTypeClass and replace it with a random item
+    for i in ["Stage_00", "Stage_01", "Stage_02", "Stage_03", "Stage_04", "Stage_05A", "Stage_05B"]:
+        filename = "Classic_" + i + "_Objects"
+        for e in game_data[filename].Exports:
+            for o in e.Data:
+                if str(o.Name) == "SpawnItemTypeClass":
+                    if int(str(o.Value)) == 0:
+                        item_name = "None"
+                    else:
+                        item_name = str(game_data[filename].Imports[abs(int(str(o.Value))) - 1].ObjectName).replace("BP_PBC_", "").replace("_C", "")
+                    #Don't randomize the item if it isn't in the pool list
+                    if not item_name in classic_pool:
+                        continue
+                    chosen = random.choice(classic_pool)
+                    if chosen == "None":
+                        o.Value = FPackageIndex(0)
+                        break
+                    else:
+                        item_class = "BP_PBC_" + chosen + "_C"
+                    #First check is the item is already in the level's imports
+                    count = 0
+                    found = False
+                    for u in game_data[filename].Imports:
+                        count -= 1
+                        if str(u.ObjectName) == item_class:
+                            o.Value = FPackageIndex(count)
+                            found = True
+                            break
+                    if found:
+                        break
+                    #If not then add the import manually
+                    new_import_index = len(game_data[filename].Imports)
+                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][0]]
+                    package_index = abs(int(str(old_import.OuterIndex.Index))) - 1
+                    new_import = Import(
+                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
+                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FPackageIndex(-(new_import_index + 1 + 2)),
+                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                    )
+                    game_data[filename].Imports.Add(new_import)
+                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][1]]
+                    new_import = Import(
+                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
+                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FPackageIndex(-(new_import_index + 1 + 2)),
+                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                    )
+                    game_data[filename].Imports.Add(new_import)
+                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[package_index]
+                    new_import = Import(
+                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
+                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FPackageIndex(0),
+                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                    )
+                    game_data[filename].Imports.Add(new_import)
+                    o.Value = FPackageIndex(-(new_import_index + 1))
+                    break
+
+def change_lip_pointer(event, event_replacement, prefix):
     #Simply swap the file's name in the name map and save as the new name
-    event = "en_" + event + "_LIP"
-    event_replacement = "en_" + event_replacement + "_LIP"
+    event = prefix + "_" + event + "_LIP"
+    event_replacement = prefix + "_" + event_replacement + "_LIP"
     
     if event_replacement + ".uasset" in os.listdir("Data\\LipSync"):
         event_replacement_data = UAsset("Data\\LipSync\\" + event_replacement + ".uasset", UE4Version(517))
@@ -1672,15 +1823,6 @@ def update_room_containers(room):
                         location.Z = 60
                     location.Y = 0
                     rotation.Yaw = 0
-            properties = {}
-            if "PBEasyTreasureBox_BP_C" in new_class_name:
-                properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
-                properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
-                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst(drop_id))
-                if gimmick_id:
-                    properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
-            else:
-                properties["DropRateID"]   = FName.FromString(game_data[filename], drop_id)
             #Removing chests like any other actor currently causes crashes so instead move the original way offscreen
             #Hopefully this is only temporary
             if "PBEasyTreasureBox_BP_C":
@@ -1693,6 +1835,16 @@ def update_room_containers(room):
             #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
             if room == "m20JRN_002":
                 filename = "m20JRN_002_BG"
+            #Setup the actor properties
+            properties = {}
+            if "PBEasyTreasureBox_BP_C" in new_class_name:
+                properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
+                properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
+                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst(drop_id))
+                if gimmick_id:
+                    properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
+            else:
+                properties["DropRateID"]   = FName.FromString(game_data[filename], drop_id)
             add_level_actor(filename, new_class_name, location, rotation, scale, properties)
 
 def update_map_connections():
@@ -1972,16 +2124,51 @@ def import_texture(filename):
     if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
         raise FileNotFoundError(filename + ".dds failed to inject")
 
-def import_music(filename):
-    #Start by coppying all secondary music files to destination
-    for i in os.listdir(asset_dir + "\\" + file_to_path[filename]):
-        name, extension = os.path.splitext(i)
-        if extension == ".awb":
-            continue
-        if name == filename:
-            shutil.copyfile(asset_dir + "\\" + file_to_path[filename] + "\\" + i, mod_dir + "\\" + file_to_path[filename] + "\\" + i)
-    #Append the HCA data to the AWB's header
-    with open(asset_dir + "\\" + file_to_path[filename] + "\\" + filename + ".awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path[filename] + "\\" + filename + ".awb", "wb") as outfile:
+def add_music_file(filename):
+    #Check if the filename is valid
+    if len(filename.split("_")) != 2:
+        raise TypeError("Invalid music name :" + filename)
+    if len(filename.split("_")[0]) != 5 or len(filename.split("_")[-1]) != 3:
+        raise TypeError("Invalid music name :" + filename)
+    if filename[0:3] != "ACT":
+        raise TypeError("Invalid music name :" + filename)
+    try:
+        int(filename[3:5])
+    except ValueError:
+        raise TypeError("Invalid music name :" + filename)
+    #Add the music pointer in soundmaster
+    music_id = "BGM_m" + filename[3:5] + filename.split("_")[-1]
+    datatable["PB_DT_SoundMaster"][music_id] = copy.deepcopy(datatable["PB_DT_SoundMaster"]["BGM_m50BRM"])
+    datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = datatable["PB_DT_SoundMaster"][music_id]["AssetPath"].replace("BGM_m50BRM", music_id)
+    #Copy the act file
+    new_file = UAsset(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", UE4Version(517))
+    index = new_file.SearchNameReference(FString("ACT50_BRM"))
+    new_file.SetNameReference(index, FString(filename))
+    index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
+    new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + filename))
+    new_file.Exports[0].Data[0].Value = FString(filename)
+    string = "{:02x}".format(int.from_bytes(str.encode(filename), "big"))
+    for i in range(int(len(string)/2)):
+        new_file.Exports[0].Extras[0x662 + i] = int(string[i*2] + string[i*2 + 1], 16)
+        new_file.Exports[0].Extras[0xE82 + i] = int(string[i*2] + string[i*2 + 1], 16)
+    string = "{:02x}".format(int.from_bytes(str.encode(music_id), "big"))
+    for i in range(int(len(string)/2)):
+        new_file.Exports[0].Extras[0x7E1 + i] = int(string[i*2] + string[i*2 + 1], 16)
+    new_file.Write(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
+    #Copy the bgm file
+    new_file = UAsset(asset_dir + "\\" + file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", UE4Version(517))
+    index = new_file.SearchNameReference(FString("ACT50_BRM"))
+    new_file.SetNameReference(index, FString(filename))
+    index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
+    new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + filename))
+    index = new_file.SearchNameReference(FString("BGM_m50BRM"))
+    new_file.SetNameReference(index, FString(music_id))
+    index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/BGM_m50BRM"))
+    new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + music_id))
+    new_file.Exports[0].Data[1].Value = FString(music_id)
+    new_file.Write(mod_dir + "\\" + file_to_path["BGM_m50BRM"] + "\\" + music_id + ".uasset")
+    #Copy the awb and import the new music in it
+    with open(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".awb", "wb") as outfile:
         offset = inputfile.read().find(str.encode("HCA"))
         inputfile.seek(0)
         outfile.write(inputfile.read(offset))
@@ -1994,7 +2181,7 @@ def export_name_to_index(filename, export_name):
         if str(i.ObjectName) == export_name:
             return count
         count += 1
-    raise "Export not found"
+    raise Exception("Export not found")
 
 def add_level_actor(filename, actor_class, location, rotation, scale, properties):
     actor_index = len(game_data[filename].Exports)
@@ -2081,7 +2268,7 @@ def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_locat
 def remove_level_actor(filename, index):
     #Remove actor at index
     if file_to_type[filename] != "Level":
-        raise "Input is not a level file"
+        raise TypeError("Input is not a level file")
     level_index = export_name_to_index(filename, "PersistentLevel")
     game_data[filename].Exports[index].OuterIndex = FPackageIndex(0)
     game_data[filename].Exports[level_index].IndexData.Remove(index + 1)
@@ -2089,7 +2276,7 @@ def remove_level_actor(filename, index):
 def remove_level_class(filename, name):
     #Remove all actors of class
     if file_to_type[filename] != "Level":
-        raise "Input is not a level file"
+        raise TypeError("Input is not a level file")
     level_index = export_name_to_index(filename, "PersistentLevel")
     for i in range(len(game_data[filename].Exports)):
         class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
@@ -2101,7 +2288,7 @@ def change_material_hsv(filename, parameter, new_hsv):
     #Change a vector color in a material file
     #Here we use hsv as a base as it is easier to work with
     if file_to_type[filename] != "Material":
-        raise "Input is not a material file"
+        raise TypeError("Input is not a material file")
     #Some color properties are not parsed by UAssetAPI and end up in extra data
     #Hex edit in that case
     if filename in material_to_offset:
@@ -2111,7 +2298,7 @@ def change_material_hsv(filename, parameter, new_hsv):
             for e in range(12):
                 string += "{:02x}".format(game_data[filename].Exports[0].Extras[i + e]).upper()
             if string != "0000000000000002FFFFFFFF":
-                raise "Material offset invalid"
+                raise Exception("Material offset invalid")
             #Get rgb
             rgb = []
             for e in range(3):
@@ -2332,6 +2519,8 @@ def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
             break
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id] = new_entry
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["UniqueID"] = enemy_id
+    for i in range(4):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = "None"
     for i in range(len(area_ids)):
         datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = area_ids[i]
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path

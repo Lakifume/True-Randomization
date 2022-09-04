@@ -213,6 +213,7 @@ modified_files = {
             "PB_DT_QuestMaster",
             "PB_DT_RoomMaster",
             "PB_DT_ShardMaster",
+            "PB_DT_SoundMaster",
             "PB_DT_SpecialEffectDefinitionMaster",
             "PB_DT_WeaponMaster"
         ]
@@ -224,32 +225,32 @@ modified_files = {
             "PBSystemStringTable"
         ]
     },
-    "Blueprint": {
-        "Files": [
-            "PBExtraModeInfo_BP"
-        ]
-    },
     "Texture": {
         "Files": [
+            "T_N3127_Body_Color",
+            "T_N3127_Uni_Color",
             "m51_EBT_BG",
             "m51_EBT_BG_01",
             "m51_EBT_Block",
             "m51_EBT_Block_00",
             "m51_EBT_Block_01",
             "m51_EBT_Door",
-            "T_N3127_Body_Color",
-            "T_N3127_Uni_Color"
+            "time_shard_diffuse"
         ]
     },
     "UI": {
         "Files": [
             "WindowMinimap02",
-            "icon"
+            "icon",
+            "ui_icon_pickup_dagger",
+            "ui_icon_pickup_timeShard",
+            "ui_icon_results_dagger",
+            "ui_icon_results_timeShard"
         ]
     },
-    "Sound": {
+    "Blueprint": {
         "Files": [
-            "ACT50_BRM"
+            "PBExtraModeInfo_BP"
         ]
     }
 }
@@ -395,7 +396,6 @@ class Generate(QThread):
             Item.no_key_in_shop()
             Item.no_shard_craft()
             Item.give_extra("Shortcut", 7)
-            Shard.eye_max_range()
             Item.extra_logic()
             Item.rand_overworld_key()
             Item.rand_overworld_pool(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
@@ -403,6 +403,10 @@ class Generate(QThread):
             Manager.randomizer_events()
             Manager.remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
             Manager.remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
+        
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            random.seed(self.seed)
+            Manager.rand_classic_drops()
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
@@ -464,7 +468,7 @@ class Generate(QThread):
         
         if config.getboolean("SoundRandomization", "bDialogues"):
             random.seed(self.seed)
-            Sound.rand_dialogue()
+            Sound.rand_dialogue(config.getboolean("GameVoices", "bEnglish"))
         
         if config.getboolean("GameDifficulty", "bNormal"):
             Manager.remove_difficulties("Normal")
@@ -493,6 +497,7 @@ class Generate(QThread):
             Enemy.zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             Equipment.zangetsu_black_belt()
         
+        #Update some things to reflect previous changes
         Item.update_container_types()
         Item.update_boss_crystal_color()
         Item.update_shard_candles()
@@ -508,10 +513,16 @@ class Generate(QThread):
         #Display game version, mod version and seed on the title screen
         Manager.show_mod_stats(str(self.seed), config.get("Misc", "sVersion"))
         
+        #Write the key location log, prioritizing Bloodless if candle shuffle is on
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             Manager.write_log("KeyLocation", Bloodless.create_log(self.seed, self.map))
         elif config.getboolean("ItemRandomization", "bOverworldPool"):
             Manager.write_log("KeyLocation", Item.create_log(self.seed, self.map))
+        
+        #Add and import any music files found in the music directory
+        for i in os.listdir("Data\\Music"):
+            name, extension = os.path.splitext(i)
+            Manager.add_music_file(name)
         
         current += 1
         self.signaller.progress.emit(current)
@@ -524,11 +535,11 @@ class Generate(QThread):
         current += 1
         self.signaller.progress.emit(current)
         
-        #Convert data
+        #Write lip sync
         
         self.progress_bar.setLabelText("Writing lip sync...")
         
-        Sound.update_lip_movement()
+        Sound.update_lip_movement(config.getboolean("GameVoices", "bEnglish"))
         current += 1
         self.signaller.progress.emit(current)
         
@@ -537,11 +548,6 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Writing files...")
         
         Manager.write_files()
-        
-        #The recently added Kingdom 2 Crowns crossover area lacks any exclusive music, it just plays the regular cave theme
-        #Since this is easy to fix via modding include it in this rando
-        #Import the new music over one of the few unused slots, the slot ID is already referenced in the RoomMaster under MapEdit
-        Manager.import_music("ACT50_BRM")
         
         #Edit the minimap outline to give an easy visual cue to tell if someone is using the mod or not and what difficulty they're on
         #This is especially useful on twitch as this difference is even visible from stream previews
@@ -570,6 +576,14 @@ class Generate(QThread):
         #Give the new dullahammer a unique color scheme
         Manager.import_texture("T_N3127_Body_Color")
         Manager.import_texture("T_N3127_Uni_Color")
+        
+        #Change the timestop shard in classic mode to have the same color as standstill
+        Manager.import_texture("time_shard_diffuse")
+        Manager.import_texture("ui_icon_pickup_timeShard")
+        Manager.import_texture("ui_icon_results_timeShard")
+        #Also change the dagger icon to match the model
+        Manager.import_texture("ui_icon_pickup_dagger")
+        Manager.import_texture("ui_icon_results_dagger")
         
         #Most map icons have fixed positions on the canvas and will not adapt to the position of the rooms
         #Might be possible to edit them via a blueprint but that's not worth it so remove them if custom map is chosen
@@ -607,6 +621,7 @@ class Generate(QThread):
             for i in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
                 os.remove("Data\\Texture\\" + i)
         
+        #Update portrait pointers
         if config.getboolean("GraphicRandomization", "bBackerPortraits"):
             for i in portrait_replacement:
                 Manager.change_portrait_pointer(i, portrait_replacement[i])
@@ -843,17 +858,17 @@ class Main(QWidget):
         box_11.setLayout(box_11_grid)
         grid.addWidget(box_11, 6, 1, 1, 2)
         
+        box_13_grid = QGridLayout()
+        box_13 = QGroupBox("Game Voices")
+        box_13.setToolTip("Select the voice language that you'll be using in-game.")
+        box_13.setLayout(box_13_grid)
+        grid.addWidget(box_13, 6, 3, 1, 2)
+        
         box_16_grid = QGridLayout()
         box_16 = QGroupBox("Start With")
         box_16.setToolTip("Select the shard you want to start the randomizer with.")
         box_16.setLayout(box_16_grid)
         grid.addWidget(box_16, 7, 1, 1, 2)
-        
-        box_13_grid = QGridLayout()
-        box_13 = QGroupBox("Game Mode")
-        box_13.setToolTip("Select the in-game mode this file is meant for.")
-        box_13.setLayout(box_13_grid)
-        #grid.addWidget(box_13, 6, 3, 1, 2)
         
         box_17_grid = QGridLayout()
         box_17 = QGroupBox("Special Mode")
@@ -891,10 +906,6 @@ class Main(QWidget):
         self.label_change("StringTable")
         box_15_left.addWidget(modified_files["StringTable"]["Label"])
         
-        modified_files["Blueprint"]["Label"] = QLabel(self)
-        self.label_change("Blueprint")
-        box_15_left.addWidget(modified_files["Blueprint"]["Label"])
-        
         modified_files["Texture"]["Label"] = QLabel(self)
         self.label_change("Texture")
         box_15_right.addWidget(modified_files["Texture"]["Label"])
@@ -903,9 +914,9 @@ class Main(QWidget):
         self.label_change("UI")
         box_15_right.addWidget(modified_files["UI"]["Label"])
         
-        modified_files["Sound"]["Label"] = QLabel(self)
-        self.label_change("Sound")
-        box_15_right.addWidget(modified_files["Sound"]["Label"])
+        modified_files["Blueprint"]["Label"] = QLabel(self)
+        self.label_change("Blueprint")
+        box_15_right.addWidget(modified_files["Blueprint"]["Label"])
 
         #Checkboxes
 
@@ -1067,13 +1078,13 @@ class Main(QWidget):
         self.radio_button_13.toggled.connect(self.radio_button_group_5_checked)
         box_16_grid.addWidget(self.radio_button_13, 0, 1)
         
-        self.radio_button_4 = QRadioButton("Randomizer")
-        self.radio_button_4.setToolTip("Adapt the file for randomizer mode.")
+        self.radio_button_4 = QRadioButton("English")
+        self.radio_button_4.setToolTip("Goofy.")
         self.radio_button_4.toggled.connect(self.radio_button_group_2_checked)
         box_13_grid.addWidget(self.radio_button_4, 0, 0)
         
-        self.radio_button_6 = QRadioButton("Story")
-        self.radio_button_6.setToolTip("Adapt the file for story mode.")
+        self.radio_button_6 = QRadioButton("Japanese")
+        self.radio_button_6.setToolTip("Anime.")
         self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
         box_13_grid.addWidget(self.radio_button_6, 1, 0)
         
@@ -1216,10 +1227,10 @@ class Main(QWidget):
         else:
             self.radio_button_13.setChecked(True)
         
-        #if config.getboolean("GameMode", "bRandomizer"):
-        #    self.radio_button_4.setChecked(True)
-        #else:
-        #    self.radio_button_6.setChecked(True)
+        if config.getboolean("GameVoices", "bEnglish"):
+            self.radio_button_4.setChecked(True)
+        else:
+            self.radio_button_6.setChecked(True)
         
         if config.getboolean("SpecialMode", "bNone"):
             self.radio_button_14.setChecked(True)
@@ -1576,12 +1587,10 @@ class Main(QWidget):
             self.check_box_24.setStyleSheet("color: " + graphic_color)
             if self.check_box_13.isChecked() and self.check_box_14.isChecked():
                 self.box_8.setStyleSheet("color: " + graphic_color)
-            self.add_to_list("Texture", "T_Tknife05_Base"    , [])
         else:
             config.set("GraphicRandomization", "bBackerPortraits", "false")
             self.check_box_24.setStyleSheet("color: #ffffff")
             self.box_8.setStyleSheet("color: #ffffff")
-            self.remove_from_list("Texture", "T_Tknife05_Base"    , [])
         self.fix_background_glitch()
 
     def check_box_15_changed(self):
@@ -1638,11 +1647,11 @@ class Main(QWidget):
 
     def radio_button_group_2_checked(self):
         if self.radio_button_4.isChecked():
-            config.set("GameMode", "bRandomizer", "true")
-            config.set("GameMode", "bStory", "false")
+            config.set("GameVoices", "bEnglish", "true")
+            config.set("GameVoices", "bJapanese", "false")
         else:
-            config.set("GameMode", "bRandomizer", "false")
-            config.set("GameMode", "bStory", "true")
+            config.set("GameVoices", "bEnglish", "false")
+            config.set("GameVoices", "bJapanese", "true")
     
     def radio_button_group_6_checked(self):
         if self.radio_button_14.isChecked():

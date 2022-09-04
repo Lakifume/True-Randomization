@@ -98,8 +98,3 @@ def rand_shard(scale):
             balance   = (average_power/doin_base)**correction
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["minGradeValue"] = round(doin_base * balance, 3)
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(doin_base * balance * Manager.mod_data["ShardBase"]["LigaDoin"]["Grade"], 3)
-
-def eye_max_range():
-    #Give Detective's Eye infinite range
-    Manager.datatable["PB_DT_ShardMaster"]["Detectiveeye"]["minGradeValue"] = 999.0
-    Manager.datatable["PB_DT_ShardMaster"]["Detectiveeye"]["maxGradeValue"] = 999.0

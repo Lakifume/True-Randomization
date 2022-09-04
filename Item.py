@@ -834,7 +834,7 @@ def remove_infinite():
 
 def give_extra(item, quantity):
     if not free_drop_entries:
-        raise "Out of free drop entries"
+        raise IndexError("Out of free drop entries")
     entry = free_drop_entries[0]
     free_drop_entries.remove(entry)
     Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemId"] = item
