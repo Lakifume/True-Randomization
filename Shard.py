@@ -98,3 +98,9 @@ def rand_shard(scale):
             balance   = (average_power/doin_base)**correction
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["minGradeValue"] = round(doin_base * balance, 3)
             Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(doin_base * balance * Manager.mod_data["ShardBase"]["LigaDoin"]["Grade"], 3)
+
+def update_special_properties():
+    #A few shards have a multiplier different than 1.0 in DamageMaster so update their shard power based on that
+    for i in ["minGradeValue", "maxGradeValue"]:
+        Manager.datatable["PB_DT_ShardMaster"]["DragonicRage"][i] = round(Manager.datatable["PB_DT_ShardMaster"]["DragonicRage"][i] / 1.45, 3)
+        Manager.datatable["PB_DT_ShardMaster"]["SummonAme"][i]    = round(Manager.datatable["PB_DT_ShardMaster"]["SummonAme"][i]    / 0.75, 3)

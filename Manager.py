@@ -56,6 +56,9 @@ from UAssetAPI.UnrealTypes import *
 from UAssetAPI.Unversioned import *
 from UAssetSnippet import *
 
+#test = UAsset("m05SAN_000_Gimmick.umap", UE4Version.VER_UE4_22)
+#print(str(test.Imports[298].ObjectName))
+
 class Direction(Enum):
     LEFT         = 0x0001
     BOTTOM       = 0x0002
@@ -148,9 +151,9 @@ def init():
             "Room": "m07LIB_006",
             "Index": 142
         },
-        "B_COM_DamegeWall_1_C": {
-            "Room": "m03ENT_000",
-            "Index": 0
+        "BP_MagicDoor_C": {
+            "Room": "m01SIP_002",
+            "Index": 3
         },
         "BP_DM_BaseLantern_ShardChild2_C": {
             "Room": "m05SAN_000",
@@ -1104,13 +1107,7 @@ def apply_tweaks():
             datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "ArmsRecipe020"
     #Remove the minimal damage addition on attacks
     for i in datatable["PB_DT_DamageMaster"]:
-        if i == "N3108_SUICIDE":
-            datatable["PB_DT_DamageMaster"][i]["SA_Correction"]  = 0.0
-            datatable["PB_DT_DamageMaster"][i]["STR_Correction"] = 0.0
-            datatable["PB_DT_DamageMaster"][i]["INT_Correction"] = 0.0
-            datatable["PB_DT_DamageMaster"][i]["FixedDamage"]    = 7777.0
-        else:
-            datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
+        datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
     #Loop through drops
     for i in datatable["PB_DT_DropRateMaster"]:
         #Increase default drop rates
@@ -1210,7 +1207,7 @@ def apply_tweaks():
     add_extra_mode_warp("m11UGD_056_Gimmick", FVector( 600, 0, 1300), FRotator(-90, 180,   0), FVector( 660, 0, 1500), FRotator( 90, 180,   0))
     add_extra_mode_warp("m12SND_006_Gimmick", FVector( 660, 0,   60), FRotator(  0,   0,   0), FVector( 420, 0,   60), FRotator(  0, 180,   0))
     add_extra_mode_warp("m13ARC_006_Gimmick", FVector( 600, 0,  960), FRotator(  0,   0,   0), FVector( 420, 0,  960), FRotator(  0, 180,   0))
-    add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1180, 0,   75), FRotator(  0,   0,   0))
+    add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1200, 0,   75), FRotator(  0,   0,   0))
     add_extra_mode_warp("m17RVA_001_Gimmick", FVector( 800, 0, 2080), FRotator(  0,   0, 180), FVector( 540, 0, 1800), FRotator(  0, 180,   0))
     add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
@@ -1218,7 +1215,7 @@ def apply_tweaks():
     add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
     #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
     #Add a shard candle for it so that it becomes a guaranteed
-    add_level_actor("m11UGD_015_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(720, -60, 390), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_015_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_015_Gimmick"], "AquastreamLantarn001")})
+    add_level_actor("m11UGD_019_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(1320, -60, 1845), FRotator(180, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_019_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_019_Gimmick"], "AquastreamLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"] = {}
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 187
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
@@ -1240,16 +1237,31 @@ def apply_tweaks():
     #Also remove the bone mortes from that one crowded room in galleon
     remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
     mod_data["EnemyLocation"]["N3004"]["HardModeRooms"].remove("m01SIP_014")
+    #Fix some of the giant cannon stacks clipping over each other
+    game_data["m10BIG_008_Enemy"].Exports[17].Data[4].Value[0].Value     = FVector(2220, 0, 3505)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(2220, 0, 3865)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[1].Data[4].Value[0].Value = FVector(2220, 0, 4225)
+    game_data["m10BIG_008_Enemy"].Exports[18].Data[4].Value[0].Value     = FVector( 300, 0, 1345)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[2].Data[4].Value[0].Value = FVector( 300, 0, 1705)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[3].Data[4].Value[0].Value = FVector( 300, 0, 2065)
+    game_data["m10BIG_008_Enemy"].Exports[19].Data[4].Value[0].Value     = FVector(2220, 0,  505)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[4].Data[4].Value[0].Value = FVector(2220, 0,  865)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[5].Data[4].Value[0].Value = FVector(2220, 0, 1225)
+    game_data["m10BIG_013_Enemy"].Exports[5].Data[4].Value[0].Value      = FVector(1020, 0, 1585)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(1020, 0, 1945)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[1].Data[4].Value[0].Value = FVector(1020, 0, 2305)
+    game_data["m10BIG_013_Enemy"].Exports[6].Data[4].Value[0].Value      = FVector(2040, 0, 2005)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[2].Data[4].Value[0].Value = FVector(2040, 0, 2365)
+    game_data["m10BIG_013_Enemy"].Exports[7].Data[4].Value[0].Value      = FVector( 300, 0, 1105)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[3].Data[4].Value[0].Value = FVector( 300, 0, 1465)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[4].Data[4].Value[0].Value = FVector( 360, 0, 2065)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[5].Data[4].Value[0].Value = FVector( 360, 0, 2425)
     #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
     #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
-    #To compensate for this the cooldown on spike damage was reduced, making it less likely for the player to tank through
     remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
-    #Add more spikes in return
-    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7140), FRotator(0, 0, 0), FVector(1, 1,  1), {})
-    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 7380), FRotator(0, 0, 0), FVector(1, 1, -1), {})
-    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 7860), FRotator(0, 0, 0), FVector(1, 1,  1), {})
-    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(420, 120, 8760), FRotator(0, 0, 0), FVector(1, 1, -1), {})
-    add_level_actor("m03ENT_000_Gimmick", "B_COM_DamegeWall_1_C", FVector(  0, 120, 9240), FRotator(0, 0, 0), FVector(1, 1,  1), {})
+    #Add magic doors instead to truly prevent tanking through
+    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
+    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
     #Store original enemy stats for convenience
@@ -1312,26 +1324,26 @@ def rand_classic_drops():
                     old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][0]]
                     package_index = abs(int(str(old_import.OuterIndex.Index))) - 1
                     new_import = Import(
-                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
-                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
+                        FName.FromString(game_data[filename], str(old_import.ClassName)),
                         FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                        FName.FromString(game_data[filename], str(old_import.ObjectName))
                     )
                     game_data[filename].Imports.Add(new_import)
                     old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][1]]
                     new_import = Import(
-                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
-                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
+                        FName.FromString(game_data[filename], str(old_import.ClassName)),
                         FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                        FName.FromString(game_data[filename], str(old_import.ObjectName))
                     )
                     game_data[filename].Imports.Add(new_import)
                     old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[package_index]
                     new_import = Import(
-                        FName.FromString(game_data[filename], old_import.ClassPackage.Value.Value),
-                        FName.FromString(game_data[filename], old_import.ClassName.Value.Value),
+                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
+                        FName.FromString(game_data[filename], str(old_import.ClassName)),
                         FPackageIndex(0),
-                        FName.FromString(game_data[filename], old_import.ObjectName.Value.Value)
+                        FName.FromString(game_data[filename], str(old_import.ObjectName))
                     )
                     game_data[filename].Imports.Add(new_import)
                     o.Value = FPackageIndex(-(new_import_index + 1))
@@ -1507,13 +1519,6 @@ def update_map_doors():
                     location.Z += 180.0
                 actor_index = len(game_data[filename].Exports)
                 add_level_actor(filename, "PBBakkerDoor_BP_C", location, rotation, scale, properties)
-                #Fix a snippet issue causing a crash
-                open_timeline_index = int(str(game_data[filename].Exports[actor_index].Data[3].Value)) - 1
-                close_timeline_index = int(str(game_data[filename].Exports[actor_index].Data[2].Value)) - 1
-                open_curve_float_index = abs(int(str(game_data[filename].Exports[open_timeline_index].Data[0].Value[1].Value[0].Value[0].Value))) - 1
-                close_curve_float_index = abs(int(str(game_data[filename].Exports[close_timeline_index].Data[0].Value[1].Value[0].Value[0].Value))) - 1
-                game_data[filename].Imports[open_curve_float_index].ObjectName = FName.FromString(game_data[filename], "CurveFloat_0")
-                game_data[filename].Imports[close_curve_float_index].ObjectName = FName.FromString(game_data[filename], "CurveFloat_0_1")
                 #If the door is a breakable wall we don't want the backer door to overlay it, so break it by default
                 if o in wall_to_gimmick_flag:
                     datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]

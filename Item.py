@@ -376,8 +376,10 @@ def init():
     ]
     global keyless_chests
     keyless_chests = [
+        "Qu07_Last",
         "Treasurebox_SIP000_Tutorial",
         "Treasurebox_SIP020_1",
+        "Treasurebox_VIL005_1",
         "N3106_1ST_Treasure",
         "N3106_2ND_Treasure"
     ]
@@ -452,7 +454,7 @@ def init():
         "Treasurebox_UGD024_2":         ["Deepsinker"],
         "Treasurebox_UGD024_3":         ["Deepsinker"],
         "Treasurebox_UGD025_1":         ["Deepsinker"],
-        "Treasurebox_UGD025_2":         ["Dimensionshift", "Reflectionray"],
+        "Treasurebox_UGD025_2":         [["Deepsinker", "Dimensionshift", "Reflectionray"]],
         "Treasurebox_UGD025_3":         ["Deepsinker"],
         "Treasurebox_UGD036_1":         ["Deepsinker"],
         "Treasurebox_UGD040_1":         ["Deepsinker"],
@@ -465,12 +467,13 @@ def init():
         "Treasurebox_ARC006_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_TAR006_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_JPN002_1":         ["Dimensionshift"],
-        "Treasurebox_RVA001_2":         ["Dimensionshift"],
-        "Treasurebox_RVA011_1":         ["Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_RVA001_2":         ["Dimensionshift", ["Invert", "Reflectionray"]],
+        "Treasurebox_RVA011_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"]
+        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"],
+        "Wall_UGD031_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"]
     }
     global boss_rooms
     boss_rooms = [
@@ -800,15 +803,6 @@ def extra_logic():
         Manager.mod_data["MapLogic"][room_name]["Keyofbacker3"]         = False
         Manager.mod_data["MapLogic"][room_name]["Keyofbacker4"]         = False
         Manager.mod_data["MapLogic"][room_name]["MonarchCrown"]         = False
-    #OD can only be fought if the Tome of Conquest was obtained which can never be guaranteed
-    if Manager.mod_data["MapLogic"]["m18ICE_019"]["GateRoom"]:
-        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"] = ["m18ICE_019"]
-        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"] = ["m18ICE_019"]
-        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"] = ["m18ICE_019"]
-    else:
-        Manager.mod_data["MapLogic"]["m02VIL_003"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.mod_data["MapLogic"]["m02VIL_005"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
-        Manager.mod_data["MapLogic"]["m18ICE_004"]["NearestGate"] = copy.deepcopy(Manager.mod_data["MapLogic"]["m18ICE_019"]["NearestGate"])
 
 def hard_enemy_logic():
     #On hard mode some rooms have extra enemies so update the location info
@@ -857,7 +851,11 @@ def key_logic():
     previous_gate = []
     requirement_to_gate = {}
     #Filling list with all room names
-    all_rooms = list(Manager.mod_data["MapLogic"])
+    all_rooms = []
+    for i in Manager.mod_data["MapLogic"]:
+        ratio = room_to_ratio(i)
+        for e in range(ratio):
+            all_rooms.append(i)
     #Loop through all keys until they've all been assigned
     while all_keys:
         #Reset lists and dicts
@@ -899,24 +897,12 @@ def key_logic():
         #Gathering rooms available before gate
         for i in Manager.mod_data["MapLogic"]:
             if not Manager.mod_data["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["MapLogic"][i]["NearestGate"]) or i in previous_gate:
-                #Increasing chances of late rooms
-                #Otherwise early game areas are more likely to have everything
-                gate_count = 1
-                gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][i]["NearestGate"])
-                while gate_list:
-                    nearest_gate = random.choice(gate_list)
-                    for e in Manager.mod_data["MapLogic"]:
-                        if e == nearest_gate:
-                            gate_count += 1
-                            gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][e]["NearestGate"])
-                            break
-                #Making multplier more extreme with exponent
-                gate_count = round(gate_count**1.5)
-                #Increasing chances of boss rooms
-                #Otherwise bosses and special enemies have low chances of being required
-                if i in boss_rooms:
-                    gate_count *= 6
-                for e in range(gate_count):
+                #If it's OD's room then don't unlock it until all requirements are lifted
+                if i == "m18ICE_004":
+                    continue
+                #Get ratio
+                ratio = room_to_ratio(i)
+                for e in range(ratio):
                     previous_room.append(i)
         #Choosing key item based on requirements
         chosen_item = random.choice(all_keys)
@@ -964,6 +950,24 @@ def previous_in_nearest(previous_gate, nearest_gate):
                 return True
     return False
 
+def room_to_ratio(room):
+    #Increasing chances of late rooms
+    #Otherwise early game areas are more likely to have everything
+    ratio = 1
+    gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][room]["NearestGate"])
+    while gate_list:
+        nearest_gate = random.choice(gate_list)
+        for i in Manager.mod_data["MapLogic"]:
+            if i == nearest_gate:
+                ratio *= 2
+                gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][i]["NearestGate"])
+                break
+    #Increasing chances of boss rooms
+    #Otherwise bosses and special enemies have low chances of being required
+    if room in boss_rooms:
+        ratio *= 10
+    return ratio
+
 def chest_to_room(chest):
     if chest in special_chest_to_room:
         return special_chest_to_room[chest]
@@ -985,27 +989,44 @@ def logic_choice(chosen_item, room_list):
             chest_list = room_to_available_chests(chosen_room)
             if chest_list:
                 key_item_to_location[chosen_item] = random.choice(chest_list)
+                #If it is a boss room then remove it from the priority
+                if chosen_room in boss_rooms:
+                    boss_rooms.remove(chosen_room)
                 break
         if chosen_item in key_shards:
             enemy_list = room_to_available_enemies(chosen_room)
             if enemy_list:
                 key_shard_to_location[chosen_item] = random.choice(enemy_list)
+                if chosen_room in boss_rooms:
+                    boss_rooms.remove(chosen_room)
                 break
 
 def room_to_available_chests(room):
     chest_list = []
     for i in used_chests:
         if chest_to_room(i) == room and not i in list(key_item_to_location.values()) and not i in keyless_chests:
+            #If it is a chest with a self-contained requirement then check if available
             if i in chest_to_requirement:
+                check = None
                 for e in chest_to_requirement[i]:
-                    if e in key_item_to_location:
-                        if i == "Treasurebox_UGD025_2":
-                            if "Deepsinker" in key_item_to_location:
-                                chest_list.append(i)
+                    #AND
+                    if type(e) is list:
+                        check = True
+                        for o in e:
+                            if not o in key_shard_to_location:
+                                check = False
                                 break
-                        else:
-                            chest_list.append(i)
+                        if check:
                             break
+                    #OR  
+                    else:
+                        check = False
+                        if e in key_shard_to_location:
+                            check = True
+                            break
+                if check:
+                    for e in range(2):
+                        chest_list.append(i)
             else:
                 chest_list.append(i)
     return chest_list
@@ -1016,7 +1037,7 @@ def room_to_available_enemies(room):
         if not i in enemy_skip_list and not i in list(key_shard_to_location.values()) and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
             #Increasing chances of uncommon enemies
             #Otherwise shards tend to mostly end up on bats an whatnot
-            for o in range(math.ceil(36/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
+            for o in range(math.ceil(len(Manager.mod_data["EnemyLocation"]["N3029"]["NormalModeRooms"])/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
                 enemy_list.append(i)
     return enemy_list
 

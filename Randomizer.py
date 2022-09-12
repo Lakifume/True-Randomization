@@ -504,6 +504,7 @@ class Generate(QThread):
         Bloodless.update_shard_candles()
         Enemy.update_special_properties()
         Equipment.update_special_properties()
+        Shard.update_special_properties()
         Manager.update_descriptions()
         Manager.update_map_connections()
         Manager.update_map_doors()
@@ -722,9 +723,8 @@ class Update(QThread):
         with open("Data\\config.ini", "w") as file_writer:
             new_config.write(file_writer)
         
-        #Open new EXE
+        #Exit
         
-        subprocess.Popen(exe_name)
         sys.exit()
 
 class Import(QThread):

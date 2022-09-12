@@ -209,7 +209,11 @@ def candle_logic():
     previous_gate = []
     requirement_to_gate = {}
     #Filling list with all room names
-    all_rooms = copy.deepcopy(candle_room)
+    all_rooms = []
+    for i in candle_room:
+        ratio = room_to_ratio(i)
+        for e in range(ratio):
+            all_rooms.append(i)
     #Loop through all keys until they've all been assigned
     while all_keys:
         #Reset lists and dicts
@@ -233,25 +237,11 @@ def candle_logic():
         if check:
             continue
         #Gathering rooms available before gate
-        for i in Manager.mod_data["BloodlessModeMapLogic"]:
-            #Skip if room doesn't have a candle
-            if not i in candle_room:
-                continue
+        for i in candle_room:
             if not Manager.mod_data["BloodlessModeMapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"]) or i in previous_gate:
-                #Increasing chances of late rooms
-                #Otherwise early game areas are more likely to have everything
-                gate_count = 1
-                gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
-                while gate_list:
-                    nearest_gate = random.choice(gate_list)
-                    for e in Manager.mod_data["BloodlessModeMapLogic"]:
-                        if e == nearest_gate:
-                            gate_count += 1
-                            gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][e]["NearestGate"])
-                            break
-                #Making multplier more extreme with exponent
-                gate_count = round(gate_count**1.5)
-                for e in range(gate_count):
+                #Get ratio
+                ratio = room_to_ratio(i)
+                for e in range(ratio):
                     previous_room.append(i)
         #Choosing key item based on requirements
         chosen_item = random.choice(all_keys)
@@ -272,6 +262,20 @@ def previous_in_nearest(previous_gate, nearest_gate):
             if i in nearest_gate:
                 return True
     return False
+
+def room_to_ratio(room):
+    #Increasing chances of late rooms
+    #Otherwise early game areas are more likely to have everything
+    ratio = 1
+    gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][room]["NearestGate"])
+    while gate_list:
+        nearest_gate = random.choice(gate_list)
+        for i in Manager.mod_data["BloodlessModeMapLogic"]:
+            if i == nearest_gate:
+                ratio *= 2
+                gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"])
+                break
+    return ratio
 
 def logic_choice(chosen_item, room_list):
     #Removing key from list
