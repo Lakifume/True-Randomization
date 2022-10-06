@@ -2,7 +2,7 @@
 
 A fan project in the form of a Python program that aims to give Bloodstained the randomizer experience it deserves, like what many of the Castlevania games got.
 
-![Screenshot (337)](https://user-images.githubusercontent.com/56451477/178378598-0cedda11-581d-4a6d-8b33-c9d9e5b0ae52.png)
+![Screenshot (445)](https://user-images.githubusercontent.com/56451477/194300199-d38e336d-168e-4d3e-9ccc-0739bb2c4dfb.png)
 
 ## How to build from source
 
