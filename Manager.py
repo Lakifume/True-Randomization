@@ -449,7 +449,6 @@ def init():
         "LIB_003_0_1_RIGHT",
         "LIB_023_0_0_LEFT",
         "LIB_023_0_0_RIGHT",
-        "UGD_006_0_2_LEFT",
         "UGD_016_0_1_RIGHT",
         "UGD_019_0_2_LEFT",
         "UGD_019_1_2_RIGHT",
@@ -472,6 +471,13 @@ def init():
         "RVA_001_0_1_LEFT",
         "ICE_005_0_2_LEFT",
         "ICE_016_0_1_RIGHT"
+    ]
+    global transitionless_doors
+    transitionless_doors = [
+        "KNG_013_0_0_RIGHT",
+        "LIB_023_0_3_RIGHT",
+        "TWR_009_0_10_RIGHT",
+        "UGD_006_0_2_LEFT"
     ]
     global room_to_boss
     room_to_boss = {
@@ -705,6 +711,13 @@ def init():
             0x18DC6
         ]
     }
+    global string_entry_exceptions
+    string_entry_exceptions = [
+        "ITEM_EXPLAIN_RolledOmelette",
+        "ITEM_EXPLAIN_DiamondBullets"
+    ]
+    global datatable_entry_index
+    datatable_entry_index = {}
 
 def load_game_data():
     global game_data
@@ -880,6 +893,7 @@ def complex_to_simple():
                     for o in e.Value:
                         datatable[i][str(e.Name)][str(o.Name)] = read_datatable(o)
                 original_datatable[i] = copy.deepcopy(datatable[i])
+                datatable_entry_index[i] = {}
             elif file_to_type[i] == "StringTable":
                 stringtable[i] = {}
                 for e in game_data[i].Exports[0].Table:
@@ -1024,6 +1038,24 @@ def append_datatable_entry(file, entry):
     new_entry.Name = FName.FromString(game_data[file], entry)
     game_data[file].Exports[0].Table.Data.Add(new_entry)
 
+def update_datatable_order():
+    #Shift some datatable entry placements when necessary
+    for i in datatable_entry_index:
+        for e in datatable_entry_index[i]:
+            old_index = list(datatable[i].keys()).index(e)
+            new_index = datatable_entry_index[i][e]
+            current_entry = game_data[i].Exports[0].Table.Data[old_index].Clone()
+            game_data[i].Exports[0].Table.Data.Remove(game_data[i].Exports[0].Table.Data[old_index])
+            game_data[i].Exports[0].Table.Data.Insert(new_index, current_entry)
+            #Update the other entry indexes for that same datatable
+            for o in datatable_entry_index[i]:
+                if new_index < old_index:
+                    if new_index <= datatable_entry_index[i][o] < old_index:
+                        datatable_entry_index[i][o] += 1
+                elif new_index > old_index:
+                    if new_index >= datatable_entry_index[i][o] > old_index:
+                        datatable_entry_index[i][o] -= 1
+
 def apply_tweaks():
     #Make levels identical in all modes
     #This needs to be done before applying the json tweaks so that exceptions can be patched over
@@ -1157,14 +1189,18 @@ def apply_tweaks():
                 break
     #Rename the second Zangetsu boss so that he isn't confused with the first
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
+    stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = mod_data["EnemyTranslation"]["N1011_STRONG"] + " Medal"
+    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_Medal013"]   = "Proof that you have triumphed over " + mod_data["EnemyTranslation"]["N1011_STRONG"] + "."
     #Update Jinrai cost description
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
     #Slightly change Igniculus' descriptions to match other familiar's
     stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
     stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
     #Add DLCs to the enemy archives
-    add_enemy_to_archive("N2016", [], None, "N2015")
-    add_enemy_to_archive("N2017", [], None, "N2008")
+    add_enemy_to_archive(102, "N2016", [], None, "N2015")
+    stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2016"] = "A giant monster that takes part on the most powerful Greed waves."
+    add_enemy_to_archive(109, "N2017", [], None, "N2008")
+    stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2017"] = "An instrument of war fought over the magical cloth that powered the game world."
     #Give the new dullahammer a unique name and look
     datatable["PB_DT_CharacterParameterMaster"]["N3127"]["NameStrKey"] = "ENEMY_NAME_N3127"
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N3127"] = mod_data["EnemyTranslation"]["N3127"]
@@ -1175,6 +1211,11 @@ def apply_tweaks():
     datatable["PB_DT_DropRateMaster"]["N2017_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
     datatable["PB_DT_DropRateMaster"]["N2017_Shard"]["ShardId"] = "TissRosain"
     datatable["PB_DT_CraftMaster"]["TissRosain"]["OpenKeyRecipeID"] = "Medal019"
+    #Fix the archive Doppleganger outfit color to match Miriam's
+    index = game_data["M_Body06_06"].SearchNameReference(FString("/Game/Core/Character/P0000/Texture/Body/T_Body06_06_Color"))
+    game_data["M_Body06_06"].SetNameReference(index, FString("/Game/Core/Character/P0000/Texture/Body/T_Body01_01_Color"))
+    index = game_data["M_Body06_06"].SearchNameReference(FString("T_Body06_06_Color"))
+    game_data["M_Body06_06"].SetNameReference(index, FString("T_Body01_01_Color"))
     #Rebalance boss rush mode a bit
     #Remove all consumables from inventory
     for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
@@ -1187,10 +1228,14 @@ def apply_tweaks():
         i.Value.Value = 66
     #Make the second train gate a regular gate rather than a debug
     game_data["m09TRN_004_Gimmick"].Exports[257].Data[18].Value = False
+    #Move the Alfred magical seal closer to the edge of the screen so that Dimension Shift cannot pass
+    game_data["m12SND_023_Gimmick"].Exports[7].Data[0].Value[0].Value = FVector(1200, 0, 2520)
     #Give the lever door in upper cathedral its own gimmick flag instead of being shared with the hall one
-    game_data["m05SAN_017_Gimmick"].Exports[1].Data[7].Value = FName(game_data["m05SAN_017_Gimmick"], "SAN_017_LockDoor")
+    game_data["m05SAN_017_Gimmick"].Exports[1].Data[7].Value = FName.FromString(game_data["m05SAN_017_Gimmick"], "SAN_017_LockDoor")
     datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"] = {}
     datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"]["Id"] = 186
+    #Remove the breakable wall in m17RVA_003 that shares its drop id with the wall in m17RVA_011
+    datatable["PB_DT_GimmickFlagMaster"]["RVA_003_ItemWall"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Add the missing gate warps for the extra characters
     #That way impassable gates are no longer a problem
     add_extra_mode_warp("m04GDN_013_Gimmick", FVector(2460, 0, 2100), FRotator(180,   0,   0), FVector(3080, 0, 1800), FRotator(  0,   0,   0))
@@ -1212,24 +1257,26 @@ def apply_tweaks():
     add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
     #Add the missing Bloodless candle that was accidentally removed in a recent game update
-    add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
+    add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName.FromString(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
     #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
     #Add a shard candle for it so that it becomes a guaranteed
-    add_level_actor("m11UGD_019_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(1320, -60, 1845), FRotator(180, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m11UGD_019_Gimmick"], "Aquastream"), "GimmickFlag": FName(game_data["m11UGD_019_Gimmick"], "AquastreamLantarn001")})
+    add_level_actor("m11UGD_019_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(1320, -60, 1845), FRotator(180, 0, 0), FVector(1, 1, 1), {"ShardID": FName.FromString(game_data["m11UGD_019_Gimmick"], "Aquastream"), "GimmickFlag": FName.FromString(game_data["m11UGD_019_Gimmick"], "AquastreamLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"] = {}
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 187
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"]["ShardId"] = "Aquastream"
     #Add a shard candle for Igniculus in Celeste's room
     #That way Celeste key becomes relevant and Igniculus can be obtained in story mode
-    add_level_actor("m88BKR_003_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(660, -120, 315), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName(game_data["m88BKR_003_Gimmick"], "FamiliaIgniculus"), "GimmickFlag": FName(game_data["m88BKR_003_Gimmick"], "IgniculusLantarn001")})
+    add_level_actor("m88BKR_003_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(660, -120, 315), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName.FromString(game_data["m88BKR_003_Gimmick"], "FamiliaIgniculus"), "GimmickFlag": FName.FromString(game_data["m88BKR_003_Gimmick"], "IgniculusLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"] = {}
     datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = 188
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["FamiliaArcher_Shard"])
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"]["ShardId"] = "FamiliaIgniculus"
+    datatable["PB_DT_ItemMaster"]["FamiliaIgniculus"]["NotListedInArchive"]     = False
+    datatable["PB_DT_ItemMaster"]["FamiliaIgniculus"]["NotCountAsCompleteness"] = False
     #The HavePatchPureMiriam gimmick flag triggers as soon as a Pure Miriam chest is loaded in a room
     #So place one in the first ship room for this flag to trigger as soon as the game starts
-    add_level_actor("m01SIP_000_Gimmick", "PBPureMiriamTreasureBox_BP_C", FVector(-999, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropItemID": FName(game_data["m01SIP_000_Gimmick"], "AAAA_Shard"), "ItemID": FName(game_data["m01SIP_000_Gimmick"], "AAAA_Shard")})
+    add_level_actor("m01SIP_000_Gimmick", "PBPureMiriamTreasureBox_BP_C", FVector(-999, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropItemID": FName.FromString(game_data["m01SIP_000_Gimmick"], "AAAA_Shard"), "ItemID": FName.FromString(game_data["m01SIP_000_Gimmick"], "AAAA_Shard")})
     #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
     #That way you can at least save once before the game truly starts
     remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
@@ -1260,8 +1307,96 @@ def apply_tweaks():
     #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
     remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
     #Add magic doors instead to truly prevent tanking through
-    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
-    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
+    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
+    add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
+    #Change Dark Matter so that consuming it puts the player in OHKO mode until the next death
+    datatable["PB_DT_SpecialEffectMaster"]["DarkMatter"]["LifeTime"] = -1
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatter"]["Type"]                     = "EPBSpecialEffect::None"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatter"]["ParameterName"]            = "None"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxHP"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["CurseTempDownMaxHP"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxHP"]["DefId"]       = "DarkMatterTempDownMaxHP"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxHP"]["Parameter01"] = 99.999
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxMP"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["CurseTempDownMaxMP"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxMP"]["DefId"]       = "DarkMatterTempDownMaxMP"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatterTempDownMaxMP"]["Parameter01"] = 99.999
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterHitPoint"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["CurseHitPoint"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterHitPoint"]["GroupId"] = "DarkMatter"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterHitPoint"]["DefId"]   = "DarkMatterTempDownMaxHP"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["CurseMagicPoint"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]["GroupId"] = "DarkMatter"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]["DefId"]   = "DarkMatterTempDownMaxMP"
+    #Add a special ring that buffs the katana parry techniques
+    add_game_item(106, "MightyRing", "Accessory", "Ring", (2048, 3200), "Mighty Ring", "A symbol of great courage that amplifies the power of counterattacks.", 8080, False)
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]                                                   = copy.deepcopy(datatable["PB_DT_EnchantParameterType"]["DUMMY"])
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["Type_5_BF08F4064B9CF244C30C7788588CFDF5"]        = "EPBEquipSpecialAttribute::BuffParryArt"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["EquipType_25_DEF1C32D420ACBA29D5AA0B5D0AE0D20"]  = "ECarriedCatalog::Accessory1"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["ItemID_31_461716F74C5895124D82E0B3CA33B6B3"]     = "MightyRing"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["EquipValue_28_5CFE97924D56254C9B62AF83698220FC"] = 1.5
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt246"]                                                   = copy.deepcopy(datatable["PB_DT_EnchantParameterType"]["DUMMY"])
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt246"]["Type_5_BF08F4064B9CF244C30C7788588CFDF5"]        = "EPBEquipSpecialAttribute::BuffParryArt"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt246"]["EquipType_25_DEF1C32D420ACBA29D5AA0B5D0AE0D20"]  = "ECarriedCatalog::Accessory2"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt246"]["ItemID_31_461716F74C5895124D82E0B3CA33B6B3"]     = "MightyRing"
+    datatable["PB_DT_EnchantParameterType"]["BuffParryArt246"]["EquipValue_28_5CFE97924D56254C9B62AF83698220FC"] = 1.5
+    datatable["PB_DT_ArmorMaster"]["MightyRing"]["MeleeDefense"] = 3
+    datatable["PB_DT_ArmorMaster"]["MightyRing"]["DAG"]          = 5
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareItemId"]               = "MightyRing"
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareItemQuantity"]         = 1
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareItemRate"]             = 100.0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonItemId"]             = "None"
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonItemQuantity"]       = 0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonRate"]               = 0.0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareIngredientId"]         = "None"
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareIngredientQuantity"]   = 0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["RareIngredientRate"]       = 0.0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonIngredientId"]       = "None"
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonIngredientQuantity"] = 0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CommonIngredientRate"]     = 0.0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CoinType"]                 = "EDropCoin::None"
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CoinOverride"]             = 0
+    datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["AreaChangeTreasureFlag"]   = False
+    mod_data["ItemDrop"]["Accessory"]["ItemPool"].append("MightyRing")
+    for i in range(4):
+        mod_data["QuestRequirement"]["Memento"]["ItemPool"].append("MightyRing")
+    #Add an invisibility cloak into the game
+    add_game_item(151, "InvisibleCloak", "Armor", "None", (3840, 2944), "Invisible Cloak", "A magical mantle that renders anything it covers fully invinsible.", 22500, False)
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MeleeDefense"] = 11
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MagicDefense"] = 52
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["HOL"]          = 5
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["DAR"]          = 5
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["INT"]          = 10
+    datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MND"]          = 8
+    datatable["PB_DT_DropRateMaster"]["N3025_Shard"]["RareItemId"]       = "InvisibleCloak"
+    datatable["PB_DT_DropRateMaster"]["N3025_Shard"]["RareItemQuantity"] = 1
+    datatable["PB_DT_DropRateMaster"]["N3025_Shard"]["RareItemRate"]     = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]
+    mod_data["ItemDrop"]["Armor"]["ItemPool"].append("InvisibleCloak")
+    for i in range(5):
+        mod_data["QuestRequirement"]["Memento"]["ItemPool"].append("InvisibleCloak")
+    #Add staggering bullets into the game
+    add_game_item(8, "RagdollBullet", "Bullet", "None", (3456, 128), "Ragdoll Bullets", "Strange bullets that contort targets, leaving a lasting impact.", 0, True)
+    datatable["PB_DT_AmmunitionMaster"]["RagdollBullet"]["MeleeAttack"] = 40
+    datatable["PB_DT_CraftMaster"]["RagdollBullet"]["CraftValue"]       = 5
+    datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient2Id"]    = "Silver"
+    datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient3Id"]    = "HolyWater"
+    datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient3Total"] = 1
+    datatable["PB_DT_CraftMaster"]["RagdollBullet"]["OpenKeyRecipeID"]  = "BalletRecipe002"
+    for i in ["", "_EX", "_EX2"]:
+        datatable["PB_DT_DamageMaster"]["RagdollBullet" + i]["SA_Attack"] = 9999
+    for i in range(5):
+        mod_data["ItemDrop"]["Bullet"]["ItemPool"].append("RagdollBullet")
+    #Add a tonic that speeds up all of Miriam's movement for 10 seconds
+    add_game_item(9, "TimeTonic", "Potion", "None", (3840, 0), "Time Tonic", "An ancient drink that grants the ability to view the world at a slower pace.", 2000, True)
+    datatable["PB_DT_ItemMaster"]["TimeTonic"]["max"] = 5
+    datatable["PB_DT_CraftMaster"]["TimeTonic"]["Ingredient1Id"] = "MonsterBirdTears"
+    datatable["PB_DT_CraftMaster"]["TimeTonic"]["Ingredient2Id"] = "SeekerEye"
+    datatable["PB_DT_CraftMaster"]["TimeTonic"]["Alkhahest"]     = 4
+    datatable["PB_DT_ConsumableMaster"]["TimeTonic"]["IsAutoUse"] = False
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Type"]        = "EPBSpecialEffect::TimeRate"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter01"] = 1.5
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter02"] = 1.0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter03"] = 20.0
+    datatable["PB_DT_SpecialEffectMaster"]["TimeTonic"]["LifeTime"] = 10.0
+    for i in range(2):
+        mod_data["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
     #Store original enemy stats for convenience
@@ -1270,10 +1405,10 @@ def apply_tweaks():
     for i in datatable["PB_DT_CharacterParameterMaster"]:
         original_enemy_stats[i] = {}
         original_enemy_stats[i]["Level"] = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        original_enemy_stats[i]["POI"] = datatable["PB_DT_CharacterParameterMaster"][i]["POI"]
-        original_enemy_stats[i]["CUR"] = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
-        original_enemy_stats[i]["STO"] = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
-        original_enemy_stats[i]["SLO"] = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
+        original_enemy_stats[i]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][i]["POI"]
+        original_enemy_stats[i]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
+        original_enemy_stats[i]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
+        original_enemy_stats[i]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
 
 def search_and_replace_string(filename, class_name, data, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
@@ -1355,14 +1490,14 @@ def change_lip_pointer(event, event_replacement, prefix):
     event_replacement = prefix + "_" + event_replacement + "_LIP"
     
     if event_replacement + ".uasset" in os.listdir("Data\\LipSync"):
-        event_replacement_data = UAsset("Data\\LipSync\\" + event_replacement + ".uasset", UE4Version(517))
+        event_replacement_data = UAsset("Data\\LipSync\\" + event_replacement + ".uasset", UE4Version.VER_UE4_22)
         index = event_replacement_data.SearchNameReference(FString(event_replacement))
         event_replacement_data.SetNameReference(index, FString(event))
         index = event_replacement_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + event_replacement))
         event_replacement_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + event))
         event_replacement_data.Write(mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
     elif event + ".uasset" in os.listdir("Data\\LipSync"):
-        event_data = UAsset("Data\\LipSync\\" + event + ".uasset", UE4Version(517))
+        event_data = UAsset("Data\\LipSync\\" + event + ".uasset", UE4Version.VER_UE4_22)
         for i in event_data.Exports:
             if str(i.ObjectName) == event:
                 i.Data.Clear()
@@ -1370,26 +1505,12 @@ def change_lip_pointer(event, event_replacement, prefix):
 
 def change_portrait_pointer(portrait, portrait_replacement):
     #Simply swap the file's name in the name map and save as the new name
-    portrait_replacement_data = UAsset(asset_dir + "\\" + file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version(517))
+    portrait_replacement_data = UAsset(asset_dir + "\\" + file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
     index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString(portrait))
     index = portrait_replacement_data.SearchNameReference(FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
     portrait_replacement_data.Write(mod_dir + "\\" + file_to_path[portrait] + "\\" + portrait + ".uasset")
-
-def add_room_file(room):
-    area_path = "ACT" + room[1:3] + "_" + room[3:6]
-    new_file = UAsset(asset_dir + "\\" + file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version(517))
-    index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
-    new_file.SetNameReference(index, FString(room + "_RV"))
-    index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
-    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
-    new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
-    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
-
-def add_starting_pickup(drop_id):
-    #Overlay an upgrade on top of Miriam's starting position to instantly get its content when starting a game
-    add_level_actor("m01SIP_000_Gimmick", "HPMaxUp_C", FVector(817, 100, 146), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data["m01SIP_000_Gimmick"], drop_id)})
 
 def update_descriptions():
     #Add magical stats to descriptions
@@ -1408,6 +1529,10 @@ def update_descriptions():
             append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Parameter01"])) + "</>")
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Type"] == "EPBSpecialEffect::ChangeMP":
             append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Parameter01"])) + "</>")
+    for i in datatable["PB_DT_AmmunitionMaster"]:
+        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
+            continue
+        append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][i]["MeleeAttack"]) + "</>")
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
@@ -1545,6 +1670,8 @@ def update_map_doors():
                 if o in door_skip:
                     continue
                 if o in special_doors:
+                    continue
+                if o in transitionless_doors:
                     continue
                 if map_doors[o].room in room_to_boss:
                     continue
@@ -1691,7 +1818,7 @@ def update_map_indicators():
                 lever_offset = 160
             #Sub direction
             if map_doors[e].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
-                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
                     location.Z -= door_height
                 elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
                     location.Z -= door_height
@@ -1700,9 +1827,9 @@ def update_map_indicators():
                     location.X -= (door_width*scale.Z - door_width)/2 - door_width
                     location.Z -= door_height*scale.Z - door_height
                 else:
-                    location.Z += 180
+                    location.Z -= 180
             if map_doors[e].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
-                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
                     location.Z += door_height
                 elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
                     location.Z += door_height
@@ -1715,12 +1842,12 @@ def update_map_indicators():
                 else:
                     location.Z += 180
             if map_doors[e].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
-                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
                     location.X -= 510
                 else:
                     location.X -= 370
             if map_doors[e].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
-                if datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
                     location.X += 510
                 else:
                     location.X += 370
@@ -1994,7 +2121,7 @@ def bathin_left_entrance_fix():
     for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
         room = map_doors[i].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version(517))
+        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(room + "_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -2012,33 +2139,35 @@ def bathin_left_entrance_fix():
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, "dummy")
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, "m13ARC_005")
         new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+    adjacent_room = None
     #Get Bathin's adjacent room while prioritizing the same area
     for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
         room = map_doors[i].room
         adjacent_room = room
         if datatable["PB_DT_RoomMaster"][room]["AreaID"] == datatable["PB_DT_RoomMaster"]["m13ARC_005"]["AreaID"]:
             break
-    #Also add one more door in the boss room to have a proper transition
-    room = "m13ARC_005"
-    area_path = "ACT" + room[1:3] + "_" + room[3:6]
-    new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version(517))
-    index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
-    new_file.SetNameReference(index, FString(room + "_RV"))
-    index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
-    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
-    new_file.Exports[9].Data[1].Value = FName.FromString(new_file, room)
-    #Correct the room dimension settings
-    new_file.Exports[0].Data[2].Value[0].Value  = FVector( 630*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],   0, 360*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
-    new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
-    new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
-    #Change the door's properties
-    new_file.Exports[2].Data[0].Value[0].Value  = FVector(0, 0, 360)
-    new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
-    new_file.Exports[8].Data[0].Value = FName.FromString(new_file, "ARC_005")
-    new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
-    new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
-    new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
-    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+    #Add one more door in the boss room to have a proper transition
+    if adjacent_room:
+        room = "m13ARC_005"
+        area_path = "ACT" + room[1:3] + "_" + room[3:6]
+        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
+        new_file.SetNameReference(index, FString(room + "_RV"))
+        index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
+        new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+        new_file.Exports[9].Data[1].Value = FName.FromString(new_file, room)
+        #Correct the room dimension settings
+        new_file.Exports[0].Data[2].Value[0].Value  = FVector( 630*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],   0, 360*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
+        #Change the door's properties
+        new_file.Exports[2].Data[0].Value[0].Value  = FVector(0, 0, 360)
+        new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
+        new_file.Exports[8].Data[0].Value = FName.FromString(new_file, "ARC_005")
+        new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
+        new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
+        new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
+        new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
 def remove_vanilla_rando():
     for i in [293, 294]:
@@ -2064,8 +2193,8 @@ def show_mod_stats(seed, mod_version):
         game_data["VersionNumber"].Exports[4 + i].Data[0].Value[2].Value[0].Y = height
         game_data["VersionNumber"].Exports[6 + i].Data[0].CultureInvariantString = FString(mod_stats)
         game_data["VersionNumber"].Exports[6 + i].Data[1].Value[2].Value = 16
-        game_data["VersionNumber"].Exports[6 + i].Data[2].EnumValue = FName(game_data["VersionNumber"], "ETextJustify::Left")
-        struct = struct = FloatPropertyData(FName(game_data["VersionNumber"], "LineHeightPercentage"))
+        game_data["VersionNumber"].Exports[6 + i].Data[2].EnumValue = FName.FromString(game_data["VersionNumber"], "ETextJustify::Left")
+        struct = struct = FloatPropertyData(FName.FromString(game_data["VersionNumber"], "LineHeightPercentage"))
         struct.Value = 0.6
         game_data["VersionNumber"].Exports[6 + i].Data.Add(struct)
 
@@ -2074,16 +2203,16 @@ def remove_difficulties(current):
     new_list = []
     sub_struct = BytePropertyData()
     sub_struct.ByteType = BytePropertyType.FName
-    sub_struct.EnumValue = FName(game_data["DifficultSelecter"], "EPBGameLevel::" + current)
+    sub_struct.EnumValue = FName.FromString(game_data["DifficultSelecter"], "EPBGameLevel::" + current)
     new_list = [sub_struct]
     game_data["DifficultSelecter"].Exports[2].Data[1].Value = new_list
 
-def default_nightmare_cheatcode():
-    #Set the nightmare cheatcode as the default name entry in case the user hasn't unlocked the higher difficulties yet
-    game_data["EntryNameSetter"].Exports[110].Data[0].CultureInvariantString = FString("NIGHTMARE")
-    game_data["EntryNameSetter"].Exports[110].Data[1].CultureInvariantString = FString("NIGHTMARE")
-    game_data["EntryNameSetter"].Exports[111].Data[2].CultureInvariantString = FString("NIGHTMARE")
-    game_data["EntryNameSetter"].Exports[111].Data[3].CultureInvariantString = FString("NIGHTMARE")
+def default_entry_name(name):
+    #Change the default in-game file name
+    game_data["EntryNameSetter"].Exports[110].Data[0].CultureInvariantString = FString(name)
+    game_data["EntryNameSetter"].Exports[110].Data[1].CultureInvariantString = FString(name)
+    game_data["EntryNameSetter"].Exports[111].Data[2].CultureInvariantString = FString(name)
+    game_data["EntryNameSetter"].Exports[111].Data[3].CultureInvariantString = FString(name)
 
 def write_log(filename, log):
     with open("SpoilerLog\\" + filename + ".json", "w", encoding="utf8") as file_writer:
@@ -2114,6 +2243,21 @@ def remove_unchanged():
                 if name == i:
                     os.remove(mod_dir + "\\" + file_to_path[i] + "\\" + e)
 
+def import_mesh(filename):
+    #Import a mesh file at the right location by reading it in the file
+    new_file = UAsset("Data\\Mesh\\" + filename + ".uasset", UE4Version.VER_UE4_22)
+    name_map = new_file.GetNameMapIndexList()
+    filepath = None
+    for e in name_map:
+        if str(e)[0] == "/" and str(e).split("/")[-1] == filename:
+            filepath = str(e)[6:][:-(len(filename)+1)].replace("/", "\\")
+            break
+    if not filepath:
+        raise Exception("Failed to obtain filepath of asset " + filename)
+    if not os.path.isdir(mod_dir + "\\" + filepath):
+        os.makedirs(mod_dir + "\\" + filepath)
+    new_file.Write(mod_dir + "\\" + filepath + "\\" + filename + ".uasset")
+
 def import_texture(filename):
     #Convert DDS to game assets dynamically instead of cooking them within Unreal Editor
     absolute_asset_dir   = os.path.abspath(asset_dir + "\\" + file_to_path[filename])
@@ -2129,6 +2273,131 @@ def import_texture(filename):
     if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
         raise FileNotFoundError(filename + ".dds failed to inject")
 
+def add_starting_pickup(drop_id):
+    #Overlay an upgrade on top of Miriam's starting position to instantly get its content when starting a game
+    add_level_actor("m01SIP_000_Gimmick", "HPMaxUp_C", FVector(817, 100, 146), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data["m01SIP_000_Gimmick"], drop_id)})
+
+def add_room_file(room):
+    area_path = "ACT" + room[1:3] + "_" + room[3:6]
+    new_file = UAsset(asset_dir + "\\" + file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version.VER_UE4_22)
+    index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
+    new_file.SetNameReference(index, FString(room + "_RV"))
+    index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
+    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+    new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
+    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+
+def add_game_item(index, item_id, type, subtype, icon_coord, name, description, price, craftable):
+    #Add a completely new item slot into the game
+    if item_id in datatable["PB_DT_ItemMaster"]:
+        raise Exception("Item already exists.")
+    #Edit ItemMaster
+    icon_path                                                              = (icon_coord[1]//128)*32 + icon_coord[0]//128
+    datatable["PB_DT_ItemMaster"][item_id]                                 = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
+    datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                     = str(icon_path)
+    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = "ITEM_NAME_" + item_id
+    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = "ITEM_EXPLAIN_" + item_id
+    datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                     = price
+    if 0 < price < 100:                                                    
+        datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                = 1
+    else:                                                                  
+        datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                = price//10
+    datatable["PB_DT_ItemMaster"][item_id]["Producted"]                    = "None"
+    #Edit string entries                                                   
+    stringtable["PBMasterStringTable"]["ITEM_NAME_" + item_id]             = name
+    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + item_id]          = description
+    #Edit case by case properties                                          
+    if type == "Accessory":                                                
+        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"
+        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
+        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+        datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyAccesory"])
+        datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
+        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = subtype
+        if craftable:
+            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
+            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+        datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
+    elif type == "Armor":                                                  
+        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
+        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
+        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+        datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyBody"])
+        datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
+        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = subtype
+        if craftable:
+            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
+            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+        datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
+    elif type == "Bullet":                                                 
+        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
+        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
+        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+        datatable["PB_DT_AmmunitionMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_AmmunitionMaster"]["Softpoint"])
+        datatable["PB_DT_AmmunitionMaster"][item_id]["BulletID"]           = item_id
+        if craftable:
+            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Softpoint"])
+            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+        if not item_id in datatable["PB_DT_BulletMaster"]:                 
+            datatable["PB_DT_BulletMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_BulletMaster"]["Softpoint"])
+            datatable["PB_DT_BulletMaster"][item_id]["DamageId"]           = item_id
+        if not item_id in datatable["PB_DT_CollisionMaster"]:              
+            datatable["PB_DT_CollisionMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint"])
+            datatable["PB_DT_CollisionMaster"][item_id + "_EX"]            = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint_EX"])
+        if not item_id in datatable["PB_DT_DamageMaster"]:                 
+            datatable["PB_DT_DamageMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint"])
+            datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
+            datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
+        datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]           = index
+    elif type == "Potion":                                                 
+        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
+        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
+        datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
+        datatable["PB_DT_ConsumableMaster"][item_id]["SpecialEffectId"]    = item_id
+        datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]          = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["Potion"])
+        datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]["DefId"] = item_id
+        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]               = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["Potion"])
+        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["GroupId"]    = item_id
+        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["DefId"]      = item_id
+        datatable["PB_DT_SpecialEffectMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["Potion"])
+        datatable["PB_DT_SpecialEffectMaster"][item_id]["Id"]              = item_id
+        datatable["PB_DT_SpecialEffectMaster"][item_id]["GroupId"]         = item_id
+        if craftable:
+            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
+            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+        datatable_entry_index["PB_DT_ConsumableMaster"][item_id]           = index
+
+def add_armor_reference(armor_id):
+    #Give a specific armor its own graphical asset pointer when equipped
+    datatable["PB_DT_ArmorMaster"][armor_id]["ReferencePath"] = "/Game/Core/Item/Body/BDBP_" + armor_id + ".BDBP_" + armor_id
+    new_file = UAsset(asset_dir + "\\" + file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_BodyValkyrie.uasset", UE4Version.VER_UE4_22)
+    index = new_file.SearchNameReference(FString("BDBP_BodyValkyrie_C"))
+    new_file.SetNameReference(index, FString("BDBP_" + armor_id + "_C"))
+    index = new_file.SearchNameReference(FString("Default__BDBP_BodyValkyrie_C"))
+    new_file.SetNameReference(index, FString("Default__BDBP_" + armor_id + "_C"))
+    default_body_mat          = mod_data["ArmorReference"][armor_id]["DefaultBodyMat"]         + "." + mod_data["ArmorReference"][armor_id]["DefaultBodyMat"].split("/")[-1]
+    chroma_body_mat           = mod_data["ArmorReference"][armor_id]["ChromaBodyMat"]          + "." + mod_data["ArmorReference"][armor_id]["ChromaBodyMat"].split("/")[-1]
+    default_skin_mat          = mod_data["ArmorReference"][armor_id]["DefaultSkinMat"]         + "." + mod_data["ArmorReference"][armor_id]["DefaultSkinMat"].split("/")[-1]
+    chroma_skin_mat           = mod_data["ArmorReference"][armor_id]["ChromaSkinMat"]          + "." + mod_data["ArmorReference"][armor_id]["ChromaSkinMat"].split("/")[-1]
+    dialogue_default_skin_mat = mod_data["ArmorReference"][armor_id]["DialogueDefaultSkinMat"] + "." + mod_data["ArmorReference"][armor_id]["DialogueDefaultSkinMat"].split("/")[-1]
+    dialogue_chroma_skin_mat  = mod_data["ArmorReference"][armor_id]["DialogueChromaSkinMat"]  + "." + mod_data["ArmorReference"][armor_id]["DialogueChromaSkinMat"].split("/")[-1]
+    new_file.Imports[18].ObjectName            = FName.FromString(new_file, mod_data["ArmorReference"][armor_id]["Mesh"])
+    new_file.Imports[27].ObjectName            = FName.FromString(new_file, mod_data["ArmorReference"][armor_id]["Mesh"].split("/")[-1])
+    new_file.Exports[1].Data[0].Value[0].Value = FName.FromString(new_file, chroma_body_mat)
+    new_file.Exports[1].Data[1].Value[0].Value = FName.FromString(new_file, default_body_mat)
+    new_file.Exports[1].Data[2].Value          = FName.FromString(new_file, chroma_skin_mat)
+    new_list = []
+    sub_struct = SoftObjectPropertyData()
+    sub_struct.Value                           = FName.FromString(new_file, default_skin_mat)
+    new_list = [sub_struct]
+    new_file.Exports[1].Data[3].Value          = new_list
+    new_file.Exports[1].Data[4].Value          = FName.FromString(new_file, dialogue_chroma_skin_mat)
+    new_file.Exports[1].Data[5].Value          = FName.FromString(new_file, dialogue_default_skin_mat)
+    new_file.Exports[1].Data[7].Value          = False
+    new_file.Exports[1].Data[8].Value          = 1
+    new_file.Exports[1].Data[9].Value          = 0
+    new_file.Write(mod_dir + "\\" + file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_" + armor_id + ".uasset")
+
 def add_music_file(filename):
     #Check if the filename is valid
     if len(filename.split("_")) != 2:
@@ -2141,12 +2410,24 @@ def add_music_file(filename):
         int(filename[3:5])
     except ValueError:
         raise TypeError("Invalid music name :" + filename)
+    #Copy the awb and import the new music in it
+    filesize = None
+    with open(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".awb", "wb") as outfile:
+        offset = inputfile.read().find(str.encode("HCA"))
+        inputfile.seek(0)
+        outfile.write(inputfile.read(offset))
+        with open("Data\\Music\\" + filename + ".hca", "rb") as hca:
+            outfile.write(hca.read())
+        outfile.seek(0, os.SEEK_END)
+        filesize = outfile.tell()
+        outfile.seek(0x16)
+        outfile.write(filesize.to_bytes(4, "little"))
     #Add the music pointer in soundmaster
     music_id = "BGM_m" + filename[3:5] + filename.split("_")[-1]
     datatable["PB_DT_SoundMaster"][music_id] = copy.deepcopy(datatable["PB_DT_SoundMaster"]["BGM_m50BRM"])
     datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = datatable["PB_DT_SoundMaster"][music_id]["AssetPath"].replace("BGM_m50BRM", music_id)
     #Copy the act file
-    new_file = UAsset(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", UE4Version(517))
+    new_file = UAsset(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -2159,9 +2440,14 @@ def add_music_file(filename):
     string = "{:02x}".format(int.from_bytes(str.encode(music_id), "big"))
     for i in range(int(len(string)/2)):
         new_file.Exports[0].Extras[0x7E1 + i] = int(string[i*2] + string[i*2 + 1], 16)
+    string = "{:08x}".format(filesize)
+    count = 0
+    for i in range(int(len(string)/2) -1, -1, -1):
+        new_file.Exports[0].Extras[0x1A32 + count] = int(string[i*2] + string[i*2 + 1], 16)
+        count += 1
     new_file.Write(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
     #Copy the bgm file
-    new_file = UAsset(asset_dir + "\\" + file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", UE4Version(517))
+    new_file = UAsset(asset_dir + "\\" + file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -2171,22 +2457,8 @@ def add_music_file(filename):
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/BGM_m50BRM"))
     new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + music_id))
     new_file.Exports[0].Data[1].Value = FString(music_id)
+    new_file.Exports[0].Data[2].Value = 300.0
     new_file.Write(mod_dir + "\\" + file_to_path["BGM_m50BRM"] + "\\" + music_id + ".uasset")
-    #Copy the awb and import the new music in it
-    with open(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".awb", "wb") as outfile:
-        offset = inputfile.read().find(str.encode("HCA"))
-        inputfile.seek(0)
-        outfile.write(inputfile.read(offset))
-        with open("Data\\Music\\" + filename + ".hca", "rb") as hca:
-            outfile.write(hca.read())
-
-def export_name_to_index(filename, export_name):
-    count = 0
-    for i in game_data[filename].Exports:
-        if str(i.ObjectName) == export_name:
-            return count
-        count += 1
-    raise Exception("Export not found")
 
 def add_level_actor(filename, actor_class, location, rotation, scale, properties):
     actor_index = len(game_data[filename].Exports)
@@ -2476,6 +2748,14 @@ def remove_inst(name):
             pass
     return "_".join(name)
 
+def export_name_to_index(filename, export_name):
+    count = 0
+    for i in game_data[filename].Exports:
+        if str(i.ObjectName) == export_name:
+            return count
+        count += 1
+    raise Exception("Export not found")
+
 def is_enemy(character):
     #Check if input entry is an enemy and what type
     dict = {
@@ -2515,7 +2795,7 @@ def create_weighted_list(value, minimum, maximum, step, deviation):
 def random_weighted(value, minimum, maximum, step, deviation):
     return random.choice(random.choice(create_weighted_list(value, minimum, maximum, step, deviation)))
 
-def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
+def add_enemy_to_archive(index, enemy_id, area_ids, package_path, copy_from):
     last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[-1])
     entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
     for i in datatable["PB_DT_ArchiveEnemyMaster"]:
@@ -2529,10 +2809,11 @@ def add_enemy_to_archive(enemy_id, area_ids, package_path, copy_from):
     for i in range(len(area_ids)):
         datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = area_ids[i]
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path
+    datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = index
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines
-    if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry == "ITEM_EXPLAIN_RolledOmelette":
+    if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry in string_entry_exceptions:
         prefix = " "
     else:
         prefix = "\r\n"

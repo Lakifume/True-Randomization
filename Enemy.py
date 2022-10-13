@@ -98,7 +98,7 @@ def convert_area_to_progress():
             if area_to_progress["MapOrder"][current_area] == i + 1.0:
                 new_boss_order.append(e)
     if len(new_boss_order) != len(zangetsu_exp):
-        raise IndexError("New Zangetsu boss order mismatches original exp order length")
+        raise IndexError("New Zangetsu boss order mismatches original EXP order length")
     values = list(zangetsu_exp.values())
     zangetsu_exp.clear()
     zangetsu_exp.update(dict(zip(new_boss_order, values)))
@@ -150,7 +150,7 @@ def nightmare_damage():
     Manager.datatable["PB_DT_CoordinateParameter"]["HardGimmickDamageRate"]["Value"] = 3.0
 
 def zangetsu_progress():
-    #On nightmare only bosses should give out EXP
+    #On nightmare only bosses should give EXP
     #Make it so that each major boss gives exactly one level up if fought in order
     #Max level will be 16
     for i in Manager.datatable["PB_DT_CharacterParameterMaster"]:

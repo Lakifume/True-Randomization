@@ -200,6 +200,7 @@ modified_files = {
             "PB_DT_CharacterParameterMaster",
             "PB_DT_CharaUniqueParameterMaster",
             "PB_DT_CollisionMaster",
+            "PB_DT_ConsumableMaster",
             "PB_DT_CoordinateParameter",
             "PB_DT_CraftMaster",
             "PB_DT_DamageMaster",
@@ -215,6 +216,8 @@ modified_files = {
             "PB_DT_ShardMaster",
             "PB_DT_SoundMaster",
             "PB_DT_SpecialEffectDefinitionMaster",
+            "PB_DT_SpecialEffectGroupMaster",
+            "PB_DT_SpecialEffectMaster",
             "PB_DT_WeaponMaster"
         ]
     },
@@ -275,6 +278,7 @@ def writing_and_exit():
 class Signaller(QObject):
     progress = Signal(int)
     finished = Signal()
+    error    = Signal()
 
 class Generate(QThread):
     def __init__(self, progress_bar, seed, map):
@@ -283,8 +287,15 @@ class Generate(QThread):
         self.progress_bar = progress_bar
         self.seed = seed
         self.map = map
-
+    
     def run(self):
+        try:
+            self.process()
+        except Exception:
+            self.signaller.error.emit()
+            raise
+
+    def process(self):
         current = 0
         self.signaller.progress.emit(current)
         
@@ -366,6 +377,7 @@ class Generate(QThread):
         for i in os.listdir(Manager.asset_dir + "\\" + Manager.file_to_path["Ml_N3100_picture_001"]):
             name, extension = os.path.splitext(i)
             portraits.append(name)
+        portraits = list(dict.fromkeys(portraits))
         random.seed(self.seed)
         new_list = copy.deepcopy(portraits)
         random.shuffle(new_list)
@@ -470,29 +482,30 @@ class Generate(QThread):
             random.seed(self.seed)
             Sound.rand_dialogue(config.getboolean("GameVoices", "bEnglish"))
         
+        #Change some in-game properties based on the difficulty chosen
         if config.getboolean("GameDifficulty", "bNormal"):
             Manager.remove_difficulties("Normal")
             Enemy.brv_damage(1.0)
         elif config.getboolean("GameDifficulty", "bHard"):
-            Manager.default_nightmare_cheatcode()
             Manager.remove_difficulties("Hard")
+            Manager.default_entry_name("NIGHTMARE")
             Enemy.hard_patterns()
             Enemy.brv_speed("AnimaionPlayRateHard")
             Enemy.brv_damage(Manager.datatable["PB_DT_CoordinateParameter"]["HardBossDamageRate"]["Value"])
         elif config.getboolean("GameDifficulty", "bNightmare"):
-            Manager.default_nightmare_cheatcode()
-            if config.getboolean("SpecialMode", "bProgressive"):
-                Manager.remove_difficulties("Hard")
-                Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Difficulty_Hard"] = "Nightmare"
-                Enemy.zangetsu_progress()
-                Enemy.nightmare_damage()
-            else:
-                Manager.remove_difficulties("Nightmare")
+            Manager.remove_difficulties("Nightmare")
+            Manager.default_entry_name("NIGHTMARE")
             Enemy.hard_patterns()
             Enemy.brv_speed("AnimaionPlayRateNightmare")
             Enemy.brv_damage(Manager.datatable["PB_DT_CoordinateParameter"]["NightmareBossDamageRate"]["Value"])
         
+        #Change some extra properties for Progressive Zangetsu mode
         if config.getboolean("SpecialMode", "bProgressive"):
+            if config.getboolean("GameDifficulty", "bNightmare"):
+                Manager.remove_difficulties("Hard")
+                Manager.stringtable["PBSystemStringTable"]["SYS_SEN_Difficulty_Hard"] = "Nightmare"
+                Enemy.zangetsu_progress()
+                Enemy.nightmare_damage()
             Enemy.zangetsu_no_stats()
             Enemy.zangetsu_growth(config.getboolean("GameDifficulty", "bNightmare"))
             Equipment.zangetsu_black_belt()
@@ -516,9 +529,20 @@ class Generate(QThread):
         
         #Write the key location log, prioritizing Bloodless if candle shuffle is on
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            Manager.default_entry_name("BLOODLESS")
             Manager.write_log("KeyLocation", Bloodless.create_log(self.seed, self.map))
         elif config.getboolean("ItemRandomization", "bOverworldPool"):
             Manager.write_log("KeyLocation", Item.create_log(self.seed, self.map))
+        
+        #Add and import any mesh files found in the mesh directory
+        for i in os.listdir("Data\\Mesh"):
+            name, extension = os.path.splitext(i)
+            if extension == ".uasset":
+                Manager.import_mesh(name)
+        
+        #Add new armor references defined in the json
+        for i in Manager.mod_data["ArmorReference"]:
+            Manager.add_armor_reference(i)
         
         #Add and import any music files found in the music directory
         for i in os.listdir("Data\\Music"):
@@ -533,6 +557,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Converting data...")
         
         Manager.simple_to_complex()
+        Manager.update_datatable_order()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -671,8 +696,15 @@ class Update(QThread):
         self.signaller = Signaller()
         self.progress_bar = progress_bar
         self.api = api
-
+    
     def run(self):
+        try:
+            self.process()
+        except Exception:
+            self.signaller.error.emit()
+            raise
+
+    def process(self):
         current = 0
         zip_name = "True Randomization.zip"
         exe_name = script_name + ".exe"
@@ -723,17 +755,25 @@ class Update(QThread):
         with open("Data\\config.ini", "w") as file_writer:
             new_config.write(file_writer)
         
-        #Exit
+        #Open new EXE
         
-        sys.exit()
+        subprocess.Popen(exe_name)
+        self.signaller.finished.emit()
 
 class Import(QThread):
     def __init__(self, asset_list):
         QThread.__init__(self)
         self.signaller = Signaller()
         self.asset_list = asset_list
-
+    
     def run(self):
+        try:
+            self.process()
+        except Exception:
+            self.signaller.error.emit()
+            raise
+
+    def process(self):
         current = 0
         self.signaller.progress.emit(current)
         
@@ -1035,7 +1075,7 @@ class Main(QWidget):
         checkbox_list.append(self.check_box_24)
 
         self.check_box_15 = QCheckBox("Dialogues")
-        self.check_box_15.setToolTip("Randomize all conversation lines in the game. Characters\nwill still retain their actual voice (let's not get weird).\nCurrently only supports english.")
+        self.check_box_15.setToolTip("Randomize all conversation lines in the game. Characters\nwill still retain their actual voice (let's not get weird).")
         self.check_box_15.stateChanged.connect(self.check_box_15_changed)
         box_9_grid.addWidget(self.check_box_15, 0, 0)
         checkbox_list.append(self.check_box_15)
@@ -1782,6 +1822,8 @@ class Main(QWidget):
             return True
         if config.getboolean("GraphicRandomization", "bZangetsuColor"):
             return True
+        if config.getboolean("GraphicRandomization", "bBackerPortraits"):
+            return True
         if config.getboolean("SoundRandomization", "bDialogues"):
             return True
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
@@ -1799,6 +1841,7 @@ class Main(QWidget):
         self.worker = Generate(self.progress_bar, self.seed, self.map)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(self.generate_finished)
+        self.worker.signaller.error.connect(self.failure)
         self.worker.start()
     
     def import_assets(self, asset_list, finished):
@@ -1812,23 +1855,25 @@ class Main(QWidget):
         self.worker = Import(asset_list)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(finished)
+        self.worker.signaller.error.connect(self.failure)
         self.worker.start()
     
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
     
     def generate_finished(self):
+        self.end_thread()
         box = QMessageBox(self)
         box.setWindowTitle("Done")
         text = "Pak file generated !"
-        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            text += "\n\nTo access Bloodless mode enter BLOODLESS as the in-game file username."
         box.setText(text)
         box.exec()
-        self.setEnabled(True)
     
     def import_finished(self):
         self.setEnabled(True)
+    
+    def update_finished(self):
+        sys.exit()
     
     def browse_button_clicked(self):
         path = QFileDialog.getExistingDirectory(self, "Folder")
@@ -2057,6 +2102,14 @@ class Main(QWidget):
         box.setWindowTitle("Credits")
         box.exec()
     
+    def end_thread(self):
+        self.progress_bar.close()
+        self.setEnabled(True)
+    
+    def failure(self):
+        self.end_thread()
+        self.error("An error has occured.\nCheck the command window for more detail.")
+    
     def error(self, text):
         box = QMessageBox(self)
         box.setWindowTitle("Error")
@@ -2099,6 +2152,8 @@ class Main(QWidget):
                 
                 self.worker = Update(self.progress_bar, api)
                 self.worker.signaller.progress.connect(self.set_progress)
+                self.worker.signaller.finished.connect(self.update_finished)
+                self.worker.signaller.error.connect(self.failure)
                 self.worker.start()
             else:
                 self.check_for_resolution()

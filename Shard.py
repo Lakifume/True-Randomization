@@ -7,6 +7,8 @@ def init():
     #DeclareVariables
     global average_power
     average_power = 50
+    global average_cost
+    average_cost = 80
     global correction
     correction = 0.2
     global min_cost
@@ -20,6 +22,7 @@ def init():
         "Jackpot",
         "ChangeBunny",
         "Voidlay",
+        "Tornadoslicer",
         "Chiselbalage",
         "TissRosain",
         "FoldingTurb"
@@ -32,6 +35,7 @@ def init():
         "Accelerator",
         "AccelWorld",
         "Beastguard",
+        "Shadowtracer",
         "Sacredshade",
         "Reflectionray",
         "Aquastream",
@@ -42,8 +46,7 @@ def init():
         "Petrey",
         "PetraBless",
         "Acidgouache",
-        "Venomsmog",
-        "LigaDoin"
+        "Venomsmog"
     ]
 
 def default_shard():
@@ -54,8 +57,10 @@ def default_shard():
         base = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * Manager.mod_data["ShardBase"][i]["Base"]
         if i in skip_list or i == "Healing":
             balance = 1.0
-        else:
+        elif i in special_list:
             balance = (average_power/base)**correction
+        else:
+            balance = (average_cost/Manager.datatable["PB_DT_ShardMaster"][i]["useMP"])**correction
         Manager.datatable["PB_DT_ShardMaster"][i]["minGradeValue"] = round(base * balance, 3)
         Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(base * balance * Manager.mod_data["ShardBase"][i]["Grade"], 3)
 
@@ -64,7 +69,7 @@ def rand_shard(scale):
         #Only randomize shards that have an entry in shard base
         if not i in Manager.mod_data["ShardBase"]:
             continue
-        if i in skip_list:
+        if i in skip_list or i == "LigaDoin":
             continue
         original_cost      = int(Manager.datatable["PB_DT_ShardMaster"][i]["useMP"])
         original_doin_cost = int(Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"])
@@ -75,29 +80,34 @@ def rand_shard(scale):
             reduction = 1
         #Randome magic cost first
         multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
-        Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] * multiplier)
+        Manager.datatable["PB_DT_ShardMaster"][i]["useMP"] = int(original_cost * multiplier)
         #Riga Doin explosion is shared with Riga Storeama
         if i == "LigaStreyma":
-            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] = int(Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] * multiplier)
+            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"] = int(original_doin_cost * multiplier)
         #Randomize power based on magic cost
-        if not scale:
-            multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
-        new_base = original_cost * Manager.mod_data["ShardBase"][i]["Base"] * multiplier
+        if scale:
+            new_cost      = Manager.datatable["PB_DT_ShardMaster"][i]["useMP"]
+            new_doin_cost = Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"]
+        else:
+            multiplier    = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
+            new_cost      = int(original_cost * multiplier)
+            new_doin_cost = int(original_doin_cost * multiplier)
+        new_base = new_cost * Manager.mod_data["ShardBase"][i]["Base"]
         #Prevent power from scaling too high or too low
         if i == "Healing":
             balance = 1.0
         elif i in special_list:
-            balance = 1/(multiplier**0.5)
+            balance = (1/(multiplier**0.5))*(average_power/new_base)**correction
         else:
-            balance = (average_power/new_base)**correction
+            balance = (average_cost/new_cost)**correction
         Manager.datatable["PB_DT_ShardMaster"][i]["minGradeValue"] = round(new_base * balance, 3)
         Manager.datatable["PB_DT_ShardMaster"][i]["maxGradeValue"] = round(new_base * balance * Manager.mod_data["ShardBase"][i]["Grade"], 3)
         #Riga Doin explosion is shared with Riga Storeama
         if i == "LigaStreyma":
-            doin_base = original_doin_cost * Manager.mod_data["ShardBase"]["LigaDoin"]["Base"] * multiplier
-            balance   = (average_power/doin_base)**correction
-            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["minGradeValue"] = round(doin_base * balance, 3)
-            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(doin_base * balance * Manager.mod_data["ShardBase"]["LigaDoin"]["Grade"], 3)
+            new_doin_base = new_doin_cost * Manager.mod_data["ShardBase"]["LigaDoin"]["Base"]
+            balance       = (average_cost/new_doin_cost)**correction
+            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["minGradeValue"] = round(new_doin_base * balance, 3)
+            Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["maxGradeValue"] = round(new_doin_base * balance * Manager.mod_data["ShardBase"]["LigaDoin"]["Grade"], 3)
 
 def update_special_properties():
     #A few shards have a multiplier different than 1.0 in DamageMaster so update their shard power based on that

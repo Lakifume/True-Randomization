@@ -81,9 +81,9 @@ def init():
             "Stat":     5
         },
         "Accessory1": {
-            "Attack":   5,
+            "Attack":   0,
             "Defense":  5,
-            "Resist":  20,
+            "Resist":  10,
             "Status":  20,
             "Stat":    10
         },
@@ -135,7 +135,10 @@ def rand_all_equip():
             for e in stat_to_property:
                 if Manager.datatable["PB_DT_ArmorMaster"][i][e] == 0:
                     continue
-                max = equipment_type_to_max_value[Manager.datatable["PB_DT_ArmorMaster"][i]["SlotType"].split("::")[1]][stat_to_property[e]]
+                if i == "SkullNecklace":
+                    max = 20
+                else:
+                    max = equipment_type_to_max_value[Manager.datatable["PB_DT_ArmorMaster"][i]["SlotType"].split("::")[1]][stat_to_property[e]]
                 Manager.datatable["PB_DT_ArmorMaster"][i][e] = Manager.random_weighted(Manager.datatable["PB_DT_ArmorMaster"][i][e], 1, int(max*1.2), 1, 3)
     #Shovel Armor's attack
     Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Manager.random_weighted(int(Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"]), int(weapon_type_to_max_value["LargeSword"][0]*0.8), int(weapon_type_to_max_value["LargeSword"][1]*1.2), 1, 3)

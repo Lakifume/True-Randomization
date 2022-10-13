@@ -469,6 +469,7 @@ def init():
         "Treasurebox_JPN002_1":         ["Dimensionshift"],
         "Treasurebox_RVA001_2":         ["Dimensionshift", ["Invert", "Reflectionray"]],
         "Treasurebox_RVA011_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_RVA011_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
@@ -1459,6 +1460,9 @@ def replace_silver_bromide():
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
         if Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] == "Silverbromide":
             Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"] = "Certificationboard"
+    for i in Manager.datatable["PB_DT_QuestMaster"]:
+        if Manager.datatable["PB_DT_QuestMaster"][i]["Item01"] == "Silverbromide":
+            Manager.datatable["PB_DT_QuestMaster"][i]["Item01"] = "Certificationboard"
 
 def update_container_types():
     for i in Manager.mod_data["MapLogic"]:
