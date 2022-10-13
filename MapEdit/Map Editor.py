@@ -9,6 +9,8 @@ from PySide6.QtWidgets import *
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
+DEFAULT_MAP = "Data\\RoomMaster\\PB_DT_RoomMaster.json"
+
 TILEWIDTH = 25
 TILEHEIGHT = 15
 OUTLINE = 3
@@ -417,6 +419,11 @@ class Main(QMainWindow):
         self.use_restr.setChecked(True)
         edit_bar.addAction(self.use_restr)
         
+        self.restore_music = QAction("Restore Music", self)
+        self.restore_music.setShortcut(QKeySequence(Qt.Key_F2))
+        self.restore_music.triggered.connect(self.restore_music_action)
+        edit_bar.addAction(self.restore_music)
+        
         self.select_all = QAction("Select all", self)
         self.select_all.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_A))
         self.select_all.triggered.connect(self.select_all_action)
@@ -661,10 +668,17 @@ class Main(QMainWindow):
         self.assign_mode.clicked.connect(self.assign_mode_action)
         gate_box_layout.addWidget(self.assign_mode)
         
-        self.unassign_all = QPushButton("Unassign all")
-        self.unassign_all.setToolTip("Empty gate list of all rooms.")
-        self.unassign_all.clicked.connect(self.unassign_all_action)
-        gate_box_layout.addWidget(self.unassign_all)
+        self.select_outlined = QPushButton("Select Outlined")
+        self.select_outlined.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_F))
+        self.select_outlined.setToolTip("Shift current selection to all outlined rooms.\nShortcut: Ctrl + F")
+        self.select_outlined.clicked.connect(self.select_outlined_action)
+        gate_box_layout.addWidget(self.select_outlined)
+        
+        self.clear_selected = QPushButton("Clear selected")
+        self.clear_selected.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Delete))
+        self.clear_selected.setToolTip("Empty gate list of selected rooms.\nShortcut: Ctrl + Del")
+        self.clear_selected.clicked.connect(self.clear_selected_action)
+        gate_box_layout.addWidget(self.clear_selected)
         
         #Layouts
         
@@ -791,7 +805,7 @@ class Main(QMainWindow):
     def reset(self):
         if not self.safety_save():
             return
-        self.string = "Data/RoomMaster/PB_DT_RoomMaster.json"
+        self.string = DEFAULT_MAP
         self.title_string = ""
         self.load_from_json(self.string)
         self.direct_save = False
@@ -858,6 +872,7 @@ class Main(QMainWindow):
             self.key_location_action()
             #Disable menu options
             self.use_restr.setEnabled(False)
+            self.restore_music.setEnabled(False)
             self.select_all.setEnabled(False)
             self.select_none.setEnabled(False)
             self.select_invert.setEnabled(False)
@@ -870,9 +885,11 @@ class Main(QMainWindow):
             self.room_search_list_change(self.room_search_list.item(0))
             self.room_search_list.setVisible(True)
         else:
+            self.room_search_list.setCurrentItem(self.room_search_list.item(0))
             search_mode = False
             self.enable_buttons()
             self.use_restr.setEnabled(True)
+            self.restore_music.setEnabled(True)
             self.select_all.setEnabled(True)
             self.select_none.setEnabled(True)
             self.select_invert.setEnabled(True)
@@ -891,9 +908,7 @@ class Main(QMainWindow):
             self.key_location_action()
             #Disable menu options
             self.use_restr.setEnabled(False)
-            self.select_all.setEnabled(False)
-            self.select_none.setEnabled(False)
-            self.select_invert.setEnabled(False)
+            self.restore_music.setEnabled(False)
             self.show_out.setChecked(False)
             self.show_out.setEnabled(False)
             #Initiate
@@ -910,9 +925,7 @@ class Main(QMainWindow):
             logic_mode = False
             self.enable_buttons()
             self.use_restr.setEnabled(True)
-            self.select_all.setEnabled(True)
-            self.select_none.setEnabled(True)
-            self.select_invert.setEnabled(True)
+            self.restore_music.setEnabled(True)
             self.show_out.setEnabled(True)
             self.assign_mode.setChecked(False)
             self.assign_mode_action()
@@ -932,6 +945,7 @@ class Main(QMainWindow):
             self.key_location_action()
             #Disable menu options
             self.use_restr.setEnabled(False)
+            self.restore_music.setEnabled(False)
             self.select_all.setEnabled(False)
             self.select_none.setEnabled(False)
             self.select_invert.setEnabled(False)
@@ -947,6 +961,7 @@ class Main(QMainWindow):
             area_mode = False
             self.enable_buttons()
             self.use_restr.setEnabled(True)
+            self.restore_music.setEnabled(True)
             self.select_all.setEnabled(True)
             self.select_none.setEnabled(True)
             self.select_invert.setEnabled(True)
@@ -994,6 +1009,7 @@ class Main(QMainWindow):
             key_mode = True
             #Disable menu options
             self.use_restr.setEnabled(False)
+            self.restore_music.setEnabled(False)
             self.select_all.setEnabled(False)
             self.select_none.setEnabled(False)
             self.select_invert.setEnabled(False)
@@ -1017,6 +1033,7 @@ class Main(QMainWindow):
             key_mode = False
             self.enable_buttons()
             self.use_restr.setEnabled(True)
+            self.restore_music.setEnabled(True)
             self.select_all.setEnabled(True)
             self.select_none.setEnabled(True)
             self.select_invert.setEnabled(True)
@@ -1034,7 +1051,7 @@ class Main(QMainWindow):
     def guidelines(self):
         box = QMessageBox(self)
         box.setWindowTitle("Map guidelines")
-        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n-having the \"Use restrictions\" option enabled while building your map\n-not overlapping any rooms except for the semi-transparent ones\n\nAdditionally here are some useful things to know when building maps:\n\n-backer rooms can be connected to any area and will be automatically updated\n-transition rooms that are connected directly into a submerged room can only be entered if the player has Deep Sinker\n-a few bosses can softlock if their rooms are placed in undesirable spots, refer to the Boss restrictions page for more info\n-room m03ENT_1200 has a transition that does not work properly when connected to a different room, so the randomizer script will ignore this room when connecting the map")
+        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\n-making use of as many rooms as possible\n-connecting as many entrances as possible\n-keeping each area separated using transition rooms\n-ensuring that boss rooms are placed relatively close to a save/warp point\n-having the \"Use restrictions\" option enabled while building your map\n-not overlapping any rooms except for the semi-transparent ones\n\nAdditionally here are some useful things to know when building maps:\n\n-backer rooms can be connected to any area and will be automatically updated\n-transition rooms that are connected directly into a submerged room can only be entered if the player has Deep Sinker\n-a few bosses can softlock if their rooms are placed in undesirable spots, refer to the Boss restrictions page for more info\n-room m03ENT_1200 has a transition that does not work properly when connected to a different room, so the randomizer script will ignore this room when connecting the map\n-the in-game minimap has a limitation as to how far it can display rooms, you can preview this limitation by pressing the space bar")
         box.exec()
     
     def restrictions(self):
@@ -1150,6 +1167,16 @@ class Main(QMainWindow):
         else:
             self.zoom_out.setEnabled(True)
     
+    def keyPressEvent(self, event):
+        super().keyPressEvent(event)
+        if event.key() == Qt.Key_Space:
+            self.map_limit.setVisible(True)
+    
+    def keyReleaseEvent(self, event):
+        super().keyReleaseEvent(event)
+        if event.key() == Qt.Key_Space:
+            self.map_limit.setVisible(False)
+    
     def room_search_list_change(self, item):
         for i in self.room_list:
             self.fill_room(i, "#000000")
@@ -1177,12 +1204,44 @@ class Main(QMainWindow):
                 self.fill_room(i, "#000000")
     
     def music_drop_down_change(self, index):
+        #Unsaved tag
+        if not self.unsaved:
+            self.change_title("*")
+            self.unsaved = True
+        #Set music id
         for i in self.scene.selectedItems():
             i.room_data.music = music_id[index]
     
     def play_drop_down_change(self, index):
+        #Unsaved tag
+        if not self.unsaved:
+            self.change_title("*")
+            self.unsaved = True
+        #Set play id
         for i in self.scene.selectedItems():
             i.room_data.play = play_id[index]
+    
+    def restore_music_action(self):
+        #Confirm
+        choice = QMessageBox.question(self, "Confirm", "This will set all music settings back to default.\nProceed ?", QMessageBox.Yes | QMessageBox.No)
+        if choice == QMessageBox.No:
+            return
+        #Unsaved tag
+        if not self.unsaved:
+            self.change_title("*")
+            self.unsaved = True
+        #Copy music from the vanilla map
+        with open(DEFAULT_MAP, "r") as file_reader:
+            copy_from = json.load(file_reader)
+        for i in self.room_list:
+            if i.room_data.name in copy_from["MapData"]:
+                i.room_data.music = copy_from["MapData"][i.room_data.name]["BgmID"]
+                i.room_data.play  = copy_from["MapData"][i.room_data.name]["BgmType"]
+            else:
+                area_save = i.room_data.name.split("_")[0] + "_1000"
+                i.room_data.music = copy_from["MapData"][area_save]["BgmID"]
+                i.room_data.play  = copy_from["MapData"][area_save]["BgmType"]
+            i.setSelected(False)
     
     def fill_room(self, i, color):
         if color == "#000000":
@@ -1319,6 +1378,7 @@ class Main(QMainWindow):
             self.disable_checkboxes()
             self.uncheck_checkboxes()
             self.assign_mode.setEnabled(False)
+            self.select_outlined.setEnabled(False)
         #One selected
         elif len(self.scene.selectedItems()) == 1:
             if self.scene.selectedItems()[0].index == 0:
@@ -1327,6 +1387,7 @@ class Main(QMainWindow):
             else:
                 self.gate_toggle.setEnabled(True)
                 self.assign_mode.setEnabled(True)
+            self.select_outlined.setEnabled(True)
             if self.scene.selectedItems()[0].logic_data.is_gate:
                 self.enable_checkboxes()
                 self.check_gate(self.scene.selectedItems()[0])
@@ -1341,6 +1402,7 @@ class Main(QMainWindow):
             self.disable_checkboxes()
             self.uncheck_checkboxes()
             self.assign_mode.setEnabled(True)
+            self.select_outlined.setEnabled(True)
             for i in self.scene.selectedItems():
                 if i.index == 0:
                     self.assign_mode.setEnabled(False)
@@ -1368,7 +1430,7 @@ class Main(QMainWindow):
             assign_mode = True
             self.gate_toggle.setEnabled(False)
             self.disable_checkboxes()
-            self.unassign_all.setEnabled(False)
+            self.clear_selected.setEnabled(False)
             self.gate_box.setStyleSheet("QGroupBox{border: 1px solid red}")
             assign_list.clear()
             for i in self.scene.selectedItems():
@@ -1378,7 +1440,7 @@ class Main(QMainWindow):
                 i.setFlags(QGraphicsItem.ItemIsFocusable)
         else:
             assign_mode = False
-            self.unassign_all.setEnabled(True)
+            self.clear_selected.setEnabled(True)
             self.gate_box.setStyleSheet("QGroupBox{border: 1px solid white}")
             for i in self.room_list:
                 i.setSelected(False)
@@ -1389,13 +1451,29 @@ class Main(QMainWindow):
             assign_list.clear()
             self.selection_event()
     
-    def unassign_all_action(self):
-        for i in self.room_list:
+    def select_outlined_action(self):
+        for i in self.scene.selectedItems():
+            if i.logic_data.is_gate:
+                for e in self.room_list:
+                    if e.logic_data == None:
+                        continue
+                    if i.index in e.logic_data.gate_list:
+                        e.setSelected(True)
+                i.setSelected(False)
+            elif i.index == 0:
+                for e in self.room_list:
+                    if e.logic_data == None:
+                        continue
+                    if not e.logic_data.gate_list:
+                        e.setSelected(True)
+                i.setSelected(False)
+    
+    def clear_selected_action(self):
+        for i in self.scene.selectedItems():
             if i.logic_data == None:
                 continue
             i.logic_data.gate_list.clear()
-        self.room_list[0].setSelected(True)
-        self.selection_event()
+            self.outline_room(i, "#0000ff")
     
     def enable_buttons(self):
         self.reverse.setEnabled(True)
@@ -1867,6 +1945,9 @@ class Main(QMainWindow):
         bound_2_vertical = self.scene.addLine(256*TILEWIDTH, 128*TILEHEIGHT, 256*TILEWIDTH, 128*TILEHEIGHT - (TILEHEIGHT/2 - 1.5))
         bound_2_vertical.setPen(outline)
         
+        self.map_limit = self.scene.addRect(0, -24*TILEHEIGHT, 136*TILEWIDTH, 72*TILEHEIGHT, QPen("#00000000"), QColor("#7F7F7F7F"))
+        self.map_limit.setVisible(False)
+        
         index = 0
         for i in self.json_file["MapData"]:
             
@@ -2306,6 +2387,22 @@ class Main(QMainWindow):
                         continue
                     if i.index in e.logic_data.gate_list:
                         e.logic_data.gate_list.remove(i.index)
+            if not i.logic_data.is_gate:
+                i.logic_data.double_jump     = False
+                i.logic_data.high_jump       = False
+                i.logic_data.invert          = False
+                i.logic_data.deepsinker      = False
+                i.logic_data.dimension_shift = False
+                i.logic_data.reflector_ray   = False
+                i.logic_data.aqua_stream     = False
+                i.logic_data.blood_steal     = False
+                i.logic_data.zangetsuto      = False
+                i.logic_data.silver_bromide  = False
+                i.logic_data.aegis_plate     = False
+                i.logic_data.carpenter       = False
+                i.logic_data.warhorse        = False
+                i.logic_data.millionaire     = False
+                i.logic_data.celeste         = False
             self.json_file["KeyLogic"][i.room_data.name]["GateRoom"]             = i.logic_data.is_gate
             self.json_file["KeyLogic"][i.room_data.name]["NearestGate"]          = self.convert_index_to_gate(i.logic_data.gate_list)
             self.json_file["KeyLogic"][i.room_data.name]["Doublejump"]           = i.logic_data.double_jump
