@@ -114,6 +114,7 @@ def init():
         candle_to_room_invert[candle_to_room[i]] = i
 
 def extra_logic():
+    Manager.mod_data["BloodlessModeMapLogic"] = copy.deepcopy(Manager.mod_data["MapLogic"])
     #Update the logic to reflect the new starting point
     room_to_list = {}
     gate_list = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m05SAN_023"]["NearestGate"])
@@ -123,7 +124,7 @@ def extra_logic():
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] == gate_list:
             room_to_list[i] = current_gate
-    #Then move backwards toward the first galleon room to inverse the logic
+    #Then move backwards toward the first galleon room to invert the logic
     while gate_list:
         for i in Manager.mod_data["BloodlessModeMapLogic"]:
             if i in gate_list:
@@ -148,28 +149,6 @@ def extra_logic():
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if i in room_to_list:
             Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] = room_to_list[i]
-    #Add 8 Bit Nightmare
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"] = {}
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["GateRoom"]             = False
-    if Manager.mod_data["BloodlessModeMapLogic"]["m06KNG_021"]["GateRoom"]:
-        Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
-    else:
-        Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["BloodlessModeMapLogic"]["m06KNG_021"]["NearestGate"])
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Doublejump"]           = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["HighJump"]             = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Invert"]               = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Deepsinker"]           = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Dimensionshift"]       = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Reflectionray"]        = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Aquastream"]           = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Bloodsteel"]           = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Swordsman"]            = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Silverbromide"]        = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["BreastplateofAguilar"] = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker1"]         = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
     #Emulate a Craftwork requirement in the garden bridge for the extended float ability
     #Normally Craftwork isn't in logic as that shard can't be moved
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
@@ -257,10 +236,9 @@ def candle_logic():
 def previous_in_nearest(previous_gate, nearest_gate):
     if not nearest_gate:
         return True
-    else:
-        for i in previous_gate:
-            if i in nearest_gate:
-                return True
+    for i in previous_gate:
+        if i in nearest_gate:
+            return True
     return False
 
 def room_to_ratio(room):

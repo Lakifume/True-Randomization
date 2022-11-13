@@ -64,6 +64,7 @@ presets = {
         False,
         False,
         False,
+        False,
         False
     ],
     "Trial": [
@@ -78,6 +79,7 @@ presets = {
         True ,
         True ,
         True ,
+        False,
         False,
         False,
         False,
@@ -106,6 +108,7 @@ presets = {
         False,
         False,
         False,
+        False,
         True ,
         True ,
         True ,
@@ -127,6 +130,7 @@ presets = {
         True ,
         True ,
         False,
+        True ,
         True ,
         False,
         True ,
@@ -156,10 +160,12 @@ presets = {
         True ,
         True ,
         True ,
+        True ,
         False
     ],
     "Blood": [
         True,
+        False,
         False,
         False,
         False,
@@ -364,6 +370,7 @@ class Generate(QThread):
             self.map = ""
         Manager.load_map(self.map)
         Manager.get_map_info()
+        Item.extra_logic()
         
         #Hue
         
@@ -393,6 +400,12 @@ class Generate(QThread):
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.hard_enemy_logic()
         
+        if config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            random.seed(self.seed)
+            Enemy.rand_enemy_placement()
+            Enemy.update_enemy_placement()
+            Enemy.retain_enemy_progression()
+        
         if config.getboolean("ItemRandomization", "bRemoveInfinites"):
             Item.remove_infinite()
         
@@ -408,17 +421,18 @@ class Generate(QThread):
             Item.no_key_in_shop()
             Item.no_shard_craft()
             Item.give_extra("Shortcut", 7)
-            Item.extra_logic()
             Item.rand_overworld_key()
             Item.rand_overworld_pool(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
             Item.rand_overworld_shard()
-            Manager.randomizer_events()
-            Manager.remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
-            Manager.remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed)
             Manager.rand_classic_drops()
+        
+        if config.getboolean("ItemRandomization", "bOverworldPool") or config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            Manager.randomizer_events()
+            Manager.remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
+            Manager.remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             random.seed(self.seed)
@@ -471,11 +485,12 @@ class Generate(QThread):
             random.seed(self.seed)
             Enemy.rand_enemy_level()
             Enemy.high_starting_stats()
-            Manager.write_log("EnemyProperties", Enemy.create_log())
         
         if config.getboolean("EnemyRandomization", "bEnemyTolerances"):
             random.seed(self.seed)
             Enemy.rand_enemy_resist()
+        
+        if config.getboolean("EnemyRandomization", "bEnemyLevels") and not config.getboolean("SpecialMode", "bCustom") or config.getboolean("EnemyRandomization", "bEnemyTolerances") or config.getboolean("EnemyRandomization", "bEnemyLocations"):
             Manager.write_log("EnemyProperties", Enemy.create_log())
         
         if config.getboolean("SoundRandomization", "bDialogues"):
@@ -870,27 +885,27 @@ class Main(QWidget):
         box_6_grid = QGridLayout()
         self.box_6 = QGroupBox("Enemy Randomization")
         self.box_6.setLayout(box_6_grid)
-        grid.addWidget(self.box_6, 0, 3, 1, 2)
+        grid.addWidget(self.box_6, 0, 3, 2, 2)
 
         box_7_grid = QGridLayout()
         self.box_7 = QGroupBox("Map Randomization")
         self.box_7.setLayout(box_7_grid)
-        grid.addWidget(self.box_7, 1, 3, 1, 2)
+        grid.addWidget(self.box_7, 2, 3, 1, 2)
 
         box_8_grid = QGridLayout()
         self.box_8 = QGroupBox("Graphic Randomization")
         self.box_8.setLayout(box_8_grid)
-        grid.addWidget(self.box_8, 2, 3, 1, 2)
+        grid.addWidget(self.box_8, 3, 3, 1, 2)
 
         box_9_grid = QGridLayout()
         self.box_9 = QGroupBox("Sound Randomization")
         self.box_9.setLayout(box_9_grid)
-        grid.addWidget(self.box_9, 3, 3, 1, 2)
+        grid.addWidget(self.box_9, 4, 3, 1, 2)
         
         box_10_grid = QGridLayout()
         self.box_10 = QGroupBox("Extra Randomization")
         self.box_10.setLayout(box_10_grid)
-        grid.addWidget(self.box_10, 4, 3, 1, 2)
+        grid.addWidget(self.box_10, 5, 3, 1, 2)
         
         box_11_grid = QGridLayout()
         box_11 = QGroupBox("Game Difficulty")
@@ -1049,6 +1064,12 @@ class Main(QWidget):
         self.check_box_11.stateChanged.connect(self.check_box_11_changed)
         box_6_grid.addWidget(self.check_box_11, 1, 0)
         checkbox_list.append(self.check_box_11)
+
+        self.check_box_25 = QCheckBox("Enemy Locations")
+        self.check_box_25.setToolTip("Randomize which enemies appear where.")
+        self.check_box_25.stateChanged.connect(self.check_box_25_changed)
+        box_6_grid.addWidget(self.check_box_25, 3, 0)
+        checkbox_list.append(self.check_box_25)
 
         self.check_box_12 = QCheckBox("Room Layout")
         self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").\nWARNING: Only recommended for Miriam mode !")
@@ -1240,6 +1261,8 @@ class Main(QWidget):
             self.check_box_10.setChecked(True)
         if config.getboolean("EnemyRandomization", "bEnemyTolerances"):
             self.check_box_11.setChecked(True)
+        if config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            self.check_box_25.setChecked(True)
         if config.getboolean("MapRandomization", "bRoomLayout"):
             self.check_box_12.setChecked(True)
         if config.getboolean("GraphicRandomization", "bMiriamColor"):
@@ -1535,7 +1558,7 @@ class Main(QWidget):
         if self.check_box_10.isChecked():
             config.set("EnemyRandomization", "bEnemyLevels", "true")
             self.check_box_10.setStyleSheet("color: " + enemy_color)
-            if self.check_box_11.isChecked():
+            if self.check_box_11.isChecked() and self.check_box_25.isChecked():
                 self.box_6.setStyleSheet("color: " + enemy_color)
         else:
             config.set("EnemyRandomization", "bEnemyLevels", "false")
@@ -1548,11 +1571,24 @@ class Main(QWidget):
         if self.check_box_11.isChecked():
             config.set("EnemyRandomization", "bEnemyTolerances", "true")
             self.check_box_11.setStyleSheet("color: " + enemy_color)
-            if self.check_box_10.isChecked():
+            if self.check_box_10.isChecked() and self.check_box_25.isChecked():
                 self.box_6.setStyleSheet("color: " + enemy_color)
         else:
             config.set("EnemyRandomization", "bEnemyTolerances", "false")
             self.check_box_11.setStyleSheet("color: #ffffff")
+            self.box_6.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
+
+    def check_box_25_changed(self):
+        self.matches_preset()
+        if self.check_box_25.isChecked():
+            config.set("EnemyRandomization", "bEnemyLocations", "true")
+            self.check_box_25.setStyleSheet("color: " + enemy_color)
+            if self.check_box_10.isChecked() and self.check_box_11.isChecked():
+                self.box_6.setStyleSheet("color: " + enemy_color)
+        else:
+            config.set("EnemyRandomization", "bEnemyLocations", "false")
+            self.check_box_25.setStyleSheet("color: #ffffff")
             self.box_6.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
 
@@ -1816,6 +1852,8 @@ class Main(QWidget):
             return True
         if config.getboolean("EnemyRandomization", "bEnemyTolerances"):
             return True
+        if config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            return True
         if config.getboolean("MapRandomization", "bRoomLayout"):
             return True
         if config.getboolean("GraphicRandomization", "bMiriamColor"):
@@ -1911,6 +1949,7 @@ class Main(QWidget):
         Manager.load_mod_data()
         
         Item.init()
+        Enemy.init()
         Bloodless.init()
         
         random.seed(self.seed_test)
@@ -1926,6 +1965,7 @@ class Main(QWidget):
         Manager.load_map(self.map_test)
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             Manager.get_map_info()
+        Item.extra_logic()
         
         if self.map_test:
             Item.unused_room_check()
@@ -1933,9 +1973,12 @@ class Main(QWidget):
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.hard_enemy_logic()
         
+        if config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            random.seed(self.seed_test)
+            Enemy.rand_enemy_placement()
+        
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed_test)
-            Item.extra_logic()
             Item.key_logic()
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
@@ -1948,7 +1991,7 @@ class Main(QWidget):
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             box.setText(Bloodless.create_log_string(self.seed_test, self.map_test))
         elif config.getboolean("ItemRandomization", "bOverworldPool"):
-            box.setText(Item.create_log_string(self.seed_test, self.map_test))
+            box.setText(Item.create_log_string(self.seed_test, self.map_test, Enemy.enemy_replacement_invert))
         else:
             box.setText("No keys to randomize")
         box.exec()

@@ -3,7 +3,6 @@ import math
 import random
 import os
 import copy
-from collections import OrderedDict
 
 def init():
     #Declare variables
@@ -435,6 +434,7 @@ def init():
         "Treasurebox_SAN021_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN021_5":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_KNG018_4":         ["HighJump", "Invert", "Dimensionshift"],
+        "Treasurebox_KNG021_1":         ["Doublejump"],
         "Treasurebox_LIB009_1":         ["HighJump", "Invert"],
         "Treasurebox_LIB009_2":         ["HighJump", "Invert"],
         "Treasurebox_LIB012_1":         ["Dimensionshift", "Reflectionray"],
@@ -456,6 +456,7 @@ def init():
         "Treasurebox_UGD025_1":         ["Deepsinker"],
         "Treasurebox_UGD025_2":         [["Deepsinker", "Dimensionshift", "Reflectionray"]],
         "Treasurebox_UGD025_3":         ["Deepsinker"],
+        "Wall_UGD031_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_UGD036_1":         ["Deepsinker"],
         "Treasurebox_UGD040_1":         ["Deepsinker"],
         "Treasurebox_UGD042_1":         ["Deepsinker"],
@@ -470,15 +471,23 @@ def init():
         "Treasurebox_RVA001_2":         ["Dimensionshift", ["Invert", "Reflectionray"]],
         "Treasurebox_RVA011_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_RVA011_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_ICE001_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_JRN001_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"],
-        "Wall_UGD031_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"]
+        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"]
+    }
+    global enemy_to_requirement
+    enemy_to_requirement = {
+        "N1008":      ["Invert", "Dimensionshift", "Reflectionray"],
+        "N2006":      ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "N2015":      ["Doublejump"],
+        "Deepsinker": ["Doublejump", "HighJump", "Invert"]
     }
     global boss_rooms
     boss_rooms = [
         "m01SIP_022",
+        "m05SAN_013",
         "m05SAN_023",
         "m06KNG_021",
         "m07LIB_011",
@@ -714,7 +723,7 @@ def unused_room_check():
             del Manager.mod_data["MapLogic"][i]
 
 def extra_logic():
-    #8 Bit Nightmare is always gonna be connected to Hall of Termination regardless of map
+    #8 Bit Nightmare is always gonna be connected to Hall of Termination regardless of the map
     #So create its entry manually
     Manager.mod_data["MapLogic"]["m51EBT_000"] = {}
     Manager.mod_data["MapLogic"]["m51EBT_000"]["GateRoom"]             = False
@@ -737,10 +746,10 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
-    #Kingdom 2 Crown
-    #Also add Crown of Creation to the logic manually
+    #Add Crown of Creation to the logic manually
     for i in Manager.mod_data["MapLogic"]:
         Manager.mod_data["MapLogic"][i]["MonarchCrown"] = False
+    #Kingdom 2 Crown is always connected to the train
     Manager.mod_data["MapLogic"]["m19K2C_000"] = {}
     Manager.mod_data["MapLogic"]["m19K2C_000"]["GateRoom"] = True
     if Manager.mod_data["MapLogic"]["m09TRN_002"]["GateRoom"]:
@@ -763,7 +772,7 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker3"]         = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker4"]         = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["MonarchCrown"]         = True
-    #Journey
+    #Journey is always connected to the desert
     Manager.mod_data["MapLogic"]["m20JRN_000"] = {}
     Manager.mod_data["MapLogic"]["m20JRN_000"]["GateRoom"]             = True
     Manager.mod_data["MapLogic"]["m20JRN_000"]["NearestGate"]          = []
@@ -814,6 +823,8 @@ def hard_enemy_logic():
     Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m08TWR_005")
     Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m08TWR_013")
     Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m11UGD_013")
+    #Some of Ultimate Zangetsu's new attacks need some movement to be avoided
+    chest_to_requirement["Swordsman"] = ["Doublejump", "Invert", "Dimensionshift"]
 
 def remove_infinite():
     #These specific gears grant the player an infinite source of something which generally ends up defining the meta and dominating runs
@@ -945,10 +956,9 @@ def journey_area_available(previous_gate):
 def previous_in_nearest(previous_gate, nearest_gate):
     if not nearest_gate:
         return True
-    else:
-        for i in previous_gate:
-            if i in nearest_gate:
-                return True
+    for i in previous_gate:
+        if i in nearest_gate:
+            return True
     return False
 
 def room_to_ratio(room):
@@ -998,6 +1008,11 @@ def logic_choice(chosen_item, room_list):
             enemy_list = room_to_available_enemies(chosen_room)
             if enemy_list:
                 key_shard_to_location[chosen_item] = random.choice(enemy_list)
+                #Giant dulla heads and Dullahammer EX share their drop with their early game counterpart
+                if key_shard_to_location[chosen_item] == "N3126":
+                    key_shard_to_location[chosen_item] = "N3090"
+                if key_shard_to_location[chosen_item] == "N3127":
+                    key_shard_to_location[chosen_item] = "N3015"
                 if chosen_room in boss_rooms:
                     boss_rooms.remove(chosen_room)
                 break
@@ -1036,10 +1051,33 @@ def room_to_available_enemies(room):
     enemy_list = []
     for i in Manager.mod_data["EnemyLocation"]:
         if not i in enemy_skip_list and not i in list(key_shard_to_location.values()) and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
-            #Increasing chances of uncommon enemies
-            #Otherwise shards tend to mostly end up on bats an whatnot
-            for o in range(math.ceil(len(Manager.mod_data["EnemyLocation"]["N3029"]["NormalModeRooms"])/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
-                enemy_list.append(i)
+            #Check if it is a boss that requires a certain movement ability to be realistically beatable
+            if i in enemy_to_requirement:
+                check = None
+                for e in enemy_to_requirement[i]:
+                    #AND
+                    if type(e) is list:
+                        check = True
+                        for o in e:
+                            if not o in key_shard_to_location:
+                                check = False
+                                break
+                        if check:
+                            break
+                    #OR  
+                    else:
+                        check = False
+                        if e in key_shard_to_location:
+                            check = True
+                            break
+                if check:
+                    for e in range(2):
+                        enemy_list.append(i)
+            else:
+                #Increase chances of uncommon enemies
+                #Otherwise shards tend to mostly end up on bats an whatnot
+                for e in range(math.ceil(30/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
+                    enemy_list.append(i)
     return enemy_list
 
 def rand_overworld_key():
@@ -1054,30 +1092,30 @@ def rand_overworld_key():
 def rand_overworld_shard():
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
         #Check if the entry should be skipped
-        id = i.split("_")
-        if not id[0] in Manager.mod_data["EnemyLocation"]:
+        if "Treasure" in i:
             continue
-        if not Manager.mod_data["EnemyLocation"][id[0]]["HasShard"]:
+        enemy_id = i.split("_")[0]
+        if not enemy_id in Manager.mod_data["EnemyLocation"]:
             continue
-        if "Treasure" in id:
+        if not Manager.mod_data["EnemyLocation"][enemy_id]["HasShard"]:
             continue
-        if id[0] in enemy_skip_list:
+        if enemy_id in enemy_skip_list:
             continue
-        if id[0] in list(key_shard_to_location.values()):
+        if enemy_id in list(key_shard_to_location.values()):
             continue
         #Reduce dulla head drop rate
-        if id[0] in ["N3090", "N3099"]:
+        if enemy_id in ["N3090", "N3099"]:
             drop_rate_multiplier = 0.5
         else:
             drop_rate_multiplier = 1.0
         #Assign shard
-        if i == id[0] + "_Shard":
+        if i == enemy_id + "_Shard":
             Manager.datatable["PB_DT_DropRateMaster"][i]["ShardId"] = any_pick(Manager.mod_data["ShardDrop"]["ItemPool"], True, "None")
             if Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] != 100.0:
                 Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = Manager.mod_data["ShardDrop"]["ItemRate"]*drop_rate_multiplier
         else:
-            Manager.datatable["PB_DT_DropRateMaster"][i]["ShardId"]   = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["ShardId"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["ShardRate"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["ShardId"]   = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardRate"]
 
 def rand_overworld_pool(waystone):
     #Start chest
@@ -1104,6 +1142,7 @@ def rand_overworld_pool(waystone):
     #Journey's last chest
     patch_chest_entry(random.choice(green_chest_type), "Treasurebox_JRN004_1")
     #Upgrades
+    #Don't put any upgrades in areas that extra character can't access
     for i in range(30):
         chosen = random.choice(used_chests)
         while "JRN" in chosen:
@@ -1126,36 +1165,36 @@ def rand_overworld_pool(waystone):
         patch_chest_entry(random.choice(chest_type), i)
     #Enemy pool
     for i in Manager.datatable["PB_DT_DropRateMaster"]:
-        id = i.split("_")
-        if not id[0] in Manager.mod_data["EnemyLocation"]:
+        if "Treasure" in i:
             continue
-        if not Manager.mod_data["EnemyLocation"][id[0]]["HasShard"]:
+        enemy_id = i.split("_")[0]
+        if not enemy_id in Manager.mod_data["EnemyLocation"]:
             continue
-        if "Treasure" in id:
+        if not Manager.mod_data["EnemyLocation"][enemy_id]["HasShard"]:
             continue
         if Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemRate"] == 0.0 and Manager.datatable["PB_DT_DropRateMaster"][i]["CommonRate"] == 0.0 and Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"] == 0.0 and Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"] == 0.0:
             continue
         #Reduce dulla head drop rate
-        if id[0] in ["N3090", "N3099"]:
+        if enemy_id in ["N3090", "N3099"]:
             drop_rate_multiplier = 0.5
         else:
             drop_rate_multiplier = 1.0
         #Assign drops
-        if i == id[0] + "_Shard":
+        if i == enemy_id + "_Shard":
             patch_enemy_entry(random.choice(enemy_type), drop_rate_multiplier, i)
         else:
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"]               = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareItemId"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemQuantity"]         = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareItemQuantity"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemRate"]             = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareItemRate"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonItemId"]             = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonItemId"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonItemQuantity"]       = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonItemQuantity"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonRate"]               = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonRate"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientId"]         = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareIngredientId"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientQuantity"]   = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareIngredientQuantity"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"]       = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["RareIngredientRate"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientId"]       = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonIngredientId"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientQuantity"] = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonIngredientQuantity"]
-            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"]     = Manager.datatable["PB_DT_DropRateMaster"][id[0] + "_Shard"]["CommonIngredientRate"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemId"]               = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareItemId"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemQuantity"]         = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareItemQuantity"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareItemRate"]             = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareItemRate"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonItemId"]             = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonItemId"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonItemQuantity"]       = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonItemQuantity"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonRate"]               = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonRate"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientId"]         = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareIngredientId"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientQuantity"]   = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareIngredientQuantity"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["RareIngredientRate"]       = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["RareIngredientRate"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientId"]       = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientId"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientQuantity"] = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientQuantity"]
+            Manager.datatable["PB_DT_DropRateMaster"][i]["CommonIngredientRate"]     = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientRate"]
 
 def empty_drop_entry(container):
     Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = "None"
@@ -1342,13 +1381,13 @@ def rand_quest_requirement():
     level_to_boss  = {}
     index = 0
     for i in enemy_requirement:
-        if Manager.is_enemy(i)["Boss"]:
+        if Manager.is_boss(i):
             level_to_boss[Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]*100 + index] = i
         else:
             level_to_enemy[Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]*100 + index] = i
         index += 1
-    level_to_enemy = OrderedDict(sorted(level_to_enemy.items()))
-    level_to_boss  = OrderedDict(sorted(level_to_boss.items()))
+    level_to_enemy = dict(sorted(level_to_enemy.items()))
+    level_to_boss  = dict(sorted(level_to_boss.items()))
     level_to_enemy.update(level_to_boss)
     #Update requirement
     for i in range(19):
@@ -1466,8 +1505,6 @@ def replace_silver_bromide():
 
 def update_container_types():
     for i in Manager.mod_data["MapLogic"]:
-        if i == "m19K2C_000":
-            continue
         Manager.update_room_containers(i)
 
 def update_boss_crystal_color():
@@ -1476,7 +1513,7 @@ def update_boss_crystal_color():
     for i in Manager.file_to_path:
         if Manager.file_to_type[i] == "Material":
             enemy_id = Manager.file_to_path[i].split("\\")[-2]
-            if Manager.is_enemy(enemy_id)["Enemy"] and Manager.is_enemy(enemy_id)["Boss"] or enemy_id == "N2008":
+            if Manager.is_boss(enemy_id) or enemy_id == "N2008":
                 shard_name = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
                 shard_type = Manager.datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
                 shard_hsv  = shard_type_to_hsv[shard_type.split("::")[-1]]
@@ -1548,7 +1585,7 @@ def create_log(seed, map):
             log["Key"][Manager.mod_data["ShardTranslation"][i]] = enemy_to_room(key_shard_to_location[i])
     return log
 
-def create_log_string(seed, map):
+def create_log_string(seed, map, original_enemies):
     #Log string for quickly showing answer to a seed
     name, extension = os.path.splitext(map)
     if name.split("\\")[-1]:
@@ -1561,7 +1598,11 @@ def create_log_string(seed, map):
     log_string += "Key:\n"
     for i in key_order:
         if i in key_items:
-            log_string += "  " + Manager.mod_data["ItemTranslation"][i] + ": " + key_item_to_location[i] + "\n"
+            log_string += "  " + Manager.mod_data["ItemTranslation"][i] + ": " + key_item_to_location[i]
+            log_string += "\n"
         if i in key_shards:
-            log_string += "  " + Manager.mod_data["ShardTranslation"][i] + ": " + Manager.mod_data["EnemyTranslation"][key_shard_to_location[i]] + "\n"
+            log_string += "  " + Manager.mod_data["ShardTranslation"][i] + ": " + Manager.mod_data["EnemyTranslation"][key_shard_to_location[i]]
+            if key_shard_to_location[i] in original_enemies:
+                log_string += " (over " + Manager.mod_data["EnemyTranslation"][original_enemies[key_shard_to_location[i]]] + ")"
+            log_string += "\n"
     return log_string

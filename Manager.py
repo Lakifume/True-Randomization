@@ -97,73 +97,6 @@ class Door:
         self.breakable = breakable
 
 def init():
-    global actor_to_properties
-    actor_to_properties = {
-        "PBEasyTreasureBox_BP_C": {
-            "Room": "m01SIP_002",
-            "Index": 63
-        },
-        "PBEasyTreasureBox_BP_C(Gold)": {
-            "Room": "m08TWR_019",
-            "Index": 989
-        },
-        "PBPureMiriamTreasureBox_BP_C": {
-            "Room": "m01SIP_003",
-            "Index": 134
-        },
-        "HPMaxUp_C": {
-            "Room": "m04GDN_002",
-            "Index": 16
-        },
-        "MPMaxUp_C": {
-            "Room": "m01SIP_025",
-            "Index": 16
-        },
-        "BulletMaxUp_C": {
-            "Room": "m01SIP_024",
-            "Index": 2
-        },
-        "PBBossDoor_BP_C": {
-            "Room": "m15JPN_015",
-            "Index": 34
-        },
-        "PBBakkerDoor_BP_C": {
-            "Room": "m15JPN_011",
-            "Index": 80
-        },
-        "BP_AreaDoor_C(Left)": {
-            "Room": "m11UGD_014",
-            "Index": 1
-        },
-        "BP_AreaDoor_C(Right)": {
-            "Room": "m04GDN_016",
-            "Index": 1
-        },
-        "ReadableBookShelf_C": {
-            "Room": "m01SIP_005",
-            "Index": 163
-        },
-        "BP_SwitchDoor_C": {
-            "Room": "m11UGD_015",
-            "Index": 3
-        },
-        "ToriiWarp_BP_C": {
-            "Room": "m07LIB_006",
-            "Index": 142
-        },
-        "BP_MagicDoor_C": {
-            "Room": "m01SIP_002",
-            "Index": 3
-        },
-        "BP_DM_BaseLantern_ShardChild2_C": {
-            "Room": "m05SAN_000",
-            "Index": 16
-        },
-        "BP_DM_BloodlessAbilityGimmick_C": {
-            "Room": "m01SIP_000",
-            "Index": 7
-        }
-    }
     global classic_item_to_properties
     classic_item_to_properties = {
         "BP_PBC_ItemCommonMoneyMedium_C": {
@@ -239,6 +172,19 @@ def init():
             "Index": [9, 33]
         }
     }
+    global c_cat_actors
+    c_cat_actors = [
+        "PBEasyTreasureBox_BP_C",
+        "PBEasyTreasureBox_BP_C(Gold)",
+        "PBPureMiriamTreasureBox_BP_C",
+        "PBBakkerDoor_BP_C",
+        "Chr_N3016_C",
+        "Chr_N3028_C",
+        "Chr_N3066_C",
+        "Chr_N3067_C",
+        "Chr_N3124_C",
+        "IncubatorGlass_BP_C"
+    ]
     global room_to_gimmick
     room_to_gimmick = {
         "m01SIP_007": "m01SIP_007_BG",
@@ -365,18 +311,18 @@ def init():
         "m17RVA_007",
         "m18ICE_002"
     ]
-    global rotating_rooms
-    rotating_rooms = [
-        "m02VIL_008",
-        "m02VIL_011",
-        "m08TWR_017",
-        "m08TWR_018",
-        "m08TWR_019",
-        "m09TRN_001",
-        "m12SND_025",
-        "m12SND_026",
-        "m12SND_027"
-    ]
+    global rotating_room_to_center
+    rotating_room_to_center = {
+        "m02VIL_008": (2280, -2280),
+        "m02VIL_011": (5218, -2310),
+        "m08TWR_017": (2400,     0),
+        "m08TWR_018": (2400,     0),
+        "m08TWR_019": (2520,     0),
+        "m09TRN_001": (2390, -2460),
+        "m12SND_025": ( 120,  -450),
+        "m12SND_026": ( 120,  -450),
+        "m12SND_027": ( 120,  -450)
+    }
     global wall_to_gimmick_flag
     wall_to_gimmick_flag = {
         "SIP_006_0_0_RIGHT_BOTTOM": "SIP_006_DestructibleWall",
@@ -767,7 +713,7 @@ def load_map(path):
     else:
         datatable["PB_DT_RoomMaster"] = json_file["MapData"]
     mod_data["MapLogic"] = json_file["KeyLogic"]
-    mod_data["BloodlessModeMapLogic"] = copy.deepcopy(mod_data["MapLogic"])
+    mod_data["BloodlessModeMapLogic"] = {}
     mod_data["MapOrder"] = json_file["AreaOrder"]
     mod_data["OriginalMapOrder"] = [
       "m01SIP",
@@ -850,7 +796,7 @@ def fix_custom_map():
     #Remove the few forced transitions that aren't necessary at all
     for i in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
         remove_level_class(i + "_RV", "RoomChange_C")
-    #Make Bathin's room enterable from the left
+    #Make Bathin's room enterable from the left without softlocking the boss
     bathin_left_entrance_fix()
     #The two underground rooms with very specific shapes only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
@@ -883,7 +829,7 @@ def fix_custom_map():
 
 def complex_to_simple():
     #The uasset data is inconvenient to access and would take up too much text space in the code
-    #Convert them to a simplified dictionary that is similar to Serializer's outputs
+    #Convert them to a simplified dictionary that is similar to the old serializer's outputs
     for i in file_to_type:
         if file_to_type[i] in simplify_types:
             if file_to_type[i] == "DataTable":
@@ -911,7 +857,7 @@ def simple_to_complex():
                     if ecount >= game_data[i].Exports[0].Table.Data.Count:
                         append_datatable_entry(i, e)
                     for o in datatable[i][e]:
-                        #The unused field in room master is only used by the mod, not by the game
+                        #The unused field in room master is only used by this rando, not by the game
                         if i == "PB_DT_RoomMaster" and o == "Unused":
                             ocount += 1
                             continue
@@ -1060,7 +1006,7 @@ def apply_tweaks():
     #Make levels identical in all modes
     #This needs to be done before applying the json tweaks so that exceptions can be patched over
     for i in datatable["PB_DT_CharacterParameterMaster"]:
-        if not is_enemy(i)["Enemy"]:
+        if not is_enemy(i):
             continue
         datatable["PB_DT_CharacterParameterMaster"][i]["HardEnemyLevel"]                       = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
         datatable["PB_DT_CharacterParameterMaster"][i]["NightmareEnemyLevel"]                  = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
@@ -1078,9 +1024,9 @@ def apply_tweaks():
                 datatable[i][e][o] = mod_data["DefaultTweak"][i][e][o]
     #Loop through all enemies
     for i in datatable["PB_DT_CharacterParameterMaster"]:
-        if not is_enemy(i)["Enemy"]:
+        if not is_enemy(i):
             continue
-        if is_enemy(i)["Boss"]:
+        if is_boss(i):
             #Make boss health scale with level
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(99/datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]))
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/5)*5
@@ -1102,7 +1048,7 @@ def apply_tweaks():
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
         else:
-            if i == "N3003":
+            if i in ["N3003", "N3023"]:
                 multiplier = (1/3)
             else:
                 multiplier = (2/3)
@@ -1187,6 +1133,16 @@ def apply_tweaks():
             if datatable["PB_DT_WeaponMaster"][i][e]:
                 datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]
                 break
+    #Rebalance boss rush mode a bit
+    #Remove all consumables from inventory
+    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
+        i.Value[1].Value = 0
+    #Start both stages at level 50
+    for i in range(8, 14):
+        game_data["PBExtraModeInfo_BP"].Exports[1].Data[i].Value = 50
+    #Give all bosses level 66
+    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
+        i.Value.Value = 66
     #Rename the second Zangetsu boss so that he isn't confused with the first
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
     stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = mod_data["EnemyTranslation"]["N1011_STRONG"] + " Medal"
@@ -1196,6 +1152,11 @@ def apply_tweaks():
     #Slightly change Igniculus' descriptions to match other familiar's
     stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
     stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
+    #Fix the archive Doppleganger outfit color to match Miriam's
+    index = game_data["M_Body06_06"].SearchNameReference(FString("/Game/Core/Character/P0000/Texture/Body/T_Body06_06_Color"))
+    game_data["M_Body06_06"].SetNameReference(index, FString("/Game/Core/Character/P0000/Texture/Body/T_Body01_01_Color"))
+    index = game_data["M_Body06_06"].SearchNameReference(FString("T_Body06_06_Color"))
+    game_data["M_Body06_06"].SetNameReference(index, FString("T_Body01_01_Color"))
     #Add DLCs to the enemy archives
     add_enemy_to_archive(102, "N2016", [], None, "N2015")
     stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2016"] = "A giant monster that takes part on the most powerful Greed waves."
@@ -1211,21 +1172,6 @@ def apply_tweaks():
     datatable["PB_DT_DropRateMaster"]["N2017_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
     datatable["PB_DT_DropRateMaster"]["N2017_Shard"]["ShardId"] = "TissRosain"
     datatable["PB_DT_CraftMaster"]["TissRosain"]["OpenKeyRecipeID"] = "Medal019"
-    #Fix the archive Doppleganger outfit color to match Miriam's
-    index = game_data["M_Body06_06"].SearchNameReference(FString("/Game/Core/Character/P0000/Texture/Body/T_Body06_06_Color"))
-    game_data["M_Body06_06"].SetNameReference(index, FString("/Game/Core/Character/P0000/Texture/Body/T_Body01_01_Color"))
-    index = game_data["M_Body06_06"].SearchNameReference(FString("T_Body06_06_Color"))
-    game_data["M_Body06_06"].SetNameReference(index, FString("T_Body01_01_Color"))
-    #Rebalance boss rush mode a bit
-    #Remove all consumables from inventory
-    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
-        i.Value[1].Value = 0
-    #Start both stages at level 50
-    for i in range(8, 14):
-        game_data["PBExtraModeInfo_BP"].Exports[1].Data[i].Value = 50
-    #Give all bosses level 66
-    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
-        i.Value.Value = 66
     #Make the second train gate a regular gate rather than a debug
     game_data["m09TRN_004_Gimmick"].Exports[257].Data[18].Value = False
     #Move the Alfred magical seal closer to the edge of the screen so that Dimension Shift cannot pass
@@ -1280,10 +1226,12 @@ def apply_tweaks():
     #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
     #That way you can at least save once before the game truly starts
     remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
-    mod_data["EnemyLocation"]["N3015"]["HardModeRooms"].remove("m01SIP_001")
     #Also remove the bone mortes from that one crowded room in galleon
     remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
-    mod_data["EnemyLocation"]["N3004"]["HardModeRooms"].remove("m01SIP_014")
+    #Remove the giant rat in Den, was most likely a dev mistake
+    remove_level_class("m10BIG_008_Enemy", "Chr_N3051_C")
+    #Fix that one Water Leaper in desert that falls through the floor by shifting its position upwards
+    game_data["m12SND_025_Enemy"].Exports[4].Data[4].Value[0].Value     = FVector(-260, -700, 600)
     #Fix some of the giant cannon stacks clipping over each other
     game_data["m10BIG_008_Enemy"].Exports[17].Data[4].Value[0].Value     = FVector(2220, 0, 3505)
     game_data["m10BIG_008_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(2220, 0, 3865)
@@ -1325,6 +1273,56 @@ def apply_tweaks():
     datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["CurseMagicPoint"])
     datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]["GroupId"] = "DarkMatter"
     datatable["PB_DT_SpecialEffectGroupMaster"]["DarkMatterMagicPoint"]["DefId"]   = "DarkMatterTempDownMaxMP"
+    #Give primary stat debuffs their secondary stat too
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["Id"]      = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["Id"]      = "DEBUFF_RATE_INT_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_INT_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["Id"]      = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["Id"]      = "DEBUFF_RATE_MND_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_MND_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["DefId"]       = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["Type"]        = "EPBSpecialEffect::None"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["Parameter01"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["Parameter02"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["Parameter03"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["DefId"]       = "DEBUFF_RATE_INT_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["Parameter01"] = 14
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["DefId"]       = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["Type"]        = "EPBSpecialEffect::None"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["Parameter01"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["Parameter02"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["Parameter03"] = 0
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]                = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["DefId"]       = "DEBUFF_RATE_MND_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["Parameter01"] = 15
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_ATK_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_STR_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_INT_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_INT_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_DEF_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_MND_WITH_EFFECT"
+    datatable["PB_DT_WeaponMaster"]["Swordbreaker"]["SpecialEffectId"]        = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_DamageMaster"]["P0000_Jsword_Kabuto"]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    for i in ["", "_EX", "_EX2"]:
+        datatable["PB_DT_DamageMaster"]["WeaponbaneRounds" + i]["SpecialEffectId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+        datatable["PB_DT_DamageMaster"]["ShieldbaneRounds" + i]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
     #Add a special ring that buffs the katana parry techniques
     add_game_item(106, "MightyRing", "Accessory", "Ring", (2048, 3200), "Mighty Ring", "A symbol of great courage that amplifies the power of counterattacks.", 8080, False)
     datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]                                                   = copy.deepcopy(datatable["PB_DT_EnchantParameterType"]["DUMMY"])
@@ -1597,13 +1595,7 @@ def update_map_doors():
             filename = room_to_gimmick[i]
         else:
             filename = i + "_Gimmick"
-        for e in range(len(game_data[filename].Exports)):
-            class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[e].ClassIndex))) - 1].ObjectName)
-            if class_name == "PBBakkerDoor_BP_C":
-                for o in game_data[filename].Exports[e].Data:
-                    if str(o.Name) == "RootComponent":
-                        root_index = int(str(o.Value)) - 1
-                game_data[filename].Exports[root_index].Data[0].Value[0].Value = FVector(-999, 0, 0)
+        remove_level_class(filename, "PBBakkerDoor_BP_C")
     #Add new
     for i in room_to_backer:
         for e in map_connections[i]:
@@ -1793,7 +1785,7 @@ def update_map_indicators():
             location = FVector(0, -360, 0)
             rotation = FRotator(0, 0, 0)
             scale    = FVector(1, 1, 1)
-           #Global direction
+            #Global direction
             if map_doors[e].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                 location.X = -18
                 location.Z = map_doors[e].z_block*720 + door_height
@@ -1866,6 +1858,8 @@ def update_room_containers(room):
         filename = room_to_gimmick[room]
     else:
         filename = room + "_Gimmick"
+    if not filename in game_data:
+        return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for i in range(len(game_data[filename].Exports)):
         old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
@@ -1916,21 +1910,27 @@ def update_room_containers(room):
             if old_class_name == new_class_name:
                 continue
             #Correct container transform when necessary
-            #The upgrades up the castle bridge are on the wrong plane
+            #Some upgrades in rotating rooms are on the wrong plane
             if room == "m02VIL_008":
                 location.X -= 50
+            if drop_id == "Treasurebox_TWR017_6":
+                location.X -= 100
             #If the room is a rotating 3d one then use the forward vector to shift position
-            elif room in rotating_rooms:
-                forward_vector = (math.cos(math.radians(rotation.Pitch))*math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Pitch))*math.cos(math.radians(rotation.Yaw)))
-                if "PBEasyTreasureBox_BP_C" in new_class_name and old_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+            if room in rotating_room_to_center:
+                rotation.Yaw = -math.degrees(math.atan2(location.X - rotating_room_to_center[room][0], location.Y - rotating_room_to_center[room][1]))
+                forward_vector = (math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Yaw)))
+                if "TreasureBox" in new_class_name and "MaxUp" in old_class_name:
                     location.X -= forward_vector[0]*120
                     location.Y -= forward_vector[1]*120
-                if new_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"] and "PBEasyTreasureBox_BP_C" in old_class_name:
-                    location.X += forward_vector[0]*120
-                    location.Y += forward_vector[1]*120
-            #Otherwise give the container a set transform
+                if "MaxUp" in new_class_name and "TreasureBox" in old_class_name:
+                    if drop_id in ["Treasurebox_TWR017_5", "Treasurebox_SND025_1"]:
+                        location.X += forward_vector[0]*60
+                        location.Y += forward_vector[1]*60
+                    else:
+                        location.X += forward_vector[0]*120
+                        location.Y += forward_vector[1]*120
             else:
-                if "PBEasyTreasureBox_BP_C" in new_class_name and old_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+                if "TreasureBox" in new_class_name:
                     location.Y = -120
                     #Slightly rotate the chest to be facing the center of the room
                     if location.X < room_width*0.45:
@@ -1942,28 +1942,21 @@ def update_room_containers(room):
                     #Drop chest down to the floor if it is in a bell
                     if drop_id == "Treasurebox_SAN003_4":
                         location.Z = 4080
-                    elif drop_id == "Treasurebox_SAN003_5":
+                    if drop_id == "Treasurebox_SAN003_5":
                         location.Z = 6600
-                    elif drop_id == "Treasurebox_SAN019_3":
+                    if drop_id == "Treasurebox_SAN019_3":
                         location.Z = 120
-                    elif drop_id == "Treasurebox_SAN021_4":
+                    if drop_id == "Treasurebox_SAN021_4":
                         location.Z = 420
-                if new_class_name in ["HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"] and "PBEasyTreasureBox_BP_C" in old_class_name:
+                if "MaxUp" in new_class_name:
+                    location.Y = 0
+                    rotation.Yaw = 0
                     #If it used to be the chest under the bridge move it to Benjamin's room for the extra characters
                     if drop_id == "Treasurebox_JPN002_1":
                         location.X = 1860
                         location.Z = 60
-                    location.Y = 0
-                    rotation.Yaw = 0
-            #Removing chests like any other actor currently causes crashes so instead move the original way offscreen
-            #Hopefully this is only temporary
-            if "PBEasyTreasureBox_BP_C":
-                for e in game_data[filename].Exports[i].Data:
-                    if str(e.Name) in ["DropItemID", "ItemID"]:
-                        e.Value = FName.FromString(game_data[filename], "AAAA_Shard")
-                game_data[filename].Exports[root_index].Data[0].Value[0].Value = FVector(-999, 0, 0)
-            else:
-                remove_level_actor(filename, i)
+            #Remove the old container
+            remove_level_actor(filename, i)
             #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
             if room == "m20JRN_002":
                 filename = "m20JRN_002_BG"
@@ -2318,7 +2311,7 @@ def add_game_item(index, item_id, type, subtype, icon_coord, name, description, 
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
         datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
-    elif type == "Armor":                                                  
+    if type == "Armor":                                                  
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
         datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
@@ -2329,7 +2322,7 @@ def add_game_item(index, item_id, type, subtype, icon_coord, name, description, 
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
         datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
-    elif type == "Bullet":                                                 
+    if type == "Bullet":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
         datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
@@ -2349,7 +2342,7 @@ def add_game_item(index, item_id, type, subtype, icon_coord, name, description, 
             datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
             datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
         datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]           = index
-    elif type == "Potion":                                                 
+    if type == "Potion":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
         datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
@@ -2401,15 +2394,15 @@ def add_armor_reference(armor_id):
 def add_music_file(filename):
     #Check if the filename is valid
     if len(filename.split("_")) != 2:
-        raise TypeError("Invalid music name :" + filename)
+        raise TypeError("Invalid music name: " + filename)
     if len(filename.split("_")[0]) != 5 or len(filename.split("_")[-1]) != 3:
-        raise TypeError("Invalid music name :" + filename)
+        raise TypeError("Invalid music name: " + filename)
     if filename[0:3] != "ACT":
-        raise TypeError("Invalid music name :" + filename)
+        raise TypeError("Invalid music name: " + filename)
     try:
         int(filename[3:5])
     except ValueError:
-        raise TypeError("Invalid music name :" + filename)
+        raise TypeError("Invalid music name: " + filename)
     #Copy the awb and import the new music in it
     filesize = None
     with open(asset_dir + "\\" + file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb", "rb") as inputfile, open(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".awb", "wb") as outfile:
@@ -2468,8 +2461,8 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
     if short_class[-1] == "C":
         short_class.pop()
     short_class = "_".join(short_class)
-    actor_name = custom_actor_prefix + short_class + "_" + str(actor_index + 1)
-    snippet = UAssetSnippet(game_data[actor_to_properties[actor_class]["Room"] + "_Gimmick"], actor_to_properties[actor_class]["Index"])
+    actor_name = custom_actor_prefix + short_class# + "_" + str(actor_index + 1)
+    snippet = UAssetSnippet(game_data[mod_data["ActorPointer"][actor_class]["File"]], mod_data["ActorPointer"][actor_class]["Index"])
     snippet.AddToUAsset(game_data[filename], actor_name)
     #Change class parameters
     for i in game_data[filename].Exports[actor_index].Data:
@@ -2487,25 +2480,31 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
             if location.X != 0 or location.Y != 0 or location.Z != 0:
                 struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
                 sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "RelativeLocation"))
-                sub_struct.Value = location
+                sub_struct.Value = FVector(location.X, location.Y, location.Z)
                 struct.Value.Add(sub_struct)
                 game_data[filename].Exports[root_index].Data.Add(struct)
             if rotation.Pitch != 0 or rotation.Yaw != 0 or rotation.Roll != 0:
                 struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeRotation"), FName.FromString(game_data[filename], "Rotator"))
                 sub_struct = RotatorPropertyData(FName.FromString(game_data[filename], "RelativeRotation"))
-                sub_struct.Value = rotation
+                sub_struct.Value = FRotator(rotation.Pitch, rotation.Yaw, rotation.Roll)
                 struct.Value.Add(sub_struct)
                 game_data[filename].Exports[root_index].Data.Add(struct)
             if scale.X != 1 or scale.Y != 1 or scale.Z != 1:
                 struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeScale3D"), FName.FromString(game_data[filename], "Vector"))
                 sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "RelativeScale3D"))
-                sub_struct.Value = scale
+                sub_struct.Value = FVector(scale.X, scale.Y, scale.Z)
                 struct.Value.Add(sub_struct)
                 game_data[filename].Exports[root_index].Data.Add(struct)
     #Add parameters that are missing
     for i in properties:
         if type(properties[i]) is bool:
             struct = BoolPropertyData(FName.FromString(game_data[filename], i))
+            struct.Value = properties[i]
+        elif type(properties[i]) is int:
+            struct = IntPropertyData(FName.FromString(game_data[filename], i))
+            struct.Value = properties[i]
+        elif type(properties[i]) is float:
+            struct = FloatPropertyData(FName.FromString(game_data[filename], i))
             struct.Value = properties[i]
         elif "::" in str(properties[i]):
             struct = BytePropertyData(FName.FromString(game_data[filename], i))
@@ -2516,6 +2515,10 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
             struct = NamePropertyData(FName.FromString(game_data[filename], i))
             struct.Value = properties[i]
         game_data[filename].Exports[actor_index].Data.Add(struct)
+    #Temporary Rocky fix
+    if actor_class == "Chr_N3115_C":
+        remove_level_actor(filename, actor_index + 59)
+        game_data[filename].Exports[actor_index + 59].OuterIndex = FPackageIndex(actor_index + 43)
 
 def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_location, warp_2_rotation):
     warp_1_index = len(game_data[filename].Exports)
@@ -2546,20 +2549,47 @@ def remove_level_actor(filename, index):
     #Remove actor at index
     if file_to_type[filename] != "Level":
         raise TypeError("Input is not a level file")
-    level_index = export_name_to_index(filename, "PersistentLevel")
-    game_data[filename].Exports[index].OuterIndex = FPackageIndex(0)
-    game_data[filename].Exports[level_index].IndexData.Remove(index + 1)
+    class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[index].ClassIndex))) - 1].ObjectName)
+    #If the actor makes use of a c_cat class removing it will crash the game
+    #So move it offscreen instead
+    if class_name in c_cat_actors or "m20JRN_002" in filename:
+        for i in game_data[filename].Exports[index].Data:
+            if str(i.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in class_name:
+                i.Value = FName.FromString(game_data[filename], "AAAA_Shard")
+            if str(i.Name) == "RootComponent":
+                root_index = int(str(i.Value)) - 1
+        for i in game_data[filename].Exports[root_index].Data:
+            if str(i.Name) == "RelativeLocation":
+                i.Value[0].Value = FVector(-999, 0, 0)
+    else:
+        level_index = export_name_to_index(filename, "PersistentLevel")
+        game_data[filename].Exports[index].OuterIndex = FPackageIndex(0)
+        game_data[filename].Exports[level_index].IndexData.Remove(index + 1)
+        game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(index + 1))
 
 def remove_level_class(filename, name):
-    #Remove all actors of class
+    #Remove all actors of class in a level
     if file_to_type[filename] != "Level":
         raise TypeError("Input is not a level file")
     level_index = export_name_to_index(filename, "PersistentLevel")
+    #Search for all exports that use this class
     for i in range(len(game_data[filename].Exports)):
         class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
-        if class_name == name:
+        if class_name != name:
+            continue
+        if name in c_cat_actors or "m20JRN_002" in filename:
+            for e in game_data[filename].Exports[i].Data:
+                if str(e.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in name:
+                    e.Value = FName.FromString(game_data[filename], "AAAA_Shard")
+                if str(e.Name) == "RootComponent":
+                    root_index = int(str(e.Value)) - 1
+            for e in game_data[filename].Exports[root_index].Data:
+                if str(e.Name) == "RelativeLocation":
+                    e.Value[0].Value = FVector(-999, 0, 0)
+        else:
             game_data[filename].Exports[i].OuterIndex = FPackageIndex(0)
             game_data[filename].Exports[level_index].IndexData.Remove(i + 1)
+            game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(i + 1))
 
 def change_material_hsv(filename, parameter, new_hsv):
     #Change a vector color in a material file
@@ -2757,25 +2787,24 @@ def export_name_to_index(filename, export_name):
     raise Exception("Export not found")
 
 def is_enemy(character):
-    #Check if input entry is an enemy and what type
-    dict = {
-        "Enemy":     False,
-        "Boss":      False,
-        "Main":      False,
-        "Exception": False
-    }
     if character in mod_data["EnemyLocation"]:
-        dict["Enemy"] = True
-        dict["Main"]  = True
-    elif character[0:5] in mod_data["EnemyLocation"] and character != "N1001_Sip":
-        dict["Enemy"] = True
-    elif character[0:5] in ["N1009", "N1013"] or character == "N3125":
-        dict["Enemy"]     = True
-        dict["Exception"] = True
-    if character in datatable["PB_DT_CharacterParameterMaster"]:
+        return True
+    if character[0:5] in mod_data["EnemyLocation"] and list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar"):
+        return True
+    if character[0:5] in ["N1009", "N1013"]:
+        return True
+    return False
+
+def is_main_enemy(character):
+    if character in mod_data["EnemyLocation"]:
+        return True
+    return False
+
+def is_boss(character):
+    if is_enemy(character):
         if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]:
-            dict["Boss"] = True
-    return dict
+            return True
+    return False
 
 def create_weighted_list(value, minimum, maximum, step, deviation):
     #Create a list in a range with higher odds around a specific value

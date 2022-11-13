@@ -136,7 +136,7 @@ def rand_dialogue(english):
     for i in background_events:
         if len(Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueText"]) > max_length:
             max_length = len(Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueText"])
-    #Randomize in a dict by first giving background events a short event and then doing the rest
+    #Randomize in a dict by first giving background events short lines and then doing the rest
     for i in character_to_event:
         new_list = copy.deepcopy(character_to_event[i])
         for e in character_to_event[i]:
