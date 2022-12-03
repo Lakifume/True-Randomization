@@ -56,8 +56,9 @@ from UAssetAPI.UnrealTypes import *
 from UAssetAPI.Unversioned import *
 from UAssetSnippet import *
 
-#test = UAsset("m05SAN_000_Gimmick.umap", UE4Version.VER_UE4_22)
-#print(str(test.Imports[298].ObjectName))
+#test = UAsset("PB_DT_DropRateMaster.uasset", UE4Version.VER_UE4_22)
+#test.AddNameReference(FString("FloatProperty"))
+#test.Write("PB_DT_DropRateMaster2.uasset")
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -1183,7 +1184,8 @@ def apply_tweaks():
     #Remove the breakable wall in m17RVA_003 that shares its drop id with the wall in m17RVA_011
     datatable["PB_DT_GimmickFlagMaster"]["RVA_003_ItemWall"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Add the missing gate warps for the extra characters
-    #That way impassable gates are no longer a problem
+    #That way impassable obstacles are no longer a problem
+    add_extra_mode_warp("m04GDN_006_Gimmick", FVector(4860, 0,   60), FRotator(  0, 180,   0), FVector(5220, 0,   60), FRotator(  0,   0,   0))
     add_extra_mode_warp("m04GDN_013_Gimmick", FVector(2460, 0, 2100), FRotator(180,   0,   0), FVector(3080, 0, 1800), FRotator(  0,   0,   0))
     add_extra_mode_warp("m05SAN_003_Gimmick", FVector( 220, 0, 5940), FRotator(  0,   0, 180), FVector(2300, 0, 6000), FRotator(  0, 180,   0))
     add_extra_mode_warp("m05SAN_003_Gimmick", FVector(1400, 0,  900), FRotator(180,   0,   0), FVector(1400, 0,   60), FRotator(  0,   0,   0))
@@ -1201,6 +1203,7 @@ def apply_tweaks():
     add_extra_mode_warp("m15JPN_002_Gimmick", FVector(1740, 0, 1260), FRotator(180,   0,   0), FVector(1200, 0,   75), FRotator(  0,   0,   0))
     add_extra_mode_warp("m17RVA_001_Gimmick", FVector( 800, 0, 2080), FRotator(  0,   0, 180), FVector( 540, 0, 1800), FRotator(  0, 180,   0))
     add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
+    add_extra_mode_warp("m17RVA_012_Gimmick", FVector(2320, 0,  120), FRotator(  0, 180,   0), FVector(1640, 0,  120), FRotator(  0,   0,   0))
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
     #Add the missing Bloodless candle that was accidentally removed in a recent game update
     add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName.FromString(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
@@ -1226,12 +1229,14 @@ def apply_tweaks():
     #Remove the Dullhammer in the first galleon room on hard to prevent rough starts
     #That way you can at least save once before the game truly starts
     remove_level_class("m01SIP_001_Enemy_Hard", "Chr_N3015_C")
-    #Also remove the bone mortes from that one crowded room in galleon
+    #Remove the morte spawner that isn't an actual enemy actor
+    remove_level_class("m01SIP_011_Enemy", "PBCharacterGeneratorActor")
+    #Remove the bone mortes from that one crowded room in galleon
     remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
     #Remove the giant rat in Den, was most likely a dev mistake
     remove_level_class("m10BIG_008_Enemy", "Chr_N3051_C")
     #Fix that one Water Leaper in desert that falls through the floor by shifting its position upwards
-    game_data["m12SND_025_Enemy"].Exports[4].Data[4].Value[0].Value     = FVector(-260, -700, 600)
+    game_data["m12SND_025_Enemy"].Exports[4].Data[4].Value[0].Value = FVector(-260, -700, 600)
     #Fix some of the giant cannon stacks clipping over each other
     game_data["m10BIG_008_Enemy"].Exports[17].Data[4].Value[0].Value     = FVector(2220, 0, 3505)
     game_data["m10BIG_008_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(2220, 0, 3865)
@@ -1916,7 +1921,7 @@ def update_room_containers(room):
             if drop_id == "Treasurebox_TWR017_6":
                 location.X -= 100
             #If the room is a rotating 3d one then use the forward vector to shift position
-            if room in rotating_room_to_center:
+            if room in rotating_room_to_center and drop_id != "Treasurebox_TWR019_2":
                 rotation.Yaw = -math.degrees(math.atan2(location.X - rotating_room_to_center[room][0], location.Y - rotating_room_to_center[room][1]))
                 forward_vector = (math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Yaw)))
                 if "TreasureBox" in new_class_name and "MaxUp" in old_class_name:

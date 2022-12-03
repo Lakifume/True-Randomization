@@ -153,7 +153,7 @@ def init():
             "Chr_N3004_1365":            ( 1280,    0,  120)
         },
         "m01SIP_006_Enemy": {
-            "Chr_N3006_1":               (  280,    0,  120),
+            "Chr_N3006_1":               (  480,    0,  120),
             "Chr_N3006_2":                              None
         },
         "m01SIP_009_Enemy": {
@@ -276,7 +276,7 @@ def init():
             "N3090_Generator_119":       ( 1860,    0,  180)
         },
         "m07LIB_032_Enemy_Hard": {
-            "N3090_Generator_73":        ( 2240,    0,  300)
+            "N3090_Generator_73":        (  840,    0,  120)
         },
         "m07LIB_035_Enemy_Hard": {
             "N3090_Generator_113":       (  960,    0,  120)
@@ -297,10 +297,10 @@ def init():
             "N3090_Generator2_112":      (  360,    0,  840)
         },
         "m08TWR_013_Enemy_Hard": {
-            "N3090_Generator_142":       (  620,    0,  120)
+            "N3090_Generator_142":       ( 1600,    0,  120)
         },
         "m08TWR_013_Enemy_Normal": {
-            "N3090_Generator_142":       (  620,    0,  120)
+            "N3090_Generator_142":       ( 1600,    0,  120)
         },
         "m08TWR_017_Enemy": {            
             "N3082_Generator_1445":      ( 3720, -720, 1640)
@@ -873,7 +873,7 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.Z -= 120
     if old_enemy_id in ["N3029", "N3030"] and room != "m03ENT_001":
         location.Z -= 200
-    if new_enemy_id in ["N3029", "N3030"]:
+    if new_enemy_id in ["N3028", "N3029", "N3030"]:
         location.Z += 120
     if new_enemy_id in ["N3089", "N3088"]:
         location.Z -= 60
@@ -896,6 +896,8 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.X -= 260
     if filename == "m05SAN_021_Enemy" and export_name == "Chr_N3056_860":
         location.X += 220
+    if filename == "m06KNG_002_Enemy" and export_name == "Chr_N3052_51":
+        location.X += 260
     if filename == "m06KNG_014_Enemy_Hard" and export_name == "Chr_N3056_834":
         location.X += 300
     if filename == "m06KNG_017_Enemy_Hard" and export_name == "Chr_N3053_87":
@@ -905,6 +907,8 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.Z -= 180
     if filename == "m07LIB_025_Enemy" and export_name == "Chr_N3033_808":
         location.X -= 240
+    if filename == "m07LIB_033_Enemy" and export_name == "Chr_N3086_1925":
+        location.Z += 60
     if filename == "m07LIB_034_Enemy" and export_name == "Chr_210":
         location.X += 380
     if filename == "m10BIG_006_Enemy" and export_name in ["Chr_N3033", "Chr_N3034", "Chr_N3035", "Chr_N3036", "Chr_N3037"]:

@@ -27,7 +27,7 @@ import json
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
-item_color    = "#ff8080" 
+item_color    = "#ff8080"
 shop_color    = "#ffff80"
 library_color = "#bf80ff"
 shard_color   = "#80ffff"
@@ -129,8 +129,8 @@ presets = {
         False,
         True ,
         True ,
-        False,
         True ,
+        False,
         True ,
         False,
         True ,
@@ -1053,23 +1053,23 @@ class Main(QWidget):
         box_5_grid.addWidget(self.check_box_9, 1, 0)
         checkbox_list.append(self.check_box_9)
 
+        self.check_box_25 = QCheckBox("Enemy Locations")
+        self.check_box_25.setToolTip("Randomize which enemies appear where.")
+        self.check_box_25.stateChanged.connect(self.check_box_25_changed)
+        box_6_grid.addWidget(self.check_box_25, 0, 0)
+        checkbox_list.append(self.check_box_25)
+
         self.check_box_10 = QCheckBox("Enemy Levels")
         self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.\nWARNING: Only recommended for Miriam mode !")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
-        box_6_grid.addWidget(self.check_box_10, 0, 0)
+        box_6_grid.addWidget(self.check_box_10, 1, 0)
         checkbox_list.append(self.check_box_10)
 
         self.check_box_11 = QCheckBox("Enemy Tolerances")
         self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.\nWARNING: Only recommended for Miriam mode !")
         self.check_box_11.stateChanged.connect(self.check_box_11_changed)
-        box_6_grid.addWidget(self.check_box_11, 1, 0)
+        box_6_grid.addWidget(self.check_box_11, 2, 0)
         checkbox_list.append(self.check_box_11)
-
-        self.check_box_25 = QCheckBox("Enemy Locations")
-        self.check_box_25.setToolTip("Randomize which enemies appear where.")
-        self.check_box_25.stateChanged.connect(self.check_box_25_changed)
-        box_6_grid.addWidget(self.check_box_25, 3, 0)
-        checkbox_list.append(self.check_box_25)
 
         self.check_box_12 = QCheckBox("Room Layout")
         self.check_box_12.setToolTip("Randomly pick from a folder of map presets (" + str(map_num) + ").\nWARNING: Only recommended for Miriam mode !")

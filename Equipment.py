@@ -152,8 +152,6 @@ def rand_all_weapon():
         #Apply reductions to weapons with special properties to not make them super broken
         if i == "Juwuse":
             reduction = 0.85
-        elif "SteamFlatWideEnd" in i or "ChargeWideEnd" in i:
-            reduction = 1.1
         elif i in ["KillerBoots", "Decapitator"]:
             reduction = 0.9
         elif i in ["Swordbreaker", "Adrastea"]:
