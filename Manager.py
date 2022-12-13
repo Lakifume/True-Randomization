@@ -13,9 +13,23 @@ import filecmp
 from enum import Enum
 from collections import OrderedDict
 
+def simplify_item_name(name):
+    return name.replace("Familiar:", "").replace(" ", "").lower()
+
 #Open file information
 with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
     file_to_path = json.load(file_reader)
+translation = {}
+for i in os.listdir("Data\\Translation"):
+    name, extension = os.path.splitext(i)
+    with open("Data\\Translation\\" + i, "r", encoding="utf8") as file_reader:
+        translation[name] = json.load(file_reader)
+start_item_translation = {}
+for i in ["Item", "Shard"]:
+    for e in translation[i]:
+        start_item_translation[simplify_item_name(translation[i][e])] = e
+
+#Gather other information
 file_to_type = {}
 for i in file_to_path:
     if "DataTable" in file_to_path[i]:
@@ -691,9 +705,9 @@ def load_game_data():
 def load_mod_data():
     global mod_data
     mod_data = {}
-    for i in os.listdir("Data\\Dictionary"):
+    for i in os.listdir("Data\\Constant"):
         name, extension = os.path.splitext(i)
-        with open("Data\\Dictionary\\" + i, "r", encoding="utf8") as file_reader:
+        with open("Data\\Constant\\" + i, "r", encoding="utf8") as file_reader:
             mod_data[name] = json.load(file_reader)
 
 def load_map(path):
@@ -1145,9 +1159,9 @@ def apply_tweaks():
     for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
         i.Value.Value = 66
     #Rename the second Zangetsu boss so that he isn't confused with the first
-    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = mod_data["EnemyTranslation"]["N1011_STRONG"]
-    stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = mod_data["EnemyTranslation"]["N1011_STRONG"] + " Medal"
-    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_Medal013"]   = "Proof that you have triumphed over " + mod_data["EnemyTranslation"]["N1011_STRONG"] + "."
+    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = translation["Enemy"]["N1011_STRONG"]
+    stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = translation["Enemy"]["N1011_STRONG"] + " Medal"
+    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_Medal013"]   = "Proof that you have triumphed over " + translation["Enemy"]["N1011_STRONG"] + "."
     #Update Jinrai cost description
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
     #Slightly change Igniculus' descriptions to match other familiar's
@@ -1165,7 +1179,7 @@ def apply_tweaks():
     stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2017"] = "An instrument of war fought over the magical cloth that powered the game world."
     #Give the new dullahammer a unique name and look
     datatable["PB_DT_CharacterParameterMaster"]["N3127"]["NameStrKey"] = "ENEMY_NAME_N3127"
-    stringtable["PBMasterStringTable"]["ENEMY_NAME_N3127"] = mod_data["EnemyTranslation"]["N3127"]
+    stringtable["PBMasterStringTable"]["ENEMY_NAME_N3127"] = translation["Enemy"]["N3127"]
     change_material_hsv("MI_N3127_Eye", "EmissiveColor" , (215, 100, 100))
     change_material_hsv("MI_N3127_Eye", "HighlightColor", (215,  65, 100))
     #Give Guardian his own shard drop

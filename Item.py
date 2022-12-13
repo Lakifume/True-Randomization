@@ -419,8 +419,8 @@ def init():
     global chest_to_requirement
     chest_to_requirement = {
         "Treasurebox_PureMiriam_Hair":  ["HighJump", "Invert"],
-        "Treasurebox_SIP014_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Wall_SIP014_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SIP014_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Wall_SIP014_1":                ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_VIL006_4":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_GDN006_1":         ["Dimensionshift"],
         "Treasurebox_GDN013_1":         ["Invert", "Dimensionshift"],
@@ -428,8 +428,8 @@ def init():
         "Treasurebox_SAN003_8":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN015_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN015_3":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN016_3":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN016_4":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN016_3":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SAN016_4":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN019_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN019_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_SAN021_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
@@ -440,7 +440,7 @@ def init():
         "Treasurebox_LIB009_2":         ["HighJump", "Invert"],
         "Treasurebox_LIB012_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_LIB022_1":         ["Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_TWR005_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_TWR005_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_TWR018_2":         ["Doublejump", "HighJump", "Invert"],
         "Treasurebox_TWR018_6":         ["Doublejump", "HighJump", "Invert"],
         "Treasurebox_PureMiriam_Sword": ["Dimensionshift"],
@@ -467,7 +467,7 @@ def init():
         "Treasurebox_UGD044_2":         ["Deepsinker"],
         "Treasurebox_UGD046_2":         ["Deepsinker"],
         "Treasurebox_SND006_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_SND017_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Treasurebox_SND017_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_ARC006_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_TAR006_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_JPN002_1":         ["Dimensionshift"],
@@ -545,33 +545,6 @@ def init():
     key_item_to_location = {}
     global key_shard_to_location
     key_shard_to_location = {}
-    global free_drop_entries
-    free_drop_entries = [
-        "Tresurebox_SAN000_01",
-        "Tresurebox_SAN000_02",
-        "Tresurebox_SAN_Tunic",
-        "Tresurebox_SAN003_02",
-        "Tresurebox_SAN003_03",
-        "Tresurebox_SAN003_04",
-        "Tresurebox_SAN016_01",
-        "Tresurebox_SAN016_02",
-        "Tresurebox_SAN017_01",
-        "Tresurebox_SAN019_01",
-        "Tresurebox_SAN_Spear",
-        "Tresurebox_SAN_Shoes",
-        "Tresurebox_SAN_Awhip",
-        "Tresurebox_SAN_Dull",
-        "Tresurebox_SAN_Claymore",
-        "Tresurebox_SAN_Headband",
-        "Tresurebox_SAN_Morgenstern",
-        "Tresurebox_SAN_Baselard",
-        "Tresurebox_SAN_High_Potion_1",
-        "Tresurebox_SAN_High_Potion_2",
-        "Tresurebox_SAN_High_Potion_3",
-        "Tresurebox_SAN_High_Ether_1",
-        "Tresurebox_SAN_High_Ether_2",
-        "Tresurebox_SAN_High_Ether_3"
-    ]
     #Pool
     global chest_type
     chest_type = []
@@ -844,14 +817,23 @@ def remove_infinite():
     while "Recyclehat" in Manager.mod_data["QuestRequirement"]["Memento"]["ItemPool"]:
         Manager.mod_data["QuestRequirement"]["Memento"]["ItemPool"].remove("Recyclehat")
 
-def give_extra(item, quantity):
-    if not free_drop_entries:
-        raise IndexError("Out of free drop entries")
-    entry = free_drop_entries[0]
-    free_drop_entries.remove(entry)
-    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemId"] = item
+def give_extra(item):
+    entry = "Start_" + item
+    #Determine quantity based on item type
+    quantity = None
+    for i in ["Item", "Enemy"]:
+        for e in Manager.mod_data[i + "Drop"]:
+            if item in Manager.mod_data[i + "Drop"][e]["ItemPool"]:
+                quantity = Manager.mod_data[i + "Drop"][e]["ItemHighQuantity"]
+    if not quantity:
+        if item == "Shortcut":
+            quantity = 7
+        else:
+            quantity = 1
+    Manager.datatable["PB_DT_DropRateMaster"][entry] = copy.deepcopy(Manager.datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
+    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemId"]       = item
     Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemQuantity"] = quantity
-    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemRate"] = 100.0
+    Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemRate"]     = 100.0
     Manager.add_starting_pickup(entry)
 
 def no_shard_craft():
@@ -1275,7 +1257,7 @@ def patch_start_chest_entry():
     #Give extra bullets if the starting weapon is a gun
     if Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"] in gun_list:
         Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = any_pick(Manager.mod_data["ItemDrop"]["Bullet"]["ItemPool"], Manager.mod_data["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
-        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemQuantity"]*3
+        Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["ItemDrop"]["Bullet"]["ItemHighQuantity"]
         Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = Manager.mod_data["ItemDrop"]["Bullet"]["ItemRate"]
     used_chests.remove(container)
 
@@ -1438,25 +1420,19 @@ def rand_quest_pool():
         item_type = random.choice(quest_type)
         if Manager.mod_data["ItemDrop"][item_type]["ChestColor"] == "Blue":
             Manager.datatable["PB_DT_QuestMaster"][i]["RewardItem01"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
-            if Manager.mod_data["ItemDrop"][item_type]["IsUnique"]:
-                Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = 1
-            else:
-                Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]*9
+            Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = Manager.mod_data["ItemDrop"][item_type]["ItemHighQuantity"]
         elif Manager.mod_data["ItemDrop"][item_type]["ChestColor"] == "Red":
             Manager.datatable["PB_DT_QuestMaster"][i]["RewardItem01"] = "Money"
             Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
         else:
             Manager.datatable["PB_DT_QuestMaster"][i]["RewardItem01"] = any_pick(Manager.mod_data["ItemDrop"][item_type]["ItemPool"], Manager.mod_data["ItemDrop"][item_type]["IsUnique"], item_type)
-            if Manager.mod_data["ItemDrop"][item_type]["IsUnique"]:
-                Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = 1
-            else:
-                Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = Manager.mod_data["ItemDrop"][item_type]["ItemQuantity"]*3
+            Manager.datatable["PB_DT_QuestMaster"][i]["RewardNum01"] = Manager.mod_data["ItemDrop"][item_type]["ItemHighQuantity"]
     invert_ratio()
 
 def catering_quest_info():
     #Update catering quests descriptions so that it is possible to tell what Susie wants
     for i in range(21):
-        Manager.stringtable["PBScenarioStringTable"]["QST_Catering_Name" + "{:02d}".format(i + 1)]    = Manager.mod_data["ItemTranslation"][Manager.datatable["PB_DT_QuestMaster"]["Quest_Catering" + "{:02d}".format(i + 1)]["Item01"]]
+        Manager.stringtable["PBScenarioStringTable"]["QST_Catering_Name" + "{:02d}".format(i + 1)]    = Manager.translation["Item"][Manager.datatable["PB_DT_QuestMaster"]["Quest_Catering" + "{:02d}".format(i + 1)]["Item01"]]
         Manager.stringtable["PBScenarioStringTable"]["QST_Catering_Caption" + "{:02d}".format(i + 1)] = "She says she wants to eat until she explodes."
 
 def all_hair_in_shop():
@@ -1522,6 +1498,16 @@ def replace_silver_bromide():
     for i in Manager.datatable["PB_DT_QuestMaster"]:
         if Manager.datatable["PB_DT_QuestMaster"][i]["Item01"] == "Silverbromide":
             Manager.datatable["PB_DT_QuestMaster"][i]["Item01"] = "Certificationboard"
+
+def update_drop_ids():
+    #Make sure that every id number in dropratemaster is unique
+    used_ids = []
+    for i in Manager.datatable["PB_DT_DropRateMaster"]:
+        drop_id = Manager.datatable["PB_DT_DropRateMaster"][i]["Id"]
+        while drop_id in used_ids:
+            drop_id += 1
+        used_ids.append(drop_id)
+        Manager.datatable["PB_DT_DropRateMaster"][i]["Id"] = drop_id
 
 def update_container_types():
     for i in Manager.mod_data["MapLogic"]:
@@ -1600,9 +1586,9 @@ def create_log(seed, map):
     log["Key"]  = {}
     for i in key_order:
         if i in key_items:
-            log["Key"][Manager.mod_data["ItemTranslation"][i]] = [chest_to_room(key_item_to_location[i])]
+            log["Key"][Manager.translation["Item"][i]] = [chest_to_room(key_item_to_location[i])]
         if i in key_shards:
-            log["Key"][Manager.mod_data["ShardTranslation"][i]] = enemy_to_room(key_shard_to_location[i])
+            log["Key"][Manager.translation["Shard"][i]] = enemy_to_room(key_shard_to_location[i])
     return log
 
 def create_log_string(seed, map, original_enemies):
@@ -1618,11 +1604,11 @@ def create_log_string(seed, map, original_enemies):
     log_string += "Key:\n"
     for i in key_order:
         if i in key_items:
-            log_string += "  " + Manager.mod_data["ItemTranslation"][i] + ": " + key_item_to_location[i]
+            log_string += "  " + Manager.translation["Item"][i] + ": " + key_item_to_location[i]
             log_string += "\n"
         if i in key_shards:
-            log_string += "  " + Manager.mod_data["ShardTranslation"][i] + ": " + Manager.mod_data["EnemyTranslation"][key_shard_to_location[i]]
+            log_string += "  " + Manager.translation["Shard"][i] + ": " + Manager.translation["Enemy"][key_shard_to_location[i]]
             if key_shard_to_location[i] in original_enemies:
-                log_string += " (over " + Manager.mod_data["EnemyTranslation"][original_enemies[key_shard_to_location[i]]] + ")"
+                log_string += " (over " + Manager.translation["Enemy"][original_enemies[key_shard_to_location[i]]] + ")"
             log_string += "\n"
     return log_string

@@ -287,12 +287,13 @@ class Signaller(QObject):
     error    = Signal()
 
 class Generate(QThread):
-    def __init__(self, progress_bar, seed, map):
+    def __init__(self, progress_bar, seed, map, start_items):
         QThread.__init__(self)
         self.signaller = Signaller()
         self.progress_bar = progress_bar
         self.seed = seed
         self.map = map
+        self.start_items = start_items
     
     def run(self):
         try:
@@ -409,10 +410,10 @@ class Generate(QThread):
         if config.getboolean("ItemRandomization", "bRemoveInfinites"):
             Item.remove_infinite()
         
-        if config.getboolean("StartWith", "bDoubleJump"):
-            Item.give_extra("Doublejump", 1)
-        elif config.getboolean("StartWith", "bAccelerator"):
-            Item.give_extra("Accelerator", 1)
+        for i in self.start_items:
+            if config.getboolean("ItemRandomization", "bOverworldPool") and i == "Shortcut":
+                continue
+            Item.give_extra(i)
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed)
@@ -420,7 +421,7 @@ class Generate(QThread):
             Item.all_hair_in_shop()
             Item.no_key_in_shop()
             Item.no_shard_craft()
-            Item.give_extra("Shortcut", 7)
+            Item.give_extra("Shortcut")
             Item.rand_overworld_key()
             Item.rand_overworld_pool(config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bEnemyTolerances"))
             Item.rand_overworld_shard()
@@ -526,6 +527,7 @@ class Generate(QThread):
             Equipment.zangetsu_black_belt()
         
         #Update some things to reflect previous changes
+        Item.update_drop_ids()
         Item.update_container_types()
         Item.update_boss_crystal_color()
         Item.update_shard_candles()
@@ -1124,21 +1126,6 @@ class Main(QWidget):
         self.radio_button_3.toggled.connect(self.radio_button_group_1_checked)
         box_11_grid.addWidget(self.radio_button_3, 0, 1)
         
-        self.radio_button_11 = QRadioButton("Nothing")
-        self.radio_button_11.setToolTip("Start with no extra abilities.")
-        self.radio_button_11.toggled.connect(self.radio_button_group_5_checked)
-        box_16_grid.addWidget(self.radio_button_11, 0, 0)
-        
-        self.radio_button_12 = QRadioButton("Double Jump")
-        self.radio_button_12.setToolTip("Start with the ability to double jump.")
-        self.radio_button_12.toggled.connect(self.radio_button_group_5_checked)
-        box_16_grid.addWidget(self.radio_button_12, 1, 0)
-        
-        self.radio_button_13 = QRadioButton("Accelerator")
-        self.radio_button_13.setToolTip("Start with an accelerator shard.")
-        self.radio_button_13.toggled.connect(self.radio_button_group_5_checked)
-        box_16_grid.addWidget(self.radio_button_13, 0, 1)
-        
         self.radio_button_4 = QRadioButton("English")
         self.radio_button_4.setToolTip("Goofy.")
         self.radio_button_4.toggled.connect(self.radio_button_group_2_checked)
@@ -1283,13 +1270,6 @@ class Main(QWidget):
         else:
             self.radio_button_3.setChecked(True)
         
-        if config.getboolean("StartWith", "bNothing"):
-            self.radio_button_11.setChecked(True)
-        elif config.getboolean("StartWith", "bDoubleJump"):
-            self.radio_button_12.setChecked(True)
-        else:
-            self.radio_button_13.setChecked(True)
-        
         if config.getboolean("GameVoices", "bEnglish"):
             self.radio_button_4.setChecked(True)
         else:
@@ -1312,6 +1292,11 @@ class Main(QWidget):
         self.matches_preset()
         
         #Text field
+        
+        self.start_field = QLineEdit(config.get("StartWith", "sStartItem"))
+        self.start_field.setToolTip("Items to start with. Input their english\nnames with | as separator.")
+        self.start_field.textChanged[str].connect(self.new_start)
+        box_16_grid.addWidget(self.start_field, 0, 0)
         
         self.output_field = QLineEdit(config.get("Misc", "sGamePath"))
         self.output_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks).")
@@ -1706,20 +1691,6 @@ class Main(QWidget):
             config.set("GameDifficulty", "bNormal", "false")
             config.set("GameDifficulty", "bHard", "false")
             config.set("GameDifficulty", "bNightmare", "true")
-    
-    def radio_button_group_5_checked(self):
-        if self.radio_button_11.isChecked():
-            config.set("StartWith", "bNothing", "true")
-            config.set("StartWith", "bDoubleJump", "false")
-            config.set("StartWith", "bAccelerator", "false")
-        elif self.radio_button_12.isChecked():
-            config.set("StartWith", "bNothing", "false")
-            config.set("StartWith", "bDoubleJump", "true")
-            config.set("StartWith", "bAccelerator", "false")
-        else:
-            config.set("StartWith", "bNothing", "false")
-            config.set("StartWith", "bDoubleJump", "false")
-            config.set("StartWith", "bAccelerator", "true")
 
     def radio_button_group_2_checked(self):
         if self.radio_button_4.isChecked():
@@ -1773,6 +1744,9 @@ class Main(QWidget):
                 self.preset_drop_down.setCurrentText(i)
                 return
         self.preset_drop_down.setCurrentText("Custom")
+    
+    def new_start(self, text):
+        config.set("StartWith", "sStartItem", text)
     
     def new_level(self):
         config.set("Misc", "iCustomLevel", str(self.level_box.value()))
@@ -1876,7 +1850,7 @@ class Main(QWidget):
         self.progress_bar.setWindowTitle("Status")
         self.progress_bar.setWindowModality(Qt.WindowModal)
         
-        self.worker = Generate(self.progress_bar, self.seed, self.map)
+        self.worker = Generate(self.progress_bar, self.seed, self.map, self.start_items)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(self.generate_finished)
         self.worker.signaller.error.connect(self.failure)
@@ -2031,6 +2005,22 @@ class Main(QWidget):
         if not config.get("Misc", "sGamePath") or not os.path.isdir(config.get("Misc", "sGamePath")) or config.get("Misc", "sGamePath").split("\\")[-1] != "Paks":
             self.error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
             return
+        
+        #Check if starting items are valid
+        
+        self.start_items = []
+        for i in config.get("StartWith", "sStartItem").split("|"):
+            if not i:
+                continue
+            simple_name = Manager.simplify_item_name(i)
+            if not simple_name in Manager.start_item_translation:
+                self.error("Starting item name invalid.")
+                return
+            item_name = Manager.start_item_translation[simple_name]
+            if "Skilled" in item_name:
+                self.start_items.append(item_name.replace("Skilled", ""))
+            self.start_items.append(item_name)
+        self.start_items = list(dict.fromkeys(self.start_items))
         
         #Prompt seed options
         

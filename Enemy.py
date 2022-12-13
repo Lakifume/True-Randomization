@@ -1192,7 +1192,7 @@ def update_special_properties():
 def create_log():
     log = {}
     for i in Manager.mod_data["EnemyLocation"]:
-        enemy_name = Manager.mod_data["EnemyTranslation"][i]
+        enemy_name = Manager.translation["Enemy"][i]
         log[enemy_name] = {}
         log[enemy_name]["DefaultLevel"]   = Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
         log[enemy_name]["BloodlessLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"]
@@ -1203,7 +1203,7 @@ def create_log():
             log[enemy_name]["Resistances"][e] = int(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e])
         if i in enemy_replacement:
             if enemy_replacement[i] != i:
-                log[enemy_name]["Position"] = Manager.mod_data["EnemyTranslation"][enemy_replacement_invert[i]]
+                log[enemy_name]["Position"] = Manager.translation["Enemy"][enemy_replacement_invert[i]]
             else:
                 log[enemy_name]["Position"] = "Unchanged"
         else:

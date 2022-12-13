@@ -304,11 +304,11 @@ def create_log(seed, map):
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
     for i in key_order:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]] = []
+        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst(i)]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]] = []
+        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst(i)]] = []
     for i in bloodless_datatable:
-        log["Key"][Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)]].append(Manager.remove_inst(bloodless_datatable[i]))
+        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst(i)]].append(Manager.remove_inst(bloodless_datatable[i]))
     return log
 
 def create_log_string(seed, map):
@@ -323,11 +323,11 @@ def create_log_string(seed, map):
     log_string += "Map: " + map_name + "\n"
     log_string += "Key:\n"
     for i in key_order:
-        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.translation["Bloodless"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
     for i in bloodless_datatable:
         if i in key_order:
             continue
         if "_UP_" in i:
             break
-        log_string += "  " + Manager.mod_data["BloodlessTranslation"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
+        log_string += "  " + Manager.translation["Bloodless"][Manager.remove_inst(i)] + ": " + bloodless_datatable[i] + "\n"
     return log_string
