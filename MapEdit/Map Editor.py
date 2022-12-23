@@ -385,31 +385,31 @@ class Main(QMainWindow):
         
         #Menu
         
-        bar = self.menuBar()
-        file_bar = bar.addMenu("File")
-        edit_bar = bar.addMenu("Edit")
-        select_bar = bar.addMenu("Select")
-        view_bar = bar.addMenu("View")
-        tool_bar = bar.addMenu("Tools")
-        help_bar = bar.addMenu("Help")
+        self.bar   = self.menuBar()
+        file_bar   = self.bar.addMenu("File")
+        edit_bar   = self.bar.addMenu("Edit")
+        select_bar = self.bar.addMenu("Select")
+        view_bar   = self.bar.addMenu("View")
+        tool_bar   = self.bar.addMenu("Tools")
+        help_bar   = self.bar.addMenu("Help")
 
         open = QAction("Open", self)
-        open.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_O))
+        open.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_O))
         open.triggered.connect(self.open_file)
         file_bar.addAction(open)
 
         self.save = QAction("Save", self)
-        self.save.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_S))
+        self.save.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_S))
         self.save.triggered.connect(self.save_file)
         file_bar.addAction(self.save)
 
         save_as = QAction("Save as", self)
-        save_as.setShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_S))
+        save_as.setShortcut(QKeySequence(Qt.SHIFT | Qt.CTRL | Qt.Key_S))
         save_as.triggered.connect(self.save_file_as)
         file_bar.addAction(save_as)
 
         reset = QAction("Reset", self)
-        reset.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_R))
+        reset.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_R))
         reset.triggered.connect(self.reset)
         file_bar.addAction(reset)
         
@@ -425,17 +425,17 @@ class Main(QMainWindow):
         edit_bar.addAction(self.restore_music)
         
         self.select_all = QAction("Select all", self)
-        self.select_all.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_A))
+        self.select_all.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_A))
         self.select_all.triggered.connect(self.select_all_action)
         select_bar.addAction(self.select_all)
         
         self.select_none = QAction("Deselect all", self)
-        self.select_none.setShortcut(QKeySequence(Qt.SHIFT + Qt.CTRL + Qt.Key_A))
+        self.select_none.setShortcut(QKeySequence(Qt.SHIFT | Qt.CTRL | Qt.Key_A))
         self.select_none.triggered.connect(self.select_none_action)
         select_bar.addAction(self.select_none)
         
         self.select_invert = QAction("Invert selection", self)
-        self.select_invert.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_I))
+        self.select_invert.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_I))
         self.select_invert.triggered.connect(self.select_invert_action)
         select_bar.addAction(self.select_invert)
         
@@ -484,21 +484,21 @@ class Main(QMainWindow):
         #Buttons
         
         self.reverse = QPushButton()
-        self.reverse.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_E))
+        self.reverse.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_E))
         self.reverse.setIcon(QIcon("Data\\reverse_icon.png"))
         self.reverse.setToolTip("Toggle save/warp entrances\nShortcut: Ctrl + E")
         self.reverse.clicked.connect(self.reverse_action)
         self.reverse.setFixedSize(50, 30)
         
         self.swap = QPushButton()
-        self.swap.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_T))
+        self.swap.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_T))
         self.swap.setIcon(QIcon("Data\\swap_icon.png"))
         self.swap.setToolTip("Toggle save/warp room type\nShortcut: Ctrl + T")
         self.swap.clicked.connect(self.swap_action)
         self.swap.setFixedSize(50, 30)
         
         self.duplicate = QPushButton()
-        self.duplicate.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_D))
+        self.duplicate.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_D))
         self.duplicate.setIcon(QIcon("Data\\duplicate_icon.png"))
         self.duplicate.setToolTip("Duplicate a save/warp/transition room\nShortcut: Ctrl + D")
         self.duplicate.clicked.connect(self.duplicate_action)
@@ -512,14 +512,14 @@ class Main(QMainWindow):
         self.delete.setFixedSize(50, 30)
         
         self.zoom_in = QPushButton()
-        self.zoom_in.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Plus))
+        self.zoom_in.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Plus))
         self.zoom_in.setIcon(QIcon("Data\\in_icon.png"))
         self.zoom_in.setToolTip("Zoom in\nShortcut: Ctrl + Plus")
         self.zoom_in.clicked.connect(self.zoom_in_action)
         self.zoom_in.setFixedSize(50, 30)
         
         self.zoom_out = QPushButton()
-        self.zoom_out.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Minus))
+        self.zoom_out.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Minus))
         self.zoom_out.setIcon(QIcon("Data\\out_icon.png"))
         self.zoom_out.setToolTip("Zoom out\nShortcut: Ctrl + Minus")
         self.zoom_out.clicked.connect(self.zoom_out_action)
@@ -596,7 +596,7 @@ class Main(QMainWindow):
         #Box content
         
         self.gate_toggle = QPushButton("Gate Toggle")
-        self.gate_toggle.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_G))
+        self.gate_toggle.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_G))
         self.gate_toggle.setToolTip("Toggle whether selected room is a gate or not.\nShortcut: Ctrl + G")
         self.gate_toggle.clicked.connect(self.gate_toggle_action)
         gate_box_layout.addWidget(self.gate_toggle)
@@ -662,20 +662,20 @@ class Main(QMainWindow):
         gate_box_layout.addWidget(self.check_box_14)
         
         self.assign_mode = QPushButton("Assign Mode")
-        self.assign_mode.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_B))
+        self.assign_mode.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_B))
         self.assign_mode.setToolTip("Select gates to assign to selected room in this mode.\nShortcut: Ctrl + B")
         self.assign_mode.setCheckable(True)
         self.assign_mode.clicked.connect(self.assign_mode_action)
         gate_box_layout.addWidget(self.assign_mode)
         
         self.select_outlined = QPushButton("Select Outlined")
-        self.select_outlined.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_F))
+        self.select_outlined.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_F))
         self.select_outlined.setToolTip("Shift current selection to all outlined rooms.\nShortcut: Ctrl + F")
         self.select_outlined.clicked.connect(self.select_outlined_action)
         gate_box_layout.addWidget(self.select_outlined)
         
         self.clear_selected = QPushButton("Clear selected")
-        self.clear_selected.setShortcut(QKeySequence(Qt.CTRL + Qt.Key_Delete))
+        self.clear_selected.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Delete))
         self.clear_selected.setToolTip("Empty gate list of selected rooms.\nShortcut: Ctrl + Del")
         self.clear_selected.clicked.connect(self.clear_selected_action)
         gate_box_layout.addWidget(self.clear_selected)
@@ -780,7 +780,7 @@ class Main(QMainWindow):
             return
         self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="Custom", filter="*.json"))[0]
         if self.path:
-            self.string = self.path
+            self.string = self.path.replace("/", "\\")
             self.title_string = " (" + self.string + ")"
             self.load_from_json(self.string)
             self.direct_save = True
@@ -795,7 +795,7 @@ class Main(QMainWindow):
     def save_file_as(self):
         self.path = (QFileDialog.getSaveFileName(parent=self, caption="Save as", dir="Custom", filter="*.json"))[0]
         if self.path:
-            self.string = self.path
+            self.string = self.path.replace("/", "\\")
             self.title_string = " (" + self.string + ")"
             self.save_to_json(self.string)
             self.direct_save = True
@@ -987,13 +987,13 @@ class Main(QMainWindow):
                 log_path = os.path.abspath(os.path.join("", os.pardir)) + "\\SpoilerLog\\KeyLocation.json"
                 with open(log_path, "r", encoding="utf8") as file_reader:
                     self.log = json.load(file_reader)
-                if not self.log["Map"] and name.split("/")[-1] != "PB_DT_RoomMaster":
+                if not self.log["Map"] and name.split("\\")[-1] != "PB_DT_RoomMaster":
                     box.setText("Current key location is meant for the default map.")
                     box.exec()
                     self.key_location.setChecked(False)
                     self.key_location_action()
                     return
-                elif self.log["Map"] and name.split("/")[-1] != self.log["Map"]:
+                elif self.log["Map"] and name.split("\\")[-1] != self.log["Map"]:
                     box.setText("Current key location is meant for map " + self.log["Map"] + ".")
                     box.exec()
                     self.key_location.setChecked(False)
@@ -1428,8 +1428,10 @@ class Main(QMainWindow):
         global assign_mode
         if self.assign_mode.isChecked():
             assign_mode = True
+            self.bar.setEnabled(False)
             self.gate_toggle.setEnabled(False)
             self.disable_checkboxes()
+            self.select_outlined.setEnabled(False)
             self.clear_selected.setEnabled(False)
             self.gate_box.setStyleSheet("QGroupBox{border: 1px solid red}")
             assign_list.clear()
@@ -1440,6 +1442,8 @@ class Main(QMainWindow):
                 i.setFlags(QGraphicsItem.ItemIsFocusable)
         else:
             assign_mode = False
+            self.bar.setEnabled(True)
+            self.select_outlined.setEnabled(True)
             self.clear_selected.setEnabled(True)
             self.gate_box.setStyleSheet("QGroupBox{border: 1px solid white}")
             for i in self.room_list:
