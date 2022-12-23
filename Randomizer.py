@@ -514,6 +514,7 @@ class Generate(QThread):
             Enemy.hard_patterns()
             Enemy.brv_speed("AnimaionPlayRateNightmare")
             Enemy.brv_damage(Manager.datatable["PB_DT_CoordinateParameter"]["NightmareBossDamageRate"]["Value"])
+            Shard.rescale_level_based_shards()
         
         #Change some extra properties for Progressive Zangetsu mode
         if config.getboolean("SpecialMode", "bProgressive"):

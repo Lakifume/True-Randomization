@@ -410,6 +410,7 @@ def init():
         "LIB_003_0_1_RIGHT",
         "LIB_023_0_0_LEFT",
         "LIB_023_0_0_RIGHT",
+        "UGD_006_0_2_LEFT",
         "UGD_016_0_1_RIGHT",
         "UGD_019_0_2_LEFT",
         "UGD_019_1_2_RIGHT",
@@ -437,8 +438,7 @@ def init():
     transitionless_doors = [
         "KNG_013_0_0_RIGHT",
         "LIB_023_0_3_RIGHT",
-        "TWR_009_0_10_RIGHT",
-        "UGD_006_0_2_LEFT"
+        "TWR_009_0_10_RIGHT"
     ]
     global room_to_boss
     room_to_boss = {
@@ -813,25 +813,20 @@ def fix_custom_map():
         remove_level_class(i + "_RV", "RoomChange_C")
     #Make Bathin's room enterable from the left without softlocking the boss
     bathin_left_entrance_fix()
-    #The two underground rooms with very specific shapes only display properly based on their Y position below the origin
+    #Rooms with no traverse blocks only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
         datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*2
     for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
         datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*3
     #Then shift those lists if the rooms are below 0
-    if datatable["PB_DT_RoomMaster"]["m11UGD_013"]["OffsetZ"] < 0:
-        multiplier = abs(int(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["OffsetZ"]/7.2)) - 1
-        if multiplier > datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaHeightSize"] - 1:
-            multiplier = datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaHeightSize"] - 1
-        for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
-            datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][i] -= datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*multiplier
-    if datatable["PB_DT_RoomMaster"]["m11UGD_031"]["OffsetZ"] < 0:
-        multiplier = abs(int(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["OffsetZ"]/7.2)) - 1
-        if multiplier > datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaHeightSize"] - 1:
-            multiplier = datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaHeightSize"] - 1
-        for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
-            datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][i] -= datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*multiplier
+    for i in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
+        if datatable["PB_DT_RoomMaster"][i]["OffsetZ"] < 0:
+            multiplier = abs(int(datatable["PB_DT_RoomMaster"][i]["OffsetZ"]/7.2)) - 1
+            if multiplier > datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] - 1:
+                multiplier = datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] - 1
+            for e in range(len(datatable["PB_DT_RoomMaster"][i]["NoTraverse"])):
+                datatable["PB_DT_RoomMaster"][i]["NoTraverse"][e] -= datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*multiplier
     #Each area has limitations as to where it can be displayed on the canvas
     #Change area IDs based on their X positions so that everything is always displayed
     for i in datatable["PB_DT_RoomMaster"]:
@@ -1697,15 +1692,11 @@ def update_map_doors():
                     datatable["PB_DT_EventFlagMaster"]["Event_09_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
                 if o == "TAR_000_0_0_LEFT":
                     datatable["PB_DT_EventFlagMaster"]["Event_12_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-                #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
-                if o in floorless_doors:
-                    x_offset = -20
-                else:
-                    x_offset = 40
                 if map_doors[o].room in room_to_gimmick:
                     filename = room_to_gimmick[map_doors[o].room]
                 else:
                     filename = map_doors[o].room + "_Gimmick"
+                x_offset = 40
                 location = FVector(x_offset, -180, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
@@ -1725,6 +1716,16 @@ def update_map_doors():
                 #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
                 if o in wall_to_gimmick_flag:
                     datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
+                if o in floorless_doors:
+                    platform_location = FVector(0, -250, location.Z - 20)
+                    platform_rotation = FRotator(0, 0, 0)
+                    platform_scale    = FVector(12/11, 1, 1)
+                    if "Left" in class_name:
+                        platform_location.X = location.X + 35
+                    if "Right" in class_name:
+                        platform_location.X = location.X - 35 - 120*12/11
+                    add_level_actor(filename, "UGD_WeakPlatform_C", platform_location, platform_rotation, platform_scale, {"SecondsToDestroy": 9999.0})
                 #Remove the magic door in that one galleon room so that it never overlays with anything
                 if o == "SIP_002_0_0_RIGHT":
                     remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")

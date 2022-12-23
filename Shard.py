@@ -114,3 +114,11 @@ def update_special_properties():
     for i in ["minGradeValue", "maxGradeValue"]:
         Manager.datatable["PB_DT_ShardMaster"]["DragonicRage"][i] = round(Manager.datatable["PB_DT_ShardMaster"]["DragonicRage"][i] / 1.45, 3)
         Manager.datatable["PB_DT_ShardMaster"]["SummonAme"][i]    = round(Manager.datatable["PB_DT_ShardMaster"]["SummonAme"][i]    / 0.75, 3)
+
+def rescale_level_based_shards():
+    #Money is Power and Red Rememberance only take starting stats and level up stats in account
+    #So considerably increase their multipliers to make them useful if level 1 capped
+    Manager.datatable["PB_DT_CoordinateParameter"]["P0000_MONEYISPOWER_ATTACK_RATE_MAX"]["Value"] = 0.5
+    #Unfortunately Red Rememberance seems to be capped at 1.0
+    Manager.datatable["PB_DT_ShardMaster"]["RedDowther"]["minGradeValue"] = 0.5
+    Manager.datatable["PB_DT_ShardMaster"]["RedDowther"]["maxGradeValue"] = 1.0

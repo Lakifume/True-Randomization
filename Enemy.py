@@ -916,6 +916,8 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
     if filename == "m10BIG_016_Enemy" and export_name == "Chr_N3039":
         location.X += 240
         location.Z += 520
+    if filename == "m11UGD_004_Enemy" and export_name == "Chr_N3064_1":
+        location.Z -= 340
     if filename == "m11UGD_017_Enemy_Hard" and export_name == "Chr_N3055_1042":
         location.X -= 310
     if filename == "m11UGD_032_Enemy" and export_name == "Chr_N3044_977":
@@ -926,9 +928,9 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
     if filename == "m51EBT_000_Enemy" and export_name in ["Chr_N3143", "Chr_N3146"]:
         location.Z += 90
     #Avoid placing 8 bit zombies near the vertical edges of the room
-    if new_enemy_id == "N3121":
+    if new_enemy_id == "N3121" and room != "m19K2C_000":
         location.Z = max(min(location.Z, room_height - 360), 360)
-    #The giant dulla head spawner actually requires to be scaled up to function properly
+    #The giant dulla head spawner requires to be scaled up to function properly
     if new_enemy_id == "N3126":
         scale.X = 32
         scale.Y = 1
@@ -938,12 +940,23 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         scale.Y = 1
         scale.Z = 1
     #Make sure the enemy is never too close to the edge of the screen
-    if room != "m12SND_025":
+    if not room in ["m12SND_025", "m19K2C_000"]:
         location.X = max(min(location.X, room_width  - 60), 60)
         location.Z = max(min(location.Z, room_height - 60), 60)
-    #If the enemy is right above a downwards entrance do not add it
-    if "_".join([room[3:], str(int(location.X//1260)), "0", "BOTTOM"]) in Manager.map_connections[room] and 500 < location.X%1260 < 760 and location.Z < 360:
-        return
+    #If the enemy is right next to an entrance do not add it
+    if not room in Manager.rotating_room_to_center:
+        #Left
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),   "LEFT"]) in Manager.map_connections[room] and location.X%1260 <  120 and 230 < location.Z%720 < 490:
+            return
+        #Right
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "RIGHT"]) in Manager.map_connections[room] and location.X%1260 > 1140 and 230 < location.Z%720 < 490:
+            return
+        #Top
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "TOP"]) in Manager.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 > 420:
+            return
+        #Bottom
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "BOTTOM"]) in Manager.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 < 360:
+            return
     #One of the Journey rooms has a faulty persistent level export in its enemy file, so add in its bg file instead
     if room == "m20JRN_002":
         filename = "m20JRN_002_BG"
@@ -1234,6 +1247,13 @@ def hard_patterns():
     
     Manager.datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R00"] *= 1.5
     Manager.datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R01"] *= 1.5
+    
+    #Increase OD's fire sword explosion radius
+    Manager.datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectBeginScale"] *= 4.0
+    Manager.datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectEndScale"]   *= 4.0
+    
+    Manager.datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R00"] *= 4.0
+    Manager.datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R01"] *= 4.0
     
     #Speeding up Bael's animation play rate doesn't work well so instead speed up and expand all of his projectiles
     Manager.datatable["PB_DT_BallisticMaster"]["N1009_RAY"]["InitialSpeed"]        *= 2.0
