@@ -471,6 +471,7 @@ def init():
         "Treasurebox_ARC006_1":         ["Dimensionshift", "Reflectionray"],
         "Treasurebox_TAR006_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_JPN002_1":         ["Dimensionshift"],
+        "Treasurebox_RVA001_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_RVA001_2":         ["Dimensionshift", ["Invert", "Reflectionray"]],
         "Treasurebox_RVA011_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Treasurebox_RVA011_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
@@ -539,6 +540,7 @@ def init():
         "Dimensionshift",
         "Reflectionray",
         "Aquastream",
+        "Demoniccapture",
         "Bloodsteel"
     ]
     global key_item_to_location
@@ -585,7 +587,6 @@ def init():
     ten_thousand = []
     global enemy_skip_list
     enemy_skip_list = [
-        "N1003",
         "N2001",
         "N2013"
     ]
@@ -628,7 +629,7 @@ def init():
     shard_type_to_hsv = {
         "Skill":       (  0,   0, 100),
         "Trigger":     (  0, 100, 100),
-        "Effective":   (216, 100, 100),
+        "Effective":   (230, 100,  80),
         "Directional": (270, 100, 100),
         "Enchant":     ( 60, 100, 100),
         "Familia":     (120, 100,  80)
@@ -717,6 +718,7 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Dimensionshift"]       = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Reflectionray"]        = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Aquastream"]           = False
+    Manager.mod_data["MapLogic"]["m51EBT_000"]["Demoniccapture"]       = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Bloodsteel"]           = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Swordsman"]            = False
     Manager.mod_data["MapLogic"]["m51EBT_000"]["Silverbromide"]        = False
@@ -742,6 +744,7 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Dimensionshift"]       = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Reflectionray"]        = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Aquastream"]           = False
+    Manager.mod_data["MapLogic"]["m19K2C_000"]["Demoniccapture"]       = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Bloodsteel"]           = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Swordsman"]            = False
     Manager.mod_data["MapLogic"]["m19K2C_000"]["Silverbromide"]        = False
@@ -762,6 +765,7 @@ def extra_logic():
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Dimensionshift"]       = True
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Reflectionray"]        = False
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Aquastream"]           = False
+    Manager.mod_data["MapLogic"]["m20JRN_000"]["Demoniccapture"]       = False
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Bloodsteel"]           = False
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Swordsman"]            = False
     Manager.mod_data["MapLogic"]["m20JRN_000"]["Silverbromide"]        = False
@@ -783,6 +787,7 @@ def extra_logic():
         Manager.mod_data["MapLogic"][room_name]["Dimensionshift"]       = False
         Manager.mod_data["MapLogic"][room_name]["Reflectionray"]        = False
         Manager.mod_data["MapLogic"][room_name]["Aquastream"]           = False
+        Manager.mod_data["MapLogic"][room_name]["Demoniccapture"]       = False
         Manager.mod_data["MapLogic"][room_name]["Bloodsteel"]           = False
         Manager.mod_data["MapLogic"][room_name]["Swordsman"]            = False
         Manager.mod_data["MapLogic"][room_name]["Silverbromide"]        = False
@@ -834,7 +839,7 @@ def give_extra(item):
     Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemId"]       = item
     Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemQuantity"] = quantity
     Manager.datatable["PB_DT_DropRateMaster"][entry]["RareItemRate"]     = 100.0
-    Manager.add_starting_pickup(entry)
+    Manager.add_global_room_pickup("m01SIP_000", entry)
 
 def no_shard_craft():
     #If shards are randomized then disable the possiblity to manually craft shards so that they aren't always available

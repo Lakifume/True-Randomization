@@ -439,19 +439,21 @@ def zangetsu_growth(nightmare):
     #Progressive Zangetsu is all about using level ups for combat growth
     #Nightmare only lets you level up off of bosses so adapt the stats for that
     if nightmare:
+        target_level = 16
         Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffHp"]["Value"]  = 0.0
         Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMp"]["Value"]  = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] = 6.2
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] = 6.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] = 6.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] = 5.8
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] = 3.0
+        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] = 0.0
+        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] = 0.0
+        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] = 0.0
+        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] = 0.0
+        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] = 0.0
     else:
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] = 3.1
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] = 3.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] = 3.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] = 2.9
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] = 1.5
+        target_level = 40
+    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] += round(93/(target_level - 1), 3)
+    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] += round(90/(target_level - 1), 3)
+    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] += round(90/(target_level - 1), 3)
+    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] += round(87/(target_level - 1), 3)
+    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] += round(45/(target_level - 1), 3)
 
 def nightmare_damage():
     #Progressive Zangetsu on nightmare has to be built over hard since the vanilla nightmare slot is hardcoded to not receive EXP
@@ -1190,15 +1192,6 @@ def update_special_properties():
     #Make sure Vepar always has double health in Bloodless mode otherwise the fight is too short
     for i in ["N1001", "N1001_HEAD"]:
         Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyHPOverride"] = int(calculate_stat(i, Manager.datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
-    #Add a bit of defense to the stronger final boss
-    for i in ["N1009_Enemy", "N1013_Bael", "N1013_Cat", "N1013_Frog", "N1009_Bael", "N1013_BaelHead", "N1013_Dominique"]:
-        for e in ["CON", "MND"]:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] += (Manager.datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"] - 45)*2
-            if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] < 60:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 60
-            if Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] > 80:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] = 80
-            Manager.datatable["PB_DT_CharacterParameterMaster"][i][e] += round((Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "99Enemy"] - 60)/10)
     #Update Gebel's health threshold for the red moon based on his level
     Manager.datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(calculate_stat("N1012", Manager.datatable["PB_DT_CharacterParameterMaster"]["N1012"]["DefaultEnemyLevel"], "MaxHP")*0.15)
 
@@ -1331,4 +1324,3 @@ def hard_patterns():
     
     Manager.datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["STR_Correction"] = 1.0
     Manager.datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["INT_Correction"] = 1.0
-    Manager.datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["RapidHitTime"]   = 0.2

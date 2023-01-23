@@ -1295,7 +1295,7 @@ class Main(QWidget):
         #Text field
         
         self.start_field = QLineEdit(config.get("StartWith", "sStartItem"))
-        self.start_field.setToolTip("Items to start with. Input their english\nnames with | as separator.")
+        self.start_field.setToolTip("Items to start with. Input their english names\nwith | as separator. If unsure refer to the files\nin Data\Translation for item names.")
         self.start_field.textChanged[str].connect(self.new_start)
         box_16_grid.addWidget(self.start_field, 0, 0)
         

@@ -149,12 +149,6 @@ def extra_logic():
     for i in Manager.mod_data["BloodlessModeMapLogic"]:
         if i in room_to_list:
             Manager.mod_data["BloodlessModeMapLogic"][i]["NearestGate"] = room_to_list[i]
-    #Emulate a Craftwork requirement in the garden bridge for the extended float ability
-    #Normally Craftwork isn't in logic as that shard can't be moved
-    for i in Manager.mod_data["BloodlessModeMapLogic"]:
-        Manager.mod_data["BloodlessModeMapLogic"][i]["Demoniccapture"] = False
-    Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["Demoniccapture"] = True
-    Manager.mod_data["BloodlessModeMapLogic"]["m04GDN_006"]["HighJump"] = True
     #Convert doors to their actual gates
     irrelevant_gates = []
     for i in irrelevant_doors:

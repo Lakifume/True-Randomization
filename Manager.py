@@ -509,6 +509,8 @@ def init():
         "WhipsOfLightDarkness",
         "TrustMusket"
     ]
+    global global_room_pickups
+    global_room_pickups = []
     global material_to_offset
     material_to_offset = {
         "MI_N1001_Body": [
@@ -798,6 +800,12 @@ def randomizer_events():
     #Tower cutscene/garden red moon removal
     datatable["PB_DT_EventFlagMaster"]["Event_07_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
     datatable["PB_DT_EventFlagMaster"]["Event_19_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
+    #Temporary Craftwork workaround
+    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
+    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemId"]       = "Demoniccapture"
+    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemQuantity"] = 1
+    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemRate"]     = 100.0
+    add_global_room_pickup("m05SAN_012", "Safe_Demoniccapture")
 
 def fix_custom_map():
     #Trigger a few events by default
@@ -1042,11 +1050,10 @@ def apply_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/5)*5
             datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
             #Make experience a portion of health
-            if i[0:5] in ["N3106", "N3107", "N3108"]:
-                multiplier = (3/3)
-            else:
-                multiplier = (4/3)
             if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+                multiplier = (4/3)
+                if i[0:5] in mod_data["ExpModifier"]:
+                    multiplier *= mod_data["ExpModifier"][i[0:5]]
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             #Expand expertise point range that scales with level
@@ -1058,11 +1065,10 @@ def apply_tweaks():
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
             datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
         else:
-            if i in ["N3003", "N3023"]:
-                multiplier = (1/3)
-            else:
-                multiplier = (2/3)
             if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+                multiplier = (2/3)
+                if i[0:5] in mod_data["ExpModifier"]:
+                    multiplier *= mod_data["ExpModifier"][i[0:5]]
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
                 datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
             if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
@@ -1194,7 +1200,6 @@ def apply_tweaks():
     datatable["PB_DT_GimmickFlagMaster"]["RVA_003_ItemWall"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Add the missing gate warps for the extra characters
     #That way impassable obstacles are no longer a problem
-    add_extra_mode_warp("m04GDN_006_Gimmick", FVector(4860, 0,   60), FRotator(  0, 180,   0), FVector(5220, 0,   60), FRotator(  0,   0,   0))
     add_extra_mode_warp("m04GDN_013_Gimmick", FVector(2460, 0, 2100), FRotator(180,   0,   0), FVector(3080, 0, 1800), FRotator(  0,   0,   0))
     add_extra_mode_warp("m05SAN_003_Gimmick", FVector( 220, 0, 5940), FRotator(  0,   0, 180), FVector(2300, 0, 6000), FRotator(  0, 180,   0))
     add_extra_mode_warp("m05SAN_003_Gimmick", FVector(1400, 0,  900), FRotator(180,   0,   0), FVector(1400, 0,   60), FRotator(  0,   0,   0))
@@ -1214,6 +1219,10 @@ def apply_tweaks():
     add_extra_mode_warp("m17RVA_011_Gimmick", FVector(1900, 0, 2080), FRotator(180,   0,   0), FVector(2140, 0, 2080), FRotator(  0,   0, 180))
     add_extra_mode_warp("m17RVA_012_Gimmick", FVector(2320, 0,  120), FRotator(  0, 180,   0), FVector(1640, 0,  120), FRotator(  0,   0,   0))
     add_extra_mode_warp("m18ICE_008_Gimmick", FVector(1745, 0,  565), FRotator(  0, 180,   0), FVector(2205, 0,  630), FRotator(  0,   0,   0))
+    #Make the garden iron maiden disappear in extra modes
+    struct = BoolPropertyData(FName.FromString(game_data["m04GDN_006_Gimmick"], "DeleteSpinoffCharacter"))
+    struct.Value = True
+    game_data["m04GDN_006_Gimmick"].Exports[6].Data.Add(struct)
     #Add the missing Bloodless candle that was accidentally removed in a recent game update
     add_level_actor("m07LIB_009_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", FVector(720, -120, 1035), FRotator(0, 0, 0), FVector(1, 1, 1), {"UnlockAbilityType": FName.FromString(game_data["m07LIB_009_Gimmick"], "EPBBloodlessAbilityType::BLD_ABILITY_INT_UP_5")})
     #Due to Focalor being scrapped the devs put aqua stream on a regular enemy instead but this can cause first playthroughs to miss out on the shard
@@ -1244,6 +1253,8 @@ def apply_tweaks():
     remove_level_class("m01SIP_014_Enemy_Hard", "Chr_N3004_C")
     #Remove the giant rat in Den, was most likely a dev mistake
     remove_level_class("m10BIG_008_Enemy", "Chr_N3051_C")
+    #Remove the boss door duplicate in the room before Craftwork
+    remove_level_class("m05SAN_011_BG", "PBBossDoor_BP_C")
     #Fix that one Water Leaper in desert that falls through the floor by shifting its position upwards
     game_data["m12SND_025_Enemy"].Exports[4].Data[4].Value[0].Value = FVector(-260, -700, 600)
     #Fix some of the giant cannon stacks clipping over each other
@@ -1421,6 +1432,25 @@ def apply_tweaks():
         original_enemy_stats[i]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
         original_enemy_stats[i]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
         original_enemy_stats[i]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
+    #Test
+    #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
+    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
+    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemId"]       = "Demoniccapture"
+    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemQuantity"] = 1
+    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemRate"]     = 100.0
+    #datatable["PB_DT_DropRateMaster"]["N1003_Shard"]["ShardId"] = "AccelWorld"
+    #add_global_room_pickup("m06KNG_020", "TestNeverSatisfied")
+    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
+    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemId"]       = "NeverSatisfied"
+    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemQuantity"] = 1
+    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemRate"]     = 100.0
+    #datatable["PB_DT_DropRateMaster"]["N2013_Shard"]["ShardId"] = "AccelWorld"
+    #add_global_room_pickup("m09TRN_002", "TestHammerknuckle")
+    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
+    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemId"]       = "Hammerknuckle"
+    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemQuantity"] = 1
+    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemRate"]     = 100.0
+    #datatable["PB_DT_DropRateMaster"]["N2001_Shard"]["ShardId"] = "AccelWorld"
 
 def search_and_replace_string(filename, class_name, data, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
@@ -1872,8 +1902,6 @@ def update_map_indicators():
 
 def update_room_containers(room):
     #Don't change the containers for starting items
-    if room == "m01SIP_000":
-        return
     if room in room_to_gimmick:
         filename = room_to_gimmick[room]
     else:
@@ -1913,6 +1941,8 @@ def update_room_containers(room):
                         if str(o.Name) == "RelativeScale3D":
                             scale    = o.Value[0].Value
             if not drop_id in datatable["PB_DT_DropRateMaster"]:
+                continue
+            if drop_id in global_room_pickups:
                 continue
             if safety_chest:
                 continue
@@ -2286,9 +2316,24 @@ def import_texture(filename):
     if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
         raise FileNotFoundError(filename + ".dds failed to inject")
 
-def add_starting_pickup(drop_id):
-    #Overlay an upgrade on top of Miriam's starting position to instantly get its content when starting a game
-    add_level_actor("m01SIP_000_Gimmick", "HPMaxUp_C", FVector(817, 100, 146), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data["m01SIP_000_Gimmick"], drop_id)})
+def add_global_room_pickup(room, drop_id):
+    #Place an upgrade in a room at its origin
+    room_width  = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
+    room_height = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720
+    if room in room_to_gimmick:
+        filename = room_to_gimmick[room]
+    else:
+        filename = room + "_Gimmick"
+    actor_index = len(game_data[filename].Exports)
+    add_level_actor(filename, "HPMaxUp_C", FVector(0, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data[filename], drop_id)})
+    #Enlarge its hitbox considerably so that enetering the room from anywhere will collect it
+    struct = StructPropertyData(FName.FromString(game_data[filename], "BoxExtent"), FName.FromString(game_data[filename], "Vector"))
+    sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "BoxExtent"))
+    sub_struct.Value = FVector(room_width*2 + 240, 50, room_height*2 + 240)
+    struct.Value.Add(sub_struct)
+    game_data[filename].Exports[actor_index + 1].Data.Add(struct)
+    #Keep it in mind to not update its container type
+    global_room_pickups.append(drop_id)
 
 def add_room_file(room):
     area_path = "ACT" + room[1:3] + "_" + room[3:6]
@@ -2572,7 +2617,7 @@ def remove_level_actor(filename, index):
     class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[index].ClassIndex))) - 1].ObjectName)
     #If the actor makes use of a c_cat class removing it will crash the game
     #So move it offscreen instead
-    if class_name in c_cat_actors or "m20JRN_002" in filename:
+    if class_name in c_cat_actors or filename in ["m20JRN_002_Gimmick", "m20JRN_002_Enemy"]:
         for i in game_data[filename].Exports[index].Data:
             if str(i.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in class_name:
                 i.Value = FName.FromString(game_data[filename], "AAAA_Shard")
