@@ -306,6 +306,14 @@ class Generate(QThread):
         current = 0
         self.signaller.progress.emit(current)
         
+        #Check IGA DLC
+        
+        if len(glob.glob(config.get("Misc", "sGamePath") + "\\*.pak")) < 2:
+            for i in list(Manager.file_to_path):
+                if "DLC_0002" in Manager.file_to_path[i]:
+                    del Manager.file_to_path[i]
+                    del Manager.file_to_type[i]
+        
         #Initialize directories
         
         #Mod
