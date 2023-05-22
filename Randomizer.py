@@ -1946,15 +1946,10 @@ class Main(QWidget):
         else:
             self.map_test = ""
         Manager.load_map(self.map_test)
-        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            Manager.get_map_info()
-        Item.extra_logic()
-        
-        if self.map_test:
-            Item.unused_room_check()
+        Manager.get_map_info()
         
         if not config.getboolean("GameDifficulty", "bNormal"):
-            Item.hard_enemy_logic()
+            Item.hard_logic()
         
         if config.getboolean("EnemyRandomization", "bEnemyLocations"):
             random.seed(self.seed_test)
@@ -1962,6 +1957,7 @@ class Main(QWidget):
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed_test)
+            Item.fill_enemy_to_room()
             Item.key_logic()
         
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):

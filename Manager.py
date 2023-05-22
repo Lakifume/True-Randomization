@@ -414,6 +414,7 @@ def init():
         "UGD_016_0_1_RIGHT",
         "UGD_019_0_2_LEFT",
         "UGD_019_1_2_RIGHT",
+        "UGD_020_0_0_LEFT",
         "UGD_021_0_0_LEFT",
         "UGD_029_0_1_LEFT",
         "UGD_056_0_3_RIGHT",
@@ -819,6 +820,8 @@ def fix_custom_map():
     #Remove the few forced transitions that aren't necessary at all
     for i in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
         remove_level_class(i + "_RV", "RoomChange_C")
+    #Add a second lever to the right of the tower elevator so that it can be activated from either sides
+    add_level_actor("m08TWR_009_Gimmick", "TWR009_ElevatorLever_BP_C", FVector(1110, 0, 11040), FRotator(0, 0, 0), FVector(1, 1, 1), {})
     #Make Bathin's room enterable from the left without softlocking the boss
     bathin_left_entrance_fix()
     #Rooms with no traverse blocks only display properly based on their Y position below the origin
@@ -1381,7 +1384,7 @@ def apply_tweaks():
     for i in range(4):
         mod_data["QuestRequirement"]["Memento"]["ItemPool"].append("MightyRing")
     #Add an invisibility cloak into the game
-    add_game_item(151, "InvisibleCloak", "Armor", "None", (3840, 2944), "Invisible Cloak", "A magical mantle that renders anything it covers fully invinsible.", 22500, False)
+    add_game_item(151, "InvisibleCloak", "Armor", "None", (3840, 2944), "Invisible Cloak", "A magical mantle that renders anything it covers fully invisible.", 22500, False)
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MeleeDefense"] = 11
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MagicDefense"] = 52
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["HOL"]          = 5
@@ -2579,6 +2582,7 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
         else:
             struct = NamePropertyData(FName.FromString(game_data[filename], i))
             struct.Value = properties[i]
+        game_data[filename].AddNameReference(struct.PropertyType)
         game_data[filename].Exports[actor_index].Data.Add(struct)
     #Temporary Rocky fix
     if actor_class == "Chr_N3115_C":
@@ -2856,7 +2860,7 @@ def is_enemy(character):
         return True
     if character[0:5] in mod_data["EnemyLocation"] and list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar"):
         return True
-    if character[0:5] in ["N1009", "N1013"]:
+    if is_final_boss(character):
         return True
     return False
 
@@ -2870,6 +2874,22 @@ def is_boss(character):
         if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]:
             return True
     return False
+
+def is_final_boss(character):
+    if character[0:5] in ["N1009", "N1013"]:
+        return True
+    return False
+
+def split_enemy_profile(profile):
+    difficulty = ""
+    enemy_id = profile
+    if "Normal" in profile:
+        enemy_id = profile.replace("_Normal", "")
+        difficulty = "Normal"
+    if "Hard" in profile:
+        enemy_id = profile.replace("_Hard", "")
+        difficulty = "Hard"
+    return (enemy_id, difficulty)
 
 def create_weighted_list(value, minimum, maximum, step, deviation):
     #Create a list in a range with higher odds around a specific value

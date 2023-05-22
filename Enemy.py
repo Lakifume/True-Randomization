@@ -43,6 +43,20 @@ def init():
         "N1004":        2218,
         "N1008":        2554
     }
+    global static_enemies
+    static_enemies = [
+        "N3090",
+        "N3099",
+        "N3025",
+        "N2012",
+        "N2013",
+        "N0000"
+    ]
+    global capped_enemies
+    capped_enemies = [
+        "N1011",
+        "N2001"
+    ]
     global unsizable_enemies
     unsizable_enemies = [
         "N3013",
@@ -402,10 +416,7 @@ def convert_area_to_progress():
     new_boss_order = []
     for i in range(len(Manager.mod_data["MapOrder"])):
         for e in zangetsu_exp:
-            if Manager.mod_data["EnemyLocation"][e]["AreaID"] == "Minor":
-                current_area = Manager.mod_data["EnemyLocation"][e]["NormalModeRooms"][0][:6]
-            else:
-                current_area = Manager.mod_data["EnemyLocation"][e]["AreaID"]
+            current_area = Manager.mod_data["EnemyLocation"][e]["AreaID"]
             if area_to_progress["MapOrder"][current_area] == i + 1.0:
                 new_boss_order.append(e)
     if len(new_boss_order) != len(zangetsu_exp):
@@ -606,20 +617,15 @@ def enemy_rebalance():
             continue
         for e in ["", "BloodlessMode"]:
             if Manager.is_main_enemy(i):
-                #Determine enemy area
-                if Manager.mod_data["EnemyLocation"][i]["AreaID"] == "Minor":
-                    current_area = Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"][0][:6]
-                else:
-                    current_area = Manager.mod_data["EnemyLocation"][i]["AreaID"]
-                #Determine new level
-                if Manager.mod_data["EnemyLocation"][i]["AreaID"] == "Static" or Manager.mod_data["EnemyLocation"][i]["AreaID"] == "Major":
+                current_area = Manager.mod_data["EnemyLocation"][i]["AreaID"]
+                if i in static_enemies or is_final_boss(i) or not current_area in area_to_progress[e + "OriginalMapOrder"]:
                     continue
-                else:
-                    current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"] + (area_to_progress[e + "MapOrder"][current_area] - area_to_progress[e + "OriginalMapOrder"][current_area])*(40/17))
-                    if current_level < 1:
-                        current_level = 1
-                    elif current_level > 50:
-                        current_level = 50
+                #Determine new level
+                current_level = round(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"] + (area_to_progress[e + "MapOrder"][current_area] - area_to_progress[e + "OriginalMapOrder"][current_area])*(40/17))
+                if current_level < 1:
+                    current_level = 1
+                elif current_level > 50:
+                    current_level = 50
                 #Patch
                 patch_level(current_level, i, e)
             elif i[0:5] in Manager.datatable["PB_DT_CharacterParameterMaster"]:
@@ -641,10 +647,10 @@ def rand_enemy_level():
         for e in ["", "BloodlessMode"]:
             if Manager.is_main_enemy(i):
                 #Some bosses have a cap for either being too boring or having a time limit
-                if Manager.mod_data["EnemyLocation"][i]["AreaID"] == "Minor":
+                if i in capped_enemies:
                     patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"], 1, 50, 1, 2), i, e)
                 #While all enemies have a weigthed random level based on their regular level the last boss can be anything
-                elif Manager.mod_data["EnemyLocation"][i]["AreaID"] == "Major":
+                elif Manager.is_final_boss(i):
                     patch_level(random.randint(1, 99), i, e)
                 else:
                     patch_level(Manager.random_weighted(Manager.datatable["PB_DT_CharacterParameterMaster"][i][e + "DefaultEnemyLevel"], 1, 99, 1, 2), i, e)
@@ -702,34 +708,35 @@ def rand_enemy_placement():
         enemy_replacement_invert[enemy_replacement[i]] = i
     #Remove the lone Seama in the early Galleon room since it is too weak to reflect its wheight of 4
     if enemy_replacement["N3006"] != "N3006":
-        Manager.mod_data["EnemyLocation"]["N3006"]["NormalModeRooms"].remove("m01SIP_004")
-    #Update enemy location
-    original_enemy_rooms = {}
-    for i in Manager.mod_data["EnemyLocation"]:
-        original_enemy_rooms[i] = copy.deepcopy(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"])
-    for i in Manager.mod_data["EnemyLocation"]:
-        if i in enemy_replacement:
-            Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"] = original_enemy_rooms[enemy_replacement_invert[i]]
+        remove_enemy_info("m01SIP_004", "N3006")
+    #Update enemy location info
+    for room in Manager.mod_data["RoomRequirement"]:
+        #Spawns in backer rooms don't change
+        if room in ["m88BKR_002", "m88BKR_004"]:
+            continue
+        for door in Manager.mod_data["RoomRequirement"][room]:
+            for check in list(Manager.mod_data["RoomRequirement"][room][door]):
+                enemy_profile = Manager.split_enemy_profile(check)
+                #Gusions in cages don't change
+                if room in ["m07LIB_001", "m13ARC_001"] and enemy_profile[0] == "N3035":
+                    continue
+                #Replace enemy
+                if enemy_profile[0] in enemy_replacement:
+                    #Scythe Mite and 8 Bit Zombie spawners seem to fail spawning anything in rooms of resistricted sizes
+                    if not (Manager.datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] < 2 and enemy_replacement[enemy_profile[0]] in ["N3082", "N3121"]):
+                        Manager.mod_data["RoomRequirement"][room][door][enemy_replacement[enemy_profile[0]] + enemy_profile[1]] = Manager.mod_data["RoomRequirement"][room][door][check]
+                    del Manager.mod_data["RoomRequirement"][room][door][check]
     #Remove the Gusions from library and labs if they were scaled up
-    if not enemy_replacement_invert["N3035"] in large_enemies:
-        Manager.mod_data["EnemyLocation"]["N3035"]["NormalModeRooms"].append("m07LIB_001")
-        Manager.mod_data["EnemyLocation"]["N3035"]["NormalModeRooms"].append("m13ARC_001")
-    Manager.mod_data["EnemyLocation"][enemy_replacement["N3035"]]["NormalModeRooms"].remove("m07LIB_001")
-    Manager.mod_data["EnemyLocation"][enemy_replacement["N3035"]]["NormalModeRooms"].remove("m13ARC_001")
-    #Lili still spawns at Millionaire's
-    Manager.mod_data["EnemyLocation"]["N3058"]["NormalModeRooms"].append("m88BKR_002")
-    Manager.mod_data["EnemyLocation"][enemy_replacement["N3058"]]["NormalModeRooms"].remove("m88BKR_002")
-    #Demon Lord still spawns at Carpenter's
-    Manager.mod_data["EnemyLocation"]["N3057"]["NormalModeRooms"].append("m88BKR_004")
-    Manager.mod_data["EnemyLocation"][enemy_replacement["N3057"]]["NormalModeRooms"].remove("m88BKR_004")
-    #Scythe Mite and 8 Bit Zombie spawners seem to fail spawning anything in rooms of resistricted sizes
-    #Update the logic by removing the rooms that most likely won't spawn them
-    for i in list(Manager.mod_data["EnemyLocation"]["N3082"]["NormalModeRooms"]):
-        if Manager.datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] < 2:
-            Manager.mod_data["EnemyLocation"]["N3082"]["NormalModeRooms"].remove(i)
-    for i in list(Manager.mod_data["EnemyLocation"]["N3121"]["NormalModeRooms"]):
-        if Manager.datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] < 2:
-            Manager.mod_data["EnemyLocation"]["N3121"]["NormalModeRooms"].remove(i)
+    if enemy_replacement_invert["N3035"] in large_enemies:
+        remove_enemy_info("m07LIB_001", "N3035")
+        remove_enemy_info("m13ARC_001", "N3035")
+    
+def remove_enemy_info(room, enemy_id):
+    for door in Manager.mod_data["RoomRequirement"][room]:
+        for check in list(Manager.mod_data["RoomRequirement"][room][door]):
+            enemy_profile = Manager.split_enemy_profile(check)
+            if enemy_profile[0] == enemy_id:
+                del Manager.mod_data["RoomRequirement"][room][door][check]
 
 def update_enemy_placement():
     #Actually do the removals mentioned above
@@ -808,9 +815,13 @@ def change_room_enemies(room):
                     else:
                         continue
             #Balance enemy spawns around their wheight
+            old_wheight = Manager.mod_data["EnemyLocation"][old_enemy_id]["Wheight"]
+            new_wheight = Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"]
+            if filename == "m01SIP_018_Enemy_Hard" and export_name == "N3090_Generator_50":
+                old_wheight -= 1
             #If the new wheight is higher only replace a portion of the enemy's instances
-            if Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"] > Manager.mod_data["EnemyLocation"][old_enemy_id]["Wheight"]:
-                enemy_num = 2**(Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"] - Manager.mod_data["EnemyLocation"][old_enemy_id]["Wheight"])
+            if new_wheight > old_wheight:
+                enemy_num = 2**(new_wheight - old_wheight)
                 if new_enemy_id in enemy_countdown:
                     if enemy_countdown[new_enemy_id] == 0:
                         add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, 0, 0)
@@ -820,9 +831,9 @@ def change_room_enemies(room):
                     add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, 0, 0)
                 enemy_countdown[new_enemy_id] -= 1
             #If the new wheight is lower spawn more instances of the enemy with the old location as its center
-            elif Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"] < Manager.mod_data["EnemyLocation"][old_enemy_id]["Wheight"]:
-                enemy_num = 2**(Manager.mod_data["EnemyLocation"][old_enemy_id]["Wheight"] - Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"])
-                offset = 120*(1.5**(Manager.mod_data["EnemyLocation"][new_enemy_id]["Wheight"] - 1))
+            elif new_wheight < old_wheight:
+                enemy_num = 2**(old_wheight - new_wheight)
+                offset = 120*(1.5**(new_wheight - 1))
                 if old_enemy_id in large_enemies:
                     offset *= 1.5
                 for o in range(enemy_num):
@@ -1096,7 +1107,7 @@ def patch_level(value, entry, extra):
         Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(value - 100)
     #Make it so that Bael and Dom's levels combined always equal 100
     #This ensures that the final fight is never too easy or too hard
-    elif entry[0:5] in ["N1009", "N1013"]:
+    elif is_final_boss(entry):
         Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"][extra + "DefaultEnemyLevel"] - 100)
     #Greedling is shared with Breeder despite having a completely different ID
     elif entry == "N3125":
@@ -1251,7 +1262,7 @@ def hard_patterns():
     #Speeding up Bael's animation play rate doesn't work well so instead speed up and expand all of his projectiles
     Manager.datatable["PB_DT_BallisticMaster"]["N1009_RAY"]["InitialSpeed"]        *= 2.0
     Manager.datatable["PB_DT_BallisticMaster"]["N1013_TracerRay"]["InitialSpeed"]  *= 6.0
-    Manager.datatable["PB_DT_BallisticMaster"]["N1013_RingLasers"]["InitialSpeed"] *= 9.0
+    Manager.datatable["PB_DT_BallisticMaster"]["N1013_RingLasers"]["InitialSpeed"] *= 8.0
     
     Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectBeginScale"]      *= 2.5
     Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectEndScale"]        *= 2.5

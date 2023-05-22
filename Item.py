@@ -3,6 +3,7 @@ import math
 import random
 import os
 import copy
+import json
 
 def init():
     #Declare variables
@@ -402,7 +403,9 @@ def init():
         "RVA": "m17",
         "ICE": "m18",
         "K2C": "m19",
-        "JRN": "m20"
+        "JRN": "m20",
+        "EBT": "m51",
+        "BKR": "m88"
     }
     global special_chest_to_room
     special_chest_to_room = {
@@ -415,79 +418,6 @@ def init():
         "Treasurebox_PureMiriam_Sword": "m08TWR_016",
         "N3106_1ST_Treasure":           "m88BKR_004",
         "N3106_2ND_Treasure":           "m88BKR_004"
-    }
-    global chest_to_requirement
-    chest_to_requirement = {
-        "Treasurebox_PureMiriam_Hair":  ["HighJump", "Invert"],
-        "Treasurebox_SIP014_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Wall_SIP014_1":                ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_VIL006_4":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_GDN006_1":         ["Dimensionshift"],
-        "Treasurebox_GDN013_1":         ["Invert", "Dimensionshift"],
-        "Treasurebox_SAN003_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN003_8":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN015_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN015_3":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN016_3":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN016_4":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN019_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN019_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN021_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_SAN021_5":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_KNG018_4":         ["HighJump", "Invert", "Dimensionshift"],
-        "Treasurebox_KNG021_1":         ["Doublejump"],
-        "Treasurebox_LIB009_1":         ["HighJump", "Invert"],
-        "Treasurebox_LIB009_2":         ["HighJump", "Invert"],
-        "Treasurebox_LIB012_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_LIB022_1":         ["Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_TWR005_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_TWR018_2":         ["Doublejump", "HighJump", "Invert"],
-        "Treasurebox_TWR018_6":         ["Doublejump", "HighJump", "Invert"],
-        "Treasurebox_PureMiriam_Sword": ["Dimensionshift"],
-        "Treasurebox_PureMiriam_Dress": ["HighJump", "Invert"],
-        "Treasurebox_TRN002_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_TRN002_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_TRN002_3":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_BIG012_2":         ["HighJump", "Invert", "Dimensionshift"],
-        "Treasurebox_UGD005_1":         ["Deepsinker"],
-        "Treasurebox_UGD005_2":         ["Deepsinker"],
-        "Treasurebox_UGD009_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_UGD021_1":         ["Deepsinker"],
-        "Treasurebox_UGD024_1":         ["Deepsinker"],
-        "Treasurebox_UGD024_2":         ["Deepsinker"],
-        "Treasurebox_UGD024_3":         ["Deepsinker"],
-        "Treasurebox_UGD025_1":         ["Deepsinker"],
-        "Treasurebox_UGD025_2":         [["Deepsinker", "Dimensionshift", "Reflectionray"]],
-        "Treasurebox_UGD025_3":         ["Deepsinker"],
-        "Wall_UGD031_1":                ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_UGD036_1":         ["Deepsinker"],
-        "Treasurebox_UGD040_1":         ["Deepsinker"],
-        "Treasurebox_UGD042_1":         ["Deepsinker"],
-        "Treasurebox_UGD044_1":         ["Deepsinker"],
-        "Treasurebox_UGD044_2":         ["Deepsinker"],
-        "Treasurebox_UGD046_2":         ["Deepsinker"],
-        "Treasurebox_SND006_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_SND017_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_ARC006_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_TAR006_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_JPN002_1":         ["Dimensionshift"],
-        "Treasurebox_RVA001_1":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_RVA001_2":         ["Dimensionshift", ["Invert", "Reflectionray"]],
-        "Treasurebox_RVA011_1":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_RVA011_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_RVA012_1":         ["Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_ICE001_2":         ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_ICE008_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_JRN001_1":         ["Dimensionshift", "Reflectionray"],
-        "Treasurebox_JRN001_2":         ["HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "Treasurebox_JRN001_3":         ["HighJump", "Invert", "Dimensionshift"]
-    }
-    global enemy_to_requirement
-    enemy_to_requirement = {
-        "N1008":      ["Invert", "Dimensionshift", "Reflectionray"],
-        "N2006":      ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
-        "N2015":      ["Doublejump"],
-        "Deepsinker": ["Doublejump", "HighJump", "Invert"]
     }
     global boss_rooms
     boss_rooms = [
@@ -532,21 +462,47 @@ def init():
         "MonarchCrown"
     ]
     global key_shards
-    key_shards = [
-        "Doublejump",
-        "HighJump",
-        "Invert",
-        "Deepsinker",
-        "Dimensionshift",
-        "Reflectionray",
-        "Aquastream",
-        "Demoniccapture",
-        "Bloodsteel"
-    ]
+    key_shards = {
+        "Doublejump":     4,
+        "HighJump":       2,
+        "Invert":         3,
+        "Deepsinker":     2,
+        "Dimensionshift": 1,
+        "Reflectionray":  3,
+        "Aquastream":     4,
+        "Demoniccapture": 4,
+        "Bloodsteel":     4
+    }
     global key_item_to_location
     key_item_to_location = {}
     global key_shard_to_location
     key_shard_to_location = {}
+    global difficulty
+    difficulty = "Normal"
+    global current_available_doors
+    current_available_doors = ["SIP_000_START"]
+    global current_available_chests
+    current_available_chests = []
+    global current_available_enemies
+    current_available_enemies = []
+    global all_available_doors
+    all_available_doors = ["SIP_000_START"]
+    global all_available_chests
+    all_available_chests = []
+    global all_available_enemies
+    all_available_enemies = []
+    global check_to_requirement
+    check_to_requirement = {}
+    global special_check_to_door
+    special_check_to_door = {}
+    global macro_to_requirements
+    macro_to_requirements = {
+        "Height": ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
+        "Flight": ["HighJump", "Invert", "Dimensionshift"],
+        "Water":  ["Invert", "Deepsinker", "Aquastream"]
+    }
+    global enemy_to_room
+    enemy_to_room = {}
     #Pool
     global chest_type
     chest_type = []
@@ -695,120 +651,43 @@ def init():
         ten_thousand.append(i)
         i += 10000
 
-def unused_room_check():
-    #On custom maps certain rooms can end up unused and thus inaccessible
-    #Remove them from the logic so that key items can never end up in there
-    for i in list(Manager.mod_data["MapLogic"]):
-        if Manager.datatable["PB_DT_RoomMaster"][i]["Unused"]:
-            del Manager.mod_data["MapLogic"][i]
+def fill_enemy_to_room():
+    for room in Manager.mod_data["RoomRequirement"]:
+        for door in Manager.mod_data["RoomRequirement"][room]:
+            for check in Manager.mod_data["RoomRequirement"][room][door]:
+                is_valid_enemy = is_valid_enemy_check(check)
+                if is_valid_enemy[1]:
+                    if is_valid_enemy[0] in enemy_to_room:
+                        enemy_to_room[is_valid_enemy[0]].append(room)
+                    else:
+                        enemy_to_room[is_valid_enemy[0]] = [room]
+            break
 
-def extra_logic():
-    #8 Bit Nightmare is always gonna be connected to Hall of Termination regardless of the map
-    #So create its entry manually
-    Manager.mod_data["MapLogic"]["m51EBT_000"] = {}
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["GateRoom"]             = False
-    if Manager.mod_data["MapLogic"]["m06KNG_021"]["GateRoom"]:
-        Manager.mod_data["MapLogic"]["m51EBT_000"]["NearestGate"]      = ["m06KNG_021"]
-    else:
-        Manager.mod_data["MapLogic"]["m51EBT_000"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["MapLogic"]["m06KNG_021"]["NearestGate"])
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Doublejump"]           = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["HighJump"]             = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Invert"]               = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Deepsinker"]           = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Dimensionshift"]       = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Reflectionray"]        = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Aquastream"]           = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Demoniccapture"]       = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Bloodsteel"]           = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Swordsman"]            = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Silverbromide"]        = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["BreastplateofAguilar"] = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker1"]         = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker2"]         = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker3"]         = False
-    Manager.mod_data["MapLogic"]["m51EBT_000"]["Keyofbacker4"]         = False
-    #Add Crown of Creation to the logic manually
-    for i in Manager.mod_data["MapLogic"]:
-        Manager.mod_data["MapLogic"][i]["MonarchCrown"] = False
-    #Kingdom 2 Crown is always connected to the train
-    Manager.mod_data["MapLogic"]["m19K2C_000"] = {}
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["GateRoom"] = True
-    if Manager.mod_data["MapLogic"]["m09TRN_002"]["GateRoom"]:
-        Manager.mod_data["MapLogic"]["m19K2C_000"]["NearestGate"]      = ["m09TRN_002"]
-    else:
-        Manager.mod_data["MapLogic"]["m19K2C_000"]["NearestGate"]      = copy.deepcopy(Manager.mod_data["MapLogic"]["m09TRN_002"]["NearestGate"])
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Doublejump"]           = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["HighJump"]             = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Invert"]               = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Deepsinker"]           = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Dimensionshift"]       = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Reflectionray"]        = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Aquastream"]           = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Demoniccapture"]       = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Bloodsteel"]           = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Swordsman"]            = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Silverbromide"]        = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["BreastplateofAguilar"] = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker1"]         = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker2"]         = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker3"]         = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["Keyofbacker4"]         = False
-    Manager.mod_data["MapLogic"]["m19K2C_000"]["MonarchCrown"]         = True
-    #Journey is always connected to the desert
-    Manager.mod_data["MapLogic"]["m20JRN_000"] = {}
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["GateRoom"]             = True
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["NearestGate"]          = []
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Doublejump"]           = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["HighJump"]             = True
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Invert"]               = True
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Deepsinker"]           = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Dimensionshift"]       = True
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Reflectionray"]        = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Aquastream"]           = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Demoniccapture"]       = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Bloodsteel"]           = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Swordsman"]            = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Silverbromide"]        = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["BreastplateofAguilar"] = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker1"]         = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker2"]         = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker3"]         = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["Keyofbacker4"]         = False
-    Manager.mod_data["MapLogic"]["m20JRN_000"]["MonarchCrown"]         = False
-    for i in range(4):
-        room_name = "m20JRN_00" + str(i + 1)
-        Manager.mod_data["MapLogic"][room_name] = {}
-        Manager.mod_data["MapLogic"][room_name]["GateRoom"]             = False
-        Manager.mod_data["MapLogic"][room_name]["NearestGate"]          = ["m20JRN_000"]
-        Manager.mod_data["MapLogic"][room_name]["Doublejump"]           = False
-        Manager.mod_data["MapLogic"][room_name]["HighJump"]             = False
-        Manager.mod_data["MapLogic"][room_name]["Invert"]               = False
-        Manager.mod_data["MapLogic"][room_name]["Deepsinker"]           = False
-        Manager.mod_data["MapLogic"][room_name]["Dimensionshift"]       = False
-        Manager.mod_data["MapLogic"][room_name]["Reflectionray"]        = False
-        Manager.mod_data["MapLogic"][room_name]["Aquastream"]           = False
-        Manager.mod_data["MapLogic"][room_name]["Demoniccapture"]       = False
-        Manager.mod_data["MapLogic"][room_name]["Bloodsteel"]           = False
-        Manager.mod_data["MapLogic"][room_name]["Swordsman"]            = False
-        Manager.mod_data["MapLogic"][room_name]["Silverbromide"]        = False
-        Manager.mod_data["MapLogic"][room_name]["BreastplateofAguilar"] = False
-        Manager.mod_data["MapLogic"][room_name]["Keyofbacker1"]         = False
-        Manager.mod_data["MapLogic"][room_name]["Keyofbacker2"]         = False
-        Manager.mod_data["MapLogic"][room_name]["Keyofbacker3"]         = False
-        Manager.mod_data["MapLogic"][room_name]["Keyofbacker4"]         = False
-        Manager.mod_data["MapLogic"][room_name]["MonarchCrown"]         = False
-
-def hard_enemy_logic():
-    #On hard mode some rooms have extra enemies so update the location info
-    for i in Manager.mod_data["EnemyLocation"]:
-        Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"].extend(Manager.mod_data["EnemyLocation"][i]["HardModeRooms"])
-    #Dulla heads can also be replaced with maledictions so adapt for that
-    Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m07LIB_029")
-    Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m08TWR_005")
-    Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m08TWR_013")
-    Manager.mod_data["EnemyLocation"]["N3090"]["NormalModeRooms"].remove("m11UGD_013")
-    #Some of Ultimate Zangetsu's new attacks need some movement to be avoided
-    chest_to_requirement["Swordsman"] = ["Doublejump", "Invert", "Dimensionshift"]
+def hard_logic():
+    #room_req = {}
+    #for i in Manager.mod_data["MapLogic"]:
+    #    room_req[i] = {}
+    #    struct = {}
+    #    for e in Manager.map_connections[i]:
+    #        struct[e] = []
+    #    for e in used_chests:
+    #        if chest_to_room(e) == i:
+    #            struct[e] = []
+    #            if e in chest_to_requirement:
+    #                struct[e] = chest_to_requirement[e]
+    #    for e in Manager.mod_data["EnemyLocation"]:
+    #        if i in Manager.mod_data["EnemyLocation"][e]["NormalModeRooms"]:
+    #            struct[e] = []
+    #        elif i in Manager.mod_data["EnemyLocation"][e]["HardModeRooms"]:
+    #            struct[e + "_Hard"] = []
+    #    for e in Manager.map_connections[i]:
+    #        struct2 = copy.deepcopy(struct)
+    #        del struct2[e]
+    #        room_req[i][e] = struct2
+    #with open("RoomRequirement.json", "w", encoding="utf8") as file_writer:
+    #    file_writer.write(json.dumps(room_req, ensure_ascii=False, indent=2))
+    global difficulty
+    difficulty = "Hard"
 
 def remove_infinite():
     #These specific gears grant the player an infinite source of something which generally ends up defining the meta and dominating runs
@@ -848,230 +727,220 @@ def no_shard_craft():
         if Manager.datatable["PB_DT_CraftMaster"][i]["Type"] == "ECraftType::Craft" and Manager.datatable["PB_DT_CraftMaster"][i]["CraftItemId"] in Manager.datatable["PB_DT_ShardMaster"]:
             Manager.datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "Medal019"
 
-def key_logic():
-    #Place all key items with logic so that the game is always beatable
-    #The strategy used here is similar to the one implemented in vanilla where it reads from a room check file and loops through all the rooms based on that
-    #The logic starts in all rooms that have no requirements until a gate is reached to determine which key item to place and so on
-    #Since this has to adapt to different map layouts we cannot get away with using any "cheats" that are specific to the default map
-    previous_gate = []
-    requirement_to_gate = {}
-    #Filling list with all room names
-    all_rooms = []
-    for i in Manager.mod_data["MapLogic"]:
-        ratio = room_to_ratio(i)
-        for e in range(ratio):
-            all_rooms.append(i)
-    #Loop through all keys until they've all been assigned
-    while all_keys:
-        #Reset lists and dicts
-        requirement = []
-        for i in key_items:
-            requirement_to_gate[i] = []
-        for i in key_shards:
-            requirement_to_gate[i] = []
-        previous_room = []
-        #Gathering upcoming gate requirements
-        for i in Manager.mod_data["MapLogic"]:
-            if Manager.mod_data["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["MapLogic"][i]["NearestGate"]) and not i in previous_gate:
-                #If Zangetsuto gate then check if garden portal and Gebel room are accessible
-                if Manager.mod_data["MapLogic"][i]["Swordsman"] and not zangetsuto_gate_avaliable(previous_gate):
-                    continue
-                #If Journey area then check if desert room and post portal are accessible
-                if i == "m20JRN_000" and not journey_area_available(previous_gate):
-                    continue
-                for e in key_items:
-                    if Manager.mod_data["MapLogic"][i][e]:
-                        requirement.append(e)
-                        requirement_to_gate[e].append(i)
-                for e in key_shards:
-                    if Manager.mod_data["MapLogic"][i][e]:
-                        requirement.append(e)
-                        requirement_to_gate[e].append(i)
-        #Check if requirement isnt already satisfied
-        check = False
-        for i in key_item_to_location:
-            if i in requirement:
-                check = True
-                previous_gate.extend(requirement_to_gate[i])
-        for i in key_shard_to_location:
-            if i in requirement:
-                check = True
-                previous_gate.extend(requirement_to_gate[i])
-        if check:
-            continue
-        #Gathering rooms available before gate
-        for i in Manager.mod_data["MapLogic"]:
-            if not Manager.mod_data["MapLogic"][i]["GateRoom"] and previous_in_nearest(previous_gate, Manager.mod_data["MapLogic"][i]["NearestGate"]) or i in previous_gate:
-                #If it's OD's room then don't unlock it until all requirements are lifted
-                if i == "m18ICE_004":
-                    continue
-                #Get ratio
-                ratio = room_to_ratio(i)
-                for e in range(ratio):
-                    previous_room.append(i)
-        #Choosing key item based on requirements
-        chosen_item = random.choice(all_keys)
-        if requirement:
-            while chosen_item not in requirement:
-                chosen_item = random.choice(all_keys)
-            logic_choice(chosen_item, previous_room)
-        else:
-            logic_choice(chosen_item, all_rooms)
-        #Update previous gate
-        previous_gate.extend(requirement_to_gate[chosen_item])
-
-def zangetsuto_gate_avaliable(previous_gate):
-    if Manager.mod_data["MapLogic"]["m04GDN_001"]["GateRoom"]:
-        nearest_gate_1 = ["m04GDN_001"]
-    else:
-        nearest_gate_1 = copy.deepcopy(Manager.mod_data["MapLogic"]["m04GDN_001"]["NearestGate"])
-    if Manager.mod_data["MapLogic"]["m06KNG_020"]["GateRoom"]:
-        nearest_gate_2 = ["m06KNG_020"]
-    else:
-        nearest_gate_2 = copy.deepcopy(Manager.mod_data["MapLogic"]["m06KNG_020"]["NearestGate"])
-    if previous_in_nearest(previous_gate, nearest_gate_1) and previous_in_nearest(previous_gate, nearest_gate_2):
-        return True
-    return False
-
-def journey_area_available(previous_gate):
-    if Manager.mod_data["MapLogic"]["m10BIG_000"]["GateRoom"]:
-        nearest_gate_1 = ["m10BIG_000"]
-    else:
-        nearest_gate_1 = copy.deepcopy(Manager.mod_data["MapLogic"]["m10BIG_000"]["NearestGate"])
-    if Manager.mod_data["MapLogic"]["m12SND_025"]["GateRoom"]:
-        nearest_gate_2 = ["m12SND_025"]
-    else:
-        nearest_gate_2 = copy.deepcopy(Manager.mod_data["MapLogic"]["m12SND_025"]["NearestGate"])
-    if previous_in_nearest(previous_gate, nearest_gate_1) and previous_in_nearest(previous_gate, nearest_gate_2):
-        return True
-    return False
-
-def previous_in_nearest(previous_gate, nearest_gate):
-    if not nearest_gate:
-        return True
-    for i in previous_gate:
-        if i in nearest_gate:
-            return True
-    return False
-
-def room_to_ratio(room):
-    #Increasing chances of late rooms
-    #Otherwise early game areas are more likely to have everything
-    ratio = 1
-    gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][room]["NearestGate"])
-    while gate_list:
-        nearest_gate = random.choice(gate_list)
-        for i in Manager.mod_data["MapLogic"]:
-            if i == nearest_gate:
-                ratio *= 2
-                gate_list = copy.deepcopy(Manager.mod_data["MapLogic"][i]["NearestGate"])
+def satisfies_requirement(requirement):
+    check = True
+    for req in requirement:
+        #AND
+        if type(req) is list:
+            for subreq in req:
+                check = check_requirement(subreq)
+                if not check:
+                    break
+            if check:
                 break
-    #Increasing chances of boss rooms
-    #Otherwise bosses and special enemies have low chances of being required
-    if room in boss_rooms:
-        ratio *= 10
-    return ratio
+        #OR  
+        else:
+            check = check_requirement(req)
+            if check:
+                break
+    return check
+
+def check_requirement(requirement):
+    if requirement in macro_to_requirements:
+        return satisfies_requirement(macro_to_requirements[requirement])
+    else:
+        return requirement in key_order
+
+def key_logic():
+    assessed_den_portal = False
+    assessed_journey_area = False
+    while all_keys:
+        #Move through rooms
+        for door in copy.deepcopy(current_available_doors):
+            current_available_doors.remove(door)
+            room = get_door_room(door)
+            if room in Manager.mod_data["RoomRequirement"]:
+                for check, requirement in Manager.mod_data["RoomRequirement"][get_door_room(door)][door].items():
+                    #Don't automatically unlock certain checks
+                    if check in ["TO_BIG_000_START", "TO_JRN_000_START"]:
+                        if check in special_check_to_door:
+                            special_check_to_door[check].append(door)
+                        else:
+                            special_check_to_door[check] = [door]
+                        continue
+                    analyse_check(check, requirement)
+            else:
+                for subdoor in Manager.map_connections[room]:
+                    if subdoor == door:
+                        continue
+                    analyse_check(subdoor, [])
+        #Keep going until stuck
+        if current_available_doors:
+            print(current_available_doors)
+            continue
+        #Check special requirements
+        if den_portal_available() and not assessed_den_portal:
+            assessed_den_portal = True
+            for door in special_check_to_door["TO_BIG_000_START"]:
+                analyse_check("TO_BIG_000_START", Manager.mod_data["RoomRequirement"][get_door_room(door)][door]["TO_BIG_000_START"])
+        if journey_area_available() and not assessed_journey_area:
+            assessed_journey_area = True
+            for door in special_check_to_door["TO_JRN_000_START"]:
+                analyse_check("TO_JRN_000_START", Manager.mod_data["RoomRequirement"][get_door_room(door)][door]["TO_JRN_000_START"])
+        if current_available_doors:
+            print(current_available_doors)
+            continue
+        #Place key item
+        if check_to_requirement:
+            #Wheight checks
+            requirement_list_list = []
+            for check in check_to_requirement:
+                requirement_list = check_to_requirement[check]
+                if not requirement_list in requirement_list_list:
+                    requirement_list_list.append(requirement_list)
+            chosen_requirement_list = random.choice(requirement_list_list)
+            #Wheight requirements
+            requirement_list = []
+            for requirement in chosen_requirement_list:
+                for num in range(get_requirement_wheight(requirement)):
+                    requirement_list.append(requirement)
+            chosen_requirement = random.choice(requirement_list)
+            #Choose requirement
+            if type(chosen_requirement) is list:
+                for item in chosen_requirement:
+                    if item in macro_to_requirements:
+                        chosen_item = random.choice(macro_to_requirements[item])
+                    else:
+                        chosen_item = item
+                    if chosen_item in all_keys:
+                        place_next_key(chosen_item)
+            else:
+                if chosen_requirement in macro_to_requirements:
+                    chosen_item = random.choice(macro_to_requirements[chosen_requirement])
+                else:
+                    chosen_item = chosen_requirement
+                place_next_key(chosen_item)
+            current_available_chests.clear()
+            current_available_enemies.clear()
+            #Check which obstacles were lifted
+            for check in list(check_to_requirement):
+                requirement = check_to_requirement[check]
+                analyse_check(check, requirement)
+        #Place last unecessary keys
+        else:
+            place_next_key(random.choice(all_keys))
+
+def analyse_check(check, requirement):
+    is_valid_enemy = is_valid_enemy_check(check)
+    if is_valid_enemy[0] and not is_valid_enemy[1]:
+        return
+    accessible = satisfies_requirement(requirement)
+    if accessible:
+        #Chest
+        if check in used_chests:
+            if not check in all_available_chests:
+                current_available_chests.append(check)
+                all_available_chests.append(check)
+        #Enemy
+        elif is_valid_enemy[0]:
+            if not is_valid_enemy[0] in all_available_enemies:
+                current_available_enemies.append(is_valid_enemy[0])
+                all_available_enemies.append(is_valid_enemy[0])
+        #Door
+        else:
+            if not check in all_available_doors:
+                all_available_doors.append(check)
+                destination = get_door_destination(check)
+                if destination and not destination in all_available_doors:
+                    current_available_doors.append(destination)
+                    all_available_doors.append(destination)
+        if check in check_to_requirement:
+            del check_to_requirement[check]
+    else:
+        if check in keyless_chests:
+            return
+        if check in check_to_requirement:
+            check_to_requirement[check].extend(requirement)
+            check_to_requirement[check] = remove_duplicates(check_to_requirement[check])
+        else:
+            check_to_requirement[check] = requirement
+
+def is_valid_enemy_check(check):
+    enemy_profile = Manager.split_enemy_profile(check)
+    if enemy_profile[0] in Manager.mod_data["EnemyLocation"]:
+        enemy_id = enemy_profile[0]
+    else:
+        enemy_id = None
+    is_valid = enemy_id and (not enemy_profile[1] or enemy_profile[1] == difficulty)
+    return (enemy_id, is_valid)
+
+def get_requirement_wheight(requirement):
+    if type(requirement) is list:
+        return 1
+    elif requirement in key_shards:
+        return key_shards[requirement]
+    else:
+        return 4
+
+def place_next_key(chosen_item):
+    if chosen_item in key_items:
+        try:
+            chosen_chest = pick_key_chest(current_available_chests)
+        except IndexError:
+            chosen_chest = pick_key_chest(all_available_chests)
+        key_item_to_location[chosen_item] = chosen_chest
+    if chosen_item in key_shards:
+        try:
+            chosen_enemy = pick_key_enemy(current_available_enemies)random.randint(1, 99)
+        except IndexError:
+            chosen_enemy = pick_key_enemy(all_available_enemies)
+        key_shard_to_location[chosen_item] = chosen_enemy
+    print(chosen_item)
+    all_keys.remove(chosen_item)
+    key_order.append(chosen_item)
+
+def pick_key_chest(available_chests):
+    possible_chests = []
+    for chest in available_chests:
+        if not chest in list(key_item_to_location.values()) and not chest in keyless_chests:
+            possible_chests.append(chest)
+    return random.choice(possible_chests)
+
+def pick_key_enemy(available_enemies):
+    possible_enemies = []
+    for enemy in available_enemies:
+        if not enemy in list(key_shard_to_location.values()) and not enemy in enemy_skip_list and Manager.mod_data["EnemyLocation"][enemy]["HasShard"]:
+            possible_enemies.append(enemy)
+    return random.choice(possible_enemies)
+
+def get_door_destination(door):
+    if door in Manager.map_doors:
+        if Manager.map_connections[Manager.map_doors[door].room][door]:
+            return Manager.map_connections[Manager.map_doors[door].room][door][0]
+        else:
+            return None
+    elif door.split("_")[0] == "TO":
+        short_door = door.split("_")
+        short_door.pop(0)
+        return "_".join(short_door)
+    else:
+        return None
+
+def get_door_room(door):
+    short_door = door.split("_")
+    return room_to_area[short_door[0]] + "_".join([short_door[0], short_door[1]])
+
+def den_portal_available():
+    return ("GDN_001_0_0_LEFT" in all_available_doors or "GDN_001_1_0_RIGHT" in all_available_doors) and "N1012" in all_available_enemies
+
+def journey_area_available():
+    return "SND_025_0_0_LEFT" in all_available_doors and "BIG_000_START" in all_available_doors
 
 def chest_to_room(chest):
     if chest in special_chest_to_room:
         return special_chest_to_room[chest]
     else:
-        return room_to_area[chest.split("_")[1].split("(")[0][:3]] + chest.split("_")[1].split("(")[0][:3] + "_" + chest.split("_")[1].split("(")[0][3:]
-
-def enemy_to_room(enemy):
-    return Manager.mod_data["EnemyLocation"][enemy]["NormalModeRooms"]
-
-def logic_choice(chosen_item, room_list):
-    #Removing key from list
-    all_keys.remove(chosen_item)
-    key_order.append(chosen_item)
-    #Choosing room to place item in
-    while True:
-        chosen_room = random.choice(room_list)
-        #Choosing container to place item in
-        if chosen_item in key_items:
-            chest_list = room_to_available_chests(chosen_room)
-            if chest_list:
-                key_item_to_location[chosen_item] = random.choice(chest_list)
-                #If it is a boss room then remove it from the priority
-                if chosen_room in boss_rooms:
-                    boss_rooms.remove(chosen_room)
-                break
-        if chosen_item in key_shards:
-            enemy_list = room_to_available_enemies(chosen_room)
-            if enemy_list:
-                key_shard_to_location[chosen_item] = random.choice(enemy_list)
-                #Giant dulla heads and Dullahammer EX share their drop with their early game counterpart
-                if key_shard_to_location[chosen_item] == "N3126":
-                    key_shard_to_location[chosen_item] = "N3090"
-                if key_shard_to_location[chosen_item] == "N3127":
-                    key_shard_to_location[chosen_item] = "N3015"
-                if chosen_room in boss_rooms:
-                    boss_rooms.remove(chosen_room)
-                break
-
-def room_to_available_chests(room):
-    chest_list = []
-    for i in used_chests:
-        if chest_to_room(i) == room and not i in list(key_item_to_location.values()) and not i in keyless_chests:
-            #If it is a chest with a self-contained requirement then check if available
-            if i in chest_to_requirement:
-                check = None
-                for e in chest_to_requirement[i]:
-                    #AND
-                    if type(e) is list:
-                        check = True
-                        for o in e:
-                            if not o in key_shard_to_location:
-                                check = False
-                                break
-                        if check:
-                            break
-                    #OR  
-                    else:
-                        check = False
-                        if e in key_shard_to_location:
-                            check = True
-                            break
-                if check:
-                    for e in range(2):
-                        chest_list.append(i)
-            else:
-                chest_list.append(i)
-    return chest_list
-
-def room_to_available_enemies(room):
-    enemy_list = []
-    for i in Manager.mod_data["EnemyLocation"]:
-        if not i in enemy_skip_list and not i in list(key_shard_to_location.values()) and Manager.mod_data["EnemyLocation"][i]["HasShard"] and room in Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]:
-            #Check if it is a boss that requires a certain movement ability to be realistically beatable
-            if i in enemy_to_requirement:
-                check = None
-                for e in enemy_to_requirement[i]:
-                    #AND
-                    if type(e) is list:
-                        check = True
-                        for o in e:
-                            if not o in key_shard_to_location:
-                                check = False
-                                break
-                        if check:
-                            break
-                    #OR  
-                    else:
-                        check = False
-                        if e in key_shard_to_location:
-                            check = True
-                            break
-                if check:
-                    for e in range(2):
-                        enemy_list.append(i)
-            else:
-                #Increase chances of uncommon enemies
-                #Otherwise shards tend to mostly end up on bats an whatnot
-                for e in range(math.ceil(30/len(Manager.mod_data["EnemyLocation"][i]["NormalModeRooms"]))):
-                    enemy_list.append(i)
-    return enemy_list
+        return room_to_area[chest.split("_")[1][:3]] + chest.split("_")[1][:3] + "_" + chest.split("_")[1][3:]
 
 def rand_overworld_key():
     key_logic()
@@ -1400,9 +1269,9 @@ def rand_quest_requirement():
     for i in range(19):
         enemy = list(level_to_enemy.values())[i]
         Manager.datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(i + 1)]["Enemy01"] = enemy
-        Manager.datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(i + 1)]["EnemyNum01"] = len(Manager.mod_data["EnemyLocation"][enemy]["NormalModeRooms"])
+        Manager.datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(i + 1)]["EnemyNum01"] = len(enemy_to_room[enemy])
         enemy_room = ""
-        for e in Manager.mod_data["EnemyLocation"][enemy]["NormalModeRooms"]:
+        for e in enemy_to_room[enemy]:
             enemy_room += e + ","
         Manager.datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(i + 1)]["EnemySpawnLocations"] = enemy_room[:-1]
     #Memento quests
@@ -1556,6 +1425,13 @@ def any_pick(item_array, remove, item_type):
             item_array.remove(item)
     return item
 
+def remove_duplicates(list):
+    new_list = []
+    for i in list:
+        if not i in new_list:
+            new_list.append(i)
+    return new_list
+
 def invert_ratio():
     #Complex function for inverting all item ratios in item drop dictionary
     for i in Manager.mod_data["ItemDrop"]:
@@ -1593,7 +1469,7 @@ def create_log(seed, map):
         if i in key_items:
             log["Key"][Manager.translation["Item"][i]] = [chest_to_room(key_item_to_location[i])]
         if i in key_shards:
-            log["Key"][Manager.translation["Shard"][i]] = enemy_to_room(key_shard_to_location[i])
+            log["Key"][Manager.translation["Shard"][i]] = enemy_to_room[key_shard_to_location[i]]
     return log
 
 def create_log_string(seed, map, original_enemies):
