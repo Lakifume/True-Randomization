@@ -65,47 +65,47 @@ def init():
     global all_replacement
     all_replacement = {}
 
-def rand_dialogue(english):
-    for i in Manager.datatable["PB_DT_DialogueTableItems"]:
-        if i in event_skip:
+def randomize_dialogues(english):
+    for entry in Manager.datatable["PB_DT_DialogueTableItems"]:
+        if entry in event_skip:
             continue
-        direction = Manager.datatable["PB_DT_DialogueTableItems"][i]["SpeakingPosition"].split("::")[-1]
+        direction = Manager.datatable["PB_DT_DialogueTableItems"][entry]["SpeakingPosition"].split("::")[-1]
         #Zangetsu has an event that doesn't have his name
-        if i == "Event_06_001":
+        if entry == "Event_06_001":
             character_to_event["Zangetsu"] = []
         else:
-            character_to_event[Manager.remove_inst(Manager.datatable["PB_DT_DialogueTableItems"][i]["SpeakerID_" + direction])] = []
+            character_to_event[Manager.remove_inst_number(Manager.datatable["PB_DT_DialogueTableItems"][entry]["SpeakerID_" + direction])] = []
         #Anything past this is dummy events
-        if i == "Tutorial_Open_Door":
+        if entry == "Tutorial_Open_Door":
             break
-    for i in Manager.datatable["PB_DT_DialogueTableItems"]:
-        if i in event_skip:
+    for entry in Manager.datatable["PB_DT_DialogueTableItems"]:
+        if entry in event_skip:
             continue
-        direction = Manager.datatable["PB_DT_DialogueTableItems"][i]["SpeakingPosition"].split("::")[-1]
-        if i == "Event_06_001":
-            character_to_event["Zangetsu"].append(i)
+        direction = Manager.datatable["PB_DT_DialogueTableItems"][entry]["SpeakingPosition"].split("::")[-1]
+        if entry == "Event_06_001":
+            character_to_event["Zangetsu"].append(entry)
         else:
-            character_to_event[Manager.remove_inst(Manager.datatable["PB_DT_DialogueTableItems"][i]["SpeakerID_" + direction])].append(i)
-        if i == "Tutorial_Open_Door":
+            character_to_event[Manager.remove_inst_number(Manager.datatable["PB_DT_DialogueTableItems"][entry]["SpeakerID_" + direction])].append(entry)
+        if entry == "Tutorial_Open_Door":
             break
     #Get every event's face anim, taking in consideration that null fields inherit previous anim 
-    for i in ["Left", "Right"]:
+    for direction in ["Left", "Right"]:
         #Start with standard consecutions
-        for e in Manager.datatable["PB_DT_DialogueTableItems"]:
+        for entry in Manager.datatable["PB_DT_DialogueTableItems"]:
             #Get anim of current event
-            current_anim = Manager.datatable["PB_DT_DialogueTableItems"][e]["FaceAnim_" + i]
-            next_event = Manager.datatable["PB_DT_DialogueTableItems"][e]["Branches"]
+            current_anim = Manager.datatable["PB_DT_DialogueTableItems"][entry]["FaceAnim_" + direction]
+            next_event = Manager.datatable["PB_DT_DialogueTableItems"][entry]["Branches"]
             if current_anim == "None":
                 continue
-            if Manager.datatable["PB_DT_DialogueTableItems"][e]["SpeakingPosition"].split("::")[-1] == i:
-                event_to_face_anim[e] = current_anim
+            if Manager.datatable["PB_DT_DialogueTableItems"][entry]["SpeakingPosition"].split("::")[-1] == direction:
+                event_to_face_anim[entry] = current_anim
             if not next_event:
                 continue
             if ";" in next_event:
                 next_event = next_event.split(";")[0]
             #Get anim of following events
-            while Manager.datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + i] == "None":
-                if Manager.datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == i:
+            while Manager.datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + direction] == "None":
+                if Manager.datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == direction:
                     event_to_face_anim[next_event] = current_anim
                 next_event = Manager.datatable["PB_DT_DialogueTableItems"][next_event]["Branches"]
                 if not next_event:
@@ -113,10 +113,10 @@ def rand_dialogue(english):
                 if ";" in next_event:
                     next_event = next_event.split(";")[0]
         #Loop again to get the few branching paths
-        for e in Manager.datatable["PB_DT_DialogueTableItems"]:
+        for entry in Manager.datatable["PB_DT_DialogueTableItems"]:
             #Get anim of current event
-            current_anim = Manager.datatable["PB_DT_DialogueTableItems"][e]["FaceAnim_" + i]
-            next_event = Manager.datatable["PB_DT_DialogueTableItems"][e]["Branches"]
+            current_anim = Manager.datatable["PB_DT_DialogueTableItems"][entry]["FaceAnim_" + direction]
+            next_event = Manager.datatable["PB_DT_DialogueTableItems"][entry]["Branches"]
             if current_anim == "None":
                 continue
             if not next_event:
@@ -125,22 +125,22 @@ def rand_dialogue(english):
                 continue
             next_event = next_event.split(";")[1]
             #Get anim of following events
-            while Manager.datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + i] == "None":
-                if Manager.datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == i:
-                    event_to_face_anim[next_event] = event_to_face_anim[e]
+            while Manager.datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + direction] == "None":
+                if Manager.datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == direction:
+                    event_to_face_anim[next_event] = event_to_face_anim[entry]
                 next_event = Manager.datatable["PB_DT_DialogueTableItems"][next_event]["Branches"]
                 if not next_event:
                     break
     #Get the max text length amongst background events
     max_length = 0
-    for i in background_events:
-        if len(Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueText"]) > max_length:
-            max_length = len(Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueText"])
+    for event in background_events:
+        if len(Manager.datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"]) > max_length:
+            max_length = len(Manager.datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"])
     #Randomize in a dict by first giving background events short lines and then doing the rest
-    for i in character_to_event:
-        new_list = copy.deepcopy(character_to_event[i])
-        for e in character_to_event[i]:
-            if e in background_events:
+    for character in character_to_event:
+        new_list = copy.deepcopy(character_to_event[character])
+        for event in character_to_event[character]:
+            if event in background_events:
                 chosen = random.choice(new_list)
                 try:
                     while len(Manager.datatable["PB_DT_DialogueTextMaster"][chosen]["DialogueText"]) > max_length:
@@ -148,24 +148,24 @@ def rand_dialogue(english):
                 except KeyError:
                     pass
                 new_list.remove(chosen)
-                all_replacement[e] = chosen
-        for e in character_to_event[i]:
-            if not e in background_events:
+                all_replacement[event] = chosen
+        for event in character_to_event[character]:
+            if not event in background_events:
                 chosen = random.choice(new_list)
                 new_list.remove(chosen)
-                all_replacement[e] = chosen
+                all_replacement[event] = chosen
     #Apply the changes
-    for i in all_replacement:
-        direction = Manager.datatable["PB_DT_DialogueTableItems"][i]["SpeakingPosition"].split("::")[-1]
-        if all_replacement[i] in event_to_face_anim:
-            Manager.datatable["PB_DT_DialogueTableItems"][i]["FaceAnim_" + direction] = event_to_face_anim[all_replacement[i]]
+    for event in all_replacement:
+        direction = Manager.datatable["PB_DT_DialogueTableItems"][event]["SpeakingPosition"].split("::")[-1]
+        if all_replacement[event] in event_to_face_anim:
+            Manager.datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = event_to_face_anim[all_replacement[event]]
         else:
-            Manager.datatable["PB_DT_DialogueTableItems"][i]["FaceAnim_" + direction] = "None"
+            Manager.datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = "None"
         try:
-            Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueText"]    = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[i]]["DialogueText"]
-            Manager.datatable["PB_DT_DialogueTextMaster"][i]["DialogueAudioID"] = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[i]]["DialogueAudioID"]
-            Manager.datatable["PB_DT_DialogueTextMaster"][i]["JPLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[i]]["JPLipRef"]
-            Manager.datatable["PB_DT_DialogueTextMaster"][i]["ENLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[i]]["ENLipRef"]
+            Manager.datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"]    = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["DialogueText"]
+            Manager.datatable["PB_DT_DialogueTextMaster"][event]["DialogueAudioID"] = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["DialogueAudioID"]
+            Manager.datatable["PB_DT_DialogueTextMaster"][event]["JPLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["JPLipRef"]
+            Manager.datatable["PB_DT_DialogueTextMaster"][event]["ENLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["ENLipRef"]
         except KeyError:
             pass
         if english:
@@ -173,7 +173,7 @@ def rand_dialogue(english):
         else:
             prefix = "jp"
         try:
-            Manager.datatable["PB_DT_SoundMaster"][prefix + "_" + i + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][prefix + "_" + all_replacement[i] + "_SE"]["AssetPath"]
+            Manager.datatable["PB_DT_SoundMaster"][prefix + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][prefix + "_" + all_replacement[event] + "_SE"]["AssetPath"]
         except KeyError:
             pass
 
@@ -185,5 +185,5 @@ def update_lip_movement(english):
         prefix = "en"
     else:
         prefix = "jp"
-    for i in all_replacement:
-        Manager.change_lip_pointer(i, all_replacement[i], prefix)
+    for event in all_replacement:
+        Manager.update_lip_pointer(event, all_replacement[event], prefix)

@@ -11,17 +11,17 @@ def init():
     global count
     count = []
     #Process variables
-    for i in range(20):
-        completion.append(i*5)
+    for num in range(20):
+        completion.append(num*5)
     completion.append(99)
-    for i in range(21):
-        if i % 2 == 0:
+    for num in range(21):
+        if num % 2 == 0:
             is_tome.append(True)
         else:
             is_tome.append(False)
-        count.append(i)
+        count.append(num)
 
-def rand_book(req, appear):
+def randomize_library_tomes(req, appear):
     #Start by randomizing Tome of Conquest, ensuring that it alwasy exists
     chosen = random.choice(count)
     while not is_tome[chosen]:
@@ -32,25 +32,25 @@ def rand_book(req, appear):
     if appear:
         Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["IslibraryBook"] = is_tome[chosen]
     #Randomize the rest with no guarantees of existing
-    for i in Manager.datatable["PB_DT_BookMaster"]:
-        if i in ["Dummy", "Bookofthechampion"]:
+    for entry in Manager.datatable["PB_DT_BookMaster"]:
+        if entry in ["Dummy", "Bookofthechampion"]:
             continue
-        chosen = any_pick(count)
+        chosen = pick_and_remove(count)
         if req:
-            Manager.datatable["PB_DT_BookMaster"][i]["RoomTraverseThreshold"] = completion[chosen]
+            Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"] = completion[chosen]
         if appear:
-            Manager.datatable["PB_DT_BookMaster"][i]["IslibraryBook"] = is_tome[chosen]
+            Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"] = is_tome[chosen]
 
-def any_pick(array):
+def pick_and_remove(array):
     item = random.choice(array)
     array.remove(item)
     return item
 
 def create_log():
     log = {}
-    for i in Manager.datatable["PB_DT_BookMaster"]:
-        if i == "Dummy":
+    for entry in Manager.datatable["PB_DT_BookMaster"]:
+        if entry == "Dummy":
             continue
-        if Manager.datatable["PB_DT_BookMaster"][i]["IslibraryBook"]:
-            log[Manager.translation["Item"][i]] = Manager.datatable["PB_DT_BookMaster"][i]["RoomTraverseThreshold"]
+        if Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"]:
+            log[Manager.translation["Item"][entry]] = Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"]
     return log

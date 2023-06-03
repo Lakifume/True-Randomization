@@ -13,66 +13,14 @@ import filecmp
 from enum import Enum
 from collections import OrderedDict
 
-def simplify_item_name(name):
-    return name.replace("Familiar:", "").replace(" ", "").lower()
-
-#Open file information
-with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
-    file_to_path = json.load(file_reader)
-translation = {}
-for i in os.listdir("Data\\Translation"):
-    name, extension = os.path.splitext(i)
-    with open("Data\\Translation\\" + i, "r", encoding="utf8") as file_reader:
-        translation[name] = json.load(file_reader)
-start_item_translation = {}
-for i in ["Item", "Shard"]:
-    for e in translation[i]:
-        start_item_translation[simplify_item_name(translation[i][e])] = e
-
-#Gather other information
-file_to_type = {}
-for i in file_to_path:
-    if "DataTable" in file_to_path[i]:
-        file_to_type[i] = "DataTable"
-    elif "Level" in file_to_path[i]:
-        file_to_type[i] = "Level"
-    elif "StringTable" in file_to_path[i]:
-        file_to_type[i] = "StringTable"
-    elif "Material" in file_to_path[i]:
-        file_to_type[i] = "Material"
-    elif "Texture" in file_to_path[i] or "UI" in file_to_path[i] and not "StartupSelecter" in file_to_path[i] and not "Title" in file_to_path[i]:
-        file_to_type[i] = "Texture"
-    elif "Sound" in file_to_path[i]:
-        file_to_type[i] = "Sound"
-    else:
-        file_to_type[i] = "Blueprint"
-load_types = ["DataTable", "Level", "StringTable", "Blueprint", "Material", "Sound"]
-simplify_types = ["DataTable", "StringTable"]
-
-mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
-asset_dir = "Game"
-
-#Open UAssetAPI module
-sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
-clr.AddReference("UAssetAPI")
-clr.AddReference("UAssetSnippet")
-
-from UAssetAPI import *
-from UAssetAPI.FieldTypes import *
-from UAssetAPI.JSON import *
-from UAssetAPI.Kismet import *
-from UAssetAPI.Kismet.Bytecode import *
-from UAssetAPI.Kismet.Bytecode.Expressions import *
-from UAssetAPI.PropertyTypes import *
-from UAssetAPI.PropertyTypes.Objects import *
-from UAssetAPI.PropertyTypes.Structs import *
-from UAssetAPI.UnrealTypes import *
-from UAssetAPI.Unversioned import *
-from UAssetSnippet import *
-
-#test = UAsset("PB_DT_DropRateMaster.uasset", UE4Version.VER_UE4_22)
-#test.AddNameReference(FString("FloatProperty"))
-#test.Write("PB_DT_DropRateMaster2.uasset")
+class FileType(Enum):
+    DataTable   = 0
+    StringTable = 1
+    Blueprint   = 2
+    Level       = 3
+    Material    = 4
+    Texture     = 5
+    Sound       = 6
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -110,6 +58,67 @@ class Door:
         self.z_block = z_block
         self.direction_part = direction_part
         self.breakable = breakable
+
+def simplify_item_name(name):
+    return name.replace("Familiar:", "").replace(" ", "").lower()
+
+#Open file information
+with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
+    file_to_path = json.load(file_reader)
+translation = {}
+for file in os.listdir("Data\\Translation"):
+    name, extension = os.path.splitext(file)
+    with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
+        translation[name] = json.load(file_reader)
+start_item_translation = {}
+for string in ["Item", "Shard"]:
+    for entry in translation[string]:
+        start_item_translation[simplify_item_name(translation[string][entry])] = entry
+
+#Gather other information
+file_to_type = {}
+for file in file_to_path:
+    if "DataTable" in file_to_path[file]:
+        file_to_type[file] = FileType.DataTable
+    elif "StringTable" in file_to_path[file]:
+        file_to_type[file] = FileType.StringTable
+    elif "Level" in file_to_path[file]:
+        file_to_type[file] = FileType.Level
+    elif "Material" in file_to_path[file]:
+        file_to_type[file] = FileType.Material
+    elif "Texture" in file_to_path[file] or "UI" in file_to_path[file] and not "StartupSelecter" in file_to_path[file] and not "Title" in file_to_path[file]:
+        file_to_type[file] = FileType.Texture
+    elif "Sound" in file_to_path[file]:
+        file_to_type[file] = FileType.Sound
+    else:
+        file_to_type[file] = FileType.Blueprint
+load_types = [FileType.DataTable, FileType.Level, FileType.StringTable, FileType.Blueprint, FileType.Material, FileType.Sound]
+simplify_types = [FileType.DataTable, FileType.StringTable]
+
+mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
+asset_dir = "Game"
+
+#Open UAssetAPI module
+sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
+clr.AddReference("UAssetAPI")
+clr.AddReference("UAssetSnippet")
+
+from UAssetAPI import *
+from UAssetAPI.FieldTypes import *
+from UAssetAPI.JSON import *
+from UAssetAPI.Kismet import *
+from UAssetAPI.Kismet.Bytecode import *
+from UAssetAPI.Kismet.Bytecode.Expressions import *
+from UAssetAPI.PropertyTypes import *
+from UAssetAPI.PropertyTypes.Objects import *
+from UAssetAPI.PropertyTypes.Structs import *
+from UAssetAPI.UnrealTypes import *
+from UAssetAPI.Unversioned import *
+from UAssetSnippet import *
+
+#test = UAsset("PB_DT_DropRateMaster.uasset", UE4Version.VER_UE4_22)
+#test.AddNameReference(FString("FloatProperty"))
+#test.Write("PB_DT_DropRateMaster2.uasset")
 
 def init():
     global classic_item_to_properties
@@ -226,7 +235,8 @@ def init():
         "m18ICE_002",
         "m18ICE_005",
         "m18ICE_010",
-        "m18ICE_017"
+        "m18ICE_017",
+        "m20JRN_002"
     ]
     global backer_door_rooms
     backer_door_rooms = [
@@ -351,12 +361,7 @@ def init():
         "KNG_013_0_0_LEFT":         "KNG_013_DestructibleWall",
         "KNG_015_0_2_TOP":          "KNG_015_DestructibleRoof",
         "KNG_017_0_0_LEFT":         "KNG_017_DestructibleWall",
-        "LIB_000_0_2_TOP":          "LIB_005_StepSwitch",
-        "LIB_005_0_0_BOTTOM":       "LIB_005_StepSwitch",
-        "LIB_023_0_2_RIGHT":        "LIB_023_StepSwitch",
         "LIB_029_1_1_TOP":          "LIB_029_DestructibleCeil",
-        "LIB_032_0_1_TOP":          "LIB_032_StepSwitch",
-        "LIB_041_0_0_BOTTOM":       "LIB_032_StepSwitch",
         "UGD_003_1_3_RIGHT":        "UGD_003_DestructibleWall1",
         "UGD_003_1_0_RIGHT":        "UGD_003_DestructibleWall2",
         "UGD_042_1_0_RIGHT":        "UGD_042_DestructibleWall",
@@ -373,13 +378,12 @@ def init():
         "VIL_008_3_0_BOTTOM_RIGHT",
         "VIL_011_5_0_RIGHT",
         "VIL_011_5_0_TOP_RIGHT",
-        "TWR_017_3_0_RIGHT",
         "SND_025_0_0_LEFT",
         "SND_026_0_0_LEFT",
         "SND_027_0_0_LEFT"
     ]
-    global special_doors
-    special_doors = [
+    global arched_doors
+    arched_doors = [
         "GDN_009_0_0_LEFT",
         "GDN_009_0_1_LEFT",
         "GDN_009_2_0_RIGHT",
@@ -400,6 +404,7 @@ def init():
         "SIP_017_0_0_LEFT",
         "VIL_006_0_1_LEFT",
         "GDN_006_0_0_LEFT",
+        "GDN_013_0_0_LEFT",
         "SAN_009_0_1_LEFT",
         "SAN_009_1_1_RIGHT",
         "SAN_021_0_1_LEFT",
@@ -417,7 +422,7 @@ def init():
         "UGD_020_0_0_LEFT",
         "UGD_021_0_0_LEFT",
         "UGD_029_0_1_LEFT",
-        "UGD_056_0_3_RIGHT",
+        "UGD_056_0_3_LEFT",
         "ARC_002_1_1_RIGHT",
         "ARC_003_0_0_RIGHT",
         "JPN_010_0_0_LEFT",
@@ -435,10 +440,27 @@ def init():
         "ICE_005_0_2_LEFT",
         "ICE_016_0_1_RIGHT"
     ]
+    global open_transition_doors
+    open_transition_doors = [
+        "LIB_008_0_1_RIGHT",
+        "UGD_019_1_0_RIGHT",
+        "UGD_021_0_0_LEFT",
+        "UGD_022_1_0_RIGHT",
+        "UGD_023_0_0_LEFT",
+        "UGD_023_1_0_RIGHT",
+        "UGD_024_0_2_LEFT",
+        "UGD_024_1_1_RIGHT",
+        "UGD_025_0_1_LEFT",
+        "UGD_042_0_0_LEFT",
+        "UGD_042_1_0_RIGHT",
+        "UGD_044_0_0_LEFT",
+        "UGD_045_0_0_LEFT",
+        "UGD_045_1_0_RIGHT",
+        "UGD_046_1_0_RIGHT"
+    ]
     global transitionless_doors
     transitionless_doors = [
         "KNG_013_0_0_RIGHT",
-        "LIB_023_0_3_RIGHT",
         "TWR_009_0_10_RIGHT"
     ]
     global room_to_boss
@@ -454,7 +476,8 @@ def init():
         "m15JPN_016": "N1011_STRONG",
         "m18ICE_004": "N2012",
         "m18ICE_018": "N1008",
-        "m18ICE_019": "N1009_Enemy"
+        "m18ICE_019": "N1009_Enemy",
+        "m20JRN_003": "N2017"
     }
     global room_to_backer
     room_to_backer = {
@@ -688,29 +711,29 @@ def load_game_data():
     game_data = {}
     global data_struct
     data_struct = {}
-    for i in file_to_type:
-        if file_to_type[i] in load_types:
+    for file in file_to_type:
+        if file_to_type[file] in load_types:
             #Load all game data in one dict
-            if file_to_type[i] == "Level":
+            if file_to_type[file] == FileType.Level:
                 extension = ".umap"
             else:
                 extension = ".uasset"
-            game_data[i] = UAsset(asset_dir + "\\" + file_to_path[i] + "\\" + i.split("(")[0] + extension, UE4Version.VER_UE4_22)
+            game_data[file] = UAsset(asset_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension, UE4Version.VER_UE4_22)
             #Store struct data types for later on
-            if file_to_type[i] == "DataTable":
-                for e in game_data[i].Exports[0].Table.Data:
-                    for o in e.Value:
-                        if str(o.PropertyType) == "ArrayProperty":
-                            if str(o.ArrayType) == "StructProperty":
-                                for u in o.Value:
-                                    data_struct[str(u.Name)] = u
+            if file_to_type[file] == FileType.DataTable:
+                for entry in game_data[file].Exports[0].Table.Data:
+                    for data in entry.Value:
+                        if str(data.PropertyType) == "ArrayProperty":
+                            if str(data.ArrayType) == "StructProperty":
+                                for struct in data.Value:
+                                    data_struct[str(struct.Name)] = struct
     
 def load_mod_data():
     global mod_data
     mod_data = {}
-    for i in os.listdir("Data\\Constant"):
-        name, extension = os.path.splitext(i)
-        with open("Data\\Constant\\" + i, "r", encoding="utf8") as file_reader:
+    for file in os.listdir("Data\\Constant"):
+        name, extension = os.path.splitext(file)
+        with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
             mod_data[name] = json.load(file_reader)
 
 def load_map(path):
@@ -720,18 +743,16 @@ def load_map(path):
     with open(path, "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
     if "PB_DT_RoomMaster" in datatable:
-        for i in json_file["MapData"]:
-            if not i in datatable["PB_DT_RoomMaster"]:
-                area_save_room = json_file["MapData"][i]["AreaID"].split("::")[-1] + "_1000"
-                datatable["PB_DT_RoomMaster"][i] = copy.deepcopy(datatable["PB_DT_RoomMaster"][area_save_room])
-                datatable["PB_DT_RoomMaster"][i]["LevelName"] = i
-                add_room_file(i)
-            for e in json_file["MapData"][i]:
-                datatable["PB_DT_RoomMaster"][i][e] = json_file["MapData"][i][e]
+        for room in json_file["MapData"]:
+            if not room in datatable["PB_DT_RoomMaster"]:
+                area_save_room = json_file["MapData"][room]["AreaID"].split("::")[-1] + "_1000"
+                datatable["PB_DT_RoomMaster"][room] = copy.deepcopy(datatable["PB_DT_RoomMaster"][area_save_room])
+                datatable["PB_DT_RoomMaster"][room]["LevelName"] = room
+                add_room_file(room)
+            for data in json_file["MapData"][room]:
+                datatable["PB_DT_RoomMaster"][room][data] = json_file["MapData"][room][data]
     else:
         datatable["PB_DT_RoomMaster"] = json_file["MapData"]
-    mod_data["MapLogic"] = json_file["KeyLogic"]
-    mod_data["BloodlessModeMapLogic"] = {}
     mod_data["MapOrder"] = json_file["AreaOrder"]
     mod_data["OriginalMapOrder"] = [
       "m01SIP",
@@ -775,227 +796,272 @@ def load_map(path):
 
 def get_map_info():
     #Keep track of every door connection for multi purpose
-    for i in datatable["PB_DT_RoomMaster"]:
-        map_connections[i] = {}
-        doors = convert_flag_to_door(i, datatable["PB_DT_RoomMaster"][i]["DoorFlag"], datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
-        for e in doors:
-            door_string = "_".join([e.room[3:], str(e.x_block), str(e.z_block), str(e.direction_part).split(".")[-1]])
-            map_doors[door_string] = e
-            map_connections[i][door_string] = []
-    for i in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][i]["Unused"]:
-            continue
-        for e in datatable["PB_DT_RoomMaster"]:
-            if datatable["PB_DT_RoomMaster"][e]["Unused"]:
+    for room in datatable["PB_DT_RoomMaster"]:
+        map_connections[room] = {}
+        doors = convert_flag_to_door(room, datatable["PB_DT_RoomMaster"][room]["DoorFlag"], datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
+        for door in doors:
+            door_string = "_".join([door.room[3:], str(door.x_block), str(door.z_block), door.direction_part.name])
+            map_doors[door_string] = door
+            map_connections[room][door_string] = []
+    for room_1 in datatable["PB_DT_RoomMaster"]:
+        for room_2 in datatable["PB_DT_RoomMaster"]:
+            if datatable["PB_DT_RoomMaster"][room_1]["OutOfMap"] != datatable["PB_DT_RoomMaster"][room_2]["OutOfMap"]:
                 continue
-            if datatable["PB_DT_RoomMaster"][i]["OutOfMap"] != datatable["PB_DT_RoomMaster"][e]["OutOfMap"]:
-                continue
-            is_adjacent(i, e)
+            is_room_adjacent(room_1, room_2)
 
-def randomizer_events():
+def set_randomizer_events():
     #Some events need to be triggered by default to avoid conflicts or tedium
-    #Galleon cannon wall
-    datatable["PB_DT_GimmickFlagMaster"]["SIP_008_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    #First ship door
+    remove_level_class("m01SIP_000_Gimmick", "BP_EventDoor_C")
     #Librarian easter egg
     datatable["PB_DT_GimmickFlagMaster"]["LIB_009_PushUpOD_Second"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["LIB_009_PushUpOD_First"]["Id"]
     #Tower cutscene/garden red moon removal
     datatable["PB_DT_EventFlagMaster"]["Event_07_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
     datatable["PB_DT_EventFlagMaster"]["Event_19_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-    #Temporary Craftwork workaround
+    #Temporary Craftwork softlock workaround
     datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
     datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemId"]       = "Demoniccapture"
     datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemQuantity"] = 1
     datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemRate"]     = 100.0
     add_global_room_pickup("m05SAN_012", "Safe_Demoniccapture")
 
-def fix_custom_map():
+def remove_fire_shard_requirement():
+    #Break galleon cannon wall
+    datatable["PB_DT_GimmickFlagMaster"]["SIP_008_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+
+def update_custom_map():
+    #Remove the village locked door
+    remove_level_class("m02VIL_003_Gimmick", "BP_LookDoor_C")
     #Trigger a few events by default
+    datatable["PB_DT_GimmickFlagMaster"]["SIP_017_BreakWallCannon"]["Id"]  = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     datatable["PB_DT_GimmickFlagMaster"]["ENT_000_FallStatue"]["Id"]       = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     datatable["PB_DT_GimmickFlagMaster"]["ENT_007_ZangetuJump"]["Id"]      = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     datatable["PB_DT_GimmickFlagMaster"]["KNG_015_DestructibleRoof"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     datatable["PB_DT_GimmickFlagMaster"]["LIB_029_DestructibleCeil"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     datatable["PB_DT_GimmickFlagMaster"]["TRN_002_LeverDoor"]["Id"]        = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
-    if not "SIP_006_0_2_RIGHT" in map_connections["m01SIP_017"]["SIP_017_0_0_LEFT"]:
-        datatable["PB_DT_GimmickFlagMaster"]["SIP_017_BreakWallCannon"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Remove the few forced transitions that aren't necessary at all
-    for i in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
-        remove_level_class(i + "_RV", "RoomChange_C")
+    for room in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
+        remove_level_class(room + "_RV", "RoomChange_C")
     #Add a second lever to the right of the tower elevator so that it can be activated from either sides
     add_level_actor("m08TWR_009_Gimmick", "TWR009_ElevatorLever_BP_C", FVector(1110, 0, 11040), FRotator(0, 0, 0), FVector(1, 1, 1), {})
     #Make Bathin's room enterable from the left without softlocking the boss
-    bathin_left_entrance_fix()
+    fix_bathin_left_entrance()
     #Rooms with no traverse blocks only display properly based on their Y position below the origin
     #Start by resetting their no traverse list as if they were above 0
-    for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
-        datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*2
-    for i in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
-        datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][i] += datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*3
+    for index in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
+        datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][index] += datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*2
+    for index in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
+        datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][index] += datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*3
     #Then shift those lists if the rooms are below 0
-    for i in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
-        if datatable["PB_DT_RoomMaster"][i]["OffsetZ"] < 0:
-            multiplier = abs(int(datatable["PB_DT_RoomMaster"][i]["OffsetZ"]/7.2)) - 1
-            if multiplier > datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] - 1:
-                multiplier = datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"] - 1
-            for e in range(len(datatable["PB_DT_RoomMaster"][i]["NoTraverse"])):
-                datatable["PB_DT_RoomMaster"][i]["NoTraverse"][e] -= datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*multiplier
+    for room in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
+        if datatable["PB_DT_RoomMaster"][room]["OffsetZ"] < 0:
+            multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/7.2)) - 1
+            if multiplier > datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1:
+                multiplier = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1
+            for index in range(len(datatable["PB_DT_RoomMaster"][room]["NoTraverse"])):
+                datatable["PB_DT_RoomMaster"][room]["NoTraverse"][index] -= datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*multiplier
     #Each area has limitations as to where it can be displayed on the canvas
     #Change area IDs based on their X positions so that everything is always displayed
-    for i in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][i]["OffsetX"] < 214.2:
-            datatable["PB_DT_RoomMaster"][i]["AreaID"] = "EAreaID::m01SIP"
-        elif datatable["PB_DT_RoomMaster"][i]["OffsetX"] + datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*12.6 > 1108.8:
-            datatable["PB_DT_RoomMaster"][i]["AreaID"] = "EAreaID::m13ARC"
+    for room in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][room]["OffsetX"] < 214.2:
+            datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m01SIP"
+        elif datatable["PB_DT_RoomMaster"][room]["OffsetX"] + datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*12.6 > 1108.8:
+            datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m13ARC"
         else:
-            datatable["PB_DT_RoomMaster"][i]["AreaID"] = "EAreaID::m03ENT"
+            datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m03ENT"
 
-def complex_to_simple():
+def table_complex_to_simple():
     #The uasset data is inconvenient to access and would take up too much text space in the code
     #Convert them to a simplified dictionary that is similar to the old serializer's outputs
-    for i in file_to_type:
-        if file_to_type[i] in simplify_types:
-            if file_to_type[i] == "DataTable":
-                datatable[i] = {}
-                for e in game_data[i].Exports[0].Table.Data:
-                    datatable[i][str(e.Name)] = {}
-                    for o in e.Value:
-                        datatable[i][str(e.Name)][str(o.Name)] = read_datatable(o)
-                original_datatable[i] = copy.deepcopy(datatable[i])
-                datatable_entry_index[i] = {}
-            elif file_to_type[i] == "StringTable":
-                stringtable[i] = {}
-                for e in game_data[i].Exports[0].Table:
-                    stringtable[i][str(e.Key)] = str(e.Value)
+    for file in file_to_type:
+        if file_to_type[file] in simplify_types:
+            if file_to_type[file] == FileType.DataTable:
+                datatable[file] = {}
+                for entry in game_data[file].Exports[0].Table.Data:
+                    datatable[file][str(entry.Name)] = {}
+                    for data in entry.Value:
+                        datatable[file][str(entry.Name)][str(data.Name)] = read_datatable_value(data)
+                original_datatable[file] = copy.deepcopy(datatable[file])
+                datatable_entry_index[file] = {}
+            elif file_to_type[file] == FileType.StringTable:
+                stringtable[file] = {}
+                for entry in game_data[file].Exports[0].Table:
+                    stringtable[file][str(entry.Key)] = str(entry.Value)
 
-def simple_to_complex():
+def table_simple_to_complex():
     #Convert the simplified datatables back to their complex versions
-    for i in file_to_type:
-        if file_to_type[i] in simplify_types:
-            if file_to_type[i] == "DataTable":
-                ecount = 0
-                for e in datatable[i]:
-                    ocount = 0
+    for file in file_to_type:
+        if file_to_type[file] in simplify_types:
+            if file_to_type[file] == FileType.DataTable:
+                entry_count = 0
+                for entry in datatable[file]:
                     #If the datatables had entries added then add an entry slot in the uasset too
-                    if ecount >= game_data[i].Exports[0].Table.Data.Count:
-                        append_datatable_entry(i, e)
-                    for o in datatable[i][e]:
-                        #The unused field in room master is only used by this rando, not by the game
-                        if i == "PB_DT_RoomMaster" and o == "Unused":
-                            ocount += 1
-                            continue
+                    if entry_count >= game_data[file].Exports[0].Table.Data.Count:
+                        append_datatable_entry(file, entry)
+                    data_count = 0
+                    for data in datatable[file][entry]:
                         #Only patch the value if it is different from the original, saves a lot of load time
-                        if e in original_datatable[i]:
-                            if datatable[i][e][o] == original_datatable[i][e][o]:
-                                ocount += 1
+                        if entry in original_datatable[file]:
+                            if datatable[file][entry][data] == original_datatable[file][entry][data]:
+                                data_count += 1
                                 continue
-                        patch_datatable(i, ecount, ocount, datatable[i][e][o])
-                        ocount += 1
-                    ecount += 1
-            elif file_to_type[i] == "StringTable":
-                game_data[i].Exports[0].Table.Clear()
-                for e in stringtable[i]:
-                    game_data[i].Exports[0].Table.Add(FString(e), FString(stringtable[i][e]))
+                        patch_datatable_value(file, entry_count, data_count, datatable[file][entry][data])
+                        data_count += 1
+                    entry_count += 1
+            elif file_to_type[file] == FileType.StringTable:
+                game_data[file].Exports[0].Table.Clear()
+                for entry in stringtable[file]:
+                    game_data[file].Exports[0].Table.Add(FString(entry), FString(stringtable[file][entry]))
 
-def read_datatable(struct):
+def read_datatable_value(struct):
     #Read a uasset variable as a python variable
-    type = str(struct.PropertyType)
-    if type == "ArrayProperty":
+    struct_type = str(struct.PropertyType)
+    if struct_type == "ArrayProperty":
         sub_type = str(struct.ArrayType)
         value = []
-        for i in struct.Value:
+        for element in struct.Value:
             if sub_type == "ByteProperty":
-                sub_value = str(i.EnumValue)
+                sub_value = str(element.EnumValue)
             elif sub_type == "FloatProperty":
-                sub_value = round(i.Value, 3)
-            elif sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty", "TextProperty"] and struct.Value:
-                sub_value = str(i.Value)
+                sub_value = round(element.Value, 3)
+            elif sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
+                sub_value = str(element.Value)
+            elif sub_type == "StrProperty":
+                if element.Value:
+                    sub_value = str(element.Value)
+                else:
+                    sub_value = ""
             elif sub_type == "StructProperty":
                 sub_value = {}
-                for e in i.Value:
-                    sub_sub_type = str(e.PropertyType)
+                for sub_element in element.Value:
+                    sub_sub_type = str(sub_element.PropertyType)
                     if sub_sub_type == "ByteProperty":
-                        sub_sub_value = str(e.EnumValue)
+                        sub_sub_value = str(sub_element.EnumValue)
                     elif sub_sub_type == "FloatProperty":
-                        sub_sub_value = round(e.Value, 3)
-                    elif sub_sub_type in ["EnumProperty", "NameProperty", "StrProperty"]:
-                        sub_sub_value = str(e.Value)
+                        sub_sub_value = round(sub_element.Value, 3)
+                    elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
+                        sub_sub_value = str(sub_element.Value)
+                    elif sub_sub_type == "StrProperty":
+                        if sub_element.Value:
+                            sub_sub_value = str(sub_element.Value)
+                        else:
+                            sub_sub_value = ""
+                    elif sub_sub_type == "TextProperty":
+                        if sub_element.CultureInvariantString:
+                            sub_sub_value = str(sub_element.CultureInvariantString)
+                        else:
+                            sub_sub_value = ""
                     else:
-                        sub_sub_value = e.Value
-                    sub_value[str(e.Name)] = sub_sub_value
+                        sub_sub_value = sub_element.Value
+                    sub_value[str(sub_element.Name)] = sub_sub_value
+            elif sub_type == "TextProperty":
+                if element.CultureInvariantString:
+                    sub_value = str(element.CultureInvariantString)
+                else:
+                    sub_value = ""
             else:
-                sub_value = i.Value
+                sub_value = element.Value
             value.append(sub_value)
-    elif type == "ByteProperty":
+    elif struct_type == "ByteProperty":
         value = str(struct.EnumValue)
-    elif type == "FloatProperty":
+    elif struct_type == "FloatProperty":
         value = round(struct.Value, 3)
-    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty", "StrProperty"] and struct.Value:
+    elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
         value = str(struct.Value)
-    elif type == "TextProperty":
-        value = str(struct.CultureInvariantString)
+    elif struct_type == "StrProperty":
+        if struct.Value:
+            value = str(struct.Value)
+        else:
+            value = ""
+    elif struct_type == "TextProperty":
+        if struct.CultureInvariantString:
+            value = str(struct.CultureInvariantString)
+        else:
+            value = ""
     else:
         value = struct.Value
     return value
 
-def patch_datatable(file, entry, data, value):
+def patch_datatable_value(file, entry, data, value):
     #Patch a python variable over a uasset's variable
     struct = game_data[file].Exports[0].Table.Data[entry].Value[data]
-    type = str(struct.PropertyType)
-    if type == "ArrayProperty":
+    struct_type = str(struct.PropertyType)
+    if struct_type == "ArrayProperty":
         sub_type = str(struct.ArrayType)
         new_list = []
-        for i in value:
+        for element in value:
             if sub_type == "BoolProperty":
                 sub_struct = BoolPropertyData()
-                sub_struct.Value = i
+                sub_struct.Value = element
             elif sub_type == "ByteProperty":
                 sub_struct = BytePropertyData()
                 sub_struct.ByteType = BytePropertyType.FName
-                sub_struct.EnumValue = FName.FromString(game_data[file], i)
+                sub_struct.EnumValue = FName.FromString(game_data[file], element)
             elif sub_type == "EnumProperty":
                 sub_struct = EnumPropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], i)
+                sub_struct.Value = FName.FromString(game_data[file], element)
             elif sub_type == "FloatProperty":
                 sub_struct = FloatPropertyData()
-                sub_struct.Value = i
+                sub_struct.Value = element
             elif sub_type == "IntProperty":
                 sub_struct = IntPropertyData()
-                sub_struct.Value = i
+                sub_struct.Value = element
             elif sub_type == "NameProperty":
                 sub_struct = NamePropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], i)
+                sub_struct.Value = FName.FromString(game_data[file], element)
             elif sub_type == "SoftObjectProperty":
                 sub_struct = SoftObjectPropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], i)
+                sub_struct.Value = FName.FromString(game_data[file], element)
             elif sub_type == "StrProperty":
                 sub_struct = StrPropertyData()
-                sub_struct.Value = FString(i)
+                if element:
+                    sub_struct.Value = FString(element)
+                else:
+                    sub_struct.Value = None
             elif sub_type == "StructProperty":
                 sub_struct = data_struct[str(struct.Name)].Clone()
                 count = 0
-                for e in i:
+                for sub_element in element:
                     sub_sub_type = str(sub_struct.Value[count].PropertyType)
                     if sub_sub_type == "ByteProperty":
-                        sub_struct.Value[count].EnumValue = FName.FromString(game_data[file], i[e])
-                    elif sub_sub_type in ["NameProperty", "EnumProperty"]:
-                        sub_struct.Value[count].Value = FName.FromString(game_data[file], i[e])
+                        sub_struct.Value[count].EnumValue = FName.FromString(game_data[file], element[sub_element])
+                    elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
+                        sub_struct.Value[count].Value = FName.FromString(game_data[file], element[sub_element])
                     elif sub_sub_type == "StrProperty":
-                        sub_struct.Value[count].Value = FString(i[e])
+                        if element[sub_element]:
+                            sub_struct.Value[count].Value = FString(element[sub_element])
+                        else:
+                            sub_struct.Value[count].Value = None
+                    elif sub_sub_type == "TextProperty":
+                        if element[sub_element]:
+                            sub_struct.Value[count].CultureInvariantString = FString(element[sub_element])
+                        else:
+                            sub_struct.Value[count].CultureInvariantString = None
                     else:
-                        sub_struct.Value[count].Value = i[e]
+                        sub_struct.Value[count].Value = element[sub_element]
                     count += 1
             elif sub_type == "TextProperty":
                 sub_struct = TextPropertyData()
-                sub_struct.CultureInvariantString = FString(i)
+                if element:
+                    sub_struct.CultureInvariantString = FString(element)
+                else:
+                    sub_struct.CultureInvariantString = None
             new_list.append(sub_struct)
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = new_list
-    elif type == "ByteProperty":
+    elif struct_type == "ByteProperty":
         game_data[file].Exports[0].Table.Data[entry].Value[data].EnumValue = FName.FromString(game_data[file], value)
-    elif type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
+    elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName.FromString(game_data[file], value)
-    elif type == "StrProperty" and value:
-        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
-    elif type == "TextProperty" and value:
-        game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value)
+    elif struct_type == "StrProperty":
+        if value:
+            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
+        else:
+            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = None
+    elif struct_type == "TextProperty":
+        if value:
+            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value)
+        else:
+            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = None
     else:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = value
 
@@ -1007,161 +1073,161 @@ def append_datatable_entry(file, entry):
 
 def update_datatable_order():
     #Shift some datatable entry placements when necessary
-    for i in datatable_entry_index:
-        for e in datatable_entry_index[i]:
-            old_index = list(datatable[i].keys()).index(e)
-            new_index = datatable_entry_index[i][e]
-            current_entry = game_data[i].Exports[0].Table.Data[old_index].Clone()
-            game_data[i].Exports[0].Table.Data.Remove(game_data[i].Exports[0].Table.Data[old_index])
-            game_data[i].Exports[0].Table.Data.Insert(new_index, current_entry)
+    for file in datatable_entry_index:
+        for entry_1 in datatable_entry_index[file]:
+            old_index = list(datatable[file]).index(entry_1)
+            new_index = datatable_entry_index[file][entry_1]
+            current_entry = game_data[file].Exports[0].Table.Data[old_index].Clone()
+            game_data[file].Exports[0].Table.Data.Remove(game_data[file].Exports[0].Table.Data[old_index])
+            game_data[file].Exports[0].Table.Data.Insert(new_index, current_entry)
             #Update the other entry indexes for that same datatable
-            for o in datatable_entry_index[i]:
+            for entry_2 in datatable_entry_index[file]:
                 if new_index < old_index:
-                    if new_index <= datatable_entry_index[i][o] < old_index:
-                        datatable_entry_index[i][o] += 1
+                    if new_index <= datatable_entry_index[file][entry_2] < old_index:
+                        datatable_entry_index[file][entry_2] += 1
                 elif new_index > old_index:
-                    if new_index >= datatable_entry_index[i][o] > old_index:
-                        datatable_entry_index[i][o] -= 1
+                    if new_index >= datatable_entry_index[file][entry_2] > old_index:
+                        datatable_entry_index[file][entry_2] -= 1
 
-def apply_tweaks():
+def apply_default_tweaks():
     #Make levels identical in all modes
     #This needs to be done before applying the json tweaks so that exceptions can be patched over
-    for i in datatable["PB_DT_CharacterParameterMaster"]:
-        if not is_enemy(i):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if not is_enemy(entry):
             continue
-        datatable["PB_DT_CharacterParameterMaster"][i]["HardEnemyLevel"]                       = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        datatable["PB_DT_CharacterParameterMaster"][i]["NightmareEnemyLevel"]                  = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeDefaultEnemyLevel"]       = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeHardEnemyLevel"]          = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeNightmareEnemyLevel"]     = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyHPOverride"]         = 0.0
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyExperienceOverride"] = 0
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyStrIntMultiplier"]   = 1.0
-        datatable["PB_DT_CharacterParameterMaster"][i]["BloodlessModeEnemyConMndMultiplier"]   = 1.0
+        datatable["PB_DT_CharacterParameterMaster"][entry]["HardEnemyLevel"]                       = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["NightmareEnemyLevel"]                  = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"]       = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeHardEnemyLevel"]          = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeNightmareEnemyLevel"]     = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyHPOverride"]         = 0.0
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyExperienceOverride"] = 0
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyStrIntMultiplier"]   = 1.0
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyConMndMultiplier"]   = 1.0
     #Apply manual tweaks defined in the json
-    for i in mod_data["DefaultTweak"]:
-        for e in mod_data["DefaultTweak"][i]:
-            for o in mod_data["DefaultTweak"][i][e]:
-                datatable[i][e][o] = mod_data["DefaultTweak"][i][e][o]
+    for file in mod_data["DefaultTweak"]:
+        for entry in mod_data["DefaultTweak"][file]:
+            for data in mod_data["DefaultTweak"][file][entry]:
+                datatable[file][entry][data] = mod_data["DefaultTweak"][file][entry][data]
     #Loop through all enemies
-    for i in datatable["PB_DT_CharacterParameterMaster"]:
-        if not is_enemy(i):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if not is_enemy(entry):
             continue
-        if is_boss(i):
+        if is_boss(entry):
             #Make boss health scale with level
-            datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*(99/datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]))
-            datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/5)*5
-            datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]
+            datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]*(99/datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]))
+            datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]/5)*5
+            datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP99Enemy"] = datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]
             #Make experience a portion of health
-            if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+            if datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] > 0:
                 multiplier = (4/3)
-                if i[0:5] in mod_data["ExpModifier"]:
-                    multiplier *= mod_data["ExpModifier"][i[0:5]]
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
+                if entry[0:5] in mod_data["ExpModifier"]:
+                    multiplier *= mod_data["ExpModifier"][entry[0:5]]
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]*multiplier)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]/100) + 2
             #Expand expertise point range that scales with level
             #In vanilla the range is too small and barely makes a difference
-            if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
-                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 15
-                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
+            if datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] = 15
+                datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience"]        = 1
             #Set stone type
             #Some regular enemies are originally set to the boss stone type which doesn't work well when petrified
-            datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Boss"
+            datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] = "EPBStoneType::Boss"
         else:
-            if datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] > 0:
+            if datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] > 0:
                 multiplier = (2/3)
-                if i[0:5] in mod_data["ExpModifier"]:
-                    multiplier *= mod_data["ExpModifier"][i[0:5]]
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]*multiplier)
-                datatable["PB_DT_CharacterParameterMaster"][i]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][i]["Experience99Enemy"]/100) + 2
-            if datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] > 0:
-                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience99Enemy"] = 10
-                datatable["PB_DT_CharacterParameterMaster"][i]["ArtsExperience"]        = 1
-            datatable["PB_DT_CharacterParameterMaster"][i]["StoneType"] = "EPBStoneType::Mob"
+                if entry[0:5] in mod_data["ExpModifier"]:
+                    multiplier *= mod_data["ExpModifier"][entry[0:5]]
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = int(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]*multiplier)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = int(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]/100) + 2
+            if datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] > 0:
+                datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] = 10
+                datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience"]        = 1
+            datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] = "EPBStoneType::Mob"
         #Make level 1 health based off of level 99 health
-        datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP"] = int(datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP99Enemy"]/100) + 2.0
-        datatable["PB_DT_CharacterParameterMaster"][i]["MaxMP"] = datatable["PB_DT_CharacterParameterMaster"][i]["MaxHP"]
+        datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"] = int(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]/100) + 2.0
+        datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"] = datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]
         #Give all enemies a luck stat which reduces the chances of critting them
         #Originally only Gebel, Valefar and OD have one
-        if datatable["PB_DT_CharacterParameterMaster"][i]["LUC"] == 0 and i != "N1008":
-            datatable["PB_DT_CharacterParameterMaster"][i]["LUC"]        = 5.0
-            datatable["PB_DT_CharacterParameterMaster"][i]["LUC99Enemy"] = 50.0
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["LUC"] == 0 and entry != "N1008":
+            datatable["PB_DT_CharacterParameterMaster"][entry]["LUC"]        = 5.0
+            datatable["PB_DT_CharacterParameterMaster"][entry]["LUC99Enemy"] = 50.0
         #Allow Zangetsu to chain grab everyone
         #Whether he can grab or not is entirely based on the enemy's stone resistance
         #As long as it's not 100% resist the chain grab will connect so cap stone resistance at 99.9%
-        if datatable["PB_DT_CharacterParameterMaster"][i]["STO"] >= 100.0:
-            datatable["PB_DT_CharacterParameterMaster"][i]["STO"] = 99.9
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] >= 100.0:
+            datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] = 99.9
     #Make up for the increased expertise range
-    for i in datatable["PB_DT_ArtsCommandMaster"]:
-        datatable["PB_DT_ArtsCommandMaster"][i]["Expertise"] = int(datatable["PB_DT_ArtsCommandMaster"][i]["Expertise"]*2.5)
+    for entry in datatable["PB_DT_ArtsCommandMaster"]:
+        datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"] = int(datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"]*2.5)
     #Lock 8 bit weapons behind recipes so that they aren't always easily accessible
-    for i in datatable["PB_DT_CraftMaster"]:
-        if i in bit_weapons:
-            datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "ArmsRecipe018"
-        elif i[:-1] in bit_weapons and i[-1] == "2":
-            datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "ArmsRecipe019"
-        elif i[:-1] in bit_weapons and i[-1] == "3":
-            datatable["PB_DT_CraftMaster"][i]["OpenKeyRecipeID"] = "ArmsRecipe020"
+    for entry in datatable["PB_DT_CraftMaster"]:
+        if entry in bit_weapons:
+            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe018"
+        elif entry[:-1] in bit_weapons and entry[-1] == "2":
+            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe019"
+        elif entry[:-1] in bit_weapons and entry[-1] == "3":
+            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe020"
     #Remove the minimal damage addition on attacks
-    for i in datatable["PB_DT_DamageMaster"]:
-        datatable["PB_DT_DamageMaster"][i]["FixedDamage"] = 0.0
+    for entry in datatable["PB_DT_DamageMaster"]:
+        datatable["PB_DT_DamageMaster"][entry]["FixedDamage"] = 0.0
     #Loop through drops
-    for i in datatable["PB_DT_DropRateMaster"]:
+    for entry in datatable["PB_DT_DropRateMaster"]:
         #Increase default drop rates
-        if datatable["PB_DT_DropRateMaster"][i]["AreaChangeTreasureFlag"]:
+        if datatable["PB_DT_DropRateMaster"][entry]["AreaChangeTreasureFlag"]:
             drop_rate = mod_data["ItemDrop"]["StandardMat"]["ItemRate"]
         else:
             drop_rate = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]
         #Keep dulla head drops relatively low due to their spawn frequency
-        if i.split("_")[0] in ["N3090", "N3099"]:
+        if entry.split("_")[0] in ["N3090", "N3099"]:
             drop_rate_multiplier = 0.5
         else:
             drop_rate_multiplier = 1.0
-        if 0.0 < datatable["PB_DT_DropRateMaster"][i]["ShardRate"] < 100.0:
-            datatable["PB_DT_DropRateMaster"][i]["ShardRate"] = mod_data["ShardDrop"]["ItemRate"]*drop_rate_multiplier
-        for e in ["RareItemRate", "CommonRate", "RareIngredientRate", "CommonIngredientRate"]:
-            if 0.0 < datatable["PB_DT_DropRateMaster"][i][e] < 100.0:
-                datatable["PB_DT_DropRateMaster"][i][e] = drop_rate*drop_rate_multiplier
+        if 0.0 < datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] < 100.0:
+            datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = mod_data["ShardDrop"]["ItemRate"]*drop_rate_multiplier
+        for data in ["RareItemRate", "CommonRate", "RareIngredientRate", "CommonIngredientRate"]:
+            if 0.0 < datatable["PB_DT_DropRateMaster"][entry][data] < 100.0:
+                datatable["PB_DT_DropRateMaster"][entry][data] = drop_rate*drop_rate_multiplier
         #Make coin type match the amount
-        if datatable["PB_DT_DropRateMaster"][i]["CoinOverride"] > 0:
-            datatable["PB_DT_DropRateMaster"][i]["CoinType"] = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][i]["CoinOverride"])
+        if datatable["PB_DT_DropRateMaster"][entry]["CoinOverride"] > 0:
+            datatable["PB_DT_DropRateMaster"][entry]["CoinType"] = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][entry]["CoinOverride"])
     #Loop through all items
-    for i in datatable["PB_DT_ItemMaster"]:
+    for entry in datatable["PB_DT_ItemMaster"]:
         #Remove dishes from shop to prevent heal spam
         #In vanilla you can easily stock up on an infinite amount of them which breaks the game completely
         #This change also makes regular potions more viable now
-        if i in mod_data["ItemDrop"]["Dish"]["ItemPool"]:
-            datatable["PB_DT_ItemMaster"][i]["max"]       = 1
-            datatable["PB_DT_ItemMaster"][i]["buyPrice"]  = 0
-            datatable["PB_DT_ItemMaster"][i]["sellPrice"] = 0
+        if entry in mod_data["ItemDrop"]["Dish"]["ItemPool"]:
+            datatable["PB_DT_ItemMaster"][entry]["max"]       = 1
+            datatable["PB_DT_ItemMaster"][entry]["buyPrice"]  = 0
+            datatable["PB_DT_ItemMaster"][entry]["sellPrice"] = 0
         #Update icon pointer of 8 bit weapons for the new icons
         #The icon texture was edited so that all new icons are evenly shifted from the original ones
-        if i[:-1] in bit_weapons and i[-1] == "2":
-            datatable["PB_DT_ItemMaster"][i]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][i]["IconPath"]) + 204)
-        elif i[:-1] in bit_weapons and i[-1] == "3":
-            datatable["PB_DT_ItemMaster"][i]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][i]["IconPath"]) + 338)
+        if entry[:-1] in bit_weapons and entry[-1] == "2":
+            datatable["PB_DT_ItemMaster"][entry]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][entry]["IconPath"]) + 204)
+        elif entry[:-1] in bit_weapons and entry[-1] == "3":
+            datatable["PB_DT_ItemMaster"][entry]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][entry]["IconPath"]) + 338)
     #Loop through all shards
-    for i in datatable["PB_DT_ShardMaster"]:
+    for entry in datatable["PB_DT_ShardMaster"]:
         #Make all shard colors match their type
-        datatable["PB_DT_ShardMaster"][i]["ShardColorOverride"] = "EShardColor::None"
+        datatable["PB_DT_ShardMaster"][entry]["ShardColorOverride"] = "EShardColor::None"
         #Make all shards ignore standstill
-        datatable["PB_DT_ShardMaster"][i]["IsStopByAccelWorld"] = False
+        datatable["PB_DT_ShardMaster"][entry]["IsStopByAccelWorld"] = False
     #Give magic attack if a weapon has an elemental attribute
-    for i in datatable["PB_DT_WeaponMaster"]:
-        for e in ["FLA", "ICE", "LIG", "HOL", "DAR"]:
-            if datatable["PB_DT_WeaponMaster"][i][e]:
-                datatable["PB_DT_WeaponMaster"][i]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][i]["MeleeAttack"]
+    for entry in datatable["PB_DT_WeaponMaster"]:
+        for data in ["FLA", "ICE", "LIG", "HOL", "DAR"]:
+            if datatable["PB_DT_WeaponMaster"][entry][data]:
+                datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"]
                 break
     #Rebalance boss rush mode a bit
     #Remove all consumables from inventory
-    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
-        i.Value[1].Value = 0
+    for data in game_data["PBExtraModeInfo_BP"].Exports[1].Data[7].Value:
+        data.Value[1].Value = 0
     #Start both stages at level 50
-    for i in range(8, 14):
-        game_data["PBExtraModeInfo_BP"].Exports[1].Data[i].Value = 50
+    for data in range(8, 14):
+        game_data["PBExtraModeInfo_BP"].Exports[1].Data[data].Value = 50
     #Give all bosses level 66
-    for i in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
-        i.Value.Value = 66
+    for data in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
+        data.Value.Value = 66
     #Rename the second Zangetsu boss so that he isn't confused with the first
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = translation["Enemy"]["N1011_STRONG"]
     stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = translation["Enemy"]["N1011_STRONG"] + " Medal"
@@ -1170,7 +1236,7 @@ def apply_tweaks():
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
     #Slightly change Igniculus' descriptions to match other familiar's
     stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaIgniculus"] = stringtable["PBMasterStringTable"]["SHARD_EFFECT_TXT_FamiliaArcher"]
-    stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = "Familiar: Igniculus"
+    stringtable["PBMasterStringTable"]["SHARD_NAME_FamiliaIgniculus"] = translation["Shard"]["FamiliaIgniculus"]
     #Fix the archive Doppleganger outfit color to match Miriam's
     index = game_data["M_Body06_06"].SearchNameReference(FString("/Game/Core/Character/P0000/Texture/Body/T_Body06_06_Color"))
     game_data["M_Body06_06"].SetNameReference(index, FString("/Game/Core/Character/P0000/Texture/Body/T_Body01_01_Color"))
@@ -1180,12 +1246,12 @@ def apply_tweaks():
     add_enemy_to_archive(102, "N2016", [], None, "N2015")
     stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2016"] = "A giant monster that takes part on the most powerful Greed waves."
     add_enemy_to_archive(109, "N2017", [], None, "N2008")
-    stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2017"] = "An instrument of war fought over the magical cloth that powered the game world."
+    stringtable["PBMasterStringTable"]["ENEMY_EXPLAIN_N2017"] = "An instrument of the war fought over the magical cloth that powered the world."
     #Give the new dullahammer a unique name and look
     datatable["PB_DT_CharacterParameterMaster"]["N3127"]["NameStrKey"] = "ENEMY_NAME_N3127"
     stringtable["PBMasterStringTable"]["ENEMY_NAME_N3127"] = translation["Enemy"]["N3127"]
-    change_material_hsv("MI_N3127_Eye", "EmissiveColor" , (215, 100, 100))
-    change_material_hsv("MI_N3127_Eye", "HighlightColor", (215,  65, 100))
+    set_material_hsv("MI_N3127_Eye", "EmissiveColor" , (215, 100, 100))
+    set_material_hsv("MI_N3127_Eye", "HighlightColor", (215,  65, 100))
     #Give Guardian his own shard drop
     datatable["PB_DT_CharacterMaster"]["N2017"]["ItemDrop"] = "N2017_Shard"
     datatable["PB_DT_DropRateMaster"]["N2017_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
@@ -1280,7 +1346,6 @@ def apply_tweaks():
     game_data["m10BIG_013_Enemy_Hard"].Exports[4].Data[4].Value[0].Value = FVector( 360, 0, 2065)
     game_data["m10BIG_013_Enemy_Hard"].Exports[5].Data[4].Value[0].Value = FVector( 360, 0, 2425)
     #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
-    #This is to simplify the logic a bit as we have no control over the Craftwork shard placement
     remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
     #Add magic doors instead to truly prevent tanking through
     add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
@@ -1348,11 +1413,11 @@ def apply_tweaks():
     datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_MND_WITH_EFFECT"
     datatable["PB_DT_WeaponMaster"]["Swordbreaker"]["SpecialEffectId"]        = "DEBUFF_RATE_ATK_WITH_EFFECT"
     datatable["PB_DT_DamageMaster"]["P0000_Jsword_Kabuto"]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
-    for i in ["", "_EX", "_EX2"]:
-        datatable["PB_DT_DamageMaster"]["WeaponbaneRounds" + i]["SpecialEffectId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
-        datatable["PB_DT_DamageMaster"]["ShieldbaneRounds" + i]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    for suffix in ["", "_EX", "_EX2"]:
+        datatable["PB_DT_DamageMaster"]["WeaponbaneRounds" + suffix]["SpecialEffectId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
+        datatable["PB_DT_DamageMaster"]["ShieldbaneRounds" + suffix]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
     #Add a special ring that buffs the katana parry techniques
-    add_game_item(106, "MightyRing", "Accessory", "Ring", (2048, 3200), "Mighty Ring", "A symbol of great courage that amplifies the power of counterattacks.", 8080, False)
+    add_game_item(106, "MightyRing", "Accessory", "Ring", (2048, 3200), translation["Item"]["MightyRing"], "A symbol of great courage that amplifies the power of counterattacks.", 8080, False)
     datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]                                                   = copy.deepcopy(datatable["PB_DT_EnchantParameterType"]["DUMMY"])
     datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["Type_5_BF08F4064B9CF244C30C7788588CFDF5"]        = "EPBEquipSpecialAttribute::BuffParryArt"
     datatable["PB_DT_EnchantParameterType"]["BuffParryArt245"]["EquipType_25_DEF1C32D420ACBA29D5AA0B5D0AE0D20"]  = "ECarriedCatalog::Accessory1"
@@ -1381,10 +1446,10 @@ def apply_tweaks():
     datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["CoinOverride"]             = 0
     datatable["PB_DT_DropRateMaster"]["Treasurebox_BIG010_1"]["AreaChangeTreasureFlag"]   = False
     mod_data["ItemDrop"]["Accessory"]["ItemPool"].append("MightyRing")
-    for i in range(4):
+    for num in range(4):
         mod_data["QuestRequirement"]["Memento"]["ItemPool"].append("MightyRing")
     #Add an invisibility cloak into the game
-    add_game_item(151, "InvisibleCloak", "Armor", "None", (3840, 2944), "Invisible Cloak", "A magical mantle that renders anything it covers fully invisible.", 22500, False)
+    add_game_item(151, "InvisibleCloak", "Armor", "None", (3840, 2944), translation["Item"]["InvisibleCloak"], "A magical mantle that renders anything it covers fully invisible.", 22500, False)
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MeleeDefense"] = 11
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["MagicDefense"] = 52
     datatable["PB_DT_ArmorMaster"]["InvisibleCloak"]["HOL"]          = 5
@@ -1395,22 +1460,22 @@ def apply_tweaks():
     datatable["PB_DT_DropRateMaster"]["N3025_Shard"]["RareItemQuantity"] = 1
     datatable["PB_DT_DropRateMaster"]["N3025_Shard"]["RareItemRate"]     = mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]
     mod_data["ItemDrop"]["Armor"]["ItemPool"].append("InvisibleCloak")
-    for i in range(5):
+    for num in range(5):
         mod_data["QuestRequirement"]["Memento"]["ItemPool"].append("InvisibleCloak")
     #Add staggering bullets into the game
-    add_game_item(8, "RagdollBullet", "Bullet", "None", (3456, 128), "Ragdoll Bullets", "Strange bullets that contort targets, leaving a lasting impact.", 0, True)
+    add_game_item(8, "RagdollBullet", "Bullet", "None", (3456, 128), translation["Item"]["RagdollBullet"], "Strange bullets that contort targets, leaving a lasting impact.", 0, True)
     datatable["PB_DT_AmmunitionMaster"]["RagdollBullet"]["MeleeAttack"] = 40
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["CraftValue"]       = 5
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient2Id"]    = "Silver"
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient3Id"]    = "HolyWater"
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient3Total"] = 1
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["OpenKeyRecipeID"]  = "BalletRecipe002"
-    for i in ["", "_EX", "_EX2"]:
-        datatable["PB_DT_DamageMaster"]["RagdollBullet" + i]["SA_Attack"] = 9999
-    for i in range(5):
+    for suffix in ["", "_EX", "_EX2"]:
+        datatable["PB_DT_DamageMaster"]["RagdollBullet" + suffix]["SA_Attack"] = 9999
+    for num in range(5):
         mod_data["ItemDrop"]["Bullet"]["ItemPool"].append("RagdollBullet")
     #Add a tonic that speeds up all of Miriam's movement for 10 seconds
-    add_game_item(9, "TimeTonic", "Potion", "None", (3840, 0), "Time Tonic", "An ancient drink that grants the ability to view the world at a slower pace.", 2000, True)
+    add_game_item(9, "TimeTonic", "Potion", "None", (3840, 0), translation["Item"]["TimeTonic"], "An ancient drink that grants the ability to view the world at a slower pace.", 2000, True)
     datatable["PB_DT_ItemMaster"]["TimeTonic"]["max"] = 5
     datatable["PB_DT_CraftMaster"]["TimeTonic"]["Ingredient1Id"] = "MonsterBirdTears"
     datatable["PB_DT_CraftMaster"]["TimeTonic"]["Ingredient2Id"] = "SeekerEye"
@@ -1421,20 +1486,20 @@ def apply_tweaks():
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter02"] = 1.0
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter03"] = 20.0
     datatable["PB_DT_SpecialEffectMaster"]["TimeTonic"]["LifeTime"] = 10.0
-    for i in range(2):
+    for num in range(2):
         mod_data["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
     #Store original enemy stats for convenience
     global original_enemy_stats
     original_enemy_stats = {}
-    for i in datatable["PB_DT_CharacterParameterMaster"]:
-        original_enemy_stats[i] = {}
-        original_enemy_stats[i]["Level"] = datatable["PB_DT_CharacterParameterMaster"][i]["DefaultEnemyLevel"]
-        original_enemy_stats[i]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][i]["POI"]
-        original_enemy_stats[i]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][i]["CUR"]
-        original_enemy_stats[i]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["STO"]
-        original_enemy_stats[i]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][i]["SLO"]
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        original_enemy_stats[entry] = {}
+        original_enemy_stats[entry]["Level"] = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        original_enemy_stats[entry]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["POI"]
+        original_enemy_stats[entry]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["CUR"]
+        original_enemy_stats[entry]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["STO"]
+        original_enemy_stats[entry]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["SLO"]
     #Test
     #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
     #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
@@ -1455,46 +1520,46 @@ def apply_tweaks():
     #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemRate"]     = 100.0
     #datatable["PB_DT_DropRateMaster"]["N2001_Shard"]["ShardId"] = "AccelWorld"
 
-def search_and_replace_string(filename, class_name, data, old_value, new_value):
+def search_and_replace_string(filename, class_name, data_name, old_value, new_value):
     #Search for a specific piece of data to change in a level file and swap it
-    for i in game_data[filename].Exports:
-        if class_name == str(game_data[filename].Imports[abs(int(str(i.ClassIndex))) - 1].ObjectName):
-            for e in i.Data:
-                if str(e.Name) == data and str(e.Value) == old_value:
-                    e.Value = FName.FromString(game_data[filename], new_value)
+    for export in game_data[filename].Exports:
+        if class_name == str(game_data[filename].Imports[abs(int(str(export.ClassIndex))) - 1].ObjectName):
+            for data in export.Data:
+                if str(data.Name) == data_name and str(data.Value) == old_value:
+                    data.Value = FName.FromString(game_data[filename], new_value)
 
-def rand_classic_drops():
+def randomize_classic_mode_drops():
     #Convert the drop dictionary to a wheighted list
     classic_pool = []
-    for i in mod_data["ClassicDrop"]:
-        for e in range(mod_data["ClassicDrop"][i]):
-            classic_pool.append(i)
+    for item in mod_data["ClassicDrop"]:
+        for num in range(mod_data["ClassicDrop"][item]):
+            classic_pool.append(item)
     #Search for any instance of SpawnItemTypeClass and replace it with a random item
-    for i in ["Stage_00", "Stage_01", "Stage_02", "Stage_03", "Stage_04", "Stage_05A", "Stage_05B"]:
-        filename = "Classic_" + i + "_Objects"
-        for e in game_data[filename].Exports:
-            for o in e.Data:
-                if str(o.Name) == "SpawnItemTypeClass":
-                    if int(str(o.Value)) == 0:
+    for stage in ["Stage_00", "Stage_01", "Stage_02", "Stage_03", "Stage_04", "Stage_05A", "Stage_05B"]:
+        filename = "Classic_" + stage + "_Objects"
+        for export in game_data[filename].Exports:
+            for data in export.Data:
+                if str(data.Name) == "SpawnItemTypeClass":
+                    if int(str(data.Value)) == 0:
                         item_name = "None"
                     else:
-                        item_name = str(game_data[filename].Imports[abs(int(str(o.Value))) - 1].ObjectName).replace("BP_PBC_", "").replace("_C", "")
+                        item_name = str(game_data[filename].Imports[abs(int(str(data.Value))) - 1].ObjectName).replace("BP_PBC_", "").replace("_C", "")
                     #Don't randomize the item if it isn't in the pool list
                     if not item_name in classic_pool:
                         continue
                     chosen = random.choice(classic_pool)
                     if chosen == "None":
-                        o.Value = FPackageIndex(0)
+                        data.Value = FPackageIndex(0)
                         break
                     else:
                         item_class = "BP_PBC_" + chosen + "_C"
                     #First check is the item is already in the level's imports
                     count = 0
                     found = False
-                    for u in game_data[filename].Imports:
+                    for uimport in game_data[filename].Imports:
                         count -= 1
-                        if str(u.ObjectName) == item_class:
-                            o.Value = FPackageIndex(count)
+                        if str(uimport.ObjectName) == item_class:
+                            data.Value = FPackageIndex(count)
                             found = True
                             break
                     if found:
@@ -1526,10 +1591,30 @@ def rand_classic_drops():
                         FName.FromString(game_data[filename], str(old_import.ObjectName))
                     )
                     game_data[filename].Imports.Add(new_import)
-                    o.Value = FPackageIndex(-(new_import_index + 1))
+                    data.Value = FPackageIndex(-(new_import_index + 1))
                     break
 
-def change_lip_pointer(event, event_replacement, prefix):
+def set_bigtoss_mode():
+    #Greatly increase the knockback from enemy attacks and randomize the impulse angle
+    enemy_attack_ranges = [
+        range(302, 783),
+        range(814, 835),
+        range(848, 862)
+    ]
+    for index_range in enemy_attack_ranges:
+        for index in index_range:
+            entry = list(datatable["PB_DT_DamageMaster"])[index]
+            if "P000" in entry or "P000" in datatable["PB_DT_DamageMaster"][entry]["GroupId"]:
+                continue
+            if "FAMILIA" in entry or "FAMILIA" in datatable["PB_DT_DamageMaster"][entry]["GroupId"]:
+                continue
+            if entry.split("_")[-1] == "BRV" or datatable["PB_DT_DamageMaster"][entry]["GroupId"].split("_")[-1] == "BRV":
+                continue
+            datatable["PB_DT_DamageMaster"][entry]["KnockBackDistance"] += 20.0
+            datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMin"] = float(random.randint(-180, 180))
+            datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMax"] = float(random.randint(-180, 180))
+
+def update_lip_pointer(event, event_replacement, prefix):
     #Simply swap the file's name in the name map and save as the new name
     event = prefix + "_" + event + "_LIP"
     event_replacement = prefix + "_" + event_replacement + "_LIP"
@@ -1543,12 +1628,12 @@ def change_lip_pointer(event, event_replacement, prefix):
         event_replacement_data.Write(mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
     elif event + ".uasset" in os.listdir("Data\\LipSync"):
         event_data = UAsset("Data\\LipSync\\" + event + ".uasset", UE4Version.VER_UE4_22)
-        for i in event_data.Exports:
-            if str(i.ObjectName) == event:
-                i.Data.Clear()
+        for export in event_data.Exports:
+            if str(export.ObjectName) == event:
+                export.Data.Clear()
         event_data.Write(mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
 
-def change_portrait_pointer(portrait, portrait_replacement):
+def update_portrait_pointer(portrait, portrait_replacement):
     #Simply swap the file's name in the name map and save as the new name
     portrait_replacement_data = UAsset(asset_dir + "\\" + file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
     index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
@@ -1557,27 +1642,27 @@ def change_portrait_pointer(portrait, portrait_replacement):
     portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
     portrait_replacement_data.Write(mod_dir + "\\" + file_to_path[portrait] + "\\" + portrait + ".uasset")
 
-def update_descriptions():
+def update_item_descriptions():
     #Add magical stats to descriptions
-    for i in datatable["PB_DT_ArmorMaster"]:
-        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
+    for entry in datatable["PB_DT_ArmorMaster"]:
+        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
-        if datatable["PB_DT_ArmorMaster"][i]["MagicAttack"] != 0:
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][i]["MagicAttack"]) + "</>")
-        if datatable["PB_DT_ArmorMaster"][i]["MagicDefense"] != 0:
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][i]["MagicDefense"]) + "</>")
+        if datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"] != 0:
+            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
+        if datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"] != 0:
+            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
     #Add restoration amount to descriptions
-    for i in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
-        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
+    for entry in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
+        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
-        if datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Type"] == "EPBSpecialEffect::ChangeHP":
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Parameter01"])) + "</>")
-        if datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Type"] == "EPBSpecialEffect::ChangeMP":
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][i]["Parameter01"])) + "</>")
-    for i in datatable["PB_DT_AmmunitionMaster"]:
-        if not "ITEM_EXPLAIN_" + i in stringtable["PBMasterStringTable"]:
+        if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeHP":
+            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+        if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeMP":
+            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+    for entry in datatable["PB_DT_AmmunitionMaster"]:
+        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
-        append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + i, "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][i]["MeleeAttack"]) + "</>")
+        append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
@@ -1586,286 +1671,242 @@ def update_map_doors():
     #Do this even for the default map as some rooms are missing boss doors
     #Boss doors
     #Remove originals
-    for i in boss_door_rooms:
-        if i in room_to_gimmick:
-            filename = room_to_gimmick[i]
-        else:
-            filename = i + "_Gimmick"
-        remove_level_class(filename, "PBBossDoor_BP_C")
+    for room in boss_door_rooms:
+        remove_level_class(get_gimmick_filename(room), "PBBossDoor_BP_C")
+    remove_level_class("m20JRN_004_Setting", "PBBossDoor_BP_C")
     #Add new
-    for i in room_to_boss:
-        for e in map_connections[i]:
-            for o in map_connections[i][e]:
-                if o in door_skip:
+    for room in room_to_boss:
+        for entrance in map_connections[room]:
+            for exit in map_connections[room][entrance]:
+                if cannot_add_actor_to_door(exit):
                     continue
-                if map_doors[o].room in room_to_boss:
-                    continue
-                if map_doors[o].room in room_to_backer:
-                    continue
-                if not map_doors[o].room in mod_data["MapLogic"]:
-                    continue
-                if map_doors[o].room in room_to_gimmick:
-                    filename = room_to_gimmick[map_doors[o].room]
+                #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
+                if map_doors[exit].room == "m20JRN_002":
+                    filename = "m20JRN_002_BG"
                 else:
-                    filename = map_doors[o].room + "_Gimmick"
-                location = FVector(0, 0, 0)
+                    filename = get_gimmick_filename(map_doors[exit].room)
+                #Offset the door for Journey
+                if map_doors[exit].room == "m20JRN_004":
+                    x_offset = 180
+                elif "m20JRN" in map_doors[exit].room:
+                    x_offset = -60
+                else:
+                    x_offset = 0
+                location = FVector(x_offset, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
                 properties = {}
-                properties["BossID"] = FName.FromString(game_data[filename], room_to_boss[i])
-                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                properties["BossID"] = FName.FromString(game_data[filename], room_to_boss[room])
+                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -180
                     properties["IsRight"] = False
-                    if o in special_doors:
+                    if exit in arched_doors:
                         rotation.Yaw += 15
-                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260
+                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - x_offset
                     properties["IsRight"] = True
-                    if o in special_doors:
+                    if exit in arched_doors:
                         rotation.Yaw -= 15
-                location.Z = map_doors[o].z_block*720 + 240.0
-                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = map_doors[exit].z_block*720 + 240.0
+                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "PBBossDoor_BP_C", location, rotation, scale, properties)
                 #If the door is a breakable wall we don't want the boss door to overlay it, so break it by default
-                if o in wall_to_gimmick_flag:
-                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                if exit in wall_to_gimmick_flag:
+                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
                 #Remove the magic door in that one galleon room so that it never overlays with anything
-                if o == "SIP_002_0_0_RIGHT":
+                if exit == "SIP_002_0_0_RIGHT":
                     remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
     #Backer doors
     #Remove originals
-    for i in backer_door_rooms:
-        if i in room_to_gimmick:
-            filename = room_to_gimmick[i]
-        else:
-            filename = i + "_Gimmick"
-        remove_level_class(filename, "PBBakkerDoor_BP_C")
+    for room in backer_door_rooms:
+        remove_level_class(get_gimmick_filename(room), "PBBakkerDoor_BP_C")
     #Add new
-    for i in room_to_backer:
-        for e in map_connections[i]:
-            for o in map_connections[i][e]:
-                if o in door_skip:
+    for room in room_to_backer:
+        for entrance in map_connections[room]:
+            for exit in map_connections[room][entrance]:
+                if cannot_add_actor_to_door(exit):
                     continue
-                if map_doors[o].room in room_to_boss:
-                    continue
-                if map_doors[o].room in room_to_backer:
-                    continue
-                if not map_doors[o].room in mod_data["MapLogic"]:
-                    continue
-                if map_doors[o].room in room_to_gimmick:
-                    filename = room_to_gimmick[map_doors[o].room]
-                else:
-                    filename = map_doors[o].room + "_Gimmick"
+                filename = get_gimmick_filename(map_doors[exit].room)
                 location = FVector(0, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
                 properties = {}
-                properties["BossID"]     = FName.FromString(game_data[filename], room_to_backer[i][0])
-                properties["KeyItemID"]  = FName.FromString(game_data[filename], "Keyofbacker" + str(room_to_backer[i][1]))
-                properties["TutorialID"] = FName.FromString(game_data[filename], "KeyDoor" + "{:02x}".format(room_to_backer[i][1]))
-                if room_to_backer[i][0] == "None":
+                properties["BossID"]     = FName.FromString(game_data[filename], room_to_backer[room][0])
+                properties["KeyItemID"]  = FName.FromString(game_data[filename], "Keyofbacker" + str(room_to_backer[room][1]))
+                properties["TutorialID"] = FName.FromString(game_data[filename], "KeyDoor" + "{:02x}".format(room_to_backer[room][1]))
+                if room_to_backer[room][0] == "None":
                     properties["IsMusicBoxRoom"] =  True
-                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -180
-                    if o in special_doors:
+                    if exit in arched_doors:
                         rotation.Yaw += 15
-                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260
-                    if o in special_doors:
+                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260
+                    if exit in arched_doors:
                         rotation.Yaw -= 15
-                location.Z = map_doors[o].z_block*720 + 240.0
-                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = map_doors[exit].z_block*720 + 240.0
+                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 actor_index = len(game_data[filename].Exports)
                 add_level_actor(filename, "PBBakkerDoor_BP_C", location, rotation, scale, properties)
                 #If the door is a breakable wall we don't want the backer door to overlay it, so break it by default
-                if o in wall_to_gimmick_flag:
-                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                if exit in wall_to_gimmick_flag:
+                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
                 #Remove the magic door in that one galleon room so that it never overlays with anything
-                if o == "SIP_002_0_0_RIGHT":
+                if exit == "SIP_002_0_0_RIGHT":
                     remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
     #Area doors
     #Remove originals
-    for i in area_door_rooms:
-        if i in room_to_gimmick:
-            filename = room_to_gimmick[i]
-        else:
-            filename = i + "_Gimmick"
-        remove_level_class(filename, "BP_AreaDoor_C")
+    for room in area_door_rooms:
+        remove_level_class(get_gimmick_filename(room), "BP_AreaDoor_C")
     #Add new
     doors_done = []
-    for i in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Load" or i == "m03ENT_1200":
+    for room in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][room]["RoomType"] != "ERoomType::Load" or room == "m03ENT_1200":
             continue
-        for e in map_connections[i]:
-            for o in map_connections[i][e]:
-                if o in doors_done:
+        for entrance in map_connections[room]:
+            for exit in map_connections[room][entrance]:
+                if cannot_add_actor_to_door(exit):
                     continue
-                if o in door_skip:
-                    continue
-                if o in special_doors:
-                    continue
-                if o in transitionless_doors:
-                    continue
-                if map_doors[o].room in room_to_boss:
-                    continue
-                if map_doors[o].room in room_to_backer:
-                    continue
-                if not map_doors[o].room in mod_data["MapLogic"]:
+                if exit in doors_done or exit in arched_doors or exit in transitionless_doors:
                     continue
                 #If the door is too close to a cutscene disable the event to prevent softlocks
-                if map_doors[o].room == "m03ENT_006":
+                if map_doors[exit].room == "m03ENT_006":
                     datatable["PB_DT_EventFlagMaster"]["Event_05_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-                if o == "ARC_001_0_0_LEFT":
+                if exit == "ARC_001_0_0_LEFT":
                     datatable["PB_DT_EventFlagMaster"]["Event_09_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-                if o == "TAR_000_0_0_LEFT":
+                if exit == "TAR_000_0_0_LEFT":
                     datatable["PB_DT_EventFlagMaster"]["Event_12_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-                if map_doors[o].room in room_to_gimmick:
-                    filename = room_to_gimmick[map_doors[o].room]
-                else:
-                    filename = map_doors[o].room + "_Gimmick"
+                filename = get_gimmick_filename(map_doors[exit].room)
                 x_offset = 40
                 location = FVector(x_offset, -180, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
-                properties = {}
-                properties["IsInvertingOpen"] = False
-                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     class_name = "BP_AreaDoor_C(Left)"
-                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260 - x_offset
+                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - x_offset
                     class_name = "BP_AreaDoor_C(Right)"
-                location.Z = map_doors[o].z_block*720 + 240.0
-                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = map_doors[exit].z_block*720 + 240.0
+                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
-                add_level_actor(filename, class_name, location, rotation, scale, properties)
-                #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
-                if o in wall_to_gimmick_flag:
-                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[o]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
-                #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
-                if o in floorless_doors:
-                    platform_location = FVector(0, -250, location.Z - 20)
-                    platform_rotation = FRotator(0, 0, 0)
-                    platform_scale    = FVector(12/11, 1, 1)
+                #If the door should remain open replace it with a regular event door
+                if exit in open_transition_doors:
+                    scale.Y = 1/3
                     if "Left" in class_name:
-                        platform_location.X = location.X + 35
+                        rotation.Yaw -= 90
                     if "Right" in class_name:
-                        platform_location.X = location.X - 35 - 120*12/11
-                    add_level_actor(filename, "UGD_WeakPlatform_C", platform_location, platform_rotation, platform_scale, {"SecondsToDestroy": 9999.0})
+                        rotation.Yaw += 90
+                    lever_index = len(game_data[filename].Exports) + 1
+                    add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
+                    game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(0, -600, 0)
+                else:
+                    add_level_actor(filename, class_name, location, rotation, scale, {"IsInvertingOpen": False})
+                    #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
+                    if exit in wall_to_gimmick_flag:
+                        datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+                    #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
+                    if exit in floorless_doors:
+                        platform_location = FVector(0, -250, location.Z - 20)
+                        platform_rotation = FRotator(0, 0, 0)
+                        platform_scale    = FVector(12/11, 1, 1)
+                        if "Left" in class_name:
+                            platform_location.X = location.X + 35
+                        if "Right" in class_name:
+                            platform_location.X = location.X - 35 - 120*12/11
+                        add_level_actor(filename, "UGD_WeakPlatform_C", platform_location, platform_rotation, platform_scale, {"SecondsToDestroy": 9999.0})
                 #Remove the magic door in that one galleon room so that it never overlays with anything
-                if o == "SIP_002_0_0_RIGHT":
+                if exit == "SIP_002_0_0_RIGHT":
                     remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
                 #Since transition rooms are double make sure that a door only gets added once
-                doors_done.append(o)
+                doors_done.append(exit)
 
 def update_map_indicators():
     #Place a bookshelf in front of every save and warp point to make map traversal easier
     #Only do it for custom maps as the default map already has bookshelves with text
     #Remove originals
-    for i in bookshelf_rooms:
-        if i in room_to_gimmick:
-            filename = room_to_gimmick[i]
-        else:
-            filename = i + "_Gimmick"
-        remove_level_class(filename, "ReadableBookShelf_C")
+    for room in bookshelf_rooms:
+        remove_level_class(get_gimmick_filename(room), "ReadableBookShelf_C")
     #Add new
     doors_done = []
-    for i in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Save" and datatable["PB_DT_RoomMaster"][i]["RoomType"] != "ERoomType::Warp":
+    for room in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][room]["RoomType"] != "ERoomType::Save" and datatable["PB_DT_RoomMaster"][room]["RoomType"] != "ERoomType::Warp":
             continue
-        for e in map_connections[i]:
-            for o in map_connections[i][e]:
-                if o in door_skip:
+        for entrance in map_connections[room]:
+            for exit in map_connections[room][entrance]:
+                if cannot_add_actor_to_door(exit):
                     continue
-                if map_doors[o].room in room_to_boss:
+                if exit in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
                     continue
-                if map_doors[o].room in room_to_backer:
-                    continue
-                if not map_doors[o].room in mod_data["MapLogic"]:
-                    continue
-                if o in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
-                    continue
-                if map_doors[o].room in room_to_gimmick:
-                    filename = room_to_gimmick[map_doors[o].room]
-                else:
-                    filename = map_doors[o].room + "_Gimmick"
+                filename = get_gimmick_filename(map_doors[exit].room)
                 location = FVector(-80, -120, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
                 properties = {}
                 properties["DiaryID"] = FName.FromString(game_data[filename], "None")
-                if map_doors[o].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -30
-                if map_doors[o].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[o].room]["AreaWidthSize"]*1260 - 50
+                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - 50
                     rotation.Yaw = 30
-                location.Z = map_doors[o].z_block*720 + 240.0
-                if map_doors[o].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = map_doors[exit].z_block*720 + 240.0
+                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[o].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "ReadableBookShelf_C", location, rotation, scale, properties)
                 #Remove the magic door in that one galleon room so that it never overlays with anything
-                if o == "SIP_002_0_0_RIGHT":
+                if exit == "SIP_002_0_0_RIGHT":
                     remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
     #Fill empty entrances with an impassable door to prevent softlocks
     #Add new
     door_height = 240
     door_width = 44
-    for i in map_connections:
-        for e in map_connections[i]:
-            if map_connections[i][e] and map_connections[i][e] != "m03ENT_1200":
+    for room in map_connections:
+        for door in map_connections[room]:
+            if map_connections[room][door]:
                 continue
-            if e in door_skip:
+            if cannot_add_actor_to_door(door):
                 continue
-            if i in room_to_boss:
-                continue
-            if i in room_to_backer:
-                continue
-            if not i in mod_data["MapLogic"]:
-                continue
-            if i in room_to_gimmick:
-                filename = room_to_gimmick[i]
-            else:
-                filename = i + "_Gimmick"
+            filename = get_gimmick_filename(room)
             location = FVector(0, -360, 0)
             rotation = FRotator(0, 0, 0)
             scale    = FVector(1, 1, 1)
             #Global direction
-            if map_doors[e].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+            if map_doors[door].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                 location.X = -18
-                location.Z = map_doors[e].z_block*720 + door_height
-                lever_offset = -160
-                if e in special_doors:
+                location.Z = map_doors[door].z_block*720 + door_height
+                lever_offset = -360
+                if door in arched_doors:
                     rotation.Yaw += 20
-            if map_doors[e].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                location.X = datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"]*1260 + 18
-                location.Z = map_doors[e].z_block*720 + door_height
-                lever_offset = 160
-                if e in special_doors:
+            if map_doors[door].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                location.X = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260 + 18
+                location.Z = map_doors[door].z_block*720 + door_height
+                lever_offset = 360
+                if door in arched_doors:
                     rotation.Yaw -= 20
-            if map_doors[e].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
-                location.X = map_doors[e].x_block*1260 + 510.0
-                location.Z = datatable["PB_DT_RoomMaster"][i]["AreaHeightSize"]*720 - 5
+            if map_doors[door].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
+                location.X = map_doors[door].x_block*1260 + 510.0
+                location.Z = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720 - 5
                 rotation.Pitch = -90
-                lever_offset = -160
-            if map_doors[e].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
-                location.X = map_doors[e].x_block*1260 + 510.0
+                lever_offset = -360
+            if map_doors[door].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
+                location.X = map_doors[door].x_block*1260 + 510.0
                 location.Z = 5
                 rotation.Pitch = -90
-                lever_offset = 160
+                lever_offset = 360
             #Sub direction
-            if map_doors[e].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
-                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+            if map_doors[door].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                if "m10BIG" in room:
                     location.Z -= door_height
-                elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
+                elif "_".join([room[3:], str(map_doors[door].x_block), str(map_doors[door].z_block), map_doors[door].direction_part.name.split("_")[0]]) in map_connections[room]:
                     location.Z -= door_height
                     scale.X = 4.25
                     scale.Z = 4.25
@@ -1873,26 +1914,26 @@ def update_map_indicators():
                     location.Z -= door_height*scale.Z - door_height
                 else:
                     location.Z -= 180
-            if map_doors[e].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
-                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+            if map_doors[door].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if "m10BIG" in room:
                     location.Z += door_height
-                elif "_".join([i[3:], str(map_doors[e].x_block), str(map_doors[e].z_block), str(map_doors[e].direction_part).split(".")[-1].split("_")[0]]) in map_connections[i]:
+                elif "_".join([room[3:], str(map_doors[door].x_block), str(map_doors[door].z_block), map_doors[door].direction_part.name.split("_")[0]]) in map_connections[room]:
                     location.Z += door_height
                     scale.X = 4.25
                     scale.Z = 4.25
-                    if map_doors[e].direction_part == Direction.LEFT_TOP:
+                    if map_doors[door].direction_part == Direction.LEFT_TOP:
                         location.X -= (door_width*scale.Z - door_width)/2 - door_width
                     else:
                         location.X += (door_width*scale.Z - door_width)/2 - door_width
                 else:
                     location.Z += 180
-            if map_doors[e].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
-                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+            if map_doors[door].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
+                if "m10BIG" in room:
                     location.X -= 510
                 else:
                     location.X -= 370
-            if map_doors[e].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
-                if original_datatable["PB_DT_RoomMaster"][i]["AreaID"] == "EAreaID::m10BIG":
+            if map_doors[door].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
+                if "m10BIG" in room:
                     location.X += 510
                 else:
                     location.X += 370
@@ -1900,22 +1941,22 @@ def update_map_indicators():
             add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
             game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(lever_offset, 360, 0)
             #Remove the magic door in that one galleon room so that it never overlays with anything
-            if e == "SIP_002_0_0_RIGHT":
+            if door == "SIP_002_0_0_RIGHT":
                 remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
 
+def cannot_add_actor_to_door(door):
+    room = map_doors[door].room
+    return door in door_skip or room in room_to_boss or room in room_to_backer or not room in mod_data["RoomRequirement"]
+
 def update_room_containers(room):
-    #Don't change the containers for starting items
-    if room in room_to_gimmick:
-        filename = room_to_gimmick[room]
-    else:
-        filename = room + "_Gimmick"
+    filename = get_gimmick_filename(room)
     if not filename in game_data:
         return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
-    for i in range(len(game_data[filename].Exports)):
-        old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
+    for export_index in range(len(game_data[filename].Exports)):
+        old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName)
         #Check if it is a golden chest
-        if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[i].Data[4].Name) == "IsAutoMaterial":
+        if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[export_index].Data[4].Name) == "IsAutoMaterial":
             old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
         #Pure miriam is considered a different class but honestly it's the same as regular chests
         if old_class_name == "PBPureMiriamTreasureBox_BP_C":
@@ -1927,22 +1968,22 @@ def update_room_containers(room):
             scale    = FVector(1, 1, 1)
             safety_chest = False
             gimmick_id = ""
-            for e in game_data[filename].Exports[i].Data:
-                if str(e.Name) in ["DropItemID", "DropRateID"]:
-                    drop_id = str(e.Value)
-                if str(e.Name) == "IsRandomizerSafetyChest":
-                    safety_chest = e.Value
-                if str(e.Name) == "OptionalGimmickID":
-                    gimmick_id = str(e.Value)
-                if str(e.Name) == "RootComponent":
-                    root_index = int(str(e.Value)) - 1
-                    for o in game_data[filename].Exports[root_index].Data:
-                        if str(o.Name) == "RelativeLocation":
-                            location = o.Value[0].Value
-                        if str(o.Name) == "RelativeRotation":
-                            rotation = o.Value[0].Value
-                        if str(o.Name) == "RelativeScale3D":
-                            scale    = o.Value[0].Value
+            for data in game_data[filename].Exports[export_index].Data:
+                if str(data.Name) in ["DropItemID", "DropRateID"]:
+                    drop_id = str(data.Value)
+                if str(data.Name) == "IsRandomizerSafetyChest":
+                    safety_chest = data.Value
+                if str(data.Name) == "OptionalGimmickID":
+                    gimmick_id = str(data.Value)
+                if str(data.Name) == "RootComponent":
+                    root_index = int(str(data.Value)) - 1
+                    for root_data in game_data[filename].Exports[root_index].Data:
+                        if str(root_data.Name) == "RelativeLocation":
+                            location = root_data.Value[0].Value
+                        if str(root_data.Name) == "RelativeRotation":
+                            rotation = root_data.Value[0].Value
+                        if str(root_data.Name) == "RelativeScale3D":
+                            scale    = root_data.Value[0].Value
             if not drop_id in datatable["PB_DT_DropRateMaster"]:
                 continue
             if drop_id in global_room_pickups:
@@ -1962,54 +2003,55 @@ def update_room_containers(room):
             #Check if container mismatches item type
             if old_class_name == new_class_name:
                 continue
-            #Correct container transform when necessary
             #Some upgrades in rotating rooms are on the wrong plane
             if room == "m02VIL_008":
                 location.X -= 50
             if drop_id == "Treasurebox_TWR017_6":
                 location.X -= 100
-            #If the room is a rotating 3d one then use the forward vector to shift position
-            if room in rotating_room_to_center and drop_id != "Treasurebox_TWR019_2":
-                rotation.Yaw = -math.degrees(math.atan2(location.X - rotating_room_to_center[room][0], location.Y - rotating_room_to_center[room][1]))
-                forward_vector = (math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Yaw)))
-                if "TreasureBox" in new_class_name and "MaxUp" in old_class_name:
-                    location.X -= forward_vector[0]*120
-                    location.Y -= forward_vector[1]*120
-                if "MaxUp" in new_class_name and "TreasureBox" in old_class_name:
-                    if drop_id in ["Treasurebox_TWR017_5", "Treasurebox_SND025_1"]:
-                        location.X += forward_vector[0]*60
-                        location.Y += forward_vector[1]*60
-                    else:
-                        location.X += forward_vector[0]*120
-                        location.Y += forward_vector[1]*120
-            else:
-                if "TreasureBox" in new_class_name:
-                    location.Y = -120
-                    #Slightly rotate the chest to be facing the center of the room
-                    if location.X < room_width*0.45:
-                        rotation.Yaw = -30
-                    elif location.X > room_width*0.55:
-                        rotation.Yaw = 30
-                    else:
+            #Correct container transform when necessary
+            if "TreasureBox" in new_class_name and "MaxUp" in old_class_name or "MaxUp" in new_class_name and "TreasureBox" in old_class_name:
+                #If the room is a rotating 3d one then use the forward vector to shift position
+                if room in rotating_room_to_center and drop_id != "Treasurebox_TWR019_2":
+                    rotation.Yaw = -math.degrees(math.atan2(location.X - rotating_room_to_center[room][0], location.Y - rotating_room_to_center[room][1]))
+                    forward_vector = (math.sin(math.radians(rotation.Yaw))*(-1), math.cos(math.radians(rotation.Yaw)))
+                    if "TreasureBox" in new_class_name:
+                        location.X -= forward_vector[0]*120
+                        location.Y -= forward_vector[1]*120
+                    if "MaxUp" in new_class_name:
+                        if drop_id in ["Treasurebox_TWR017_5", "Treasurebox_SND025_1"]:
+                            location.X += forward_vector[0]*60
+                            location.Y += forward_vector[1]*60
+                        else:
+                            location.X += forward_vector[0]*120
+                            location.Y += forward_vector[1]*120
+                else:
+                    if "TreasureBox" in new_class_name:
+                        location.Y = -120
+                        #Slightly rotate the chest to be facing the center of the room
+                        if location.X < room_width*0.45:
+                            rotation.Yaw = -30
+                        elif location.X > room_width*0.55:
+                            rotation.Yaw = 30
+                        else:
+                            rotation.Yaw = 0
+                        #Drop chest down to the floor if it is in a bell
+                        if drop_id == "Treasurebox_SAN003_4":
+                            location.Z = 4080
+                        if drop_id == "Treasurebox_SAN003_5":
+                            location.Z = 6600
+                        if drop_id == "Treasurebox_SAN019_3":
+                            location.Z = 120
+                        if drop_id == "Treasurebox_SAN021_4":
+                            location.Z = 420
+                    if "MaxUp" in new_class_name:
+                        location.Y = 0
                         rotation.Yaw = 0
-                    #Drop chest down to the floor if it is in a bell
-                    if drop_id == "Treasurebox_SAN003_4":
-                        location.Z = 4080
-                    if drop_id == "Treasurebox_SAN003_5":
-                        location.Z = 6600
-                    if drop_id == "Treasurebox_SAN019_3":
-                        location.Z = 120
-                    if drop_id == "Treasurebox_SAN021_4":
-                        location.Z = 420
-                if "MaxUp" in new_class_name:
-                    location.Y = 0
-                    rotation.Yaw = 0
-                    #If it used to be the chest under the bridge move it to Benjamin's room for the extra characters
-                    if drop_id == "Treasurebox_JPN002_1":
-                        location.X = 1860
-                        location.Z = 60
+                        #If it used to be the chest under the bridge move it to Benjamin's room for the extra characters
+                        if drop_id == "Treasurebox_JPN002_1":
+                            location.X = 1860
+                            location.Z = 60
             #Remove the old container
-            remove_level_actor(filename, i)
+            remove_level_actor(filename, export_index)
             #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
             if room == "m20JRN_002":
                 filename = "m20JRN_002_BG"
@@ -2018,7 +2060,7 @@ def update_room_containers(room):
             if "PBEasyTreasureBox_BP_C" in new_class_name:
                 properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
                 properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
-                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst(drop_id))
+                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst_number(drop_id))
                 if gimmick_id:
                     properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
             else:
@@ -2030,41 +2072,43 @@ def update_map_connections():
     #Doing this via the map editor would only add long load times upon saving a map so do it here instead
     #Fill same room field for rooms that are overlayed perfectly
     #Not sure if it serves any actual purpose in-game but it does help for the following adjacent room check
-    for i in datatable["PB_DT_RoomMaster"]:
-        datatable["PB_DT_RoomMaster"][i]["SameRoom"] = "None"
-        if datatable["PB_DT_RoomMaster"][i]["OutOfMap"]:
+    for room_1 in datatable["PB_DT_RoomMaster"]:
+        datatable["PB_DT_RoomMaster"][room_1]["SameRoom"] = "None"
+        if datatable["PB_DT_RoomMaster"][room_1]["OutOfMap"]:
             continue
-        for e in datatable["PB_DT_RoomMaster"]:
-            if datatable["PB_DT_RoomMaster"][e]["OutOfMap"]:
+        for room_2 in datatable["PB_DT_RoomMaster"]:
+            if datatable["PB_DT_RoomMaster"][room_2]["OutOfMap"]:
                 continue
-            if datatable["PB_DT_RoomMaster"][i]["OffsetX"] == datatable["PB_DT_RoomMaster"][e]["OffsetX"] and datatable["PB_DT_RoomMaster"][i]["OffsetZ"] == datatable["PB_DT_RoomMaster"][e]["OffsetZ"] and i != e:
-                datatable["PB_DT_RoomMaster"][i]["SameRoom"] = e
+            if datatable["PB_DT_RoomMaster"][room_1]["OffsetX"] == datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] and datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"] == datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] and room_1 != room_2:
+                datatable["PB_DT_RoomMaster"][room_1]["SameRoom"] = room_2
                 break
+    is_vanilla_start = datatable["PB_DT_RoomMaster"]["m03ENT_1200"]["SameRoom"] == "m02VIL_1200"
     #Fill adjacent room lists
-    for i in datatable["PB_DT_RoomMaster"]:
+    for room in datatable["PB_DT_RoomMaster"]:
         doors = []
-        for e in map_connections[i]:
-            if map_connections[i][e]:
-                doors.append(map_doors[e])
-        datatable["PB_DT_RoomMaster"][i]["DoorFlag"] = convert_door_to_flag(doors, datatable["PB_DT_RoomMaster"][i]["AreaWidthSize"])
+        for entrance in map_connections[room]:
+            if map_connections[room][entrance]:
+                doors.append(map_doors[entrance])
+        datatable["PB_DT_RoomMaster"][room]["DoorFlag"] = convert_door_to_flag(doors, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
         adjacent = []
-        for e in map_connections[i]:
-            for o in map_connections[i][e]:
+        for entrance in map_connections[room]:
+            for exit in map_connections[room][entrance]:
                 #Transition rooms in Bloodstained come by pair, each belonging to an area
                 #Make it so that an area is only connected to its corresponding transition rooms when possible
                 #This avoids having the next area name tag show up within the transition
                 #With the exception of standalone transitions with no fallbacks as well as the first entrance transition fallback
-                if datatable["PB_DT_RoomMaster"][map_doors[o].room]["RoomType"] == "ERoomType::Load" and map_doors[o].room[0:6] != i[0:6] and datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] != "None" and map_doors[o].room != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] != "m03ENT_1200":
-                    continue
+                if datatable["PB_DT_RoomMaster"][map_doors[exit].room]["RoomType"] == "ERoomType::Load" and map_doors[exit].room[0:6] != room[0:6] and datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] != "None":
+                    if is_vanilla_start or map_doors[exit].room != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] != "m03ENT_1200":
+                        continue
                 #The first entrance transition room is hardcoded to bring you back to the village regardless of its position on the canvas
                 #Ignore that room and don't connect it to anything
                 #Meanwhile the village version of that transition is always needed to trigger the curved effect of the following bridge room
                 #So ignore any other transitions overlayed on top of it
-                if datatable["PB_DT_RoomMaster"][map_doors[o].room]["SameRoom"] == "m02VIL_1200" or map_doors[o].room == "m03ENT_1200":
+                if not is_vanilla_start and (datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] == "m02VIL_1200" or map_doors[exit].room == "m03ENT_1200"):
                     continue
-                if not map_doors[o].room in adjacent:
-                    adjacent.append(map_doors[o].room)
-        datatable["PB_DT_RoomMaster"][i]["AdjacentRoomName"] = adjacent
+                if not map_doors[exit].room in adjacent:
+                    adjacent.append(map_doors[exit].room)
+        datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"] = adjacent
     #Some rooms need specific setups
     #Connect Vepar room to its overlayed village counterpart
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].append("m02VIL_000")
@@ -2161,11 +2205,11 @@ def update_map_connections():
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
     datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
 
-def bathin_left_entrance_fix():
+def fix_bathin_left_entrance():
     #If Bathin's intro event triggers when the player entered the room from the left they will be stuck in an endless walk cycle
     #To fix this add a special door to warp the player in the room's player start instead
-    for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
-        room = map_doors[i].room
+    for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
+        room = map_doors[door].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
         new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
@@ -2178,7 +2222,7 @@ def bathin_left_entrance_fix():
         new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
         new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
         #Change the door's properties
-        new_file.Exports[2].Data[0].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 0, 720*map_doors[i].z_block + 360)
+        new_file.Exports[2].Data[0].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 0, 720*map_doors[door].z_block + 360)
         new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
         new_file.Exports[8].Data[0].Value = FName.FromString(new_file, room[3:])
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, "dummy")
@@ -2187,8 +2231,8 @@ def bathin_left_entrance_fix():
         new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
     adjacent_room = None
     #Get Bathin's adjacent room while prioritizing the same area
-    for i in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
-        room = map_doors[i].room
+    for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
+        room = map_doors[door].room
         adjacent_room = room
         if datatable["PB_DT_RoomMaster"][room]["AreaID"] == datatable["PB_DT_RoomMaster"]["m13ARC_005"]["AreaID"]:
             break
@@ -2216,14 +2260,14 @@ def bathin_left_entrance_fix():
         new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
 def remove_vanilla_rando():
-    for i in [293, 294]:
+    for index in [293, 294]:
         new_list = []
         count = 0
-        for e in game_data["TitleExtraMenu"].Exports[i].Data[0].Value:
+        for data in game_data["TitleExtraMenu"].Exports[index].Data[0].Value:
             if count != 2:
-                new_list.append(e)
+                new_list.append(data)
             count += 1
-        game_data["TitleExtraMenu"].Exports[i].Data[0].Value = new_list
+        game_data["TitleExtraMenu"].Exports[index].Data[0].Value = new_list
     stringtable["PBSystemStringTable"]["SYS_SEN_ModeRogueDungeon"] = "DELETED"
     stringtable["PBSystemStringTable"]["SYS_MSG_OpenRogueDungeonMode"] = "Story Mode completed."
 
@@ -2234,26 +2278,26 @@ def show_mod_stats(seed, mod_version):
     if seed:
         mod_stats += "\r\nSeed # " + seed
         height = 0.66
-    for i in range(2):
-        game_data["VersionNumber"].Exports[4 + i].Data[0].Value[2].Value[0].X = 19
-        game_data["VersionNumber"].Exports[4 + i].Data[0].Value[2].Value[0].Y = height
-        game_data["VersionNumber"].Exports[6 + i].Data[0].CultureInvariantString = FString(mod_stats)
-        game_data["VersionNumber"].Exports[6 + i].Data[1].Value[2].Value = 16
-        game_data["VersionNumber"].Exports[6 + i].Data[2].EnumValue = FName.FromString(game_data["VersionNumber"], "ETextJustify::Left")
+    for num in range(2):
+        game_data["VersionNumber"].Exports[4 + num].Data[0].Value[2].Value[0].X = 19
+        game_data["VersionNumber"].Exports[4 + num].Data[0].Value[2].Value[0].Y = height
+        game_data["VersionNumber"].Exports[6 + num].Data[0].CultureInvariantString = FString(mod_stats)
+        game_data["VersionNumber"].Exports[6 + num].Data[1].Value[2].Value = 16
+        game_data["VersionNumber"].Exports[6 + num].Data[2].EnumValue = FName.FromString(game_data["VersionNumber"], "ETextJustify::Left")
         struct = struct = FloatPropertyData(FName.FromString(game_data["VersionNumber"], "LineHeightPercentage"))
         struct.Value = 0.6
-        game_data["VersionNumber"].Exports[6 + i].Data.Add(struct)
+        game_data["VersionNumber"].Exports[6 + num].Data.Add(struct)
 
-def remove_difficulties(current):
+def set_single_difficulty(difficulty):
     #Ensure that in game difficulty never mismatches the mod's
     new_list = []
     sub_struct = BytePropertyData()
     sub_struct.ByteType = BytePropertyType.FName
-    sub_struct.EnumValue = FName.FromString(game_data["DifficultSelecter"], "EPBGameLevel::" + current)
+    sub_struct.EnumValue = FName.FromString(game_data["DifficultSelecter"], "EPBGameLevel::" + difficulty)
     new_list = [sub_struct]
     game_data["DifficultSelecter"].Exports[2].Data[1].Value = new_list
 
-def default_entry_name(name):
+def set_default_entry_name(name):
     #Change the default in-game file name
     game_data["EntryNameSetter"].Exports[110].Data[0].CultureInvariantString = FString(name)
     game_data["EntryNameSetter"].Exports[110].Data[1].CultureInvariantString = FString(name)
@@ -2266,37 +2310,37 @@ def write_log(filename, log):
 
 def write_files():
     #Dump all uasset objects to files
-    for i in game_data:
-        if file_to_type[i] == "Level":
+    for file in game_data:
+        if file_to_type[file] == FileType.Level:
             extension = ".umap"
         else:
             extension = ".uasset"
-        game_data[i].Write(mod_dir + "\\" + file_to_path[i] + "\\" + i.split("(")[0] + extension)
+        game_data[file].Write(mod_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension)
 
-def remove_unchanged():
+def remove_unchanged_files():
     #Since uasset objects cannot be compared successfully we need to compare the files after they've been written
     #That way unchanged files get removed from the pak
-    for i in file_to_path:
+    for file in file_to_path:
         remove = True
-        for e in os.listdir(mod_dir + "\\" + file_to_path[i]):
-            name, extension = os.path.splitext(e)
-            if name == i:
-                if not filecmp.cmp(mod_dir + "\\" + file_to_path[i] + "\\" + e, asset_dir + "\\" + file_to_path[i] + "\\" + e, shallow=False):
+        for sub_file in os.listdir(mod_dir + "\\" + file_to_path[file]):
+            name, extension = os.path.splitext(sub_file)
+            if name == file:
+                if not filecmp.cmp(mod_dir + "\\" + file_to_path[file] + "\\" + sub_file, asset_dir + "\\" + file_to_path[file] + "\\" + sub_file, shallow=False):
                     remove = False
         if remove:
-            for e in os.listdir(mod_dir + "\\" + file_to_path[i]):
-                name, extension = os.path.splitext(e)
-                if name == i:
-                    os.remove(mod_dir + "\\" + file_to_path[i] + "\\" + e)
+            for sub_file in os.listdir(mod_dir + "\\" + file_to_path[file]):
+                name, extension = os.path.splitext(sub_file)
+                if name == file:
+                    os.remove(mod_dir + "\\" + file_to_path[file] + "\\" + sub_file)
 
 def import_mesh(filename):
     #Import a mesh file at the right location by reading it in the file
     new_file = UAsset("Data\\Mesh\\" + filename + ".uasset", UE4Version.VER_UE4_22)
     name_map = new_file.GetNameMapIndexList()
     filepath = None
-    for e in name_map:
-        if str(e)[0] == "/" and str(e).split("/")[-1] == filename:
-            filepath = str(e)[6:][:-(len(filename)+1)].replace("/", "\\")
+    for name in name_map:
+        if str(name)[0] == "/" and str(name).split("/")[-1] == filename:
+            filepath = str(name)[6:][:-(len(filename)+1)].replace("/", "\\")
             break
     if not filepath:
         raise Exception("Failed to obtain filepath of asset " + filename)
@@ -2323,13 +2367,10 @@ def add_global_room_pickup(room, drop_id):
     #Place an upgrade in a room at its origin
     room_width  = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     room_height = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720
-    if room in room_to_gimmick:
-        filename = room_to_gimmick[room]
-    else:
-        filename = room + "_Gimmick"
+    filename = get_gimmick_filename(room)
     actor_index = len(game_data[filename].Exports)
     add_level_actor(filename, "HPMaxUp_C", FVector(0, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropRateID": FName.FromString(game_data[filename], drop_id)})
-    #Enlarge its hitbox considerably so that enetering the room from anywhere will collect it
+    #Enlarge its hitbox considerably so that entering the room from anywhere will collect it
     struct = StructPropertyData(FName.FromString(game_data[filename], "BoxExtent"), FName.FromString(game_data[filename], "Vector"))
     sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "BoxExtent"))
     sub_struct.Value = FVector(room_width*2 + 240, 50, room_height*2 + 240)
@@ -2348,7 +2389,7 @@ def add_room_file(room):
     new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
     new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
-def add_game_item(index, item_id, type, subtype, icon_coord, name, description, price, craftable):
+def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
     if item_id in datatable["PB_DT_ItemMaster"]:
         raise Exception("Item already exists.")
@@ -2368,29 +2409,29 @@ def add_game_item(index, item_id, type, subtype, icon_coord, name, description, 
     stringtable["PBMasterStringTable"]["ITEM_NAME_" + item_id]             = name
     stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + item_id]          = description
     #Edit case by case properties                                          
-    if type == "Accessory":                                                
+    if item_type == "Accessory":                                                
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
         datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
         datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyAccesory"])
         datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
-        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = subtype
+        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
         if craftable:
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
         datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
-    if type == "Armor":                                                  
+    if item_type == "Armor":                                                  
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
         datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
         datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyBody"])
         datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
-        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = subtype
+        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
         if craftable:
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
         datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
-    if type == "Bullet":                                                 
+    if item_type == "Bullet":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
         datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
@@ -2410,7 +2451,7 @@ def add_game_item(index, item_id, type, subtype, icon_coord, name, description, 
             datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
             datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
         datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]           = index
-    if type == "Potion":                                                 
+    if item_type == "Potion":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
         datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
@@ -2495,16 +2536,16 @@ def add_music_file(filename):
     new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + filename))
     new_file.Exports[0].Data[0].Value = FString(filename)
     string = "{:02x}".format(int.from_bytes(str.encode(filename), "big"))
-    for i in range(int(len(string)/2)):
-        new_file.Exports[0].Extras[0x662 + i] = int(string[i*2] + string[i*2 + 1], 16)
-        new_file.Exports[0].Extras[0xE82 + i] = int(string[i*2] + string[i*2 + 1], 16)
+    for num in range(int(len(string)/2)):
+        new_file.Exports[0].Extras[0x662 + num] = int(string[num*2] + string[num*2 + 1], 16)
+        new_file.Exports[0].Extras[0xE82 + num] = int(string[num*2] + string[num*2 + 1], 16)
     string = "{:02x}".format(int.from_bytes(str.encode(music_id), "big"))
-    for i in range(int(len(string)/2)):
-        new_file.Exports[0].Extras[0x7E1 + i] = int(string[i*2] + string[i*2 + 1], 16)
+    for num in range(int(len(string)/2)):
+        new_file.Exports[0].Extras[0x7E1 + num] = int(string[num*2] + string[num*2 + 1], 16)
     string = "{:08x}".format(filesize)
     count = 0
-    for i in range(int(len(string)/2) -1, -1, -1):
-        new_file.Exports[0].Extras[0x1A32 + count] = int(string[i*2] + string[i*2 + 1], 16)
+    for num in range(int(len(string)/2) -1, -1, -1):
+        new_file.Exports[0].Extras[0x1A32 + count] = int(string[num*2] + string[num*2 + 1], 16)
         count += 1
     new_file.Write(mod_dir + "\\" + file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
     #Copy the bgm file
@@ -2529,21 +2570,21 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
     if short_class[-1] == "C":
         short_class.pop()
     short_class = "_".join(short_class)
-    actor_name = custom_actor_prefix + short_class# + "_" + str(actor_index + 1)
+    actor_name = custom_actor_prefix + short_class
     snippet = UAssetSnippet(game_data[mod_data["ActorPointer"][actor_class]["File"]], mod_data["ActorPointer"][actor_class]["Index"])
     snippet.AddToUAsset(game_data[filename], actor_name)
     #Change class parameters
-    for i in game_data[filename].Exports[actor_index].Data:
-        if str(i.Name) in properties:
-            if str(i.PropertyType) == "ByteProperty":
-                i.EnumValue = properties[str(i.Name)]
+    for data in game_data[filename].Exports[actor_index].Data:
+        if str(data.Name) in properties:
+            if str(data.PropertyType) == "ByteProperty":
+                data.EnumValue = properties[str(data.Name)]
             else:
-                i.Value = properties[str(i.Name)]
-            del properties[str(i.Name)]
-        if str(i.Name) == "ActorLabel":
-            i.Value = FString(remove_inst(actor_name))
-        if str(i.Name) == "RootComponent":
-            root_index = int(str(i.Value)) - 1
+                data.Value = properties[str(data.Name)]
+            del properties[str(data.Name)]
+        if str(data.Name) == "ActorLabel":
+            data.Value = FString(remove_inst_number(actor_name))
+        if str(data.Name) == "RootComponent":
+            root_index = int(str(data.Value)) - 1
             game_data[filename].Exports[root_index].Data.Clear()
             if location.X != 0 or location.Y != 0 or location.Z != 0:
                 struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
@@ -2564,24 +2605,24 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
                 struct.Value.Add(sub_struct)
                 game_data[filename].Exports[root_index].Data.Add(struct)
     #Add parameters that are missing
-    for i in properties:
-        if type(properties[i]) is bool:
-            struct = BoolPropertyData(FName.FromString(game_data[filename], i))
-            struct.Value = properties[i]
-        elif type(properties[i]) is int:
-            struct = IntPropertyData(FName.FromString(game_data[filename], i))
-            struct.Value = properties[i]
-        elif type(properties[i]) is float:
-            struct = FloatPropertyData(FName.FromString(game_data[filename], i))
-            struct.Value = properties[i]
-        elif "::" in str(properties[i]):
-            struct = BytePropertyData(FName.FromString(game_data[filename], i))
+    for data in properties:
+        if type(properties[data]) is bool:
+            struct = BoolPropertyData(FName.FromString(game_data[filename], data))
+            struct.Value = properties[data]
+        elif type(properties[data]) is int:
+            struct = IntPropertyData(FName.FromString(game_data[filename], data))
+            struct.Value = properties[data]
+        elif type(properties[data]) is float:
+            struct = FloatPropertyData(FName.FromString(game_data[filename], data))
+            struct.Value = properties[data]
+        elif "::" in str(properties[data]):
+            struct = BytePropertyData(FName.FromString(game_data[filename], data))
             struct.ByteType = BytePropertyType.FName
-            struct.EnumType = FName.FromString(game_data[filename], str(properties[i]).split("::")[0])
-            struct.EnumValue = properties[i]
+            struct.EnumType = FName.FromString(game_data[filename], str(properties[data]).split("::")[0])
+            struct.EnumValue = properties[data]
         else:
-            struct = NamePropertyData(FName.FromString(game_data[filename], i))
-            struct.Value = properties[i]
+            struct = NamePropertyData(FName.FromString(game_data[filename], data))
+            struct.Value = properties[data]
         game_data[filename].AddNameReference(struct.PropertyType)
         game_data[filename].Exports[actor_index].Data.Add(struct)
     #Temporary Rocky fix
@@ -2614,76 +2655,63 @@ def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_locat
     game_data[filename].Exports[warp_2_event_index].Data[2].Value = game_data[filename].Exports[warp_2_index].ObjectName
     game_data[filename].Exports[warp_2_event_index].Data[3].Value = game_data[filename].Exports[warp_1_index].ObjectName
 
-def remove_level_actor(filename, index):
+def remove_level_actor(filename, export_index):
     #Remove actor at index
-    if file_to_type[filename] != "Level":
+    if file_to_type[filename] != FileType.Level:
         raise TypeError("Input is not a level file")
-    class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[index].ClassIndex))) - 1].ObjectName)
+    class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName)
     #If the actor makes use of a c_cat class removing it will crash the game
-    #So move it offscreen instead
     if class_name in c_cat_actors or filename in ["m20JRN_002_Gimmick", "m20JRN_002_Enemy"]:
-        for i in game_data[filename].Exports[index].Data:
-            if str(i.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in class_name:
-                i.Value = FName.FromString(game_data[filename], "AAAA_Shard")
-            if str(i.Name) == "RootComponent":
-                root_index = int(str(i.Value)) - 1
-        for i in game_data[filename].Exports[root_index].Data:
-            if str(i.Name) == "RelativeLocation":
-                i.Value[0].Value = FVector(-999, 0, 0)
+        for data in game_data[filename].Exports[export_index].Data:
+            if str(data.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in class_name:
+                data.Value = FName.FromString(game_data[filename], "AAAA_Shard")
+            if str(data.Name) == "RootComponent":
+                root_index = int(str(data.Value)) - 1
+        for data in game_data[filename].Exports[root_index].Data:
+            #Scale giant dulla spawner to 0 to remove it
+            if class_name == "N3126_Generator_C":
+                if str(data.Name) == "RelativeScale3D":
+                    data.Value[0].Value = FVector(0, 0, 0)
+            #Otherwise move the actor off screen
+            else:
+                if str(data.Name) == "RelativeLocation":
+                    data.Value[0].Value = FVector(-999, 0, 0)
     else:
         level_index = export_name_to_index(filename, "PersistentLevel")
-        game_data[filename].Exports[index].OuterIndex = FPackageIndex(0)
-        game_data[filename].Exports[level_index].IndexData.Remove(index + 1)
-        game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(index + 1))
+        game_data[filename].Exports[export_index].OuterIndex = FPackageIndex(0)
+        game_data[filename].Exports[level_index].IndexData.Remove(export_index + 1)
+        game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))
 
-def remove_level_class(filename, name):
+def remove_level_class(filename, class_name):
     #Remove all actors of class in a level
-    if file_to_type[filename] != "Level":
-        raise TypeError("Input is not a level file")
-    level_index = export_name_to_index(filename, "PersistentLevel")
-    #Search for all exports that use this class
-    for i in range(len(game_data[filename].Exports)):
-        class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[i].ClassIndex))) - 1].ObjectName)
-        if class_name != name:
-            continue
-        if name in c_cat_actors or "m20JRN_002" in filename:
-            for e in game_data[filename].Exports[i].Data:
-                if str(e.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in name:
-                    e.Value = FName.FromString(game_data[filename], "AAAA_Shard")
-                if str(e.Name) == "RootComponent":
-                    root_index = int(str(e.Value)) - 1
-            for e in game_data[filename].Exports[root_index].Data:
-                if str(e.Name) == "RelativeLocation":
-                    e.Value[0].Value = FVector(-999, 0, 0)
-        else:
-            game_data[filename].Exports[i].OuterIndex = FPackageIndex(0)
-            game_data[filename].Exports[level_index].IndexData.Remove(i + 1)
-            game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(i + 1))
+    for export_index in range(len(game_data[filename].Exports)):
+        if str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName) == class_name:
+            remove_level_actor(filename, export_index)
 
-def change_material_hsv(filename, parameter, new_hsv):
+def set_material_hsv(filename, parameter, new_hsv):
     #Change a vector color in a material file
     #Here we use hsv as a base as it is easier to work with
-    if file_to_type[filename] != "Material":
+    if file_to_type[filename] != FileType.Material:
         raise TypeError("Input is not a material file")
     #Some color properties are not parsed by UAssetAPI and end up in extra data
     #Hex edit in that case
     if filename in material_to_offset:
-        for i in material_to_offset[filename]:
+        for offset in material_to_offset[filename]:
             #Check if given offset is valid
             string = ""
-            for e in range(12):
-                string += "{:02x}".format(game_data[filename].Exports[0].Extras[i + e]).upper()
+            for num in range(12):
+                string += "{:02x}".format(game_data[filename].Exports[0].Extras[offset + num]).upper()
             if string != "0000000000000002FFFFFFFF":
                 raise Exception("Material offset invalid")
             #Get rgb
             rgb = []
-            for e in range(3):
+            for num in range(3):
                 list = []
-                for o in range(4):
-                    list.insert(0, "{:02x}".format(game_data[filename].Exports[0].Extras[i + 12 + e*4 + o]).upper())
+                for index in range(4):
+                    list.insert(0, "{:02x}".format(game_data[filename].Exports[0].Extras[offset + 12 + num*4 + index]).upper())
                 string = ""
-                for o in list:
-                    string += o
+                for index in list:
+                    string += index
                 rgb.append(struct.unpack("!f", bytes.fromhex(string))[0])
             #Convert
             hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
@@ -2701,23 +2729,23 @@ def change_material_hsv(filename, parameter, new_hsv):
                 new_val = new_hsv[2]/100
             rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
             #Write rgb
-            for e in range(3):
-                string = "{:08x}".format(struct.unpack("<I", struct.pack("<f", rgb[e]))[0]).upper()
+            for num in range(3):
+                string = "{:08x}".format(struct.unpack("<I", struct.pack("<f", rgb[num]))[0]).upper()
                 list = []
-                for o in range(0, len(string), 2):
-                    list.insert(0, string[o] + string[o + 1])
-                for o in range(4):
-                    game_data[filename].Exports[0].Extras[i + 12 + e*4 + o] = int(list[o], 16)
+                for index in range(0, len(string), 2):
+                    list.insert(0, string[index] + string[index + 1])
+                for index in range(4):
+                    game_data[filename].Exports[0].Extras[offset + 12 + num*4 + index] = int(list[index], 16)
     #Otherwise change color through the exports
     else:
-        for i in game_data[filename].Exports[0].Data:
-            if str(i.Name) == "VectorParameterValues":
-                for e in i.Value:
-                    if str(e.Value[0].Value[0].Value) == parameter:
+        for data in game_data[filename].Exports[0].Data:
+            if str(data.Name) == "VectorParameterValues":
+                for sub_data in data.Value:
+                    if str(sub_data.Value[0].Value[0].Value) == parameter:
                         rgb = []
-                        rgb.append(e.Value[1].Value[0].Value.R)
-                        rgb.append(e.Value[1].Value[0].Value.G)
-                        rgb.append(e.Value[1].Value[0].Value.B)
+                        rgb.append(sub_data.Value[1].Value[0].Value.R)
+                        rgb.append(sub_data.Value[1].Value[0].Value.G)
+                        rgb.append(sub_data.Value[1].Value[0].Value.B)
                         hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
                         if new_hsv[0] < 0:
                             new_hue = hsv[0]
@@ -2732,16 +2760,16 @@ def change_material_hsv(filename, parameter, new_hsv):
                         else:
                             new_val = new_hsv[2]/100
                         rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
-                        e.Value[1].Value[0].Value.R = rgb[0]
-                        e.Value[1].Value[0].Value.G = rgb[1]
-                        e.Value[1].Value[0].Value.B = rgb[2]
+                        sub_data.Value[1].Value[0].Value.R = rgb[0]
+                        sub_data.Value[1].Value[0].Value.G = rgb[1]
+                        sub_data.Value[1].Value[0].Value.B = rgb[2]
 
 def convert_flag_to_door(room_name, door_flag, room_width):
     #Function by LagoLunatic
     door_list = []
-    for i in range(0, len(door_flag), 2):
-        tile_index = door_flag[i]
-        direction = door_flag[i+1]
+    for index in range(0, len(door_flag), 2):
+        tile_index = door_flag[index]
+        direction = door_flag[index+1]
         tile_index -= 1
         if room_width == 0:
             x_block = tile_index
@@ -2775,68 +2803,59 @@ def convert_door_to_flag(door_list, room_width):
         door_flag.extend([tile_index_in_room, dir_flags])
     return door_flag
 
-def convert_door_to_adjacent_room(door):
-    #Return a door's adjacent rooms, including the room that it belongs to
-    if door in datatable["PB_DT_RoomMaster"]:
-        return [door]
-    adjacent = [map_doors[door].room]
-    for i in map_connections[map_doors[door].room][door]:
-        adjacent.append(map_doors[i].room)
-    return adjacent
-
-def is_adjacent(room_1, room_2):
-    if left_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+def is_room_adjacent(room_1, room_2):
+    if left_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
-    elif bottom_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    elif bottom_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
-    elif right_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    elif right_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
-    elif top_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    elif top_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
 
-def left_check(room_1, room_2):
+def left_room_check(room_1, room_2):
     return bool(room_2["OffsetX"] == round(room_1["OffsetX"] - 12.6 * room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
 
-def bottom_check(room_1, room_2):
+def bottom_room_check(room_1, room_2):
     return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - 7.2 * room_2["AreaHeightSize"], 1))
 
-def right_check(room_1, room_2):
+def right_room_check(room_1, room_2):
     return bool(room_2["OffsetX"] == round(room_1["OffsetX"] + 12.6 * room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
 
-def top_check(room_1, room_2):
+def top_room_check(room_1, room_2):
     return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + 7.2 * room_1["AreaHeightSize"], 1))
 
 def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
-    for i in map_connections[room_1]:
-        if map_doors[i].direction_part == direction_1:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_1] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
-                    map_connections[room_1][i].append(e)
-        elif map_doors[i].direction_part == direction_2:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_2] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
-                    map_connections[room_1][i].append(e)
-        elif map_doors[i].direction_part == direction_3:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_3] and map_doors[i].z_block == (map_doors[e].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
-                    map_connections[room_1][i].append(e)
+    for door_1 in map_connections[room_1]:
+        if map_doors[door_1].direction_part == direction_1:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_1] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][door_1].append(door_2)
+        elif map_doors[door_1].direction_part == direction_2:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_2] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][door_1].append(door_2)
+        elif map_doors[door_1].direction_part == direction_3:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_3] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                    map_connections[room_1][door_1].append(door_2)
 
 def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3):
-    for i in map_connections[room_1]:
-        if map_doors[i].direction_part == direction_1:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_1] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
-                    map_connections[room_1][i].append(e)
-        elif map_doors[i].direction_part == direction_2:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_2] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
-                    map_connections[room_1][i].append(e)
-        elif map_doors[i].direction_part == direction_3:
-            for e in map_connections[room_2]:
-                if map_doors[e].direction_part == OppositeDirection[direction_3] and map_doors[i].x_block == (map_doors[e].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
-                    map_connections[room_1][i].append(e)
+    for door_1 in map_connections[room_1]:
+        if map_doors[door_1].direction_part == direction_1:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_1] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][door_1].append(door_2)
+        elif map_doors[door_1].direction_part == direction_2:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_2] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][door_1].append(door_2)
+        elif map_doors[door_1].direction_part == direction_3:
+            for door_2 in map_connections[room_2]:
+                if map_doors[door_2].direction_part == OppositeDirection[direction_3] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                    map_connections[room_1][door_1].append(door_2)
 
-def remove_inst(name):
+def remove_inst_number(name):
     #Return a string without its instance number the same way Unreal does it
     name = name.split("_")
     if name[-1][0] != "0":
@@ -2849,23 +2868,29 @@ def remove_inst(name):
 
 def export_name_to_index(filename, export_name):
     count = 0
-    for i in game_data[filename].Exports:
-        if str(i.ObjectName) == export_name:
+    for export in game_data[filename].Exports:
+        if str(export.ObjectName) == export_name:
             return count
         count += 1
     raise Exception("Export not found")
 
+def get_gimmick_filename(room):
+    if room in room_to_gimmick:
+        return room_to_gimmick[room]
+    else:
+        return room + "_Gimmick"
+
 def is_enemy(character):
-    if character in mod_data["EnemyLocation"]:
+    if character in mod_data["EnemyInfo"]:
         return True
-    if character[0:5] in mod_data["EnemyLocation"] and list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar"):
+    if character[0:5] in mod_data["EnemyInfo"] and list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar"):
         return True
     if is_final_boss(character):
         return True
     return False
 
 def is_main_enemy(character):
-    if character in mod_data["EnemyLocation"]:
+    if character in mod_data["EnemyInfo"]:
         return True
     return False
 
@@ -2894,36 +2919,36 @@ def split_enemy_profile(profile):
 def create_weighted_list(value, minimum, maximum, step, deviation):
     #Create a list in a range with higher odds around a specific value
     list = []
-    for i in [(minimum, value + 1), (value, maximum + 1)]:
+    for side in [(minimum, value + 1), (value, maximum + 1)]:
         sublist = []
-        distance = abs(i[0]-i[1])
+        distance = abs(side[0]-side[1])
         new_deviation = round(deviation*(distance/(maximum-minimum)))*2
-        for e in range(i[0], i[1]):
-            if e % step == 0:
-                difference = abs(e-value)
-                for o in range(2**(abs(math.ceil(difference*new_deviation/distance)-new_deviation))):
-                    sublist.append(e)
+        for num in range(side[0], side[1]):
+            if num % step == 0:
+                difference = abs(num-value)
+                for odd in range(2**(abs(math.ceil(difference*new_deviation/distance)-new_deviation))):
+                    sublist.append(num)
         list.append(sublist)
     return list
 
 def random_weighted(value, minimum, maximum, step, deviation):
     return random.choice(random.choice(create_weighted_list(value, minimum, maximum, step, deviation)))
 
-def add_enemy_to_archive(index, enemy_id, area_ids, package_path, copy_from):
+def add_enemy_to_archive(entry_index, enemy_id, area_ids, package_path, copy_from):
     last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[-1])
     entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
-    for i in datatable["PB_DT_ArchiveEnemyMaster"]:
-        if datatable["PB_DT_ArchiveEnemyMaster"][i]["UniqueID"] == copy_from:
-            new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][i])
+    for entry in datatable["PB_DT_ArchiveEnemyMaster"]:
+        if datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"] == copy_from:
+            new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][entry])
             break
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id] = new_entry
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["UniqueID"] = enemy_id
-    for i in range(4):
-        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = "None"
-    for i in range(len(area_ids)):
-        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(i + 1)] = area_ids[i]
+    for index in range(4):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(index + 1)] = "None"
+    for index in range(len(area_ids)):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(index + 1)] = area_ids[index]
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path
-    datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = index
+    datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = entry_index
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines
