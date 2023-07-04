@@ -4,6 +4,8 @@ A fan project in the form of a Python program that aims to give Bloodstained the
 
 ![Screenshot (445)](https://user-images.githubusercontent.com/56451477/194300199-d38e336d-168e-4d3e-9ccc-0739bb2c4dfb.png)
 
+Discord: https://discord.gg/nUbFA7MEeU
+
 ## How to build from source
 
 Requirements:
