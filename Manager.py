@@ -1,9 +1,7 @@
 import os
 import clr
-import shutil
 import json
 import math
-import glob
 import random
 import struct
 import sys
@@ -60,7 +58,7 @@ class Door:
         self.breakable = breakable
 
 def simplify_item_name(name):
-    return name.replace("Familiar:", "").replace(" ", "").lower()
+    return name.replace("Familiar:", "").replace(" ", "").replace("'", "").replace("-", "").replace(".", "").replace("é", "e").replace("è", "e").replace("&", "and").lower()
 
 #Open file information
 with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
@@ -705,6 +703,8 @@ def init():
     ]
     global datatable_entry_index
     datatable_entry_index = {}
+    global wheight_exponents
+    wheight_exponents = [3, 1.8, 1.25]
 
 def load_game_data():
     global game_data
@@ -847,12 +847,7 @@ def update_custom_map():
     #Make Bathin's room enterable from the left without softlocking the boss
     fix_bathin_left_entrance()
     #Rooms with no traverse blocks only display properly based on their Y position below the origin
-    #Start by resetting their no traverse list as if they were above 0
-    for index in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"])):
-        datatable["PB_DT_RoomMaster"]["m11UGD_013"]["NoTraverse"][index] += datatable["PB_DT_RoomMaster"]["m11UGD_013"]["AreaWidthSize"]*2
-    for index in range(len(datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"])):
-        datatable["PB_DT_RoomMaster"]["m11UGD_031"]["NoTraverse"][index] += datatable["PB_DT_RoomMaster"]["m11UGD_031"]["AreaWidthSize"]*3
-    #Then shift those lists if the rooms are below 0
+    #Shift those lists if the rooms are below 0
     for room in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
         if datatable["PB_DT_RoomMaster"][room]["OffsetZ"] < 0:
             multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/7.2)) - 1
@@ -1143,7 +1138,8 @@ def apply_default_tweaks():
             if datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] > 0:
                 datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience99Enemy"] = 10
                 datatable["PB_DT_CharacterParameterMaster"][entry]["ArtsExperience"]        = 1
-            datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] = "EPBStoneType::Mob"
+            if entry != "N2008_BOSS":
+                datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] = "EPBStoneType::Mob"
         #Make level 1 health based off of level 99 health
         datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"] = int(datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]/100) + 2.0
         datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"] = datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]
@@ -1154,9 +1150,9 @@ def apply_default_tweaks():
             datatable["PB_DT_CharacterParameterMaster"][entry]["LUC99Enemy"] = 50.0
         #Allow Zangetsu to chain grab everyone
         #Whether he can grab or not is entirely based on the enemy's stone resistance
-        #As long as it's not 100% resist the chain grab will connect so cap stone resistance at 99.9%
+        #As long as it's not 100% resist the chain grab will connect so cap stone resistance at 99.99%
         if datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] >= 100.0:
-            datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] = 99.9
+            datatable["PB_DT_CharacterParameterMaster"][entry]["STO"] = 99.99
     #Make up for the increased expertise range
     for entry in datatable["PB_DT_ArtsCommandMaster"]:
         datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"] = int(datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"]*2.5)
@@ -1264,7 +1260,7 @@ def apply_default_tweaks():
     #Give the lever door in upper cathedral its own gimmick flag instead of being shared with the hall one
     game_data["m05SAN_017_Gimmick"].Exports[1].Data[7].Value = FName.FromString(game_data["m05SAN_017_Gimmick"], "SAN_017_LockDoor")
     datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"]["Id"] = 186
+    datatable["PB_DT_GimmickFlagMaster"]["SAN_017_LockDoor"]["Id"] = get_available_gimmick_flag()
     #Remove the breakable wall in m17RVA_003 that shares its drop id with the wall in m17RVA_011
     datatable["PB_DT_GimmickFlagMaster"]["RVA_003_ItemWall"]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Add the missing gate warps for the extra characters
@@ -1298,14 +1294,14 @@ def apply_default_tweaks():
     #Add a shard candle for it so that it becomes a guaranteed
     add_level_actor("m11UGD_019_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(1320, -60, 1845), FRotator(180, 0, 0), FVector(1, 1, 1), {"ShardID": FName.FromString(game_data["m11UGD_019_Gimmick"], "Aquastream"), "GimmickFlag": FName.FromString(game_data["m11UGD_019_Gimmick"], "AquastreamLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = 187
+    datatable["PB_DT_GimmickFlagMaster"]["AquastreamLantarn001"]["Id"] = get_available_gimmick_flag()
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Deepsinker_Shard"])
     datatable["PB_DT_DropRateMaster"]["Aquastream_Shard"]["ShardId"] = "Aquastream"
     #Add a shard candle for Igniculus in Celeste's room
     #That way Celeste key becomes relevant and Igniculus can be obtained in story mode
     add_level_actor("m88BKR_003_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", FVector(660, -120, 315), FRotator(0, 0, 0), FVector(1, 1, 1), {"ShardID": FName.FromString(game_data["m88BKR_003_Gimmick"], "FamiliaIgniculus"), "GimmickFlag": FName.FromString(game_data["m88BKR_003_Gimmick"], "IgniculusLantarn001")})
     datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"] = {}
-    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = 188
+    datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = get_available_gimmick_flag()
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["FamiliaArcher_Shard"])
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"]["ShardId"] = "FamiliaIgniculus"
     datatable["PB_DT_ItemMaster"]["FamiliaIgniculus"]["NotListedInArchive"]     = False
@@ -2881,58 +2877,22 @@ def get_gimmick_filename(room):
         return room + "_Gimmick"
 
 def is_enemy(character):
-    if character in mod_data["EnemyInfo"]:
+    if is_main_enemy(character):
         return True
-    if character[0:5] in mod_data["EnemyInfo"] and list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar"):
-        return True
-    if is_final_boss(character):
-        return True
-    return False
+    if character[0:5] in mod_data["EnemyInfo"]:
+        return list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar")
+    return is_final_boss(character)
 
 def is_main_enemy(character):
-    if character in mod_data["EnemyInfo"]:
-        return True
-    return False
+    return character in mod_data["EnemyInfo"]
 
 def is_boss(character):
     if is_enemy(character):
-        if datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]:
-            return True
+        return datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]
     return False
 
 def is_final_boss(character):
-    if character[0:5] in ["N1009", "N1013"]:
-        return True
-    return False
-
-def split_enemy_profile(profile):
-    difficulty = ""
-    enemy_id = profile
-    if "Normal" in profile:
-        enemy_id = profile.replace("_Normal", "")
-        difficulty = "Normal"
-    if "Hard" in profile:
-        enemy_id = profile.replace("_Hard", "")
-        difficulty = "Hard"
-    return (enemy_id, difficulty)
-
-def create_weighted_list(value, minimum, maximum, step, deviation):
-    #Create a list in a range with higher odds around a specific value
-    list = []
-    for side in [(minimum, value + 1), (value, maximum + 1)]:
-        sublist = []
-        distance = abs(side[0]-side[1])
-        new_deviation = round(deviation*(distance/(maximum-minimum)))*2
-        for num in range(side[0], side[1]):
-            if num % step == 0:
-                difference = abs(num-value)
-                for odd in range(2**(abs(math.ceil(difference*new_deviation/distance)-new_deviation))):
-                    sublist.append(num)
-        list.append(sublist)
-    return list
-
-def random_weighted(value, minimum, maximum, step, deviation):
-    return random.choice(random.choice(create_weighted_list(value, minimum, maximum, step, deviation)))
+    return character[0:5] in ["N1009", "N1013"]
 
 def add_enemy_to_archive(entry_index, enemy_id, area_ids, package_path, copy_from):
     last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[-1])
@@ -2957,3 +2917,12 @@ def append_string_entry(file, entry, text):
     else:
         prefix = "\r\n"
     stringtable[file][entry] += prefix + text
+
+def get_available_gimmick_flag():
+    index = -1
+    while abs(index) <= len(datatable["PB_DT_GimmickFlagMaster"]):
+        dict = datatable["PB_DT_GimmickFlagMaster"][list(datatable["PB_DT_GimmickFlagMaster"])[index]]
+        if "Id" in dict:
+            return dict["Id"] + 1
+        index -= 1
+    return 1

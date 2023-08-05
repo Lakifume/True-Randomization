@@ -1,7 +1,5 @@
 import Manager
-import math
-import random
-import copy
+import Utility
 
 def init():
     #DeclareVariables
@@ -59,6 +57,10 @@ def init():
         "Venomsmog"
     ]
 
+def set_shard_power_wheight(wheight):
+    global shard_power_wheight
+    shard_power_wheight = Manager.wheight_exponents[wheight - 1]
+
 def set_default_shard_power():
     #Recalculate default shard power in a more convenient way for balance
     for entry in Manager.datatable["PB_DT_ShardMaster"]:
@@ -91,7 +93,7 @@ def randomize_shard_power(scale):
         else:
             reduction = 1
         #Randomize magic cost first
-        multiplier = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
+        multiplier = Utility.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, shard_power_wheight)/original_cost
         Manager.datatable["PB_DT_ShardMaster"][entry]["useMP"] = int(original_cost * multiplier)
         #Riga Doin explosion is shared with Riga Storeama
         if entry == "LigaStreyma":
@@ -101,7 +103,7 @@ def randomize_shard_power(scale):
             new_cost      = Manager.datatable["PB_DT_ShardMaster"][entry]["useMP"]
             new_doin_cost = Manager.datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"]
         else:
-            multiplier    = Manager.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, 3)/original_cost
+            multiplier    = Utility.random_weighted(original_cost, min_cost, int(max_cost/reduction), 1, shard_power_wheight)/original_cost
             new_cost      = int(original_cost * multiplier)
             new_doin_cost = int(original_doin_cost * multiplier)
         new_base = new_cost * Manager.mod_data["ShardBase"][entry]["Base"]

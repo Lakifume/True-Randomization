@@ -1,4 +1,5 @@
 import Manager
+import Utility
 import Item
 import random
 import os
@@ -118,6 +119,10 @@ def init():
     check_to_requirement = {}
     global special_check_to_door
     special_check_to_door = {}
+
+def set_logic_complexity(complexity):
+    global logic_complexity
+    logic_complexity = (complexity - 1)/2
 
 def satisfies_requirement(requirement):
     check = True
@@ -248,7 +253,7 @@ def get_check_type(check):
 
 def place_next_key(chosen_item):
     try:
-        if random.randint(0, len(current_available_candles)) > 0:
+        if random.random() < (1 - 1/(1+len(current_available_candles)))*logic_complexity:
             chosen_candle = pick_key_candle(current_available_candles)
         else:
             chosen_candle = pick_key_candle(all_available_candles)
@@ -287,7 +292,7 @@ def randomize_bloodless_candles():
     for item in all_abilities:
         if item in key_abilities:
             continue
-        chosen_room = pick_and_remove(all_candles)
+        chosen_room = Utility.pick_and_remove(all_candles)
         bloodless_datatable[item] = chosen_room
 
 def update_shard_candles():
@@ -296,10 +301,11 @@ def update_shard_candles():
     for item in bloodless_datatable:
         Manager.search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
 
-def pick_and_remove(item_array):
-    item = random.choice(item_array)
-    item_array.remove(item)
-    return item
+def increase_starting_stats():
+    #Give Bloodless 4 of each stat to start with
+    for stat in ["STR", "INT", "CON", "MND"]:
+        for index in range(4):
+            Manager.datatable["PB_DT_BloodlessAbilityData"]["BLD_ABILITY_" + stat + "_UP_" + str(index + 1)]["IsUnlockedByDefault"] = True
 
 def remove_gremory_cutscene():
     #Remove the new cutscene when entering the Gremory fight since it causes a softlock on custom maps

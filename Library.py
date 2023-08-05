@@ -1,56 +1,67 @@
 import Manager
+import Utility
 import random
-import copy
+from enum import Enum
+
+class ReqCurve(Enum):
+    Concave = 0
+    Linear  = 1
+    Domed   = 2
 
 def init():
-    #Declare variables
-    global is_tome
-    is_tome = []
-    global completion
-    completion = []
-    global count
-    count = []
-    #Process variables
-    for num in range(20):
-        completion.append(num*5)
-    completion.append(99)
-    for num in range(21):
-        if num % 2 == 0:
-            is_tome.append(True)
-        else:
-            is_tome.append(False)
-        count.append(num)
+    global tome_to_properties
+    tome_to_properties = {}
 
-def randomize_library_tomes(req, appear):
-    #Start by randomizing Tome of Conquest, ensuring that it alwasy exists
-    chosen = random.choice(count)
-    while not is_tome[chosen]:
-        chosen = random.choice(count)
-    count.remove(chosen)
-    if req:
-        Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["RoomTraverseThreshold"] = completion[chosen]
-    if appear:
-        Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["IslibraryBook"] = is_tome[chosen]
-    #Randomize the rest with no guarantees of existing
+def set_requirement_wheight(wheight):
+    global requirement_wheight
+    requirement_wheight = ReqCurve(wheight-1)
+
+def randomize_library_requirements():
+    #Fill requirement list
+    property_list = []
+    for num in range(20):
+        match requirement_wheight:
+            case ReqCurve.Concave:
+                completion = round(Utility.squircle(num/20, 1.5)*100)
+            case ReqCurve.Linear:
+                completion = round(num*5)
+            case ReqCurve.Domed:
+                completion = round(Utility.invert_squircle(num/20, 1.5)*100)
+        property_list.append((completion, num % 2 == 0))
+    property_list.append((99, True))
+    #Assign tome of conquest
+    chosen = random.choice(property_list)
+    while not chosen[1]:
+        chosen = random.choice(property_list)
+    property_list.remove(chosen)
+    tome_to_properties["Bookofthechampion"] = chosen
+    Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["RoomTraverseThreshold"] = chosen[0]
+    #Assign the rest
     for entry in Manager.datatable["PB_DT_BookMaster"]:
         if entry in ["Dummy", "Bookofthechampion"]:
             continue
-        chosen = pick_and_remove(count)
-        if req:
-            Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"] = completion[chosen]
-        if appear:
-            Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"] = is_tome[chosen]
+        tome_to_properties[entry] = Utility.pick_and_remove(property_list)
+        Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"] = tome_to_properties[entry][0]
 
-def pick_and_remove(array):
-    item = random.choice(array)
-    array.remove(item)
-    return item
+def randomize_tome_appearance():
+    #If requirements were randomized remove tomes that have uneven indexes
+    if tome_to_properties:
+        for entry in Manager.datatable["PB_DT_BookMaster"]:
+            if entry in ["Dummy", "Bookofthechampion"]:
+                continue
+            Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"] = tome_to_properties[entry][1]
+    #If requirements are vanilla remove 10 tomes at complete random
+    else:
+        book_list = list(Manager.datatable["PB_DT_BookMaster"])
+        book_list.remove("Dummy")
+        book_list.remove("Bookofthechampion")
+        for num in range(10):
+            chosen = Utility.pick_and_remove(book_list)
+            Manager.datatable["PB_DT_BookMaster"][chosen]["IslibraryBook"] = False
 
 def create_log():
     log = {}
     for entry in Manager.datatable["PB_DT_BookMaster"]:
-        if entry == "Dummy":
-            continue
         if Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"]:
             log[Manager.translation["Item"][entry]] = Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"]
     return log

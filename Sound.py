@@ -1,7 +1,6 @@
 import Manager
 import random
 import copy
-import json
 
 def init():
     global event_skip
@@ -65,7 +64,11 @@ def init():
     global all_replacement
     all_replacement = {}
 
-def randomize_dialogues(english):
+def set_voice_language(language):
+    global voice_language
+    voice_language = ["jp", "en"][language - 1]
+
+def randomize_dialogues():
     for entry in Manager.datatable["PB_DT_DialogueTableItems"]:
         if entry in event_skip:
             continue
@@ -168,22 +171,14 @@ def randomize_dialogues(english):
             Manager.datatable["PB_DT_DialogueTextMaster"][event]["ENLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["ENLipRef"]
         except KeyError:
             pass
-        if english:
-            prefix = "en"
-        else:
-            prefix = "jp"
         try:
-            Manager.datatable["PB_DT_SoundMaster"][prefix + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][prefix + "_" + all_replacement[event] + "_SE"]["AssetPath"]
+            Manager.datatable["PB_DT_SoundMaster"][voice_language + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][voice_language + "_" + all_replacement[event] + "_SE"]["AssetPath"]
         except KeyError:
             pass
 
-def update_lip_movement(english):
+def update_lip_movement():
     #While the dialogue datatable contains lip movement information it is completely ignored by the game
     #So the only solution left is to rename the pointer of every lip file to match the random dialogue
     #Quite a bit costly but this is the only way
-    if english:
-        prefix = "en"
-    else:
-        prefix = "jp"
     for event in all_replacement:
-        Manager.update_lip_pointer(event, all_replacement[event], prefix)
+        Manager.update_lip_pointer(event, all_replacement[event], voice_language)

@@ -1,5 +1,5 @@
 import Manager
-import math
+import Utility
 import random
 import os
 import copy
@@ -509,28 +509,21 @@ def init():
     global area_pools
     area_pools = {}
     #Shop
-    global event_type
-    event_type = [
-        "Event_01_001_0000",
-        "Event_01_001_0000",
-        "Event_01_001_0000",
-        "Event_01_001_0000",
-        "Event_01_001_0000",
-        "Event_01_001_0000",
-        "Event_06_001_0000",
-        "Event_08_002_0000",
-        "Event_09_005_0000"
+    global default_shop_event
+    default_shop_event = "Event_01_001_0000"
+    global boss_shop_events
+    boss_shop_events = [
+        "Event_02_001_0000", #Vepar
+        "Event_06_001_0000", #Zangetsu
+        "Event_08_002_0000", #Glutton Train
+        "Event_09_005_0000", #Bathin
+        "Event_10_001_0000", #Gebel
+        "Event_11_001_0000", #Alfred
+        "Event_13_001_0000", #Ultimate Zangetsu
+        "Event_15_001_0000", #Gremory
+        "Event_20_001_0000", #Valefar
+        "Event_24_001_0000"  #Bloodless
     ]
-    global base
-    base = []
-    global ten
-    ten = []
-    global hundred
-    hundred = []
-    global thousand
-    thousand = []
-    global ten_thousand
-    ten_thousand = []
     global enemy_skip_list
     enemy_skip_list = [
         "N2001",
@@ -592,6 +585,18 @@ def init():
             quest_type.append(entry)
     enemy_type = list(Manager.mod_data["EnemyDrop"])
 
+def set_logic_complexity(complexity):
+    global logic_complexity
+    logic_complexity = (complexity - 1)/2
+
+def set_shop_event_wheight(wheight):
+    global shop_event_wheight
+    shop_event_wheight = 0.2 * wheight
+
+def set_shop_price_wheight(wheight):
+    global shop_price_wheight
+    shop_price_wheight = Manager.wheight_exponents[wheight - 1]
+
 def fill_enemy_to_room():
     #Gather a list of rooms per enemy
     for enemy in Manager.mod_data["EnemyInfo"]:
@@ -600,7 +605,7 @@ def fill_enemy_to_room():
         for door in Manager.mod_data["RoomRequirement"][room]:
             for check in Manager.mod_data["RoomRequirement"][room][door]:
                 if is_valid_enemy_check(check)[1]:
-                    enemy_id = Manager.split_enemy_profile(check)[0]
+                    enemy_id = Utility.split_enemy_profile(check)[0]
                     if not room in enemy_to_room[enemy_id]:
                         enemy_to_room[enemy_id].append(room)
 
@@ -788,7 +793,7 @@ def analyse_check(check, requirement):
         case CheckType.Enemy:
             if not is_valid_enemy_check(check)[1]:
                 return
-            enemy_id = Manager.split_enemy_profile(check)[0]
+            enemy_id = Utility.split_enemy_profile(check)[0]
             if enemy_id in all_available_enemies:
                 return
     #Set check as available
@@ -824,7 +829,7 @@ def get_check_type(check):
     return CheckType.Door
 
 def is_valid_enemy_check(check):
-    enemy_profile = Manager.split_enemy_profile(check)
+    enemy_profile = Utility.split_enemy_profile(check)
     is_enemy = enemy_profile[0] in Manager.mod_data["EnemyInfo"]
     is_valid = is_enemy and (not enemy_profile[1] or enemy_profile[1] == difficulty)
     return (is_enemy, is_valid)
@@ -841,7 +846,7 @@ def place_next_key(chosen_item):
     #Item
     if chosen_item in key_items:
         try:
-            if random.randint(0, len(current_available_chests)) > 0:
+            if random.random() < (1 - 1/(1+len(current_available_chests)))*logic_complexity:
                 chosen_chest = pick_key_chest(current_available_chests)
             else:
                 chosen_chest = pick_key_chest(all_available_chests)
@@ -851,7 +856,7 @@ def place_next_key(chosen_item):
     #Shard
     if chosen_item in key_shards:
         try:
-            if random.randint(0, len(current_available_enemies)) > 0:
+            if random.random() < (1 - 1/(1+len(current_available_enemies)))*logic_complexity:
                 chosen_enemy = pick_key_enemy(current_available_enemies)
             else:
                 chosen_enemy = pick_key_enemy(all_available_enemies)
@@ -866,6 +871,7 @@ def pick_key_chest(available_chests):
     for chest in available_chests:
         if not chest in list(key_item_to_location.values()) and not chest in keyless_chests:
             odds = 1
+            #Increase odds of important checks
             if chest in important_checks:
                 odds *= important_check_ratio
             for num in range(odds):
@@ -880,7 +886,7 @@ def pick_key_enemy(available_enemies):
     for enemy in available_enemies:
         if not enemy in list(key_shard_to_location.values()) and not enemy in enemy_skip_list and Manager.mod_data["EnemyInfo"][enemy]["HasShard"]:
             #Increase odds the more uncommon the enemy
-            odds = math.ceil((36/len(enemy_shard_to_room(enemy)))**0.8)
+            odds = important_check_ratio - min(len(enemy_shard_to_room(enemy)), important_check_ratio) + 1
             for num in range(odds):
                 possible_enemies.append(enemy)
     return random.choice(possible_enemies)
@@ -960,15 +966,12 @@ def randomize_overworld_shards():
             Manager.datatable["PB_DT_DropRateMaster"][entry]["ShardId"]   = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
             Manager.datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardRate"]
 
-def randomize_overworld_items(waystone):
+def randomize_overworld_items():
     create_area_pools()
     #Start chest
     patch_start_chest_entry()
-    #Vepar chest
-    if waystone:
-        patch_key_item_entry("Waystone", "Treasurebox_SIP020_1")
-    else:
-        patch_key_item_entry("Potion", "Treasurebox_SIP020_1")
+    #Skip Vepar chest
+    used_chests.remove("Treasurebox_SIP020_1")
     #Johannes mats
     patch_chest_entry(random.choice(blue_chest_type), "PotionMaterial")
     #100% chest
@@ -1039,6 +1042,9 @@ def randomize_overworld_items(waystone):
             Manager.datatable["PB_DT_DropRateMaster"][entry]["CommonIngredientId"]       = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientId"]
             Manager.datatable["PB_DT_DropRateMaster"][entry]["CommonIngredientQuantity"] = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][entry]["CommonIngredientRate"]     = Manager.datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["CommonIngredientRate"]
+
+def add_pre_vepar_waystone():
+    Manager.datatable["PB_DT_DropRateMaster"]["Treasurebox_SIP020_1"]["RareItemId"] = "Waystone"
 
 def create_area_pools():
     #Set up material pools per area for blue chests
@@ -1153,53 +1159,53 @@ def patch_enemy_entry(item_type, item_rate, container):
     #Also randomize the amount of drops so that it isn't always 4 per enemy
     empty_drop_entry(container)
     if item_type == "CookingMat":
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["CookingMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["StandardMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"]       = pick_and_remove(Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["EnemyMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"]     = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["CookingMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemRate"]*item_rate
     elif item_type == "StandardMat":
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["StandardMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["EnemyMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["CookingMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"]     = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["StandardMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemRate"]*item_rate
     elif item_type == "EnemyMat":
-        if random.randint(1, 3) > 1 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["EnemyMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["CookingMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["CookingMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = Manager.mod_data["EnemyDrop"]["CookingMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"]       = pick_and_remove(Manager.mod_data["ItemDrop"]["StandardMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["StandardMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"]     = Manager.mod_data["EnemyDrop"]["StandardMat"]["ItemRate"]*item_rate
-        if random.randint(1, 3) > 1 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
+        if random.random() < 2/3 and Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"]:
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = pick_and_remove(Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemPool"], Manager.mod_data["EnemyDrop"]["EnemyMat"]["IsUnique"], item_type)
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemQuantity"]
             Manager.datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = Manager.mod_data["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
@@ -1326,24 +1332,26 @@ def randomize_shop_items():
                 chosen = pick_and_remove(Manager.mod_data["ItemDrop"][entry]["ItemPool"], True, "None")
                 while Manager.datatable["PB_DT_ItemMaster"][chosen]["buyPrice"] == 0 or chosen in shop_skip_list:
                     chosen = pick_and_remove(Manager.mod_data["ItemDrop"][entry]["ItemPool"], True, "None")
-                Manager.datatable["PB_DT_ItemMaster"][chosen]["Producted"] = random.choice(event_type)
+                if random.random() < shop_event_wheight:
+                    Manager.datatable["PB_DT_ItemMaster"][chosen]["Producted"] = random.choice(boss_shop_events)
+                else:
+                    Manager.datatable["PB_DT_ItemMaster"][chosen]["Producted"] = default_shop_event
 
 def randomize_shop_prices(scale):
-    price_range = Manager.create_weighted_list(100, 1, 10000, 1, 3)
     for entry in Manager.datatable["PB_DT_ItemMaster"]:
         if Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"] == 0 or entry in price_skip_list:
             continue
         #Buy
         buy_price = Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"]
         sell_ratio = Manager.datatable["PB_DT_ItemMaster"][entry]["sellPrice"]/buy_price
-        multiplier = random.choice(random.choice(price_range))/100
+        multiplier = Utility.random_weighted(1.0, 0.01, 100.0, 0.01, shop_price_wheight, False)
         Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"] = int(buy_price*multiplier)
         Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"] = max(Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"], 1)
         if Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"] > 10:
             Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"] = round(Manager.datatable["PB_DT_ItemMaster"][entry]["buyPrice"]/10)*10
         #Sell
         if not scale:
-            multiplier = random.choice(random.choice(price_range))/100
+            multiplier = Utility.random_weighted(1.0, 0.01, 100.0, 0.01, shop_price_wheight, False)
         Manager.datatable["PB_DT_ItemMaster"][entry]["sellPrice"] = int(buy_price*multiplier*sell_ratio)
         Manager.datatable["PB_DT_ItemMaster"][entry]["sellPrice"] = max(Manager.datatable["PB_DT_ItemMaster"][entry]["sellPrice"], 1)
 
