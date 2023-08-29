@@ -92,6 +92,7 @@ modified_files = {
             "PB_DT_EnchantParameterType",
             "PB_DT_EventFlagMaster",
             "PB_DT_GimmickFlagMaster",
+            "PB_DT_HairSalonOldDefaults",
             "PB_DT_ItemMaster",
             "PB_DT_QuestMaster",
             "PB_DT_RoomMaster",
@@ -281,8 +282,10 @@ class Generate(QThread):
         #Hue
         
         random.seed(self.seed)
-        miriam_hue   = random.choice(os.listdir("Data\\Texture\\Miriam"))
-        zangetsu_hue = random.choice(os.listdir("Data\\Texture\\Zangetsu"))
+        miriam_color   = random.choice(os.listdir("Data\\Texture\\Miriam"))
+        zangetsu_color = random.choice(os.listdir("Data\\Texture\\Zangetsu"))
+        if config.getboolean("GraphicRandomization", "bMiriamColor"):
+            Manager.update_default_outfit_hsv(miriam_color)
         
         #Portraits
         
@@ -572,19 +575,19 @@ class Generate(QThread):
         #Import chosen hues for Miriam and Zangetsu
         #While it is technically not necessary to first copy the textures out of the chosen folder we do it so that the random hue does not show up on the terminal
         if config.getboolean("GraphicRandomization", "bMiriamColor"):
-            for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_hue):
-                shutil.copyfile("Data\\Texture\\Miriam\\" + miriam_hue + "\\" + directory, "Data\\Texture\\" + directory)
+            for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_color):
+                shutil.copyfile("Data\\Texture\\Miriam\\" + miriam_color + "\\" + directory, "Data\\Texture\\" + directory)
             
             Manager.import_texture("Face_Miriam")
             Manager.import_texture("T_Pl01_Cloth_Bace")
             Manager.import_texture("T_Body01_01_Color")
             
-            for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_hue):
+            for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_color):
                 os.remove("Data\\Texture\\" + directory)
         
         if config.getboolean("GraphicRandomization", "bZangetsuColor"):
-            for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
-                shutil.copyfile("Data\\Texture\\Zangetsu\\" + zangetsu_hue + "\\" + directory, "Data\\Texture\\" + directory)
+            for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_color):
+                shutil.copyfile("Data\\Texture\\Zangetsu\\" + zangetsu_color + "\\" + directory, "Data\\Texture\\" + directory)
             
             Manager.import_texture("Face_Zangetsu")
             Manager.import_texture("T_N1011_body_color")
@@ -592,7 +595,7 @@ class Generate(QThread):
             Manager.import_texture("T_N1011_weapon_color")
             Manager.import_texture("T_Tknife05_Base")
             
-            for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_hue):
+            for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_color):
                 os.remove("Data\\Texture\\" + directory)
         
         #Update portrait pointers
@@ -1030,13 +1033,13 @@ class Main(QWidget):
         main_widget_to_setting[self.check_box_12] = 0x040000
 
         self.check_box_13 = QCheckBox("Miriam Color")
-        self.check_box_13.setToolTip("Randomize the hue of Miriam's outfit.")
+        self.check_box_13.setToolTip("Randomize the color of Miriam's outfit.")
         self.check_box_13.stateChanged.connect(self.check_box_13_changed)
         box_8_grid.addWidget(self.check_box_13, 0, 0)
         main_widget_to_setting[self.check_box_13] = 0x080000
 
         self.check_box_14 = QCheckBox("Zangetsu Color")
-        self.check_box_14.setToolTip("Randomize the hue of Zangetsu's outfit.")
+        self.check_box_14.setToolTip("Randomize the color of Zangetsu's outfit.")
         self.check_box_14.stateChanged.connect(self.check_box_14_changed)
         box_8_grid.addWidget(self.check_box_14, 1, 0)
         main_widget_to_setting[self.check_box_14] = 0x100000

@@ -739,7 +739,7 @@ def load_mod_data():
 def load_map(path):
     #Load map related files
     if not path:
-        path = "MapEdit\\Data\\RoomMaster\\PB_DT_RoomMaster.json"
+        path = "MapEdit\\Data\\PB_DT_RoomMaster.json"
     with open(path, "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
     if "PB_DT_RoomMaster" in datatable:
@@ -793,6 +793,15 @@ def load_map(path):
       "m10BIG",
       "m18ICE"
     ]
+    #Rooms with no traverse blocks only display properly based on their Y position below the origin
+    #Shift those lists if the rooms are below 0
+    for room in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
+        if datatable["PB_DT_RoomMaster"][room]["OffsetZ"] < 0:
+            multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/7.2)) - 1
+            if multiplier > datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1:
+                multiplier = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1
+            for index in range(len(datatable["PB_DT_RoomMaster"][room]["NoTraverse"])):
+                datatable["PB_DT_RoomMaster"][room]["NoTraverse"][index] -= datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*multiplier
 
 def get_map_info():
     #Keep track of every door connection for multi purpose
@@ -846,15 +855,6 @@ def update_custom_map():
     add_level_actor("m08TWR_009_Gimmick", "TWR009_ElevatorLever_BP_C", FVector(1110, 0, 11040), FRotator(0, 0, 0), FVector(1, 1, 1), {})
     #Make Bathin's room enterable from the left without softlocking the boss
     fix_bathin_left_entrance()
-    #Rooms with no traverse blocks only display properly based on their Y position below the origin
-    #Shift those lists if the rooms are below 0
-    for room in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
-        if datatable["PB_DT_RoomMaster"][room]["OffsetZ"] < 0:
-            multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/7.2)) - 1
-            if multiplier > datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1:
-                multiplier = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1
-            for index in range(len(datatable["PB_DT_RoomMaster"][room]["NoTraverse"])):
-                datatable["PB_DT_RoomMaster"][room]["NoTraverse"][index] -= datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*multiplier
     #Each area has limitations as to where it can be displayed on the canvas
     #Change area IDs based on their X positions so that everything is always displayed
     for room in datatable["PB_DT_RoomMaster"]:
@@ -2081,12 +2081,8 @@ def update_map_connections():
     is_vanilla_start = datatable["PB_DT_RoomMaster"]["m03ENT_1200"]["SameRoom"] == "m02VIL_1200"
     #Fill adjacent room lists
     for room in datatable["PB_DT_RoomMaster"]:
-        doors = []
-        for entrance in map_connections[room]:
-            if map_connections[room][entrance]:
-                doors.append(map_doors[entrance])
-        datatable["PB_DT_RoomMaster"][room]["DoorFlag"] = convert_door_to_flag(doors, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
-        adjacent = []
+        datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"].clear()
+        open_doors = []
         for entrance in map_connections[room]:
             for exit in map_connections[room][entrance]:
                 #Transition rooms in Bloodstained come by pair, each belonging to an area
@@ -2102,9 +2098,14 @@ def update_map_connections():
                 #So ignore any other transitions overlayed on top of it
                 if not is_vanilla_start and (datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] == "m02VIL_1200" or map_doors[exit].room == "m03ENT_1200"):
                     continue
-                if not map_doors[exit].room in adjacent:
-                    adjacent.append(map_doors[exit].room)
-        datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"] = adjacent
+                if not map_doors[exit].room in datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"]:
+                    datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"].append(map_doors[exit].room)
+            #Update door list
+            if map_connections[room][entrance]:
+                open_doors.append(map_doors[entrance])
+        if not open_doors and datatable["PB_DT_RoomMaster"][room]["DoorFlag"]:
+            datatable["PB_DT_RoomMaster"][room]["OutOfMap"] = True
+        datatable["PB_DT_RoomMaster"][room]["DoorFlag"] = convert_door_to_flag(open_doors, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
     #Some rooms need specific setups
     #Connect Vepar room to its overlayed village counterpart
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].append("m02VIL_000")
@@ -2200,6 +2201,14 @@ def update_map_connections():
     #Give overlayed rooms the same door flag as their counterparts
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
     datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
+
+def update_default_outfit_hsv(parameter_string):
+    parameter_list = []
+    for index in range(len(parameter_string)//4):
+        parameter_list.append(parameter_string[index*4:index*4 + 4])
+    for index in range(6):
+        for parameter in parameter_list:
+            datatable["PB_DT_HairSalonOldDefaults"]["Body_01_" + "{:02d}".format(index + 1)][parameter[0] + "1"] = int(parameter[1:4])
 
 def fix_bathin_left_entrance():
     #If Bathin's intro event triggers when the player entered the room from the left they will be stuck in an endless walk cycle
