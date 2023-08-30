@@ -3,9 +3,12 @@ import Manager
 import Bloodless
 import Enemy
 import Equipment
+import Graphic
 import Item
 import Library
+import Room
 import Shard
+import Shop
 import Sound
 #Import GUI
 from PySide6.QtCore import*
@@ -212,7 +215,7 @@ class Generate(QThread):
         
         Manager.init()
         Manager.load_game_data()
-        Manager.load_mod_data()
+        Manager.load_constant()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -229,10 +232,13 @@ class Generate(QThread):
         #Init classes
         
         Item.init()
+        Shop.init()
         Library.init()
         Shard.init()
         Equipment.init()
         Enemy.init()
+        Room.init()
+        Graphic.init()
         Sound.init()
         Bloodless.init()
         
@@ -240,7 +246,7 @@ class Generate(QThread):
         
         Item.set_logic_complexity(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
         Item.set_shop_event_wheight(config.getint("ItemRandomization", "iShopPoolWheight"))
-        Item.set_shop_price_wheight(config.getint("ShopRandomization", "iItemCostAndSellingPriceWheight"))
+        Shop.set_shop_price_wheight(config.getint("ShopRandomization", "iItemCostAndSellingPriceWheight"))
         Library.set_requirement_wheight(config.getint("LibraryRandomization", "iMapRequirementsWheight"))
         Shard.set_shard_power_wheight(config.getint("ShardRandomization", "iShardPowerAndMagicCostWheight"))
         Equipment.set_global_stat_wheight(config.getint("EquipmentRandomization", "iGlobalGearStatsWheight"))
@@ -277,7 +283,8 @@ class Generate(QThread):
         else:
             self.map = ""
         Manager.load_map(self.map)
-        Manager.get_map_info()
+        Room.get_map_info()
+        Room.update_any_map()
         
         #Hue
         
@@ -285,7 +292,7 @@ class Generate(QThread):
         miriam_color   = random.choice(os.listdir("Data\\Texture\\Miriam"))
         zangetsu_color = random.choice(os.listdir("Data\\Texture\\Zangetsu"))
         if config.getboolean("GraphicRandomization", "bMiriamColor"):
-            Manager.update_default_outfit_hsv(miriam_color)
+            Graphic.update_default_outfit_hsv(miriam_color)
         
         #Portraits
         
@@ -304,7 +311,7 @@ class Generate(QThread):
         has_risky_option = (config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bBossLevels")) and not config.getboolean("SpecialMode", "bCustomNG")
         
         if self.map:
-            Manager.update_custom_map()
+            Room.update_custom_map()
             Enemy.rebalance_enemies_to_map()
         
         if not config.getboolean("GameDifficulty", "bNormal"):
@@ -343,7 +350,7 @@ class Generate(QThread):
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.seed)
-            Manager.randomize_classic_mode_drops()
+            Item.randomize_classic_mode_drops()
         
         if config.getboolean("ItemRandomization", "bOverworldPool") or config.getboolean("EnemyRandomization", "bEnemyLocations") or self.map:
             Manager.remove_fire_shard_requirement()
@@ -373,7 +380,7 @@ class Generate(QThread):
         
         if config.getboolean("ShopRandomization", "bItemCostAndSellingPrice"):
             random.seed(self.seed)
-            Item.randomize_shop_prices(config.getboolean("ShopRandomization", "bScaleSellingPriceWithCost"))
+            Shop.randomize_shop_prices(config.getboolean("ShopRandomization", "bScaleSellingPriceWithCost"))
         
         if config.getboolean("LibraryRandomization", "bMapRequirements"):
             random.seed(self.seed)
@@ -457,17 +464,17 @@ class Generate(QThread):
         #Update some things to reflect previous changes
         Item.update_drop_ids()
         Item.update_container_types()
-        Item.update_boss_crystal_color()
         Item.update_shard_candles()
         Bloodless.update_shard_candles()
-        Enemy.update_special_properties()
-        Equipment.update_special_properties()
         Shard.update_special_properties()
+        Equipment.update_special_properties()
+        Enemy.update_special_properties()
+        Graphic.update_boss_crystal_color()
         Manager.update_item_descriptions()
-        Manager.update_map_connections()
-        Manager.update_map_doors()
+        Room.update_map_connections()
+        Room.update_map_doors()
         if self.map:
-            Manager.update_map_indicators()
+            Room.update_map_indicators()
         
         #Display game version, mod version and seed on the title screen
         Manager.show_mod_stats(str(self.seed), config.get("Misc", "sVersion"))
@@ -489,16 +496,16 @@ class Generate(QThread):
         for directory in os.listdir("Data\\Mesh"):
             name, extension = os.path.splitext(directory)
             if extension == ".uasset":
-                Manager.import_mesh(name)
+                Graphic.import_mesh(name)
         
         #Add new armor references defined in the json
-        for item in Manager.mod_data["ArmorReference"]:
-            Manager.add_armor_reference(item)
+        for item in Manager.constant["ArmorReference"]:
+            Equipment.add_armor_reference(item)
         
         #Add and import any music files found in the music directory
         for directory in os.listdir("Data\\Music"):
             name, extension = os.path.splitext(directory)
-            Manager.add_music_file(name)
+            Sound.add_music_file(name)
         
         current += 1
         self.signaller.progress.emit(current)
@@ -534,43 +541,43 @@ class Generate(QThread):
             shutil.copyfile("Data\\Texture\\Difficulty\\Hard\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
         elif config.getboolean("GameDifficulty", "bNightmare"):
             shutil.copyfile("Data\\Texture\\Difficulty\\Nightmare\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
-        Manager.import_texture("WindowMinimap02")
+        Graphic.import_texture("WindowMinimap02")
         os.remove("Data\\Texture\\WindowMinimap02.dds")
         
         #Edit the file that contains all the icons in the game to give 8 bit weapons unique icons per rank
         #Otherwise it is almost impossible to tell which tier the weapon you're looking at actually is
-        Manager.import_texture("icon")
+        Graphic.import_texture("icon")
         
         #The textures used in the 8 Bit Nightmare area have inconsistent formats and mostly use block compression which butchers the pixel arts completely
         #An easy fix so include it here
-        Manager.import_texture("m51_EBT_BG")
-        Manager.import_texture("m51_EBT_BG_01")
-        Manager.import_texture("m51_EBT_Block")
-        Manager.import_texture("m51_EBT_Block_00")
-        Manager.import_texture("m51_EBT_Block_01")
-        Manager.import_texture("m51_EBT_Door")
+        Graphic.import_texture("m51_EBT_BG")
+        Graphic.import_texture("m51_EBT_BG_01")
+        Graphic.import_texture("m51_EBT_Block")
+        Graphic.import_texture("m51_EBT_Block_00")
+        Graphic.import_texture("m51_EBT_Block_01")
+        Graphic.import_texture("m51_EBT_Door")
         
         #Give the new dullahammer a unique color scheme
-        Manager.import_texture("T_N3127_Body_Color")
-        Manager.import_texture("T_N3127_Uni_Color")
+        Graphic.import_texture("T_N3127_Body_Color")
+        Graphic.import_texture("T_N3127_Uni_Color")
         
         #Change the timestop shard in classic mode to have the same color as standstill
-        Manager.import_texture("time_shard_diffuse")
-        Manager.import_texture("ui_icon_pickup_timeShard")
-        Manager.import_texture("ui_icon_results_timeShard")
+        Graphic.import_texture("time_shard_diffuse")
+        Graphic.import_texture("ui_icon_pickup_timeShard")
+        Graphic.import_texture("ui_icon_results_timeShard")
         #Also change the dagger icon to match the model
-        Manager.import_texture("ui_icon_pickup_dagger")
-        Manager.import_texture("ui_icon_results_dagger")
+        Graphic.import_texture("ui_icon_pickup_dagger")
+        Graphic.import_texture("ui_icon_results_dagger")
         
         #Most map icons have fixed positions on the canvas and will not adapt to the position of the rooms
         #Might be possible to edit them via a blueprint but that's not worth it so remove them if custom map is chosen
         if self.map:
-            Manager.import_texture("icon_map_journey_")
-            Manager.import_texture("Map_Icon_Keyperson")
-            Manager.import_texture("Map_Icon_RootBox")
-            Manager.import_texture("Map_StartingPoint")
+            Graphic.import_texture("icon_map_journey_")
+            Graphic.import_texture("Map_Icon_Keyperson")
+            Graphic.import_texture("Map_Icon_RootBox")
+            Graphic.import_texture("Map_StartingPoint")
         if self.map or config.getboolean("ItemRandomization", "bOverworldPool"):
-            Manager.import_texture("icon_8bitCrown")
+            Graphic.import_texture("icon_8bitCrown")
         
         #Import chosen hues for Miriam and Zangetsu
         #While it is technically not necessary to first copy the textures out of the chosen folder we do it so that the random hue does not show up on the terminal
@@ -578,9 +585,9 @@ class Generate(QThread):
             for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_color):
                 shutil.copyfile("Data\\Texture\\Miriam\\" + miriam_color + "\\" + directory, "Data\\Texture\\" + directory)
             
-            Manager.import_texture("Face_Miriam")
-            Manager.import_texture("T_Pl01_Cloth_Bace")
-            Manager.import_texture("T_Body01_01_Color")
+            Graphic.import_texture("Face_Miriam")
+            Graphic.import_texture("T_Pl01_Cloth_Bace")
+            Graphic.import_texture("T_Body01_01_Color")
             
             for directory in os.listdir("Data\\Texture\\Miriam\\" + miriam_color):
                 os.remove("Data\\Texture\\" + directory)
@@ -589,11 +596,11 @@ class Generate(QThread):
             for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_color):
                 shutil.copyfile("Data\\Texture\\Zangetsu\\" + zangetsu_color + "\\" + directory, "Data\\Texture\\" + directory)
             
-            Manager.import_texture("Face_Zangetsu")
-            Manager.import_texture("T_N1011_body_color")
-            Manager.import_texture("T_N1011_face_color")
-            Manager.import_texture("T_N1011_weapon_color")
-            Manager.import_texture("T_Tknife05_Base")
+            Graphic.import_texture("Face_Zangetsu")
+            Graphic.import_texture("T_N1011_body_color")
+            Graphic.import_texture("T_N1011_face_color")
+            Graphic.import_texture("T_N1011_weapon_color")
+            Graphic.import_texture("T_Tknife05_Base")
             
             for directory in os.listdir("Data\\Texture\\Zangetsu\\" + zangetsu_color):
                 os.remove("Data\\Texture\\" + directory)
@@ -601,7 +608,7 @@ class Generate(QThread):
         #Update portrait pointers
         if config.getboolean("GraphicRandomization", "bBackerPortraits"):
             for portrait in portrait_replacement:
-                Manager.update_portrait_pointer(portrait, portrait_replacement[portrait])
+                Graphic.update_portrait_pointer(portrait, portrait_replacement[portrait])
         
         Manager.remove_unchanged_files()
         current += 1
@@ -2321,7 +2328,7 @@ class Main(QWidget):
         
         try:
             Manager.init()
-            Manager.load_mod_data()
+            Manager.load_constant()
             
             Item.init()
             Enemy.init()
@@ -2341,7 +2348,7 @@ class Main(QWidget):
             else:
                 self.map_test = ""
             Manager.load_map(self.map_test)
-            Manager.get_map_info()
+            Room.get_map_info()
             
             if not config.getboolean("GameDifficulty", "bNormal"):
                 Item.set_hard_mode()

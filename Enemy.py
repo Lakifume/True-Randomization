@@ -1,8 +1,4 @@
-import Manager
-import Utility
-import math
-import random
-import copy
+from Manager import*
 
 def init():
     #Declare variables
@@ -378,33 +374,33 @@ def init():
 
 def set_enemy_level_wheight(wheight):
     global enemy_level_wheight
-    enemy_level_wheight = Manager.wheight_exponents[wheight - 1]
+    enemy_level_wheight = wheight_exponents[wheight - 1]
 
 def set_boss_level_wheight(wheight):
     global boss_level_wheight
-    boss_level_wheight = Manager.wheight_exponents[wheight - 1]
+    boss_level_wheight = wheight_exponents[wheight - 1]
 
 def set_enemy_tolerance_wheight(wheight):
     global enemy_tolerance_wheight
-    enemy_tolerance_wheight = Manager.wheight_exponents[wheight - 1]
+    enemy_tolerance_wheight = wheight_exponents[wheight - 1]
 
 def set_boss_tolerance_wheight(wheight):
     global boss_tolerance_wheight
-    boss_tolerance_wheight = Manager.wheight_exponents[wheight - 1]
+    boss_tolerance_wheight = wheight_exponents[wheight - 1]
 
 def convert_area_to_progress():
     #Adapt the area order of Bloodless mode based on her starting position
-    start_index = Manager.mod_data["MapOrder"].index("m05SAN")
+    start_index = constant["MapOrder"].index("m05SAN")
     for num in range(start_index -1, -1, -1):
-        Manager.mod_data["BloodlessModeMapOrder"].append(Manager.mod_data["MapOrder"][num])
-    for num in range(start_index +1, len(Manager.mod_data["MapOrder"])):
-        Manager.mod_data["BloodlessModeMapOrder"].append(Manager.mod_data["MapOrder"][num])
+        constant["BloodlessModeMapOrder"].append(constant["MapOrder"][num])
+    for num in range(start_index +1, len(constant["MapOrder"])):
+        constant["BloodlessModeMapOrder"].append(constant["MapOrder"][num])
     #Convert area list to difficulty scale
     for suffix in ["", "Original", "BloodlessMode", "BloodlessModeOriginal"]:
         entry = suffix + "MapOrder"
         area_to_progress[entry] = {}
-        for num in range(len(Manager.mod_data[entry])):
-            area_to_progress[entry][Manager.mod_data[entry][num]] = num + 1.0
+        for num in range(len(constant[entry])):
+            area_to_progress[entry][constant[entry][num]] = num + 1.0
     #Handle in between areas with unique difficulty scale
     area_to_progress["OriginalMapOrder"]["m04GDN_1"] = (area_to_progress["OriginalMapOrder"]["m04GDN"] + area_to_progress["OriginalMapOrder"]["m05SAN"])/2
     area_to_progress["OriginalMapOrder"]["m05SAN_1"] = (area_to_progress["OriginalMapOrder"]["m06KNG"])
@@ -421,9 +417,9 @@ def convert_area_to_progress():
         area_to_progress["BloodlessModeMapOrder"][area + "_1"] = area_to_progress["BloodlessModeMapOrder"][area]
     #Change the order of progressive Zangetsu experience
     new_boss_order = []
-    for num in range(len(Manager.mod_data["MapOrder"])):
+    for num in range(len(constant["MapOrder"])):
         for enemy in zangetsu_exp:
-            current_area = Manager.mod_data["EnemyInfo"][enemy]["AreaID"]
+            current_area = constant["EnemyInfo"][enemy]["AreaID"]
             if area_to_progress["MapOrder"][current_area] == num + 1.0:
                 new_boss_order.append(enemy)
     if len(new_boss_order) != len(zangetsu_exp):
@@ -434,89 +430,89 @@ def convert_area_to_progress():
 
 def increase_starting_stats():
     #Random enemy levels can be rough at the start of the game so give the player a starting stat boost
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxHP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxMP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxHP99Enemy"] += Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxMP99Enemy"] += Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxHP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxMP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxHP99Enemy"] += Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxMP99Enemy"] += Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0006"]["MaxHP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0006"]["MaxMP"]        += Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxHP"]        += datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxMP"]        += datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxHP99Enemy"] += datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0000"]["MaxMP99Enemy"] += datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxHP"]        += datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxMP"]        += datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxHP99Enemy"] += datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MaxMP99Enemy"] += datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0006"]["MaxHP"]        += datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"]/2
+    datatable["PB_DT_CharacterParameterMaster"]["P0006"]["MaxMP"]        += datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"]/2
     #Reduce the stats gained from upgrades in return
-    Manager.datatable["PB_DT_SpecialEffectDefinitionMaster"]["MaxHPUP"]["Parameter01"]             /= 2
-    Manager.datatable["PB_DT_SpecialEffectDefinitionMaster"]["MaxMPUP"]["Parameter01"]             /= 2
-    Manager.datatable["PB_DT_CoordinateParameter"]["BloodlessMainStoryModeMaxHpUpAmount"]["Value"] /= 2
-    Manager.datatable["PB_DT_CoordinateParameter"]["BloodlessMainStoryModeMaxMpUpAmount"]["Value"] /= 2
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["MaxHPUP"]["Parameter01"]             /= 2
+    datatable["PB_DT_SpecialEffectDefinitionMaster"]["MaxMPUP"]["Parameter01"]             /= 2
+    datatable["PB_DT_CoordinateParameter"]["BloodlessMainStoryModeMaxHpUpAmount"]["Value"] /= 2
+    datatable["PB_DT_CoordinateParameter"]["BloodlessMainStoryModeMaxMpUpAmount"]["Value"] /= 2
     #As well as the upgrade cap
-    Manager.datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"] /= 2
-    Manager.datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"] /= 2
+    datatable["PB_DT_CoordinateParameter"]["HpMaxUpLimit"]["Value"] /= 2
+    datatable["PB_DT_CoordinateParameter"]["MpMaxUpLimit"]["Value"] /= 2
 
 def set_zangetsu_progressive_level(nightmare):
     #Progressive Zangetsu is all about using level ups for combat growth
     #Nightmare only lets you level up off of bosses so adapt the stats for that
     if nightmare:
         target_level = 16
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffHp"]["Value"]  = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMp"]["Value"]  = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] = 0.0
-        Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffHp"]["Value"]  = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMp"]["Value"]  = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] = 0.0
+        datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] = 0.0
     else:
         target_level = 40
-    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] += round(93/(target_level - 1), 3)
-    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] += round(90/(target_level - 1), 3)
-    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] += round(90/(target_level - 1), 3)
-    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] += round(87/(target_level - 1), 3)
-    Manager.datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] += round(45/(target_level - 1), 3)
+    datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffStr"]["Value"] += round(93/(target_level - 1), 3)
+    datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffCon"]["Value"] += round(90/(target_level - 1), 3)
+    datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffInt"]["Value"] += round(90/(target_level - 1), 3)
+    datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffMnd"]["Value"] += round(87/(target_level - 1), 3)
+    datatable["PB_DT_CoordinateParameter"]["ZangetsuGrowthCoeffLuc"]["Value"] += round(45/(target_level - 1), 3)
 
 def set_zangetsu_nightmare_damage():
     #Progressive Zangetsu on nightmare has to be built over hard since the vanilla nightmare slot is hardcoded to not receive EXP
     #Update the hard mode damage multipliers to reflect nightmare
-    Manager.datatable["PB_DT_CoordinateParameter"]["HardEnemyAttackAdd"]["Value"]    = Manager.datatable["PB_DT_CoordinateParameter"]["NightmareEnemyAttackAdd"]["Value"]
-    Manager.datatable["PB_DT_CoordinateParameter"]["HardEnemyDamageRate"]["Value"]   = Manager.datatable["PB_DT_CoordinateParameter"]["NightmareEnemyDamageRate"]["Value"]
-    Manager.datatable["PB_DT_CoordinateParameter"]["HardBossAttackAdd"]["Value"]     = Manager.datatable["PB_DT_CoordinateParameter"]["NightmareBossAttackAdd"]["Value"]
-    Manager.datatable["PB_DT_CoordinateParameter"]["HardBossDamageRate"]["Value"]    = Manager.datatable["PB_DT_CoordinateParameter"]["NightmareBossDamageRate"]["Value"]
-    Manager.datatable["PB_DT_CoordinateParameter"]["HardGimmickDamageRate"]["Value"] = Manager.datatable["PB_DT_CoordinateParameter"]["NightmareGimmickDamageRate"]["Value"]
+    datatable["PB_DT_CoordinateParameter"]["HardEnemyAttackAdd"]["Value"]    = datatable["PB_DT_CoordinateParameter"]["NightmareEnemyAttackAdd"]["Value"]
+    datatable["PB_DT_CoordinateParameter"]["HardEnemyDamageRate"]["Value"]   = datatable["PB_DT_CoordinateParameter"]["NightmareEnemyDamageRate"]["Value"]
+    datatable["PB_DT_CoordinateParameter"]["HardBossAttackAdd"]["Value"]     = datatable["PB_DT_CoordinateParameter"]["NightmareBossAttackAdd"]["Value"]
+    datatable["PB_DT_CoordinateParameter"]["HardBossDamageRate"]["Value"]    = datatable["PB_DT_CoordinateParameter"]["NightmareBossDamageRate"]["Value"]
+    datatable["PB_DT_CoordinateParameter"]["HardGimmickDamageRate"]["Value"] = datatable["PB_DT_CoordinateParameter"]["NightmareGimmickDamageRate"]["Value"]
 
 def set_zangetsu_enemy_exp():
     #On nightmare only bosses should give EXP
     #Make it so that each major boss gives exactly one level up if fought in order
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] == 0:
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] == 0:
             continue
         if entry in zangetsu_exp:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = zangetsu_exp[entry]
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = zangetsu_exp[entry]
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = zangetsu_exp[entry]
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = zangetsu_exp[entry]
         elif entry[0:5] in zangetsu_exp:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = zangetsu_exp[entry[0:5]]
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = zangetsu_exp[entry[0:5]]
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = zangetsu_exp[entry[0:5]]
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = zangetsu_exp[entry[0:5]]
         else:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = 0
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = 0
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = 0
+            datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = 0
 
 def reset_zangetsu_starting_stats():
     #Zangetsu is very strong by default due to him weilding a late game weapon
     #Make all starting stats 0 to compensate
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["STR"]        = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["INT"]        = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["CON"]        = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MND"]        = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["LUC"]        = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["STR99Enemy"] = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["INT99Enemy"] = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["CON99Enemy"] = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MND99Enemy"] = 0.0
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["P0001"]["LUC99Enemy"] = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["STR"]        = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["INT"]        = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["CON"]        = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MND"]        = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["LUC"]        = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["STR99Enemy"] = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["INT99Enemy"] = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["CON99Enemy"] = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["MND99Enemy"] = 0.0
+    datatable["PB_DT_CharacterParameterMaster"]["P0001"]["LUC99Enemy"] = 0.0
 
 def update_brv_boss_speed(difficulty):
     #Update boss revenge bosses to have the animation speed of the chosen difficulty
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["AnimaionPlayRateNormal"]  = Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["AnimaionPlayRate" + difficulty]
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["AnimaionPlayRateNormal"] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["AnimaionPlayRate" + difficulty]
-    Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"]["AnimaionPlayRateNormal"]        = Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"]["AnimaionPlayRate" + difficulty]
+    datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["AnimaionPlayRateNormal"]  = datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"]["AnimaionPlayRate" + difficulty]
+    datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["AnimaionPlayRateNormal"] = datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"]["AnimaionPlayRate" + difficulty]
+    datatable["PB_DT_CharacterParameterMaster"]["N0000"]["AnimaionPlayRateNormal"]        = datatable["PB_DT_CharacterParameterMaster"]["N0000"]["AnimaionPlayRate" + difficulty]
 
 def update_brv_damage(difficulty):
     #Rebalance boss revenge so that damage is canon with the main game
@@ -525,19 +521,19 @@ def update_brv_damage(difficulty):
         boss_attack_add  = 0.0
         boss_damage_rate = 1.0
     else:
-        boss_attack_add  = Manager.datatable["PB_DT_CoordinateParameter"][difficulty + "BossAttackAdd"]["Value"]
-        boss_damage_rate = Manager.datatable["PB_DT_CoordinateParameter"][difficulty + "BossDamageRate"]["Value"]
-    for brv_entry in Manager.datatable["PB_DT_BRVAttackDamage"]:
+        boss_attack_add  = datatable["PB_DT_CoordinateParameter"][difficulty + "BossAttackAdd"]["Value"]
+        boss_damage_rate = datatable["PB_DT_CoordinateParameter"][difficulty + "BossDamageRate"]["Value"]
+    for brv_entry in datatable["PB_DT_BRVAttackDamage"]:
         #Getting enemy strength as if level 45
         target_level = 45
-        if Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Zangetsu":
+        if datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Zangetsu":
             base = calculate_stat_with_level("N1011_STRONG", target_level, "STR")
-        elif Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Dominique":
+        elif datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Dominique":
             base = calculate_stat_with_level("N1009_Enemy", target_level, "STR")
-        elif Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Miriam":
+        elif datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Miriam":
             base = calculate_stat_with_level("N0000", target_level, "STR")
         #Multiplier for crits on Gremory
-        if Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["IsZangetsutoAttack"]:
+        if datatable["PB_DT_BRVAttackDamage"][brv_entry]["IsZangetsutoAttack"]:
             critical = 2.5
         else:
             critical = 1.0
@@ -547,19 +543,19 @@ def update_brv_damage(difficulty):
         #This brv_entry has a different name than the corresponding boss revenge one
         if brv_entry == "N1008_Moon_Attack_01_Burst":
             for attr in main_resistances:
-                if Manager.datatable["PB_DT_DamageMaster"]["N1008_Moon_Attack_Screen"][attr]:
+                if datatable["PB_DT_DamageMaster"]["N1008_Moon_Attack_Screen"][attr]:
                     attribute.append(attr)
         #This brv_entry is shared for all of Zangetsu's Flying Vajra elemental versions in boss revenge so average its damage multiplier between the 3 elements
         elif brv_entry == "N1011_ATTACK_EXPLOSION":
-            multiplier = (Manager.datatable["PB_DT_DamageMaster"]["N1011_ATTACK_ICE_EXPLOSION"]["STR_Correction"] + Manager.datatable["PB_DT_DamageMaster"]["N1011_ATTACK_FIRE_EXPLOSION"]["STR_Correction"])/2
+            multiplier = (datatable["PB_DT_DamageMaster"]["N1011_ATTACK_ICE_EXPLOSION"]["STR_Correction"] + datatable["PB_DT_DamageMaster"]["N1011_ATTACK_FIRE_EXPLOSION"]["STR_Correction"])/2
         #Rest is straightforward
         else:
-            for damage_entry in Manager.datatable["PB_DT_DamageMaster"]:
+            for damage_entry in datatable["PB_DT_DamageMaster"]:
                 if brv_entry in damage_entry:
-                    multiplier = Manager.datatable["PB_DT_DamageMaster"][damage_entry]["STR_Correction"]
+                    multiplier = datatable["PB_DT_DamageMaster"][damage_entry]["STR_Correction"]
                     if brv_entry == damage_entry:
                         for attr in main_resistances:
-                            if Manager.datatable["PB_DT_DamageMaster"][damage_entry][attr]:
+                            if datatable["PB_DT_DamageMaster"][damage_entry][attr]:
                                 attribute.append(attr)
                         break
             if multiplier == 0.0:
@@ -574,13 +570,13 @@ def update_brv_damage(difficulty):
         miriam      = 0.0
         for attr in attribute:
             #Add up resistances into a multiplier and average out
-            andrealphus += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["P0004"][attr]/100
-            bathin      += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["P0005"][attr]/100
-            bloodless   += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["P0006"][attr]/100
-            gremory     += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["P0007"][attr]/100
-            zangetsu    += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"][attr]/100
-            dominique   += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"][attr]/100
-            miriam      += 1.0 - Manager.datatable["PB_DT_CharacterParameterMaster"]["N0000"][attr]/100
+            andrealphus += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["P0004"][attr]/100
+            bathin      += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["P0005"][attr]/100
+            bloodless   += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["P0006"][attr]/100
+            gremory     += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["P0007"][attr]/100
+            zangetsu    += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"][attr]/100
+            dominique   += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"][attr]/100
+            miriam      += 1.0 - datatable["PB_DT_CharacterParameterMaster"]["N0000"][attr]/100
         if attribute:
             andrealphus /= len(attribute)
             bathin      /= len(attribute)
@@ -599,27 +595,27 @@ def update_brv_damage(difficulty):
             dominique   = 1.0
             miriam      = 1.0
         #Calculating enemy damage
-        if Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceAndrealphus"] == 100.0 and Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceBathin"] == 100.0 and Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceBloodless"] == 100.0 and Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceGremory"] == 100.0:
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsAndrealphus"] = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*andrealphus     *boss_damage_rate, 1.0)))
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsBathin"]      = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*bathin          *boss_damage_rate, 1.0)))
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsBloodless"]   = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*bloodless       *boss_damage_rate, 1.0)))
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsGremory"]     = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*gremory*critical*boss_damage_rate, 1.0)))
+        if datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceAndrealphus"] == 100.0 and datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceBathin"] == 100.0 and datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceBloodless"] == 100.0 and datatable["PB_DT_BRVAttackDamage"][brv_entry]["ChanceGremory"] == 100.0:
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsAndrealphus"] = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*andrealphus     *boss_damage_rate, 1.0)))
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsBathin"]      = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*bathin          *boss_damage_rate, 1.0)))
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsBloodless"]   = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*bloodless       *boss_damage_rate, 1.0)))
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsGremory"]     = float(int(max(max(base*multiplier - 40 + boss_attack_add, 1.0)*gremory*critical*boss_damage_rate, 1.0)))
         #Calculating player damage
-        if brv_entry in Manager.mod_data["BossBase"]:
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsZangetsu"]    = float(int(max(Manager.mod_data["BossBase"][brv_entry]*zangetsu , 1.0)))
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsDominique"]   = float(int(max(Manager.mod_data["BossBase"][brv_entry]*dominique, 1.0)))
-            Manager.datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsMiriam"]      = float(int(max(Manager.mod_data["BossBase"][brv_entry]*miriam   , 1.0)))
+        if brv_entry in constant["BossBase"]:
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsZangetsu"]    = float(int(max(constant["BossBase"][brv_entry]*zangetsu , 1.0)))
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsDominique"]   = float(int(max(constant["BossBase"][brv_entry]*dominique, 1.0)))
+            datatable["PB_DT_BRVAttackDamage"][brv_entry]["VsMiriam"]      = float(int(max(constant["BossBase"][brv_entry]*miriam   , 1.0)))
 
 def rebalance_enemies_to_map():
     #If custom map is on then default enemy levels need to be rebalanced in order you encounter them
     convert_area_to_progress()
-    for enemy in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if not Manager.is_enemy(enemy) or enemy in static_enemies or Manager.is_final_boss(enemy):
+    for enemy in datatable["PB_DT_CharacterParameterMaster"]:
+        if not is_enemy(enemy) or enemy in static_enemies or is_final_boss(enemy):
             continue
         for suffix in ["", "BloodlessMode"]:
-            current_level = Manager.datatable["PB_DT_CharacterParameterMaster"][enemy][suffix + "DefaultEnemyLevel"]
-            if Manager.is_main_enemy(enemy):
-                current_area = Manager.mod_data["EnemyInfo"][enemy]["AreaID"]
+            current_level = datatable["PB_DT_CharacterParameterMaster"][enemy][suffix + "DefaultEnemyLevel"]
+            if is_main_enemy(enemy):
+                current_area = constant["EnemyInfo"][enemy]["AreaID"]
                 #8 Bit Nightmare
                 if current_area == "m51EBT":
                     if area_to_progress[suffix + "MapOrder"]["m06KNG"] - area_to_progress[suffix + "OriginalMapOrder"]["m06KNG"] < -2:
@@ -649,19 +645,19 @@ def rebalance_enemies_to_map():
 
 def set_custom_enemy_level(value):
     #If custom NG+ is chosen ignore random levels and assign a set value to all enemies
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if Manager.is_enemy(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_enemy(entry):
             patch_enemy_level(value, entry, "")
             patch_enemy_level(value, entry, "BloodlessMode")
 
 def randomize_enemy_levels():
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if Manager.is_enemy(entry) and not is_boss(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_enemy(entry) and not is_boss_part(entry):
             randomize_level_for(entry, enemy_level_wheight)
 
 def randomize_boss_levels():
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if is_boss(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_boss_part(entry):
             randomize_level_for(entry, boss_level_wheight)
 
 def randomize_level_for(entry, wheight):
@@ -672,84 +668,84 @@ def randomize_level_for(entry, wheight):
         else:
             max_level = 99
         #The final boss should be an average of 50 for both
-        if Manager.is_final_boss(entry):
+        if is_final_boss(entry):
             default_level = 50
         else:
-            default_level = Manager.datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
+            default_level = datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
         #Patch level
-        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, wheight), entry, suffix)
+        patch_enemy_level(random_weighted(default_level, 1, max_level, 1, wheight), entry, suffix)
 
 def randomize_enemy_tolerances():
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if Manager.is_enemy(entry) and not is_boss(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_enemy(entry) and not is_boss_part(entry):
             randomize_tolerances_for(entry, enemy_tolerance_wheight)
 
 def randomize_boss_tolerances():
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if is_boss(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_boss_part(entry):
             randomize_tolerances_for(entry, boss_tolerance_wheight)
 
 def randomize_tolerances_for(entry, wheight):
     #Don't randomize entries that are meant to guard everything
-    if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["ZAN"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DAG"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["TOT"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["FLA"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["ICE"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["LIG"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["HOL"] == 100.0 and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DAR"] == 100.0:
+    if datatable["PB_DT_CharacterParameterMaster"][entry]["ZAN"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["DAG"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["TOT"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["FLA"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["ICE"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["LIG"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["HOL"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["DAR"] == 100.0:
         return
     #Weak points
     if entry in ["N3015_HEAD", "N1001_HEAD", "N2001_HEAD"]:
         for attr in main_resistances:
-            if Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr] < -20:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = -100
+            if datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr] < -20:
+                datatable["PB_DT_CharacterParameterMaster"][entry][attr] = -100
             else:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]-80
+                datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]-80
     #Strong parts
     elif entry in ["N3108_GUARD", "N2001_ARMOR"]:
         for attr in main_resistances:
-            if Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr] > 20:
-                    Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = 100
+            if datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr] > 20:
+                    datatable["PB_DT_CharacterParameterMaster"][entry][attr] = 100
             else:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]+80
+                datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]+80
     #Bael
     elif entry[0:5] == "N1013" and entry != "N1013_Bael" or entry == "N1009_Bael":
         for attr in main_resistances:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N1013_Bael"][attr]
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"]["N1013_Bael"][attr]
     #Greedling
     elif entry == "N3125":
         for attr in main_resistances:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N2016"][attr]
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"]["N2016"][attr]
     #Dullahammer EX
     elif entry == "N3127":
         for attr in main_resistances:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N3015"][attr]
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"]["N3015"][attr]
     #Main entry
-    elif Manager.is_main_enemy(entry):
+    elif is_main_enemy(entry):
         #Use the original resistances to create an average to base the random resistances off of
         average = 0
         for attr in main_resistances:
-            average += Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr]
+            average += datatable["PB_DT_CharacterParameterMaster"][entry][attr]
         average = average/len(main_resistances)
         for attr in main_resistances:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Utility.random_weighted(round(average), -100, 100, 5, wheight)
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = random_weighted(round(average), -100, 100, 5, wheight)
     #Sub entry
     else:
         for attr in main_resistances:
-            Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][attr]
 
 def randomize_enemy_locations():
     #This needs to be done before item randomization so that the logic adapts
     #Create a dict for enemy id to their class names
-    for actor in Manager.mod_data["ActorPointer"]:
-        enemy_id = Manager.mod_data["ActorPointer"][actor]["Name"]
+    for actor in constant["ActorPointer"]:
+        enemy_id = constant["ActorPointer"][actor]["Name"]
         if enemy_id in enemy_id_to_class:
             continue
         enemy_id_to_class[enemy_id] = actor
     enemy_id_to_class["N3099"] = enemy_id_to_class["N3090"]
     #Gather portrait indexes
-    for actor in Manager.mod_data["ActorPointer"]:
+    for actor in constant["ActorPointer"]:
         if "N3100" in actor:
             available_portrait_index.append(int(actor.split("_")[2]))
     #Get enemy list
     old_enemy_slots = []
-    for enemy in Manager.mod_data["EnemyInfo"]:
-        if Manager.mod_data["EnemyInfo"][enemy]["Type"] in ["Ground", "Air", "Spawner"]:
+    for enemy in constant["EnemyInfo"]:
+        if constant["EnemyInfo"][enemy]["Type"] in ["Ground", "Air", "Spawner"]:
             old_enemy_slots.append(enemy)
     new_enemy_slots = copy.deepcopy(old_enemy_slots)
     #Shuffle enemies (special)
@@ -757,7 +753,7 @@ def randomize_enemy_locations():
         chosen = random.choice(new_enemy_slots)
         #Prevent large enemies from ending up over the morte
         if enemy == "N3003":
-            while Manager.mod_data["EnemyInfo"][chosen]["Wheight"] > Manager.mod_data["EnemyInfo"][enemy]["Wheight"]:
+            while constant["EnemyInfo"][chosen]["Wheight"] > constant["EnemyInfo"][enemy]["Wheight"]:
                 chosen = random.choice(new_enemy_slots)
         #Som enemies completely ignores any scale modifiers so prevent them from going over large enemies
         elif enemy in large_enemies:
@@ -779,13 +775,13 @@ def randomize_enemy_locations():
     if enemy_replacement["N3006"] != "N3006":
         remove_enemy_info("m01SIP_004", "N3006")
     #Update enemy location info
-    for room in Manager.mod_data["RoomRequirement"]:
+    for room in constant["RoomRequirement"]:
         #Spawns in backer rooms don't change
         if room in ["m88BKR_002", "m88BKR_004"]:
             continue
-        for door in Manager.mod_data["RoomRequirement"][room]:
-            for check in list(Manager.mod_data["RoomRequirement"][room][door]):
-                enemy_profile = Utility.split_enemy_profile(check)
+        for door in constant["RoomRequirement"][room]:
+            for check in list(constant["RoomRequirement"][room][door]):
+                enemy_profile = Item.split_enemy_profile(check)
                 #Gusions in cages don't change
                 if room in ["m07LIB_001", "m13ARC_001"] and enemy_profile[0] == "N3035":
                     continue
@@ -799,28 +795,28 @@ def randomize_enemy_locations():
                     else:
                         suffix = enemy_profile[1]
                     #Scythe Mite and 8 Bit Zombie spawners seem to fail spawning anything in rooms of resistricted sizes
-                    if not (Manager.datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] < 2 and enemy_replacement[enemy_profile[0]] in ["N3082", "N3121"]):
-                        Manager.mod_data["RoomRequirement"][room][door][enemy_replacement[enemy_profile[0]] + suffix] = Manager.mod_data["RoomRequirement"][room][door][check]
-                    del Manager.mod_data["RoomRequirement"][room][door][check]
+                    if not (datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] < 2 and enemy_replacement[enemy_profile[0]] in ["N3082", "N3121"]):
+                        constant["RoomRequirement"][room][door][enemy_replacement[enemy_profile[0]] + suffix] = constant["RoomRequirement"][room][door][check]
+                    del constant["RoomRequirement"][room][door][check]
     #Remove the Gusions from library and labs if they were scaled up
     if enemy_replacement_invert["N3035"] in large_enemies:
         remove_enemy_info("m07LIB_001", "N3035")
         remove_enemy_info("m13ARC_001", "N3035")
     
 def remove_enemy_info(room, enemy_id):
-    for door in Manager.mod_data["RoomRequirement"][room]:
-        for check in list(Manager.mod_data["RoomRequirement"][room][door]):
-            enemy_profile = Utility.split_enemy_profile(check)
+    for door in constant["RoomRequirement"][room]:
+        for check in list(constant["RoomRequirement"][room][door]):
+            enemy_profile = Item.split_enemy_profile(check)
             if enemy_profile[0] == enemy_id:
-                del Manager.mod_data["RoomRequirement"][room][door][check]
+                del constant["RoomRequirement"][room][door][check]
 
 def update_enemy_locations():
     #Actually do the removals mentioned above
     if enemy_replacement_invert["N3035"] in large_enemies:
-        Manager.remove_level_class("m07LIB_001_Gimmick", "Chr_N3035_C")
-        Manager.remove_level_class("m13ARC_001_Gimmick", "IncubatorGlass_BP_C")
+        Room.remove_level_class("m07LIB_001_Gimmick", "Chr_N3035_C")
+        Room.remove_level_class("m13ARC_001_Gimmick", "IncubatorGlass_BP_C")
     #Patch enemies in rooms
-    for room in Manager.mod_data["RoomRequirement"]:
+    for room in constant["RoomRequirement"]:
         change_room_enemies(room)
 
 def change_room_enemies(room):
@@ -828,22 +824,22 @@ def change_room_enemies(room):
     #Loop through all difficulties
     for difficulty in ["", "_Normal", "_Hard"]:
         filename = room + "_Enemy" + difficulty
-        if not filename in Manager.game_data:
+        if not filename in game_data:
             continue
         #Loop through all exports
-        for export_index in range(len(Manager.game_data[filename].Exports)):
+        for export_index in range(len(game_data[filename].Exports)):
             #Check if the export is an enemy
-            export_name = str(Manager.game_data[filename].Exports[export_index].ObjectName)
-            if int(str(Manager.game_data[filename].Exports[export_index].OuterIndex)) == 0:
+            export_name = str(game_data[filename].Exports[export_index].ObjectName)
+            if int(str(game_data[filename].Exports[export_index].OuterIndex)) == 0:
                 continue
-            class_index = int(str(Manager.game_data[filename].Exports[export_index].ClassIndex))
+            class_index = int(str(game_data[filename].Exports[export_index].ClassIndex))
             if class_index >= 0:
                 continue
-            old_class_name = str(Manager.game_data[filename].Imports[abs(class_index) - 1].ObjectName)
-            if not old_class_name in Manager.mod_data["ActorPointer"]:
+            old_class_name = str(game_data[filename].Imports[abs(class_index) - 1].ObjectName)
+            if not old_class_name in constant["ActorPointer"]:
                 continue
-            old_enemy_id = Manager.mod_data["ActorPointer"][old_class_name]["Name"]
-            if not Manager.is_enemy(old_enemy_id):
+            old_enemy_id = constant["ActorPointer"][old_class_name]["Name"]
+            if not is_enemy(old_enemy_id):
                 continue
             #The village has unused moco weeds
             if room == "m02VIL_006" and old_enemy_id == "N3066":
@@ -852,16 +848,16 @@ def change_room_enemies(room):
             if old_enemy_id == "N3090":
                 old_enemy_id = "N3099"
             #Get the old actor's properties
-            location = Manager.FVector(0, 0, 0)
-            rotation = Manager.FRotator(0, 0, 0)
-            scale    = Manager.FVector(1, 1, 1)
-            for data in Manager.game_data[filename].Exports[export_index].Data:
+            location = FVector(0, 0, 0)
+            rotation = FRotator(0, 0, 0)
+            scale    = FVector(1, 1, 1)
+            for data in game_data[filename].Exports[export_index].Data:
                 #Change it back to a dulla head if the setting is there
                 if str(data.Name) == "SpawnIsN3099":
                     old_enemy_id = "N3090"
                 if str(data.Name) == "RootComponent":
                     root_index = int(str(data.Value)) - 1
-                    for root_data in Manager.game_data[filename].Exports[root_index].Data:
+                    for root_data in game_data[filename].Exports[root_index].Data:
                         if str(root_data.Name) == "RelativeLocation":
                             location = root_data.Value[0].Value
                         if str(root_data.Name) == "RelativeRotation":
@@ -876,14 +872,14 @@ def change_room_enemies(room):
             if old_enemy_id == new_enemy_id:
                 continue
             #Remove the old enemy
-            Manager.remove_level_actor(filename, export_index)
+            Room.remove_level_actor(filename, export_index)
             #Some enemies shouldn't get replaced and only deleted
             if filename in special_enemy_removal:
                 if export_name in special_enemy_removal[filename]:
                     continue
             #If non-spawner enemies are placed over spawner ones determine an advantageous location to avoid clipping into objects
             if filename in spawner_to_advantageous_location:
-                if export_name in spawner_to_advantageous_location[filename] and Manager.mod_data["EnemyInfo"][new_enemy_id]["Type"] != "Spawner":
+                if export_name in spawner_to_advantageous_location[filename] and constant["EnemyInfo"][new_enemy_id]["Type"] != "Spawner":
                     if spawner_to_advantageous_location[filename][export_name]:
                         location.X = spawner_to_advantageous_location[filename][export_name][0]
                         location.Y = spawner_to_advantageous_location[filename][export_name][1]
@@ -891,8 +887,8 @@ def change_room_enemies(room):
                     else:
                         continue
             #Balance enemy spawns around their wheight
-            old_wheight = Manager.mod_data["EnemyInfo"][old_enemy_id]["Wheight"]
-            new_wheight = Manager.mod_data["EnemyInfo"][new_enemy_id]["Wheight"]
+            old_wheight = constant["EnemyInfo"][old_enemy_id]["Wheight"]
+            new_wheight = constant["EnemyInfo"][new_enemy_id]["Wheight"]
             if filename == "m01SIP_018_Enemy_Hard" and export_name == "N3090_Generator_50":
                 old_wheight -= 1
             #If the new wheight is higher only replace a portion of the enemy's instances
@@ -914,7 +910,7 @@ def change_room_enemies(room):
                     offset *= 1.5
                 for num in range(enemy_num):
                     horizontal_offset = -offset*(enemy_num - 1)/2 + offset*num
-                    if "Air" in Manager.mod_data["EnemyInfo"][new_enemy_id]["Type"] and not new_enemy_id in ["N3029", "N3030"]:
+                    if "Air" in constant["EnemyInfo"][new_enemy_id]["Type"] and not new_enemy_id in ["N3029", "N3030"]:
                         vertical_offset = random.uniform(-offset, offset)
                     else:
                         vertical_offset = 0
@@ -925,15 +921,15 @@ def change_room_enemies(room):
 
 def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, horizontal_offset, vertical_offset):
     room = filename.split("_Enemy")[0]
-    room_width  = Manager.datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
-    room_height = Manager.datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720
+    room_width  = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
+    room_height = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720
     hard_mode = "Hard" in filename
-    location = Manager.FVector(location.X, location.Y, location.Z)
-    rotation = Manager.FRotator(rotation.Pitch, rotation.Yaw, rotation.Roll)
-    scale    = Manager.FVector(scale.X, scale.Y, scale.Z)
+    location = FVector(location.X, location.Y, location.Z)
+    rotation = FRotator(rotation.Pitch, rotation.Yaw, rotation.Roll)
+    scale    = FVector(scale.X, scale.Y, scale.Z)
     #If the room is a rotating 3d one then use the forward vector to shift position
-    if room in Manager.rotating_room_to_center:
-        rotation.Yaw = -math.degrees(math.atan2(location.X - Manager.rotating_room_to_center[room][0], location.Y - Manager.rotating_room_to_center[room][1]))
+    if room in Room.rotating_room_to_center:
+        rotation.Yaw = -math.degrees(math.atan2(location.X - Room.rotating_room_to_center[room][0], location.Y - Room.rotating_room_to_center[room][1]))
         forward_vector = (math.sin(math.radians(rotation.Yaw))*(-1),      math.cos(math.radians(rotation.Yaw)))
         right_vector   = (math.sin(math.radians(rotation.Yaw - 90))*(-1), math.cos(math.radians(rotation.Yaw - 90)))
     else:
@@ -956,9 +952,9 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
     else:
         new_class_name = enemy_id_to_class[new_enemy_id]
     #Adjust position when necessary
-    if Manager.mod_data["EnemyInfo"][old_enemy_id]["Type"] in ["Ground", "Spawner"] and Manager.mod_data["EnemyInfo"][new_enemy_id]["Type"] == "Air":
+    if constant["EnemyInfo"][old_enemy_id]["Type"] in ["Ground", "Spawner"] and constant["EnemyInfo"][new_enemy_id]["Type"] == "Air":
         location.Z += 120
-    if Manager.mod_data["EnemyInfo"][old_enemy_id]["Type"] == "Air" and Manager.mod_data["EnemyInfo"][new_enemy_id]["Type"] in ["Ground", "Spawner"]:
+    if constant["EnemyInfo"][old_enemy_id]["Type"] == "Air" and constant["EnemyInfo"][new_enemy_id]["Type"] in ["Ground", "Spawner"]:
         location.Z -= 120
     if old_enemy_id in ["N3029", "N3030"] and room != "m03ENT_001":
         location.Z -= 200
@@ -1041,18 +1037,18 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.X = max(min(location.X, room_width  - 60), 60)
         location.Z = max(min(location.Z, room_height - 60), 60)
     #If the enemy is right next to an entrance do not add it
-    if not room in Manager.rotating_room_to_center:
+    if not room in Room.rotating_room_to_center:
         #Left
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),   "LEFT"]) in Manager.map_connections[room] and location.X%1260 <  120 and 230 < location.Z%720 < 490:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),   "LEFT"]) in Room.map_connections[room] and location.X%1260 <  120 and 230 < location.Z%720 < 490:
             return
         #Right
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "RIGHT"]) in Manager.map_connections[room] and location.X%1260 > 1140 and 230 < location.Z%720 < 490:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "RIGHT"]) in Room.map_connections[room] and location.X%1260 > 1140 and 230 < location.Z%720 < 490:
             return
         #Top
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "TOP"]) in Manager.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 > 420:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "TOP"]) in Room.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 > 420:
             return
         #Bottom
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "BOTTOM"]) in Manager.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 < 360:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "BOTTOM"]) in Room.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 < 360:
             return
     #One of the Journey rooms has a faulty persistent level export in its enemy file, so add in its bg file instead
     if room == "m20JRN_002":
@@ -1092,20 +1088,20 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
     if new_enemy_id == "N3067":
         properties["HiddenInRock"] = False
     if new_enemy_id == "N3053":
-        properties["StandbyType"]        = Manager.FName(Manager.game_data[filename], "EPBEnemyGargoyleStandbyType::Normal")
+        properties["StandbyType"]        = FName(game_data[filename], "EPBEnemyGargoyleStandbyType::Normal")
         properties["TargetNoticeRangeX"] = 1200.0
     if new_enemy_id == "N3063":
-        properties["StandbyType"] = Manager.FName(Manager.game_data[filename], "EPBEnemyDantalionEntryType::Floating")
+        properties["StandbyType"] = FName(game_data[filename], "EPBEnemyDantalionEntryType::Floating")
     if new_enemy_id == "N3064":
         properties["ChainLength"] = 350.0
         properties["IsCeiling"]   = location.Y > room_height - 360
     if new_enemy_id == "N3087":
-        properties["StandbyType"] = Manager.FName(Manager.game_data[filename], "EPBEnemyCyhiraethStandbyType::Floating")
+        properties["StandbyType"] = FName(game_data[filename], "EPBEnemyCyhiraethStandbyType::Floating")
     if new_enemy_id == "N3122":
         properties["PlayerDistanceX"] = random.uniform( 90.0, 630.0)
         properties["PlayerDistanceZ"] = random.uniform(180.0, 360.0)
     #Add the new enemy
-    Manager.add_level_actor(filename, new_class_name, location, rotation, scale, properties)
+    Room.add_level_actor(filename, new_class_name, location, rotation, scale, properties)
     #If it is a cannon enemy then potentially add extra stacks
     if new_enemy_id == "N3005":
         stack_num = random.randint(1, 3)
@@ -1122,19 +1118,19 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         return
     for num in range(stack_num - 1):
         location.Z += offset
-        Manager.add_level_actor(filename, new_class_name, location, rotation, scale, properties)
+        Room.add_level_actor(filename, new_class_name, location, rotation, scale, properties)
 
 def restore_enemy_scaling():
     #After randomizing enemies keep the difficulty progression the same by making them inherit original properties
     original_enemy_levels = {}
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if Manager.is_enemy(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if is_enemy(entry):
             original_enemy_levels[entry] = {}
-            original_enemy_levels[entry]["Miriam"]    = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-            original_enemy_levels[entry]["Bloodless"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"]
+            original_enemy_levels[entry]["Miriam"]    = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+            original_enemy_levels[entry]["Bloodless"] = datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"]
     #Update enemy levels
-    for entry in Manager.datatable["PB_DT_CharacterParameterMaster"]:
-        if not Manager.is_enemy(entry):
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        if not is_enemy(entry):
             continue
         enemy_id = entry[0:5]
         if enemy_id in enemy_replacement:
@@ -1142,68 +1138,68 @@ def restore_enemy_scaling():
             patch_enemy_level(original_enemy_levels[enemy_replacement_invert[enemy_id]]["Bloodless"], entry, "BloodlessMode")
             #Den enemies that are placed in the overworld struggle to fit in most places so shrink them down a bit
             if enemy_id in large_enemies and not enemy_replacement_invert[enemy_id] in large_enemies:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleRadius"]     /= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleHeight"]     /= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleX"]        /= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleY"]        /= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleZ"]        /= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]             *= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"]             *= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]      *= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP99Enemy"]      *= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = round(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]*0.8125)
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = round(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]*0.8125)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleRadius"]     /= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleHeight"]     /= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleX"]        /= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleY"]        /= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleZ"]        /= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]             *= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"]             *= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]      *= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP99Enemy"]      *= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = round(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]*0.8125)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]*0.8125)
             #On the other hand increase the size of overworld enemies placed in the Den
             if not enemy_id in large_enemies and enemy_replacement_invert[enemy_id] in large_enemies:
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleRadius"]     *= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleHeight"]     *= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleX"]        *= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleY"]        *= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleZ"]        *= 1.5
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]             /= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"]             /= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]      /= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP99Enemy"]      /= 0.8125
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = round(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]/0.8125)
-                Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = round(Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]/0.8125)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleRadius"]     *= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["CapsuleHeight"]     *= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleX"]        *= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleY"]        *= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MeshScaleZ"]        *= 1.5
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP"]             /= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP"]             /= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxHP99Enemy"]      /= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["MaxMP99Enemy"]      /= 0.8125
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]        = round(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience"]/0.8125)
+                datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"] = round(datatable["PB_DT_CharacterParameterMaster"][entry]["Experience99Enemy"]/0.8125)
     #Update enemy area info
     enemy_id_to_archive = {}
-    for entry in Manager.datatable["PB_DT_ArchiveEnemyMaster"]:
-        enemy_id_to_archive[Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"]] = entry
-    for entry in Manager.datatable["PB_DT_ArchiveEnemyMaster"]:
-        enemy_id = Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"]
+    for entry in datatable["PB_DT_ArchiveEnemyMaster"]:
+        enemy_id_to_archive[datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"]] = entry
+    for entry in datatable["PB_DT_ArchiveEnemyMaster"]:
+        enemy_id = datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"]
         if enemy_id in enemy_replacement:
             if enemy_replacement_invert[enemy_id] in enemy_id_to_archive:
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area1"]
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area2"]
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area3"]
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area4"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area1"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area2"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area3"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area4"]
             else:
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = "None"
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = "None"
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = "None"
-                Manager.datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = "None"
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = "None"
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = "None"
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = "None"
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = "None"
 
 def patch_enemy_level(value, entry, extra):
     #Make Zangetsu ally's level shared with Ultimate
     if entry == "N1011_COOP":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"][extra + "DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = datatable["PB_DT_CharacterParameterMaster"]["N1011_STRONG"][extra + "DefaultEnemyLevel"]
     #Make Dom's level be the inverse of the chosen value
     elif entry == "N1009_Enemy":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(value - 100)
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(value - 100)
     #Make it so that Bael and Dom's levels combined always equal 100
     #This ensures that the final fight is never too easy or too hard
-    elif Manager.is_final_boss(entry):
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(Manager.datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"][extra + "DefaultEnemyLevel"] - 100)
+    elif is_final_boss(entry):
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = abs(datatable["PB_DT_CharacterParameterMaster"]["N1009_Enemy"][extra + "DefaultEnemyLevel"] - 100)
     #Greedling is shared with Breeder despite having a completely different ID
     elif entry == "N3125":
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"]["N2016"][extra + "DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = datatable["PB_DT_CharacterParameterMaster"]["N2016"][extra + "DefaultEnemyLevel"]
     #Main
-    elif Manager.is_main_enemy(entry):
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = value
+    elif is_main_enemy(entry):
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = value
     #Give sub entries the level of the main
     else:
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][extra + "DefaultEnemyLevel"]
+        datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"] = datatable["PB_DT_CharacterParameterMaster"][entry[0:5]][extra + "DefaultEnemyLevel"]
     
     #While physical and elemental resistances can be random status effect ones should scale with the enemy's level
     #Otherwise some enemies made strong could be easily one shot with petrifying weapons and whatnot
@@ -1212,31 +1208,31 @@ def patch_enemy_level(value, entry, extra):
         scale_status_resistances(entry)
     
     #Make level match in all difficulties
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "HardEnemyLevel"]      = Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
-    Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "NightmareEnemyLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
+    datatable["PB_DT_CharacterParameterMaster"][entry][extra + "HardEnemyLevel"]      = datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
+    datatable["PB_DT_CharacterParameterMaster"][entry][extra + "NightmareEnemyLevel"] = datatable["PB_DT_CharacterParameterMaster"][entry][extra + "DefaultEnemyLevel"]
 
 def scale_status_resistances(entry):
     for attr in status_resistances:
-        attr_num = Manager.original_enemy_stats[entry][attr]
+        attr_num = original_enemy_stats[entry][attr]
         #Bosses should always be immune to stone
-        if attr == "STO" and Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] == "EPBStoneType::Boss":
+        if attr == "STO" and datatable["PB_DT_CharacterParameterMaster"][entry]["StoneType"] == "EPBStoneType::Boss":
             continue
         #If an enemy is by default immune to all status effects keep it that way
-        if Manager.original_enemy_stats[entry]["POI"] == 100.0 and Manager.original_enemy_stats[entry]["CUR"] == 100.0 and Manager.original_enemy_stats[entry]["STO"] >= 99.0 and Manager.original_enemy_stats[entry]["SLO"] == 100.0:
+        if original_enemy_stats[entry]["POI"] == 100.0 and original_enemy_stats[entry]["CUR"] == 100.0 and original_enemy_stats[entry]["STO"] >= 99.0 and original_enemy_stats[entry]["SLO"] == 100.0:
             continue
         #Gain
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_enemy_stats[entry]["Level"] + ((99 - Manager.original_enemy_stats[entry]["Level"]) * 0.10):
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > original_enemy_stats[entry]["Level"] + ((99 - original_enemy_stats[entry]["Level"]) * 0.10):
             attr_num += 25.0
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > Manager.original_enemy_stats[entry]["Level"] + ((99 - Manager.original_enemy_stats[entry]["Level"]) * 0.55):
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > original_enemy_stats[entry]["Level"] + ((99 - original_enemy_stats[entry]["Level"]) * 0.55):
             attr_num += 25.0
         if attr == "STO":
             attr_num = min(attr_num, 99.99)
         else:
             attr_num = min(attr_num, 100.0)
         #Loss
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_enemy_stats[entry]["Level"] * 0.90:
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < original_enemy_stats[entry]["Level"] * 0.90:
             attr_num = math.ceil(attr_num - 25.0)
-        if Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < Manager.original_enemy_stats[entry]["Level"] * 0.45:
+        if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < original_enemy_stats[entry]["Level"] * 0.45:
             attr_num -= 25.0
         if attr == "STO":
             attr_num = max(attr_num, 50.0)
@@ -1244,30 +1240,174 @@ def scale_status_resistances(entry):
             attr_num = max(attr_num, 25.0)
         else:
             attr_num = max(attr_num, 0.0)
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry][attr] = attr_num
+        datatable["PB_DT_CharacterParameterMaster"][entry][attr] = attr_num
 
 def update_special_properties():
     #Make sure Vepar has double health in Bloodless mode otherwise the fight is always too short
     for entry in ["N1001", "N1001_HEAD"]:
-        Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyHPOverride"] = int(calculate_stat_with_level(entry, Manager.datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
+        datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeEnemyHPOverride"] = int(calculate_stat_with_level(entry, datatable["PB_DT_CharacterParameterMaster"][entry]["BloodlessModeDefaultEnemyLevel"], "MaxHP")*2.0)
     #Update Gebel's health threshold for the red moon based on his level
-    Manager.datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(calculate_stat_with_level("N1012", Manager.datatable["PB_DT_CharacterParameterMaster"]["N1012"]["DefaultEnemyLevel"], "MaxHP")*0.15)
+    datatable["PB_DT_CoordinateParameter"]["FakeMoon_ChangeHPThreshold"]["Value"] = int(calculate_stat_with_level("N1012", datatable["PB_DT_CharacterParameterMaster"]["N1012"]["DefaultEnemyLevel"], "MaxHP")*0.15)
+
+def add_enemy_to_archive(entry_index, enemy_id, area_ids, package_path, copy_from):
+    last_id = int(list(datatable["PB_DT_ArchiveEnemyMaster"])[-1].split("_")[-1])
+    entry_id = "Enemy_" + "{:03d}".format(last_id + 1)
+    for entry in datatable["PB_DT_ArchiveEnemyMaster"]:
+        if datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"] == copy_from:
+            new_entry = copy.deepcopy(datatable["PB_DT_ArchiveEnemyMaster"][entry])
+            break
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id] = new_entry
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["UniqueID"] = enemy_id
+    for index in range(4):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(index + 1)] = "None"
+    for index in range(len(area_ids)):
+        datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(index + 1)] = area_ids[index]
+    datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path
+    datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = entry_index
+
+def add_hard_enemy_patterns():
+    #Some major enemies in vanilla lack any form of patterns changes on harder difficulties making them feel underwhelming compared to the rest
+    #However this needs to only be done if hard or nightmare is chosen within the mod since those properties would be shared between all difficulties in-game
+    
+    #Increase Bomber Morte explosion radius
+    datatable["PB_DT_BulletMaster"]["N3024_BOMB_BaudRideBlast"]["BeginEffectBeginScale"] *= 2.0
+    datatable["PB_DT_BulletMaster"]["N3024_BOMB_BaudRideBlast"]["BeginEffectEndScale"]   *= 2.0
+    
+    datatable["PB_DT_CollisionMaster"]["N3024_EXPLOSION"]["R00"] *= 2.0
+    datatable["PB_DT_CollisionMaster"]["N3024_EXPLOSION"]["R01"] *= 2.0
+    
+    #Increase Millionaire melon explosion radius
+    datatable["PB_DT_BulletMaster"]["N3108_Bomb_Explosion"]["BeginEffectBeginScale"] *= 1.5
+    datatable["PB_DT_BulletMaster"]["N3108_Bomb_Explosion"]["BeginEffectEndScale"]   *= 1.5
+    
+    datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R00"] *= 1.5
+    datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R01"] *= 1.5
+    
+    #Increase OD's fire sword explosion radius
+    datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectBeginScale"] *= 4.0
+    datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectEndScale"]   *= 4.0
+    
+    datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R00"] *= 4.0
+    datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R01"] *= 4.0
+    
+    #Speeding up Bael's animation play rate doesn't work well so instead speed up and expand all of his projectiles
+    datatable["PB_DT_BallisticMaster"]["N1009_RAY"]["InitialSpeed"]        *= 2.0
+    datatable["PB_DT_BallisticMaster"]["N1013_TracerRay"]["InitialSpeed"]  *= 6.0
+    datatable["PB_DT_BallisticMaster"]["N1013_RingLasers"]["InitialSpeed"] *= 8.0
+    
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectBeginScale"]      *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectEndScale"]        *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["BeginEffectBeginScale"] *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["BeginEffectEndScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EndEffectBeginScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EndEffectEndScale"]     *= 2.5
+    
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EffectBeginScale"]      *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EffectEndScale"]        *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["BeginEffectBeginScale"] *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["BeginEffectEndScale"]   *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EndEffectBeginScale"]   *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EndEffectEndScale"]     *= 1.5
+    
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EffectBeginScale"]      *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EffectEndScale"]        *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["BeginEffectBeginScale"] *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["BeginEffectEndScale"]   *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectBeginScale"]   *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectEndScale"]     *= 2.0
+    
+    datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectBeginScale"]    *= 1.9
+    datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectEndScale"]      *= 1.9
+    datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectBeginScale"] *= 1.9
+    datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectEndScale"]   *= 1.9
+    
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectBeginScale"]      *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectEndScale"]        *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["BeginEffectBeginScale"] *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["BeginEffectEndScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EndEffectBeginScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EndEffectEndScale"]     *= 2.5
+    
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EffectBeginScale"]      *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EffectEndScale"]        *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["BeginEffectBeginScale"] *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["BeginEffectEndScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EndEffectBeginScale"]   *= 2.5
+    datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EndEffectEndScale"]     *= 2.5
+    
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EffectBeginScale"]      *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EffectEndScale"]        *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["BeginEffectBeginScale"] *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["BeginEffectEndScale"]   *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EndEffectBeginScale"]   *= 1.5
+    datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EndEffectEndScale"]     *= 1.5
+    
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EffectBeginScale"]      *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EffectEndScale"]        *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["BeginEffectBeginScale"] *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["BeginEffectEndScale"]   *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EndEffectBeginScale"]   *= 2.0
+    datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EndEffectEndScale"]     *= 2.0
+    
+    datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull"]["R00"] *= 2.5
+    datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull"]["R01"] *= 2.5
+    
+    datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull_Explosion"]["R00"] *= 2.5
+    datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull_Explosion"]["R01"] *= 2.5
+    
+    datatable["PB_DT_CollisionMaster"]["N1013_Bubbles"]["R00"] *= 1.5
+    datatable["PB_DT_CollisionMaster"]["N1013_Bubbles"]["R01"] *= 1.5
+    
+    datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R00"] *= 2.0
+    datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R01"] *= 2.0
+    
+    datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R00"] *= 1.9
+    datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R01"] *= 1.9
+    
+    datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["STR_Correction"] = 1.0
+    datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["INT_Correction"] = 1.0
+
+def calculate_stat_with_level(entry, level, stat_name):
+    #Calculate a stat based on the enemy's level in a way nearly identical to how the game calculates it
+    #Though sometimes it can be 1 unit off
+    return int(((datatable["PB_DT_CharacterParameterMaster"][entry][stat_name + "99Enemy"] - datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])/98)*(level-1) + datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])
+
+def is_enemy(character):
+    if is_main_enemy(character):
+        return True
+    if character[0:5] in constant["EnemyInfo"]:
+        return list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar")
+    return is_final_boss(character)
+
+def is_main_enemy(character):
+    return character in constant["EnemyInfo"]
+
+def is_boss(character):
+    if is_enemy(character):
+        return datatable["PB_DT_CharacterParameterMaster"][character]["IsBoss"] and character != "N2008_BOSS" or character[0:5] in ["N3106", "N3107", "N3108"]
+    return False
+
+def is_boss_part(character):
+    return is_boss(character) or character in ["N1001_Tentacle", "N3125"]
+
+def is_final_boss(character):
+    return character[0:5] in ["N1009", "N1013"]
 
 def create_log():
     log = {}
-    for enemy in Manager.mod_data["EnemyInfo"]:
-        enemy_name = Manager.translation["Enemy"][enemy]
+    for enemy in constant["EnemyInfo"]:
+        enemy_name = translation["Enemy"][enemy]
         log[enemy_name] = {}
-        log[enemy_name]["DefaultLevel"]   = Manager.datatable["PB_DT_CharacterParameterMaster"][enemy]["DefaultEnemyLevel"]
-        log[enemy_name]["BloodlessLevel"] = Manager.datatable["PB_DT_CharacterParameterMaster"][enemy]["BloodlessModeDefaultEnemyLevel"]
+        log[enemy_name]["DefaultLevel"]   = datatable["PB_DT_CharacterParameterMaster"][enemy]["DefaultEnemyLevel"]
+        log[enemy_name]["BloodlessLevel"] = datatable["PB_DT_CharacterParameterMaster"][enemy]["BloodlessModeDefaultEnemyLevel"]
         log[enemy_name]["Resistances"] = {}
         for attr in main_resistances:
-            log[enemy_name]["Resistances"][attr] = int(Manager.datatable["PB_DT_CharacterParameterMaster"][enemy][attr])
+            log[enemy_name]["Resistances"][attr] = int(datatable["PB_DT_CharacterParameterMaster"][enemy][attr])
         for attr in status_resistances:
-            log[enemy_name]["Resistances"][attr] = int(Manager.datatable["PB_DT_CharacterParameterMaster"][enemy][attr])
+            log[enemy_name]["Resistances"][attr] = int(datatable["PB_DT_CharacterParameterMaster"][enemy][attr])
         if enemy in enemy_replacement:
             if enemy_replacement[enemy] != enemy:
-                log[enemy_name]["Position"] = Manager.translation["Enemy"][enemy_replacement_invert[enemy]]
+                log[enemy_name]["Position"] = translation["Enemy"][enemy_replacement_invert[enemy]]
             else:
                 log[enemy_name]["Position"] = "Unchanged"
         else:
@@ -1275,113 +1415,3 @@ def create_log():
         if enemy == "N0000":
             break
     return log
-
-def calculate_stat_with_level(entry, level, stat_name):
-    #Calculate a stat based on the enemy's level in a way nearly identical to how the game calculates it
-    #Though sometimes it can be 1 unit off
-    return int(((Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name + "99Enemy"] - Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])/98)*(level-1) + Manager.datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])
-
-def is_boss(character):
-    return Manager.is_boss(character) or character in ["N1001_Tentacle", "N3125"]
-
-def add_hard_enemy_patterns():
-    #Some major enemies in vanilla lack any form of patterns changes on harder difficulties making them feel underwhelming compared to the rest
-    #However this needs to only be done if hard or nightmare is chosen within the mod since those properties would be shared between all difficulties in-game
-    
-    #Increase Bomber Morte explosion radius
-    Manager.datatable["PB_DT_BulletMaster"]["N3024_BOMB_BaudRideBlast"]["BeginEffectBeginScale"] *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N3024_BOMB_BaudRideBlast"]["BeginEffectEndScale"]   *= 2.0
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N3024_EXPLOSION"]["R00"] *= 2.0
-    Manager.datatable["PB_DT_CollisionMaster"]["N3024_EXPLOSION"]["R01"] *= 2.0
-    
-    #Increase Millionaire melon explosion radius
-    Manager.datatable["PB_DT_BulletMaster"]["N3108_Bomb_Explosion"]["BeginEffectBeginScale"] *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N3108_Bomb_Explosion"]["BeginEffectEndScale"]   *= 1.5
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R00"] *= 1.5
-    Manager.datatable["PB_DT_CollisionMaster"]["N3108_BOMB_EXPLOSION"]["R01"] *= 1.5
-    
-    #Increase OD's fire sword explosion radius
-    Manager.datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectBeginScale"] *= 4.0
-    Manager.datatable["PB_DT_BulletMaster"]["N2012_Magic_FireExplosion"]["BeginEffectEndScale"]   *= 4.0
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R00"] *= 4.0
-    Manager.datatable["PB_DT_CollisionMaster"]["N2012_Magic_FireExplosion"]["R01"] *= 4.0
-    
-    #Speeding up Bael's animation play rate doesn't work well so instead speed up and expand all of his projectiles
-    Manager.datatable["PB_DT_BallisticMaster"]["N1009_RAY"]["InitialSpeed"]        *= 2.0
-    Manager.datatable["PB_DT_BallisticMaster"]["N1013_TracerRay"]["InitialSpeed"]  *= 6.0
-    Manager.datatable["PB_DT_BallisticMaster"]["N1013_RingLasers"]["InitialSpeed"] *= 8.0
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectBeginScale"]      *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EffectEndScale"]        *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["BeginEffectBeginScale"] *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["BeginEffectEndScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EndEffectBeginScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull"]["EndEffectEndScale"]     *= 2.5
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EffectBeginScale"]      *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EffectEndScale"]        *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["BeginEffectBeginScale"] *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["BeginEffectEndScale"]   *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EndEffectBeginScale"]   *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles"]["EndEffectEndScale"]     *= 1.5
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EffectBeginScale"]      *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EffectEndScale"]        *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["BeginEffectBeginScale"] *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["BeginEffectEndScale"]   *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectBeginScale"]   *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasers"]["EndEffectEndScale"]     *= 2.0
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectBeginScale"]    *= 1.9
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EffectEndScale"]      *= 1.9
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectBeginScale"] *= 1.9
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Screech"]["EndEffectEndScale"]   *= 1.9
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectBeginScale"]      *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EffectEndScale"]        *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["BeginEffectBeginScale"] *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["BeginEffectEndScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EndEffectBeginScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Explosion"]["EndEffectEndScale"]     *= 2.5
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EffectBeginScale"]      *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EffectEndScale"]        *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["BeginEffectBeginScale"] *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["BeginEffectEndScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EndEffectBeginScale"]   *= 2.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_FlameSkull_Destroyed"]["EndEffectEndScale"]     *= 2.5
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EffectBeginScale"]      *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EffectEndScale"]        *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["BeginEffectBeginScale"] *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["BeginEffectEndScale"]   *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EndEffectBeginScale"]   *= 1.5
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_Bubbles_Destroyed"]["EndEffectEndScale"]     *= 1.5
-    
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EffectBeginScale"]      *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EffectEndScale"]        *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["BeginEffectBeginScale"] *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["BeginEffectEndScale"]   *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EndEffectBeginScale"]   *= 2.0
-    Manager.datatable["PB_DT_BulletMaster"]["N1013_RingLasersImpact"]["EndEffectEndScale"]     *= 2.0
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull"]["R00"] *= 2.5
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull"]["R01"] *= 2.5
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull_Explosion"]["R00"] *= 2.5
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_FlameSkull_Explosion"]["R01"] *= 2.5
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Bubbles"]["R00"] *= 1.5
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Bubbles"]["R01"] *= 1.5
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R00"] *= 2.0
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_RingLasers"]["R01"] *= 2.0
-    
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R00"] *= 1.9
-    Manager.datatable["PB_DT_CollisionMaster"]["N1013_Screech"]["R01"] *= 1.9
-    
-    Manager.datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["STR_Correction"] = 1.0
-    Manager.datatable["PB_DT_DamageMaster"]["N1013_RingLasers"]["INT_Correction"] = 1.0

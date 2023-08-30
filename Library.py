@@ -1,7 +1,4 @@
-import Manager
-import Utility
-import random
-from enum import Enum
+from Manager import*
 
 class ReqCurve(Enum):
     Concave = 0
@@ -22,11 +19,11 @@ def randomize_library_requirements():
     for num in range(20):
         match requirement_wheight:
             case ReqCurve.Concave:
-                completion = round(Utility.squircle(num/20, 1.5)*100)
+                completion = round(squircle(num/20, 1.5)*100)
             case ReqCurve.Linear:
                 completion = round(num*5)
             case ReqCurve.Domed:
-                completion = round(Utility.invert_squircle(num/20, 1.5)*100)
+                completion = round(invert_squircle(num/20, 1.5)*100)
         property_list.append((completion, num % 2 == 0))
     property_list.append((99, True))
     #Assign tome of conquest
@@ -35,33 +32,38 @@ def randomize_library_requirements():
         chosen = random.choice(property_list)
     property_list.remove(chosen)
     tome_to_properties["Bookofthechampion"] = chosen
-    Manager.datatable["PB_DT_BookMaster"]["Bookofthechampion"]["RoomTraverseThreshold"] = chosen[0]
+    datatable["PB_DT_BookMaster"]["Bookofthechampion"]["RoomTraverseThreshold"] = chosen[0]
     #Assign the rest
-    for entry in Manager.datatable["PB_DT_BookMaster"]:
+    for entry in datatable["PB_DT_BookMaster"]:
         if entry in ["Dummy", "Bookofthechampion"]:
             continue
-        tome_to_properties[entry] = Utility.pick_and_remove(property_list)
-        Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"] = tome_to_properties[entry][0]
+        tome_to_properties[entry] = pick_and_remove(property_list)
+        datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"] = tome_to_properties[entry][0]
 
 def randomize_tome_appearance():
     #If requirements were randomized remove tomes that have uneven indexes
     if tome_to_properties:
-        for entry in Manager.datatable["PB_DT_BookMaster"]:
+        for entry in datatable["PB_DT_BookMaster"]:
             if entry in ["Dummy", "Bookofthechampion"]:
                 continue
-            Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"] = tome_to_properties[entry][1]
+            datatable["PB_DT_BookMaster"][entry]["IslibraryBook"] = tome_to_properties[entry][1]
     #If requirements are vanilla remove 10 tomes at complete random
     else:
-        book_list = list(Manager.datatable["PB_DT_BookMaster"])
+        book_list = list(datatable["PB_DT_BookMaster"])
         book_list.remove("Dummy")
         book_list.remove("Bookofthechampion")
         for num in range(10):
-            chosen = Utility.pick_and_remove(book_list)
-            Manager.datatable["PB_DT_BookMaster"][chosen]["IslibraryBook"] = False
+            chosen = pick_and_remove(book_list)
+            datatable["PB_DT_BookMaster"][chosen]["IslibraryBook"] = False
+
+def pick_and_remove(array):
+    item = random.choice(array)
+    array.remove(item)
+    return item
 
 def create_log():
     log = {}
-    for entry in Manager.datatable["PB_DT_BookMaster"]:
-        if Manager.datatable["PB_DT_BookMaster"][entry]["IslibraryBook"]:
-            log[Manager.translation["Item"][entry]] = Manager.datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"]
+    for entry in datatable["PB_DT_BookMaster"]:
+        if datatable["PB_DT_BookMaster"][entry]["IslibraryBook"]:
+            log[translation["Item"][entry]] = datatable["PB_DT_BookMaster"][entry]["RoomTraverseThreshold"]
     return log

@@ -1,10 +1,4 @@
-import Manager
-import Utility
-import Item
-import random
-import os
-import copy
-from enum import Enum
+from Manager import*
 
 class CheckType(Enum):
     Door   = 0
@@ -139,8 +133,8 @@ def candle_logic():
         for door in copy.deepcopy(current_available_doors):
             current_available_doors.remove(door)
             room = Item.get_door_room(door)
-            if room in Manager.mod_data["BloodlessRoomRequirement"]:
-                for check, requirement in Manager.mod_data["BloodlessRoomRequirement"][room][door].items():
+            if room in constant["BloodlessRoomRequirement"]:
+                for check, requirement in constant["BloodlessRoomRequirement"][room][door].items():
                     #Don't automatically unlock certain checks
                     if check in ["TO_BIG_000_START", "ICE_015_0_0_LEFT", "ICE_015_1_0_RIGHT"]:
                         if check in special_check_to_door:
@@ -150,7 +144,7 @@ def candle_logic():
                         continue
                     analyse_check(check, requirement)
             else:
-                for subdoor in Manager.map_connections[room]:
+                for subdoor in Room.map_connections[room]:
                     if subdoor == door:
                         continue
                     analyse_check(subdoor, [])
@@ -160,12 +154,12 @@ def candle_logic():
         #Check special requirements
         if "TO_BIG_000_START" in special_check_to_door and den_portal_available():
             for door in special_check_to_door["TO_BIG_000_START"]:
-                analyse_check("TO_BIG_000_START", Manager.mod_data["BloodlessRoomRequirement"][Item.get_door_room(door)][door]["TO_BIG_000_START"])
+                analyse_check("TO_BIG_000_START", constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door]["TO_BIG_000_START"])
             del special_check_to_door["TO_BIG_000_START"]
         for check in ["ICE_015_0_0_LEFT", "ICE_015_1_0_RIGHT"]:
             if check in special_check_to_door and wall_room_available():
                 for door in special_check_to_door[check]:
-                    analyse_check(check, Manager.mod_data["BloodlessRoomRequirement"][Item.get_door_room(door)][door][check])
+                    analyse_check(check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][check])
                 del special_check_to_door[check]
         #Keep going until stuck
         if current_available_doors:
@@ -247,7 +241,7 @@ def analyse_check(check, requirement):
 def get_check_type(check):
     if check in all_candles:
         return CheckType.Candle
-    if check in Manager.mod_data["EnemyInfo"] or check == "N2008_BOSS":
+    if check in constant["EnemyInfo"] or check == "N2008_BOSS":
         return CheckType.Boss
     return CheckType.Door
 
@@ -292,28 +286,33 @@ def randomize_bloodless_candles():
     for item in all_abilities:
         if item in key_abilities:
             continue
-        chosen_room = Utility.pick_and_remove(all_candles)
+        chosen_room = pick_and_remove(all_candles)
         bloodless_datatable[item] = chosen_room
 
 def update_shard_candles():
     #All of Bloodless' abilities are stored inside of shard candles
     #Just like for Miriam those are defined inside of the level files
     for item in bloodless_datatable:
-        Manager.search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
+        search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
 
 def increase_starting_stats():
     #Give Bloodless 4 of each stat to start with
     for stat in ["STR", "INT", "CON", "MND"]:
         for index in range(4):
-            Manager.datatable["PB_DT_BloodlessAbilityData"]["BLD_ABILITY_" + stat + "_UP_" + str(index + 1)]["IsUnlockedByDefault"] = True
+            datatable["PB_DT_BloodlessAbilityData"]["BLD_ABILITY_" + stat + "_UP_" + str(index + 1)]["IsUnlockedByDefault"] = True
 
 def remove_gremory_cutscene():
     #Remove the new cutscene when entering the Gremory fight since it causes a softlock on custom maps
-    Manager.datatable["PB_DT_EventFlagMaster"]["Event_15_001_0000"]["Id"]          = Manager.datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
-    Manager.datatable["PB_DT_EventFlagMaster"]["Event_15_geki_End"]["Id"]          = Manager.datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
-    Manager.datatable["PB_DT_EventFlagMaster"]["Event_15_Cine_End"]["Id"]          = Manager.datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
-    Manager.datatable["PB_DT_EventFlagMaster"]["Event_15_N1008_BattleStart"]["Id"] = Manager.datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
-    Manager.datatable["PB_DT_RoomMaster"]["m18ICE_018"]["BgmID"] = "BGM_BOSS_B"
+    datatable["PB_DT_EventFlagMaster"]["Event_15_001_0000"]["Id"]          = datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
+    datatable["PB_DT_EventFlagMaster"]["Event_15_geki_End"]["Id"]          = datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
+    datatable["PB_DT_EventFlagMaster"]["Event_15_Cine_End"]["Id"]          = datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
+    datatable["PB_DT_EventFlagMaster"]["Event_15_N1008_BattleStart"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_24_001_0000"]["Id"]
+    datatable["PB_DT_RoomMaster"]["m18ICE_018"]["BgmID"] = "BGM_BOSS_B"
+
+def pick_and_remove(array):
+    item = random.choice(array)
+    array.remove(item)
+    return item
 
 def create_log(seed, map):
     #Log compatible with the map editor to show key item locations
@@ -323,11 +322,11 @@ def create_log(seed, map):
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
     for item in key_order:
-        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst_number(item)]] = []
+        log["Key"][translation["Bloodless"][remove_inst_number(item)]] = []
     for item in bloodless_datatable:
-        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst_number(item)]] = []
+        log["Key"][translation["Bloodless"][remove_inst_number(item)]] = []
     for item in bloodless_datatable:
-        log["Key"][Manager.translation["Bloodless"][Manager.remove_inst_number(item)]].append(Item.chest_to_room(bloodless_datatable[item]))
+        log["Key"][translation["Bloodless"][remove_inst_number(item)]].append(Item.chest_to_room(bloodless_datatable[item]))
     log["Beatable"] = final_boss_available()
     return log
 
@@ -343,14 +342,14 @@ def create_log_string(seed, map):
     log_string += "Map: " + map_name + "\n"
     log_string += "Key:\n"
     for item in key_order:
-        log_string += "  " + Manager.translation["Bloodless"][Manager.remove_inst_number(item)] + ": " + bloodless_datatable[item]
+        log_string += "  " + translation["Bloodless"][remove_inst_number(item)] + ": " + bloodless_datatable[item]
         log_string += "\n"
     for item in bloodless_datatable:
         if item in key_order:
             continue
         if "_UP_" in item:
             break
-        log_string += "  " + Manager.translation["Bloodless"][Manager.remove_inst_number(item)] + ": " + bloodless_datatable[item]
+        log_string += "  " + translation["Bloodless"][remove_inst_number(item)] + ": " + bloodless_datatable[item]
         log_string += "\n"
     log_string += "Beatable: "
     if final_boss_available():
