@@ -2332,6 +2332,7 @@ class Main(QWidget):
             
             Item.init()
             Enemy.init()
+            Room.init()
             Bloodless.init()
             
             Item.set_logic_complexity(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
