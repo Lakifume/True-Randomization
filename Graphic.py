@@ -1,4 +1,15 @@
-from Manager import*
+from System import*
+import Manager
+import Item
+import Shop
+import Library
+import Shard
+import Equipment
+import Enemy
+import Room
+import Sound
+import Bloodless
+import Utility
 
 def init():
     global material_to_offset
@@ -167,12 +178,12 @@ def init():
 
 def update_portrait_pointer(portrait, portrait_replacement):
     #Simply swap the file's name in the name map and save as the new name
-    portrait_replacement_data = UAsset(asset_dir + "\\" + file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
+    portrait_replacement_data = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
     index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString(portrait))
     index = portrait_replacement_data.SearchNameReference(FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
-    portrait_replacement_data.Write(mod_dir + "\\" + file_to_path[portrait] + "\\" + portrait + ".uasset")
+    portrait_replacement_data.Write(Manager.mod_dir + "\\" + Manager.file_to_path[portrait] + "\\" + portrait + ".uasset")
 
 def update_default_outfit_hsv(parameter_string):
     #Set the salon sliders to match the default outfit color
@@ -186,9 +197,9 @@ def update_default_outfit_hsv(parameter_string):
 def update_boss_crystal_color():
     #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
     #So update it manually in the material files
-    for file in file_to_path:
-        if file_to_type[file] == FileType.Material:
-            enemy_id = file_to_path[file].split("\\")[-2]
+    for file in Manager.file_to_path:
+        if Manager.file_to_type[file] == Manager.FileType.Material:
+            enemy_id = Manager.file_to_path[file].split("\\")[-2]
             if Enemy.is_boss(enemy_id) or enemy_id == "N2008":
                 shard_name = datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
                 shard_type = datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
@@ -198,7 +209,7 @@ def update_boss_crystal_color():
 def set_material_hsv(filename, parameter, new_hsv):
     #Change a vector color in a material file
     #Here we use hsv as a base as it is easier to work with
-    if file_to_type[filename] != FileType.Material:
+    if Manager.file_to_type[filename] != Manager.FileType.Material:
         raise TypeError("Input is not a material file")
     #Some color properties are not parsed by UAssetAPI and end up in extra data
     #Hex edit in that case
@@ -282,15 +293,15 @@ def import_mesh(filename):
             break
     if not filepath:
         raise Exception("Failed to obtain filepath of asset " + filename)
-    if not os.path.isdir(mod_dir + "\\" + filepath):
-        os.makedirs(mod_dir + "\\" + filepath)
-    new_file.Write(mod_dir + "\\" + filepath + "\\" + filename + ".uasset")
+    if not os.path.isdir(Manager.mod_dir + "\\" + filepath):
+        os.makedirs(Manager.mod_dir + "\\" + filepath)
+    new_file.Write(Manager.mod_dir + "\\" + filepath + "\\" + filename + ".uasset")
 
 def import_texture(filename):
     #Convert DDS to game assets dynamically instead of cooking them within Unreal Editor
-    absolute_asset_dir   = os.path.abspath(asset_dir + "\\" + file_to_path[filename])
+    absolute_asset_dir   = os.path.abspath(Manager.asset_dir + "\\" + Manager.file_to_path[filename])
     absolute_texture_dir = os.path.abspath("Data\\Texture")
-    absolute_mod_dir     = os.path.abspath(mod_dir + "\\" + file_to_path[filename])
+    absolute_mod_dir     = os.path.abspath(Manager.mod_dir + "\\" + Manager.file_to_path[filename])
     
     root = os.getcwd()
     os.chdir("Tools\\UE4 DDS Tools")

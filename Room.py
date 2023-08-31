@@ -1,4 +1,15 @@
-from Manager import*
+from System import*
+import Manager
+import Item
+import Shop
+import Library
+import Shard
+import Equipment
+import Enemy
+import Graphic
+import Sound
+import Bloodless
+import Utility
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -784,7 +795,7 @@ def update_room_containers(room):
             if "PBEasyTreasureBox_BP_C" in new_class_name:
                 properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
                 properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
-                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + remove_inst_number(drop_id))
+                properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + Utility.remove_inst_number(drop_id))
                 if gimmick_id:
                     properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
             else:
@@ -936,7 +947,7 @@ def fix_bathin_left_entrance():
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
         room = map_doors[door].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(room + "_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -953,7 +964,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, "dummy")
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, "dummy")
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, "m13ARC_005")
-        new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+        new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
     adjacent_room = None
     #Get Bathin's adjacent room while prioritizing the same area
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
@@ -965,7 +976,7 @@ def fix_bathin_left_entrance():
     if adjacent_room:
         room = "m13ARC_005"
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(asset_dir + "\\" + file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(room + "_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -982,7 +993,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
-        new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+        new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
 def add_global_room_pickup(room, drop_id):
     #Place an upgrade in a room at its origin
@@ -1002,13 +1013,13 @@ def add_global_room_pickup(room, drop_id):
 
 def add_game_room(room):
     area_path = "ACT" + room[1:3] + "_" + room[3:6]
-    new_file = UAsset(asset_dir + "\\" + file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
     new_file.SetNameReference(index, FString(room + "_RV"))
     index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
     new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
     new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
-    new_file.Write(mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+    new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
 
 def add_level_actor(filename, actor_class, location, rotation, scale, properties):
     actor_index = len(game_data[filename].Exports)
@@ -1030,7 +1041,7 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
                 data.Value = properties[str(data.Name)]
             del properties[str(data.Name)]
         if str(data.Name) == "ActorLabel":
-            data.Value = FString(remove_inst_number(actor_name))
+            data.Value = FString(Utility.remove_inst_number(actor_name))
         if str(data.Name) == "RootComponent":
             root_index = int(str(data.Value)) - 1
             game_data[filename].Exports[root_index].Data.Clear()
@@ -1105,7 +1116,7 @@ def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_locat
 
 def remove_level_actor(filename, export_index):
     #Remove actor at index
-    if file_to_type[filename] != FileType.Level:
+    if Manager.file_to_type[filename] != Manager.FileType.Level:
         raise TypeError("Input is not a level file")
     class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName)
     #If the actor makes use of a c_cat class removing it will crash the game
@@ -1125,7 +1136,7 @@ def remove_level_actor(filename, export_index):
                 if str(data.Name) == "RelativeLocation":
                     data.Value[0].Value = FVector(-999, 0, 0)
     else:
-        level_index = export_name_to_index(filename, "PersistentLevel")
+        level_index = Utility.export_name_to_index(filename, "PersistentLevel")
         game_data[filename].Exports[export_index].OuterIndex = FPackageIndex(0)
         game_data[filename].Exports[level_index].IndexData.Remove(export_index + 1)
         game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))

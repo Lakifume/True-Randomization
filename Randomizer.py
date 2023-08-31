@@ -1,32 +1,32 @@
-#Import subclasses
 import Manager
-import Bloodless
-import Enemy
-import Equipment
-import Graphic
 import Item
-import Library
-import Room
-import Shard
 import Shop
+import Library
+import Shard
+import Equipment
+import Enemy
+import Room
+import Graphic
 import Sound
-#Import GUI
+import Bloodless
+import Utility
+
 from PySide6.QtCore import*
 from PySide6.QtGui import*
 from PySide6.QtWidgets import*
-#Import modules
-import configparser
-import sys
+
 import os
+import sys
 import shutil
-import random
-import requests
-import zipfile
-import subprocess
-import psutil
-import glob
 import copy
 import json
+import glob
+import random
+import zipfile
+import requests
+import subprocess
+import configparser
+import psutil
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
@@ -46,9 +46,7 @@ sub_setting_length = 6
 main_widget_to_setting = {}
 sub_widget_to_setting = {}
 spin_index_to_shift = {1: 0, 2: 2, 3: 1}
-shift_to_spin_index = {}
-for index in spin_index_to_shift:
-    shift_to_spin_index[spin_index_to_shift[index]] = index
+shift_to_spin_index = {value: key for key, value in spin_index_to_shift.items()}
     
 map_num = len(glob.glob("MapEdit\\Custom\\*.json"))
 
@@ -60,9 +58,7 @@ preset_to_bytes = {
     "Risk":  0x7FFFFF,
     "Blood": 0xB80001
 }
-bytes_to_preset = {}
-for preset in preset_to_bytes:
-    bytes_to_preset[preset_to_bytes[preset]] = preset
+bytes_to_preset = {value: key for key, value in preset_to_bytes.items()}
 
 cheats = {
     "BIGTOSS": Manager.set_bigtoss_mode
@@ -241,6 +237,7 @@ class Generate(QThread):
         Graphic.init()
         Sound.init()
         Bloodless.init()
+        Utility.init()
         
         #Apply parameters
         
@@ -261,6 +258,7 @@ class Generate(QThread):
         
         Manager.apply_default_tweaks()
         Shard.set_default_shard_power()
+        Enemy.get_original_enemy_stats()
         
         #Apply cheats
         
@@ -2423,7 +2421,7 @@ class Main(QWidget):
         for item in config.get("StartWith", "sStartItem").split("|"):
             if not item:
                 continue
-            simple_name = Manager.simplify_item_name(item)
+            simple_name = Utility.simplify_item_name(item)
             if not simple_name in Manager.start_item_translation:
                 self.error("Starting item name invalid.")
                 return

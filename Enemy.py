@@ -1,4 +1,15 @@
-from Manager import*
+from System import*
+import Manager
+import Item
+import Shop
+import Library
+import Shard
+import Equipment
+import Room
+import Graphic
+import Sound
+import Bloodless
+import Utility
 
 def init():
     #Declare variables
@@ -78,6 +89,8 @@ def init():
         "N2003",
         "N3126"
     ]
+    global original_enemy_stats
+    original_enemy_stats = {}
     global current_portrait_pos
     current_portrait_pos = 0
     global enemy_id_to_class
@@ -374,19 +387,29 @@ def init():
 
 def set_enemy_level_wheight(wheight):
     global enemy_level_wheight
-    enemy_level_wheight = wheight_exponents[wheight - 1]
+    enemy_level_wheight = Utility.wheight_exponents[wheight - 1]
 
 def set_boss_level_wheight(wheight):
     global boss_level_wheight
-    boss_level_wheight = wheight_exponents[wheight - 1]
+    boss_level_wheight = Utility.wheight_exponents[wheight - 1]
 
 def set_enemy_tolerance_wheight(wheight):
     global enemy_tolerance_wheight
-    enemy_tolerance_wheight = wheight_exponents[wheight - 1]
+    enemy_tolerance_wheight = Utility.wheight_exponents[wheight - 1]
 
 def set_boss_tolerance_wheight(wheight):
     global boss_tolerance_wheight
-    boss_tolerance_wheight = wheight_exponents[wheight - 1]
+    boss_tolerance_wheight = Utility.wheight_exponents[wheight - 1]
+
+def get_original_enemy_stats():
+    #Store original enemy stats for convenience
+    for entry in datatable["PB_DT_CharacterParameterMaster"]:
+        original_enemy_stats[entry] = {}
+        original_enemy_stats[entry]["Level"] = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
+        original_enemy_stats[entry]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["POI"]
+        original_enemy_stats[entry]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["CUR"]
+        original_enemy_stats[entry]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["STO"]
+        original_enemy_stats[entry]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["SLO"]
 
 def convert_area_to_progress():
     #Adapt the area order of Bloodless mode based on her starting position
@@ -673,7 +696,7 @@ def randomize_level_for(entry, wheight):
         else:
             default_level = datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
         #Patch level
-        patch_enemy_level(random_weighted(default_level, 1, max_level, 1, wheight), entry, suffix)
+        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, wheight), entry, suffix)
 
 def randomize_enemy_tolerances():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
@@ -723,7 +746,7 @@ def randomize_tolerances_for(entry, wheight):
             average += datatable["PB_DT_CharacterParameterMaster"][entry][attr]
         average = average/len(main_resistances)
         for attr in main_resistances:
-            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = random_weighted(round(average), -100, 100, 5, wheight)
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Utility.random_weighted(round(average), -100, 100, 5, wheight)
     #Sub entry
     else:
         for attr in main_resistances:
@@ -1170,10 +1193,10 @@ def restore_enemy_scaling():
         enemy_id = datatable["PB_DT_ArchiveEnemyMaster"][entry]["UniqueID"]
         if enemy_id in enemy_replacement:
             if enemy_replacement_invert[enemy_id] in enemy_id_to_archive:
-                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area1"]
-                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area2"]
-                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area3"]
-                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area4"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area1"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area2"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area3"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area3"]
+                datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area4"] = Manager.original_datatable["PB_DT_ArchiveEnemyMaster"][enemy_id_to_archive[enemy_replacement_invert[enemy_id]]]["Area4"]
             else:
                 datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area1"] = "None"
                 datatable["PB_DT_ArchiveEnemyMaster"][entry]["Area2"] = "None"
@@ -1263,7 +1286,7 @@ def add_enemy_to_archive(entry_index, enemy_id, area_ids, package_path, copy_fro
     for index in range(len(area_ids)):
         datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["Area" + str(index + 1)] = area_ids[index]
     datatable["PB_DT_ArchiveEnemyMaster"][entry_id]["AreaInputPath"] = package_path
-    datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = entry_index
+    Manager.datatable_entry_index["PB_DT_ArchiveEnemyMaster"][entry_id] = entry_index
 
 def add_hard_enemy_patterns():
     #Some major enemies in vanilla lack any form of patterns changes on harder difficulties making them feel underwhelming compared to the rest

@@ -1,27 +1,15 @@
-import Bloodless
-import Enemy
-import Equipment
-import Graphic
+from System import*
 import Item
-import Library
-import Room
-import Shard
 import Shop
+import Library
+import Shard
+import Equipment
+import Enemy
+import Room
+import Graphic
 import Sound
-
-import os
-import clr
-import json
-import math
-import random
-import sys
-import copy
-import filecmp
-import struct
-import colorsys
-
-from enum import Enum
-from collections import OrderedDict
+import Bloodless
+import Utility
 
 class FileType(Enum):
     DataTable   = 0
@@ -32,89 +20,73 @@ class FileType(Enum):
     Texture     = 5
     Sound       = 6
 
-def simplify_item_name(name):
-    return name.replace("Familiar:", "").replace(" ", "").replace("'", "").replace("-", "").replace(".", "").replace("é", "e").replace("è", "e").replace("&", "and").lower()
-
-#Open file information
-with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
-    file_to_path = json.load(file_reader)
-translation = {}
-for file in os.listdir("Data\\Translation"):
-    name, extension = os.path.splitext(file)
-    with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
-        translation[name] = json.load(file_reader)
-start_item_translation = {}
-for string in ["Item", "Shard"]:
-    for entry in translation[string]:
-        start_item_translation[simplify_item_name(translation[string][entry])] = entry
-
-#Gather other information
-file_to_type = {}
-for file in file_to_path:
-    if "DataTable" in file_to_path[file]:
-        file_to_type[file] = FileType.DataTable
-    elif "StringTable" in file_to_path[file]:
-        file_to_type[file] = FileType.StringTable
-    elif "Level" in file_to_path[file]:
-        file_to_type[file] = FileType.Level
-    elif "Material" in file_to_path[file]:
-        file_to_type[file] = FileType.Material
-    elif "Texture" in file_to_path[file] or "UI" in file_to_path[file] and not "StartupSelecter" in file_to_path[file] and not "Title" in file_to_path[file]:
-        file_to_type[file] = FileType.Texture
-    elif "Sound" in file_to_path[file]:
-        file_to_type[file] = FileType.Sound
-    else:
-        file_to_type[file] = FileType.Blueprint
-load_types = [FileType.DataTable, FileType.Level, FileType.StringTable, FileType.Blueprint, FileType.Material, FileType.Sound]
-simplify_types = [FileType.DataTable, FileType.StringTable]
-
-mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
-asset_dir = "Game"
-
-#Open UAssetAPI module
-sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
-clr.AddReference("UAssetAPI")
-clr.AddReference("UAssetSnippet")
-
-from UAssetAPI import *
-from UAssetAPI.FieldTypes import *
-from UAssetAPI.JSON import *
-from UAssetAPI.Kismet import *
-from UAssetAPI.Kismet.Bytecode import *
-from UAssetAPI.Kismet.Bytecode.Expressions import *
-from UAssetAPI.PropertyTypes import *
-from UAssetAPI.PropertyTypes.Objects import *
-from UAssetAPI.PropertyTypes.Structs import *
-from UAssetAPI.UnrealTypes import *
-from UAssetAPI.Unversioned import *
-from UAssetSnippet import *
-
-#test = UAsset("PB_DT_DropRateMaster.uasset", UE4Version.VER_UE4_22)
-#test.AddNameReference(FString("FloatProperty"))
-#test.Write("PB_DT_DropRateMaster2.uasset")
-
 def init():
-    global datatable
-    datatable = {}
+    reset()
+    global mod_dir
+    mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
+    global asset_dir
+    asset_dir = "Game"
+    global file_to_path
+    file_to_path = {}
+    global file_to_type
+    file_to_type = {}
+    global load_types
+    load_types = [
+        FileType.DataTable,
+        FileType.Level,
+        FileType.StringTable,
+        FileType.Blueprint,
+        FileType.Material,
+        FileType.Sound
+    ]
+    global simplify_types
+    simplify_types = [
+        FileType.DataTable,
+        FileType.StringTable
+    ]
+    global data_struct
+    data_struct = {}
     global original_datatable
     original_datatable = {}
-    global stringtable
-    stringtable = {}
+    global datatable_entry_index
+    datatable_entry_index = {}
+    global start_item_translation
+    start_item_translation = {}
     global string_entry_exceptions
     string_entry_exceptions = [
         "ITEM_EXPLAIN_RolledOmelette",
         "ITEM_EXPLAIN_DiamondBullets"
     ]
-    global datatable_entry_index
-    datatable_entry_index = {}
-    global wheight_exponents
-    wheight_exponents = [3, 1.8, 1.25]
+
+def reset():
+    game_data.clear()
+    datatable.clear()
+    stringtable.clear()
+    constant.clear()
+    translation.clear()
+
+def load_file_info():
+    #Path info
+    with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
+        file_to_path.update(json.load(file_reader))
+    #Type info
+    for file in file_to_path:
+        if "DataTable" in file_to_path[file]:
+            file_to_type[file] = FileType.DataTable
+        elif "StringTable" in file_to_path[file]:
+            file_to_type[file] = FileType.StringTable
+        elif "Level" in file_to_path[file]:
+            file_to_type[file] = FileType.Level
+        elif "Material" in file_to_path[file]:
+            file_to_type[file] = FileType.Material
+        elif "Texture" in file_to_path[file] or "UI" in file_to_path[file] and not "StartupSelecter" in file_to_path[file] and not "Title" in file_to_path[file]:
+            file_to_type[file] = FileType.Texture
+        elif "Sound" in file_to_path[file]:
+            file_to_type[file] = FileType.Sound
+        else:
+            file_to_type[file] = FileType.Blueprint
 
 def load_game_data():
-    global game_data
-    game_data = {}
-    global data_struct
-    data_struct = {}
     for file in file_to_type:
         if file_to_type[file] in load_types:
             #Load all game data in one dict
@@ -133,15 +105,21 @@ def load_game_data():
                                     data_struct[str(struct.Name)] = struct
     
 def load_constant():
-    global constant
-    constant = {}
     for file in os.listdir("Data\\Constant"):
         name, extension = os.path.splitext(file)
         with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
             constant[name] = json.load(file_reader)
 
+def load_translation():
+    for file in os.listdir("Data\\Translation"):
+        name, extension = os.path.splitext(file)
+        with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
+            translation[name] = json.load(file_reader)
+    for string in ["Item", "Shard"]:
+        for entry in translation[string]:
+            start_item_translation[Utility.simplify_item_name(translation[string][entry])] = entry
+
 def load_map(path):
-    #Load map related files
     if not path:
         path = "MapEdit\\Data\\PB_DT_RoomMaster.json"
     with open(path, "r", encoding="utf8") as file_reader:
@@ -819,16 +797,6 @@ def apply_default_tweaks():
         constant["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #With this mod vanilla rando is pointless and obselete so remove its widget
     remove_vanilla_rando()
-    #Store original enemy stats for convenience
-    global original_enemy_stats
-    original_enemy_stats = {}
-    for entry in datatable["PB_DT_CharacterParameterMaster"]:
-        original_enemy_stats[entry] = {}
-        original_enemy_stats[entry]["Level"] = datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"]
-        original_enemy_stats[entry]["POI"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["POI"]
-        original_enemy_stats[entry]["CUR"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["CUR"]
-        original_enemy_stats[entry]["STO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["STO"]
-        original_enemy_stats[entry]["SLO"]   = datatable["PB_DT_CharacterParameterMaster"][entry]["SLO"]
     #Test
     #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
     #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
@@ -987,24 +955,13 @@ def remove_unchanged_files():
                 if name == file:
                     os.remove(mod_dir + "\\" + file_to_path[file] + "\\" + sub_file)
 
-def remove_inst_number(name):
-    #Return a string without its instance number the same way Unreal does it
-    name = name.split("_")
-    if name[-1][0] != "0":
-        try:
-            int(name[-1])
-            name.pop()
-        except ValueError:
-            pass
-    return "_".join(name)
-
-def export_name_to_index(filename, export_name):
-    count = 0
+def search_and_replace_string(filename, class_name, data_name, old_value, new_value):
+    #Search for a specific piece of data to change in a blueprint file and swap it
     for export in game_data[filename].Exports:
-        if str(export.ObjectName) == export_name:
-            return count
-        count += 1
-    raise Exception("Export not found")
+        if class_name == str(game_data[filename].Imports[abs(int(str(export.ClassIndex))) - 1].ObjectName):
+            for data in export.Data:
+                if str(data.Name) == data_name and str(data.Value) == old_value:
+                    data.Value = FName.FromString(game_data[filename], new_value)
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines
@@ -1013,14 +970,6 @@ def append_string_entry(file, entry, text):
     else:
         prefix = "\r\n"
     stringtable[file][entry] += prefix + text
-
-def search_and_replace_string(filename, class_name, data_name, old_value, new_value):
-    #Search for a specific piece of data to change in a blueprint file and swap it
-    for export in game_data[filename].Exports:
-        if class_name == str(game_data[filename].Imports[abs(int(str(export.ClassIndex))) - 1].ObjectName):
-            for data in export.Data:
-                if str(data.Name) == data_name and str(data.Value) == old_value:
-                    data.Value = FName.FromString(game_data[filename], new_value)
 
 def get_available_gimmick_flag():
     index = -1
@@ -1031,21 +980,5 @@ def get_available_gimmick_flag():
         index -= 1
     return 1
 
-def squircle(value, exponent):
-    return -(1-value**exponent)**(1/exponent)+1
-
-def invert_squircle(value, exponent):
-    return (1-(-value+1)**exponent)**(1/exponent)
-
-def random_weighted(value, minimum, maximum, step, exponent, adaptive = True):
-    full_range = maximum - minimum
-    if random.randint(0, 1) > 0:
-        distance = maximum - value
-        if adaptive:
-            exponent = (exponent-1)*(0.5*4**(distance/full_range))+1
-        return round(round((value + squircle(random.random(), exponent)*distance)/step)*step, 3)
-    else:
-        distance = value - minimum
-        if adaptive:
-            exponent = (exponent-1)*(0.5*4**(distance/full_range))+1
-        return round(round((value - squircle(random.random(), exponent)*distance)/step)*step, 3)
+load_file_info()
+load_translation()

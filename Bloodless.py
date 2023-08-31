@@ -1,4 +1,15 @@
-from Manager import*
+from System import*
+import Manager
+import Item
+import Shop
+import Library
+import Shard
+import Equipment
+import Enemy
+import Room
+import Graphic
+import Sound
+import Utility
 
 class CheckType(Enum):
     Door   = 0
@@ -293,7 +304,7 @@ def update_shard_candles():
     #All of Bloodless' abilities are stored inside of shard candles
     #Just like for Miriam those are defined inside of the level files
     for item in bloodless_datatable:
-        search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
+        Manager.search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
 
 def increase_starting_stats():
     #Give Bloodless 4 of each stat to start with
@@ -322,11 +333,11 @@ def create_log(seed, map):
     log["Map"]  = name.split("\\")[-1]
     log["Key"]  = {}
     for item in key_order:
-        log["Key"][translation["Bloodless"][remove_inst_number(item)]] = []
+        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]] = []
     for item in bloodless_datatable:
-        log["Key"][translation["Bloodless"][remove_inst_number(item)]] = []
+        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]] = []
     for item in bloodless_datatable:
-        log["Key"][translation["Bloodless"][remove_inst_number(item)]].append(Item.chest_to_room(bloodless_datatable[item]))
+        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]].append(Item.chest_to_room(bloodless_datatable[item]))
     log["Beatable"] = final_boss_available()
     return log
 
@@ -342,14 +353,14 @@ def create_log_string(seed, map):
     log_string += "Map: " + map_name + "\n"
     log_string += "Key:\n"
     for item in key_order:
-        log_string += "  " + translation["Bloodless"][remove_inst_number(item)] + ": " + bloodless_datatable[item]
+        log_string += "  " + translation["Bloodless"][Utility.remove_inst_number(item)] + ": " + bloodless_datatable[item]
         log_string += "\n"
     for item in bloodless_datatable:
         if item in key_order:
             continue
         if "_UP_" in item:
             break
-        log_string += "  " + translation["Bloodless"][remove_inst_number(item)] + ": " + bloodless_datatable[item]
+        log_string += "  " + translation["Bloodless"][Utility.remove_inst_number(item)] + ": " + bloodless_datatable[item]
         log_string += "\n"
     log_string += "Beatable: "
     if final_boss_available():

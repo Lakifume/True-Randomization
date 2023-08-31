@@ -1,4 +1,15 @@
-from Manager import*
+from System import*
+import Manager
+import Item
+import Shop
+import Shard
+import Equipment
+import Enemy
+import Room
+import Graphic
+import Sound
+import Bloodless
+import Utility
 
 class ReqCurve(Enum):
     Concave = 0
@@ -19,11 +30,11 @@ def randomize_library_requirements():
     for num in range(20):
         match requirement_wheight:
             case ReqCurve.Concave:
-                completion = round(squircle(num/20, 1.5)*100)
+                completion = round(Utility.squircle(num/20, 1.5)*100)
             case ReqCurve.Linear:
                 completion = round(num*5)
             case ReqCurve.Domed:
-                completion = round(invert_squircle(num/20, 1.5)*100)
+                completion = round(Utility.invert_squircle(num/20, 1.5)*100)
         property_list.append((completion, num % 2 == 0))
     property_list.append((99, True))
     #Assign tome of conquest
