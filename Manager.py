@@ -1,4 +1,4 @@
-from System import*
+from System import *
 import Item
 import Shop
 import Library
@@ -22,14 +22,6 @@ class FileType(Enum):
 
 def init():
     reset()
-    global mod_dir
-    mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
-    global asset_dir
-    asset_dir = "Game"
-    global file_to_path
-    file_to_path = {}
-    global file_to_type
-    file_to_type = {}
     global load_types
     load_types = [
         FileType.DataTable,
@@ -50,8 +42,6 @@ def init():
     original_datatable = {}
     global datatable_entry_index
     datatable_entry_index = {}
-    global start_item_translation
-    start_item_translation = {}
     global string_entry_exceptions
     string_entry_exceptions = [
         "ITEM_EXPLAIN_RolledOmelette",
@@ -63,9 +53,18 @@ def reset():
     datatable.clear()
     stringtable.clear()
     constant.clear()
-    translation.clear()
+    #translation.clear()
 
 def load_file_info():
+    #Variables
+    global mod_dir
+    mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
+    global asset_dir
+    asset_dir = "Game"
+    global file_to_path
+    file_to_path = {}
+    global file_to_type
+    file_to_type = {}
     #Path info
     with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
         file_to_path.update(json.load(file_reader))
@@ -115,6 +114,8 @@ def load_translation():
         name, extension = os.path.splitext(file)
         with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
             translation[name] = json.load(file_reader)
+    global start_item_translation
+    start_item_translation = {}
     for string in ["Item", "Shard"]:
         for entry in translation[string]:
             start_item_translation[Utility.simplify_item_name(translation[string][entry])] = entry

@@ -1,4 +1,4 @@
-from System import*
+from System import *
 import Manager
 import Item
 import Library

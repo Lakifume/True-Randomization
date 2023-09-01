@@ -1,4 +1,4 @@
-from System import*
+from System import *
 import Manager
 import Shop
 import Library
@@ -550,30 +550,6 @@ def init():
     constant["ItemDrop"]["Potion"]["ShopRatio"]      -= 3
     constant["ItemDrop"]["CookingMat"]["ShopRatio"]  -= 3
     constant["ItemDrop"]["StandardMat"]["ShopRatio"] -= 3
-    #Misc
-    global gun_list
-    gun_list = [
-        "Musketon",
-        "Branderbus",
-        "Tanegasima",
-        "Trador",
-        "Carvalin",
-        "Betelgeuse",
-        "Ursula",
-        "Adrastea",
-        "TrustMusket",
-        "TrustMusket2",
-        "TrustMusket3"
-    ]
-    global shard_type_to_hsv
-    shard_type_to_hsv = {
-        "Skill":       (  0,   0, 100),
-        "Trigger":     (  0, 100, 100),
-        "Effective":   (230, 100,  80),
-        "Directional": (270, 100, 100),
-        "Enchant":     ( 60, 100, 100),
-        "Familia":     (120, 100,  80)
-    }
     #Classic mode
     global classic_item_to_properties
     classic_item_to_properties = {
@@ -1262,11 +1238,12 @@ def patch_start_chest_entry():
     #Randomize the very first chest so that it is always a weapon
     container = "Treasurebox_SIP000_Tutorial"
     empty_drop_entry(container)
-    datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(constant["ItemDrop"]["Weapon"]["ItemPool"], constant["ItemDrop"]["Weapon"]["IsUnique"], "Weapon")
+    start_weapon = pick_and_remove(constant["ItemDrop"]["Weapon"]["ItemPool"], constant["ItemDrop"]["Weapon"]["IsUnique"], "Weapon")
+    datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = start_weapon
     datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = constant["ItemDrop"]["Weapon"]["ItemQuantity"]
     datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = constant["ItemDrop"]["Weapon"]["ItemRate"]
     #Give extra bullets if the starting weapon is a gun
-    if datatable["PB_DT_DropRateMaster"][container]["RareItemId"] in gun_list:
+    if datatable["PB_DT_WeaponMaster"][start_weapon]["WeaponType"] == "EWeaponType::Gun":
         datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(constant["ItemDrop"]["Bullet"]["ItemPool"], constant["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
         datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = constant["ItemDrop"]["Bullet"]["ItemHighQuantity"]
         datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = constant["ItemDrop"]["Bullet"]["ItemRate"]

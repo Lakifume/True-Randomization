@@ -1,4 +1,4 @@
-from System import*
+from System import *
 import Manager
 import Item
 import Shop
@@ -12,6 +12,15 @@ import Bloodless
 import Utility
 
 def init():
+    global shard_type_to_hsv
+    shard_type_to_hsv = {
+        "Skill":       (  0,   0, 100),
+        "Trigger":     (  0, 100, 100),
+        "Effective":   (230, 100,  80),
+        "Directional": (270, 100, 100),
+        "Enchant":     ( 60, 100, 100),
+        "Familia":     (120, 100,  80)
+    }
     global material_to_offset
     material_to_offset = {
         "MI_N1001_Body": [

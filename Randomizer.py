@@ -284,7 +284,7 @@ class Generate(QThread):
         Room.get_map_info()
         Room.update_any_map()
         
-        #Hue
+        #Color
         
         random.seed(self.seed)
         miriam_color   = random.choice(os.listdir("Data\\Texture\\Miriam"))
