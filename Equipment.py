@@ -269,6 +269,8 @@ def has_negative_stat(equipment):
 
 def get_weapon_reduction(weapon):
     #Apply reductions to weapons with special properties to not make them super broken
+    if "ShieldWeapon" in weapon:
+        return 0.9
     if weapon == "Juwuse":
         return 0.85
     if weapon in ["KillerBoots", "Decapitator"]:
