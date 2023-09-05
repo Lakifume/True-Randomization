@@ -1,6 +1,7 @@
 import json
 import sys
 import os
+import math
 import copy
 import colorsys
 from enum import Enum
@@ -255,14 +256,17 @@ class RoomItem(QGraphicsRectItem):
         return super().itemChange(change, value)
 
     def mousePressEvent(self, event):
-        if right_held or mid_held or x1_held or x2_held:
+        if mid_held or x1_held or x2_held:
             return
         super().mousePressEvent(event)
-        #Normal mode selection
-        for i in self.scene().selectedItems():
-            if restrictions:
+        if event.button() == Qt.LeftButton and restrictions:
+            for i in self.scene().selectedItems():
                 for e in i.group_list:
                     self.main_window.room_list[e].setSelected(True)
+        if event.button() == Qt.RightButton and not self.isSelected():
+            for i in self.scene().selectedItems():
+                i.setSelected(False)
+            self.setSelected(True)
     
     def mouseMoveEvent(self, event):
         #Ignore mouse move if another button than left mouse is held
@@ -322,6 +326,18 @@ class RoomItem(QGraphicsRectItem):
             self.room_data.offset_z = 0
         self.reset_pos()
 
+class GraphicsView(QGraphicsView):
+    def wheelEvent(self, event):
+        if event.modifiers() & Qt.ControlModifier:
+            current_scale = abs(self.transform().m11())
+            current_scale_exp = math.log(current_scale, 2)
+            if event.angleDelta().y() > 0 and current_scale_exp < 3:
+                self.scale(2.0, 2.0)
+            if event.angleDelta().y() < 0 and current_scale_exp > 0:
+                self.scale(0.5, 0.5)
+        else:
+            super().wheelEvent(event)
+
 class Main(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -354,7 +370,7 @@ class Main(QMainWindow):
         #Graphics
         
         self.scene = QGraphicsScene(self)
-        self.view = QGraphicsView(self.scene, self) 
+        self.view = GraphicsView(self.scene, self) 
         self.scene.selectionChanged.connect(self.selection_event)
         self.view.setDragMode(QGraphicsView.RubberBandDrag)
         self.scene.installEventFilter(self)
@@ -363,7 +379,6 @@ class Main(QMainWindow):
         self.view.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.view.setAlignment(Qt.AlignLeft)
         self.view.scale(1, -1)
-        self.current_zoom = 1
         self.setCentralWidget(self.view)
         
         #Menu
@@ -459,6 +474,18 @@ class Main(QMainWindow):
         boss_res.triggered.connect(self.boss_res)
         help_bar.addAction(boss_res)
         
+        self.context_menu = QMenu(self)
+        
+        context_action_1 = self.context_menu.addAction(QIcon("Data\\Icon\\reverse_icon.png")  , "Entrances")
+        context_action_2 = self.context_menu.addAction(QIcon("Data\\Icon\\swap_icon.png")     , "Room type")
+        context_action_3 = self.context_menu.addAction(QIcon("Data\\Icon\\duplicate_icon.png"), "Duplicate")
+        context_action_4 = self.context_menu.addAction(QIcon("Data\\Icon\\delete_icon.png")   , "Delete")
+        
+        context_action_1.triggered.connect(self.reverse_action)
+        context_action_2.triggered.connect(self.swap_action)
+        context_action_3.triggered.connect(self.duplicate_action)
+        context_action_4.triggered.connect(self.delete_action)
+        
         #Buttons
         
         self.reverse = QPushButton()
@@ -492,17 +519,16 @@ class Main(QMainWindow):
         self.zoom_in = QPushButton()
         self.zoom_in.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Plus))
         self.zoom_in.setIcon(QIcon("Data\\Icon\\in_icon.png"))
-        self.zoom_in.setToolTip("Zoom in\nShortcut: Ctrl + Plus")
+        self.zoom_in.setToolTip("Zoom in\nShortcut: Ctrl + Scroll Up")
         self.zoom_in.clicked.connect(self.zoom_in_action)
         self.zoom_in.setFixedSize(50, 30)
         
         self.zoom_out = QPushButton()
         self.zoom_out.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Minus))
         self.zoom_out.setIcon(QIcon("Data\\Icon\\out_icon.png"))
-        self.zoom_out.setToolTip("Zoom out\nShortcut: Ctrl + Minus")
+        self.zoom_out.setToolTip("Zoom out\nShortcut: Ctrl + Scroll Down")
         self.zoom_out.clicked.connect(self.zoom_out_action)
         self.zoom_out.setFixedSize(50, 30)
-        self.zoom_out.setEnabled(False)
         
         #Labels
         
@@ -630,6 +656,10 @@ class Main(QMainWindow):
             if event.button() == Qt.XButton2:
                 x2_held = False
         return super().eventFilter(obj, event)
+    
+    def contextMenuEvent(self, event):
+        if self.scene.selectedItems():
+            self.context_menu.exec(event.globalPos())
     
     def closeEvent(self, event):
         if self.safety_save():
@@ -845,7 +875,16 @@ class Main(QMainWindow):
     def how_to(self):
         box = QMessageBox(self)
         box.setWindowTitle("How to use")
-        box.setText("Map Editor:\n\nThis editor allows you to fully customize the layout of the game's map. You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.\nSave your creations to the Custom folder for them to be picked by the randomizer.\n\nArea Order:\n\nA simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
+        box.setText("Map Editor: +
+        \n\n
+        This editor allows you to fully customize the layout of the game's map.
+        You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.
+        \n
+        Save your creations to the Custom folder for them to be picked by the randomizer.
+        \n\n
+        Area Order:
+        \n\n
+        A simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
         box.exec()
     
     def guidelines(self):
@@ -940,22 +979,20 @@ class Main(QMainWindow):
         self.show_out_action()
     
     def zoom_in_action(self):
-        self.view.scale(2, 2)
-        self.current_zoom += 1
-        self.zoom_out.setEnabled(True)
-        if self.current_zoom >= 4:
-            self.zoom_in.setEnabled(False)
-        else:
-            self.zoom_in.setEnabled(True)
+        current_scale = abs(self.view.transform().m11())
+        current_scale_exp = math.log(current_scale, 2)
+        new_scale_exp = min(round(current_scale_exp) + 1, 3)
+        new_scale = 2**new_scale_exp
+        new_transform = self.view.transform().fromScale(new_scale, -new_scale)
+        self.view.setTransform(new_transform)
     
     def zoom_out_action(self):
-        self.view.scale(0.5, 0.5)
-        self.current_zoom -= 1
-        self.zoom_in.setEnabled(True)
-        if self.current_zoom <= 1:
-            self.zoom_out.setEnabled(False)
-        else:
-            self.zoom_out.setEnabled(True)
+        current_scale = abs(self.view.transform().m11())
+        current_scale_exp = math.log(current_scale, 2)
+        new_scale_exp = max(round(current_scale_exp) - 1, 0)
+        new_scale = 2**new_scale_exp
+        new_transform = self.view.transform().fromScale(new_scale, -new_scale)
+        self.view.setTransform(new_transform)
     
     def keyPressEvent(self, event):
         super().keyPressEvent(event)
