@@ -293,6 +293,8 @@ class RoomItem(QGraphicsRectItem):
                     i.set_fill(area_color[18])
                 else:
                     i.set_fill(area_color[int(i.room_data.area.split("::")[-1][1:3]) - 1])
+        if event.button() == Qt.LeftButton:
+            self.main_window.set_unsaved()
     
     def mouseDoubleClickEvent(self, event):
         super().mouseDoubleClickEvent(event)
@@ -941,10 +943,11 @@ class Main(QMainWindow):
             if i.room_data.room_type == "ERoomType::Save":
                 i.room_data.room_type = "ERoomType::Warp"
                 i.childItems()[0].setPixmap(QPixmap("Data\\Icon\\warp.png"))
+                self.set_unsaved()
             elif i.room_data.room_type == "ERoomType::Warp":
                 i.room_data.room_type = "ERoomType::Save"
                 i.childItems()[0].setPixmap(QPixmap("Data\\Icon\\save.png"))
-            self.set_unsaved()
+                self.set_unsaved()
     
     def duplicate_action(self):
         for i in self.scene.selectedItems():
@@ -1028,7 +1031,8 @@ class Main(QMainWindow):
                 i.set_theme(RoomTheme.Default)
             else:
                 i.set_theme(RoomTheme.Dark)
-        self.set_unsaved()
+        if self.area_order_list.isVisible():
+            self.set_unsaved()
     
     def key_drop_down_change(self, index):
         for i in self.room_list:
@@ -1040,12 +1044,14 @@ class Main(QMainWindow):
     def music_drop_down_change(self, index):
         for i in self.scene.selectedItems():
             i.room_data.music = music_id[index]
-        self.set_unsaved()
+        if self.music_drop_down.isVisible():
+            self.set_unsaved()
     
     def play_drop_down_change(self, index):
         for i in self.scene.selectedItems():
             i.room_data.play = play_id[index]
-        self.set_unsaved()
+        if self.play_drop_down.isVisible():
+            self.set_unsaved()
     
     def restore_music_action(self):
         #Confirm
@@ -1083,14 +1089,13 @@ class Main(QMainWindow):
             self.unsaved = True
 
     def selection_event(self):
-        self.set_unsaved()
         #Display music drop down
         if self.scene.selectedItems():
-            self.music_drop_down.setVisible(True)
-            self.play_drop_down.setVisible(True)
             if len(self.scene.selectedItems()) == 1:
                 self.music_drop_down.setCurrentIndex(music_id.index(self.scene.selectedItems()[0].room_data.music))
                 self.play_drop_down.setCurrentIndex(play_id.index(self.scene.selectedItems()[0].room_data.play))
+            self.music_drop_down.setVisible(True)
+            self.play_drop_down.setVisible(True)
         else:
             self.music_drop_down.setVisible(False)
             self.play_drop_down.setVisible(False)
