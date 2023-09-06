@@ -78,13 +78,6 @@ music_id = []
 music_name = []
 play_id = []
 play_name = []
-
-restrictions = False
-
-right_held = False
-mid_held   = False
-x1_held    = False
-x2_held    = False
     
 with open("Data\\Constant\\ConnectedRooms.json", "r", encoding="utf8") as file_reader:
     connected_room = json.load(file_reader)
@@ -222,7 +215,7 @@ class RoomItem(QGraphicsRectItem):
     
     def reset_flags(self):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
-        if self.can_move or not restrictions:
+        if self.can_move or not self.main_window.restrictions:
             self.setFlag(QGraphicsItem.ItemIsMovable, True)
     
     def set_static(self):
@@ -252,14 +245,12 @@ class RoomItem(QGraphicsRectItem):
                 self.set_theme(RoomTheme.Light)
             else:
                 self.set_theme(RoomTheme.Default)
-            self.reset_layer(value and (self.can_move or not restrictions))
+            self.reset_layer(value and (self.can_move or not self.main_window.restrictions))
         return super().itemChange(change, value)
 
     def mousePressEvent(self, event):
-        if mid_held or x1_held or x2_held:
-            return
         super().mousePressEvent(event)
-        if event.button() == Qt.LeftButton and restrictions:
+        if event.button() == Qt.LeftButton and self.main_window.restrictions:
             for i in self.scene().selectedItems():
                 for e in i.group_list:
                     self.main_window.room_list[e].setSelected(True)
@@ -269,14 +260,10 @@ class RoomItem(QGraphicsRectItem):
             self.setSelected(True)
     
     def mouseMoveEvent(self, event):
-        #Ignore mouse move if another button than left mouse is held
-        if right_held or mid_held or x1_held or x2_held:
-            return
         super().mouseMoveEvent(event)
+        self.main_window.view.setDragMode(QGraphicsView.NoDrag)
     
     def mouseReleaseEvent(self, event):
-        if event.button() != Qt.LeftButton:
-            return
         super().mouseReleaseEvent(event)
         #Place room
         for i in self.scene().selectedItems():
@@ -308,8 +295,6 @@ class RoomItem(QGraphicsRectItem):
                     i.set_fill(area_color[int(i.room_data.area.split("::")[-1][1:3]) - 1])
     
     def mouseDoubleClickEvent(self, event):
-        if right_held or mid_held or x1_held or x2_held:
-            return
         super().mouseDoubleClickEvent(event)
         #Select all rooms belonging to the same area
         if self.room_data.area != "EAreaID::None":
@@ -322,7 +307,7 @@ class RoomItem(QGraphicsRectItem):
         self.room_data.offset_x = round(self.pos().x() / TILEWIDTH)
         self.room_data.offset_z = round(self.pos().y() / TILEHEIGHT)
         #The train room's z offset must always be positive
-        if self.room_data.name == "m09TRN_002" and self.room_data.offset_z < 0 and restrictions:
+        if self.room_data.name == "m09TRN_002" and self.room_data.offset_z < 0 and self.main_window.restrictions:
             self.room_data.offset_z = 0
         self.reset_pos()
 
@@ -342,7 +327,12 @@ class Main(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
-        self.unsaved = False
+        self.unsaved      = False
+        self.restrictions = False
+        self.right_held   = False
+        self.mid_held     = False
+        self.x1_held      = False
+        self.x2_held      = False
         self.reset()
         
     def initUI(self):
@@ -625,36 +615,32 @@ class Main(QMainWindow):
     
     def eventFilter(self, obj, event):
         #Try to prevent holding several mouse buttons at once as that can cause major glitches
-        global right_held
-        global mid_held
-        global x1_held
-        global x2_held
         if event.type() in [QEvent.GraphicsSceneMousePress, QEvent.GraphicsSceneMouseDoubleClick]:
-            if event.button() == Qt.LeftButton and not right_held and not mid_held and not x1_held and not x2_held:
+            if event.button() == Qt.LeftButton and not self.right_held and not self.mid_held and not self.x1_held and not self.x2_held:
                 self.view.setDragMode(QGraphicsView.RubberBandDrag)
             if event.button() == Qt.RightButton:
                 self.view.setDragMode(QGraphicsView.NoDrag)
-                right_held = True
+                self.right_held = True
             if event.button() == Qt.MiddleButton:
                 self.view.setDragMode(QGraphicsView.NoDrag)
-                mid_held = True
+                self.mid_held = True
             if event.button() == Qt.XButton1:
                 self.view.setDragMode(QGraphicsView.NoDrag)
-                x1_held = True
+                self.x1_held = True
             if event.button() == Qt.XButton2:
                 self.view.setDragMode(QGraphicsView.NoDrag)
-                x2_held = True
+                self.x2_held = True
         elif event.type() == QEvent.GraphicsSceneMouseRelease:
-            if event.button() == Qt.LeftButton and not right_held and not mid_held and not x1_held and not x2_held:
+            if event.button() == Qt.LeftButton and not self.right_held and not self.mid_held and not self.x1_held and not self.x2_held:
                 self.view.setDragMode(QGraphicsView.NoDrag)
             if event.button() == Qt.RightButton:
-                right_held = False
+                self.right_held = False
             if event.button() == Qt.MiddleButton:
-                mid_held = False
+                self.mid_held = False
             if event.button() == Qt.XButton1:
-                x1_held = False
+                self.x1_held = False
             if event.button() == Qt.XButton2:
-                x2_held = False
+                self.x2_held = False
         return super().eventFilter(obj, event)
     
     def contextMenuEvent(self, event):
@@ -714,12 +700,11 @@ class Main(QMainWindow):
         self.direct_save = False
     
     def use_restr_action(self):
-        global restrictions
         if self.use_restr.isChecked():
-            restrictions = True
+            self.restrictions = True
             self.lock_label.setPixmap(QPixmap("Data\\Icon\\lock_icon.png"))
         else:
-            restrictions = False
+            self.restrictions = False
             self.lock_label.setPixmap(QPixmap("Data\\Icon\\unlock_icon.png"))
         for i in self.room_list:
             i.reset_flags()
@@ -875,22 +860,50 @@ class Main(QMainWindow):
     def how_to(self):
         box = QMessageBox(self)
         box.setWindowTitle("How to use")
-        box.setText("Map Editor: +
-        \n\n
-        This editor allows you to fully customize the layout of the game's map.
-        You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms.
-        \n
-        Save your creations to the Custom folder for them to be picked by the randomizer.
-        \n\n
-        Area Order:
-        \n\n
-        A simple tool that lets you reorder the difficulty scaling of each area. Try to arrange these in the order that the player will most likely traverse them.\n\nYou can submit your own layout creations to me on Discord (Lakifume#4066) if you want them to be added as presets in the main download of the randomizer.")
+        box.setText("Map Editor:"
+        + "\n\n"
+        + "This editor allows you to fully customize the layout of the game's map."
+        + "\n"
+        + "You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms."
+        + "\n"
+        + "You can navigate the viewport with the mouse wheel to scroll vertically and with Ctrl held to scroll horizontally."
+        + "\n"
+        + "Save your creations to the Custom folder for them to be picked by the randomizer."
+        + "\n\n"
+        + "Area Order:"
+        + "\n\n"
+        + "A simple tool that lets you reorder the difficulty scaling of each area."
+        + "Try to arrange these in the order that the player will most likely traverse them."
+        + "\n\n"
+        + "You can submit your own layout creations on the Discord server if you want them to be added as presets in the main download of the randomizer.")
         box.exec()
     
     def guidelines(self):
         box = QMessageBox(self)
         box.setWindowTitle("Map guidelines")
-        box.setText("Here are some tips that will help you build maps that are fun to play on:\n\n• making use of as many rooms as possible\n• connecting as many entrances as possible\n• keeping each area separated using transition rooms\n• ensuring that boss rooms are placed relatively close to a save/warp point\n• having the \"Use restrictions\" option enabled while building your map\n• not overlapping any rooms except for the semi-transparent ones\n• keeping the layout of the map within the area visible with Space Bar\n\nAdditionally here are some useful things to know when building maps:\n\n• backer rooms can be connected to any area and will be automatically updated\n• a few bosses can softlock if their rooms are placed in undesirable spots, refer to the Boss restrictions page for more info\n• room m03ENT_1200 has a transition that does not work properly when connected to a different room, so the randomizer script will ignore this room when connecting the map\n• the in-game minimap has a limitation as to how far it can display rooms, you can preview this limitation by pressing the space bar")
+        box.setText("Here are some tips that will help you build maps that are fun to play on:"
+        + "\n\n"
+        + "• making use of as many rooms as possible\n• connecting as many entrances as possible"
+        + "\n"
+        + "• keeping each area separated using transition rooms"
+        + "\n"
+        + "• ensuring that boss rooms are placed relatively close to a save/warp point"
+        + "\n"
+        + "• having the \"Use restrictions\" option enabled while building your map"
+        + "\n"
+        + "• not overlapping any rooms except for the semi-transparent ones"
+        + "\n"
+        + "• keeping the layout of the map within the area visible with Space Bar"
+        + "\n\n"
+        + "Additionally here are some useful things to know when building maps:"
+        + "\n\n"
+        + "• backer rooms can be connected to any area and will be automatically updated"
+        + "\n"
+        + "• a few bosses can softlock if their rooms are placed in undesirable spots, refer to the Boss restrictions page for more info"
+        + "\n"
+        + "• room m03ENT_1200 has a transition that does not work properly when connected to a different room, so the randomizer script will ignore this room when connecting the map"
+        + "\n"
+        + "• the in-game minimap has a limitation as to how far it can display rooms, you can preview this limitation by pressing the space bar")
         box.exec()
     
     def boss_res(self):
