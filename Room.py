@@ -1005,7 +1005,7 @@ def add_global_room_pickup(room, drop_id):
     #Enlarge its hitbox considerably so that entering the room from anywhere will collect it
     struct = StructPropertyData(FName.FromString(game_data[filename], "BoxExtent"), FName.FromString(game_data[filename], "Vector"))
     sub_struct = VectorPropertyData(FName.FromString(game_data[filename], "BoxExtent"))
-    sub_struct.Value = FVector(room_width*2 + 240, 50, room_height*2 + 240)
+    sub_struct.Value = FVector((room_width + 120)*4, 50, (room_height + 120)*4)
     struct.Value.Add(sub_struct)
     game_data[filename].Exports[actor_index + 1].Data.Add(struct)
     #Keep it in mind to not update its container type

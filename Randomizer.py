@@ -2041,18 +2041,19 @@ class Main(QWidget):
             config.set("SpecialMode", "bNone", "true")
             config.set("SpecialMode", "bCustomNG", "false")
             config.set("SpecialMode", "bProgressiveZ", "false")
+            self.fix_background_glitch()
         elif self.radio_button_5.isChecked():
             self.level_box.setVisible(True)
             config.set("SpecialMode", "bNone", "false")
             config.set("SpecialMode", "bCustomNG", "true")
             config.set("SpecialMode", "bProgressiveZ", "false")
-            #Fix background
             self.fix_background_glitch()
         else:
             self.level_box.setVisible(False)
             config.set("SpecialMode", "bNone", "false")
             config.set("SpecialMode", "bCustomNG", "false")
             config.set("SpecialMode", "bProgressiveZ", "true")
+            self.fix_background_glitch()
     
     def fix_background_glitch(self):
         try:
