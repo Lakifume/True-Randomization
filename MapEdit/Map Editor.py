@@ -4,6 +4,7 @@ import os
 import math
 import copy
 import colorsys
+import decimal
 from enum import Enum
 from collections import OrderedDict
 from PySide6.QtCore import *
@@ -306,8 +307,8 @@ class RoomItem(QGraphicsRectItem):
 
     def apply_round(self):
         #Snap room to grid
-        self.room_data.offset_x = round(self.pos().x() / TILEWIDTH)
-        self.room_data.offset_z = round(self.pos().y() / TILEHEIGHT)
+        self.room_data.offset_x = float(decimal.Decimal(self.pos().x() /  TILEWIDTH).quantize(0, decimal.ROUND_HALF_DOWN))
+        self.room_data.offset_z = float(decimal.Decimal(self.pos().y() / TILEHEIGHT).quantize(0, decimal.ROUND_HALF_DOWN))
         #The train room's z offset must always be positive
         if self.room_data.name == "m09TRN_002" and self.room_data.offset_z < 0 and self.main_window.restrictions:
             self.room_data.offset_z = 0
