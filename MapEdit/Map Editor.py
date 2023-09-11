@@ -307,8 +307,14 @@ class RoomItem(QGraphicsRectItem):
 
     def apply_round(self):
         #Snap room to grid
-        self.room_data.offset_x = float(decimal.Decimal(self.pos().x() /  TILEWIDTH).quantize(0, decimal.ROUND_HALF_DOWN))
-        self.room_data.offset_z = float(decimal.Decimal(self.pos().y() / TILEHEIGHT).quantize(0, decimal.ROUND_HALF_DOWN))
+        x_round_mode = decimal.ROUND_HALF_DOWN
+        y_round_mode = decimal.ROUND_HALF_DOWN
+        if self.pos().x() < 0:
+            x_round_mode = decimal.ROUND_HALF_UP
+        if self.pos().y() < 0:
+            y_round_mode = decimal.ROUND_HALF_UP
+        self.room_data.offset_x = float(decimal.Decimal(self.pos().x() /  TILEWIDTH).quantize(0, x_round_mode))
+        self.room_data.offset_z = float(decimal.Decimal(self.pos().y() / TILEHEIGHT).quantize(0, y_round_mode))
         #The train room's z offset must always be positive
         if self.room_data.name == "m09TRN_002" and self.room_data.offset_z < 0 and self.main_window.restrictions:
             self.room_data.offset_z = 0
