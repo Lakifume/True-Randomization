@@ -881,7 +881,7 @@ class Main(QMainWindow):
         + "\n\n"
         + "Area Order:"
         + "\n\n"
-        + "A simple tool that lets you reorder the difficulty scaling of each area."
+        + "A simple tool that lets you reorder the difficulty scaling of each area. "
         + "Try to arrange these in the order that the player will most likely traverse them."
         + "\n\n"
         + "You can submit your own layout creations on the Discord server if you want them to be added as presets in the main download of the randomizer.")
