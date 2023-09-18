@@ -127,6 +127,21 @@ class Direction(Enum):
     BOTTOM_RIGHT = 0x0400
     BOTTOM_LEFT  = 0x0800
 
+OppositeDirection = {
+    Direction.LEFT:         Direction.RIGHT,
+    Direction.BOTTOM:       Direction.TOP,
+    Direction.RIGHT:        Direction.LEFT,
+    Direction.TOP:          Direction.BOTTOM,
+    Direction.LEFT_BOTTOM:  Direction.RIGHT_BOTTOM,
+    Direction.RIGHT_BOTTOM: Direction.LEFT_BOTTOM,
+    Direction.LEFT_TOP:     Direction.RIGHT_TOP,
+    Direction.RIGHT_TOP:    Direction.LEFT_TOP,
+    Direction.TOP_LEFT:     Direction.BOTTOM_LEFT,
+    Direction.TOP_RIGHT:    Direction.BOTTOM_RIGHT,
+    Direction.BOTTOM_RIGHT: Direction.TOP_RIGHT,
+    Direction.BOTTOM_LEFT:  Direction.TOP_LEFT,
+}
+
 class RoomTheme(Enum):
     Default = 0
     Light   = 1
@@ -461,6 +476,11 @@ class Main(QMainWindow):
         self.key_location.triggered.connect(self.key_location_action)
         tool_bar.addAction(self.key_location)
         
+        self.comp_check = QAction("Completion Check", self, checkable = True)
+        self.comp_check.setShortcut(QKeySequence(Qt.Key_C))
+        self.comp_check.triggered.connect(self.comp_check_action)
+        tool_bar.addAction(self.comp_check)
+        
         how_to = QAction("How to use", self)
         how_to.triggered.connect(self.how_to)
         help_bar.addAction(how_to)
@@ -764,6 +784,8 @@ class Main(QMainWindow):
             self.area_order_action()
             self.key_location.setChecked(False)
             self.key_location_action()
+            self.comp_check.setChecked(False)
+            self.comp_check_action()
             #Initiate
             self.disable_menus()
             self.disable_buttons()
@@ -787,6 +809,8 @@ class Main(QMainWindow):
             self.room_search_action()
             self.key_location.setChecked(False)
             self.key_location_action()
+            self.comp_check.setChecked(False)
+            self.comp_check_action()
             #Initiate
             self.disable_menus()
             self.disable_buttons()
@@ -809,6 +833,8 @@ class Main(QMainWindow):
             self.room_search_action()
             self.area_order.setChecked(False)
             self.area_order_action()
+            self.comp_check.setChecked(False)
+            self.comp_check_action()
             #CheckLog
             name, extension = os.path.splitext(self.string)
             box = QMessageBox(self)
@@ -862,6 +888,89 @@ class Main(QMainWindow):
             self.key_drop_down.setVisible(False)
             self.seed_label.setVisible(False)
             self.show_out.setEnabled(True)
+            self.enable_menus()
+            self.enable_buttons()
+            self.reset_rooms()
+    
+    def is_room_adjacent(self, room_1, room_2):
+        if self.left_room_check(room_1, room_2):
+            return self.door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
+        elif self.bottom_room_check(room_1, room_2):
+            return self.door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
+        elif self.right_room_check(room_1, room_2):
+            return self.door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
+        elif self.top_room_check(room_1, room_2):
+            return self.door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
+        return False
+    
+    def left_room_check(self, room_1, room_2):
+        return bool(room_2.offset_x == room_1.offset_x - 1 * room_2.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
+    
+    def bottom_room_check(self, room_1, room_2):
+        return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z - 1 * room_2.height)
+    
+    def right_room_check(self, room_1, room_2):
+        return bool(room_2.offset_x == room_1.offset_x + 1 * room_1.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
+    
+    def top_room_check(self, room_1, room_2):
+        return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z + 1 * room_1.height)
+    
+    def door_vertical_check(self, room_1, room_2, direction_1, direction_2, direction_3):
+        for door_1 in room_1.door_flag:
+            if door_1.direction_part == direction_1:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_1] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                        return True
+            if door_1.direction_part == direction_2:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_2] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                        return True
+            if door_1.direction_part == direction_3:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_3] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                        return True
+        return False
+    
+    def door_horizontal_check(self, room_1, room_2, direction_1, direction_2, direction_3):
+        for door_1 in room_1.door_flag:
+            if door_1.direction_part == direction_1:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_1] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                        return True
+            if door_1.direction_part == direction_2:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_2] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                        return True
+            if door_1.direction_part == direction_3:
+                for door_2 in room_2.door_flag:
+                    if door_2.direction_part == OppositeDirection[direction_3] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                        return True
+        return False
+    
+    def comp_check_action(self):
+        if self.comp_check.isChecked():
+            #Initiate
+            self.disable_menus()
+            self.disable_buttons()
+            for i in self.room_list:
+                i.setSelected(False)
+                i.set_static()
+            current_rooms = [self.room_list[0]]
+            available_rooms = [self.room_list[0]]
+            while current_rooms:
+                newList = [elem for elem in current_rooms]
+                for i in newList:
+                    for e in self.room_list:
+                        if self.is_room_adjacent(i.room_data, e.room_data) and not e in available_rooms:
+                            available_rooms.append(e)
+                            current_rooms.append(e)
+                    current_rooms.remove(i)
+            for i in self.room_list:
+                if i in available_rooms:
+                    i.set_theme(RoomTheme.Default)
+                else:
+                    i.set_theme(RoomTheme.Dark)
+        else:
             self.enable_menus()
             self.enable_buttons()
             self.reset_rooms()
