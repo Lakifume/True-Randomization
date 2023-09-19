@@ -385,21 +385,21 @@ def init():
         }
     }
 
-def set_enemy_level_wheight(wheight):
-    global enemy_level_wheight
-    enemy_level_wheight = Utility.wheight_exponents[wheight - 1]
+def set_enemy_level_weight(weight):
+    global enemy_level_weight
+    enemy_level_weight = Utility.weight_exponents[weight - 1]
 
-def set_boss_level_wheight(wheight):
-    global boss_level_wheight
-    boss_level_wheight = Utility.wheight_exponents[wheight - 1]
+def set_boss_level_weight(weight):
+    global boss_level_weight
+    boss_level_weight = Utility.weight_exponents[weight - 1]
 
-def set_enemy_tolerance_wheight(wheight):
-    global enemy_tolerance_wheight
-    enemy_tolerance_wheight = Utility.wheight_exponents[wheight - 1]
+def set_enemy_tolerance_weight(weight):
+    global enemy_tolerance_weight
+    enemy_tolerance_weight = Utility.weight_exponents[weight - 1]
 
-def set_boss_tolerance_wheight(wheight):
-    global boss_tolerance_wheight
-    boss_tolerance_wheight = Utility.wheight_exponents[wheight - 1]
+def set_boss_tolerance_weight(weight):
+    global boss_tolerance_weight
+    boss_tolerance_weight = Utility.weight_exponents[weight - 1]
 
 def get_original_enemy_stats():
     #Store original enemy stats for convenience
@@ -676,14 +676,14 @@ def set_custom_enemy_level(value):
 def randomize_enemy_levels():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
         if is_enemy(entry) and not is_boss_part(entry):
-            randomize_level_for(entry, enemy_level_wheight)
+            randomize_level_for(entry, enemy_level_weight)
 
 def randomize_boss_levels():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
         if is_boss_part(entry):
-            randomize_level_for(entry, boss_level_wheight)
+            randomize_level_for(entry, boss_level_weight)
 
-def randomize_level_for(entry, wheight):
+def randomize_level_for(entry, weight):
     for suffix in ["", "BloodlessMode"]:
         #Some bosses have a cap for either being too boring or having a time limit
         if entry in capped_enemies:
@@ -696,19 +696,19 @@ def randomize_level_for(entry, wheight):
         else:
             default_level = datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
         #Patch level
-        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, wheight), entry, suffix)
+        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, weight), entry, suffix)
 
 def randomize_enemy_tolerances():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
         if is_enemy(entry) and not is_boss_part(entry):
-            randomize_tolerances_for(entry, enemy_tolerance_wheight)
+            randomize_tolerances_for(entry, enemy_tolerance_weight)
 
 def randomize_boss_tolerances():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
         if is_boss_part(entry):
-            randomize_tolerances_for(entry, boss_tolerance_wheight)
+            randomize_tolerances_for(entry, boss_tolerance_weight)
 
-def randomize_tolerances_for(entry, wheight):
+def randomize_tolerances_for(entry, weight):
     #Don't randomize entries that are meant to guard everything
     if datatable["PB_DT_CharacterParameterMaster"][entry]["ZAN"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["DAG"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["TOT"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["FLA"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["ICE"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["LIG"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["HOL"] == 100.0 and datatable["PB_DT_CharacterParameterMaster"][entry]["DAR"] == 100.0:
         return
@@ -746,7 +746,7 @@ def randomize_tolerances_for(entry, wheight):
             average += datatable["PB_DT_CharacterParameterMaster"][entry][attr]
         average = average/len(main_resistances)
         for attr in main_resistances:
-            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Utility.random_weighted(round(average), -100, 100, 5, wheight)
+            datatable["PB_DT_CharacterParameterMaster"][entry][attr] = Utility.random_weighted(round(average), -100, 100, 5, weight)
     #Sub entry
     else:
         for attr in main_resistances:
@@ -776,7 +776,7 @@ def randomize_enemy_locations():
         chosen = random.choice(new_enemy_slots)
         #Prevent large enemies from ending up over the morte
         if enemy == "N3003":
-            while constant["EnemyInfo"][chosen]["Wheight"] > constant["EnemyInfo"][enemy]["Wheight"]:
+            while constant["EnemyInfo"][chosen]["Weight"] > constant["EnemyInfo"][enemy]["Weight"]:
                 chosen = random.choice(new_enemy_slots)
         #Som enemies completely ignores any scale modifiers so prevent them from going over large enemies
         elif enemy in large_enemies:
@@ -794,7 +794,7 @@ def randomize_enemy_locations():
         new_enemy_slots.remove(chosen)
     for enemy in enemy_replacement:
         enemy_replacement_invert[enemy_replacement[enemy]] = enemy
-    #Remove the lone Seama in the early Galleon room since it is too weak to reflect its wheight of 4
+    #Remove the lone Seama in the early Galleon room since it is too weak to reflect its weight of 4
     if enemy_replacement["N3006"] != "N3006":
         remove_enemy_info("m01SIP_004", "N3006")
     #Update enemy location info
@@ -909,14 +909,14 @@ def change_room_enemies(room):
                         location.Z = spawner_to_advantageous_location[filename][export_name][2]
                     else:
                         continue
-            #Balance enemy spawns around their wheight
-            old_wheight = constant["EnemyInfo"][old_enemy_id]["Wheight"]
-            new_wheight = constant["EnemyInfo"][new_enemy_id]["Wheight"]
+            #Balance enemy spawns around their weight
+            old_weight = constant["EnemyInfo"][old_enemy_id]["Weight"]
+            new_weight = constant["EnemyInfo"][new_enemy_id]["Weight"]
             if filename == "m01SIP_018_Enemy_Hard" and export_name == "N3090_Generator_50":
-                old_wheight -= 1
-            #If the new wheight is higher only replace a portion of the enemy's instances
-            if new_wheight > old_wheight:
-                enemy_num = 2**(new_wheight - old_wheight)
+                old_weight -= 1
+            #If the new weight is higher only replace a portion of the enemy's instances
+            if new_weight > old_weight:
+                enemy_num = 2**(new_weight - old_weight)
                 if new_enemy_id in enemy_countdown:
                     if enemy_countdown[new_enemy_id] == 0:
                         add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, 0, 0)
@@ -925,10 +925,10 @@ def change_room_enemies(room):
                     enemy_countdown[new_enemy_id] = enemy_num
                     add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, 0, 0)
                 enemy_countdown[new_enemy_id] -= 1
-            #If the new wheight is lower spawn more instances of the enemy with the old location as its center
-            elif new_wheight < old_wheight:
-                enemy_num = 2**(old_wheight - new_wheight)
-                offset = 120*(1.5**(new_wheight - 1))
+            #If the new weight is lower spawn more instances of the enemy with the old location as its center
+            elif new_weight < old_weight:
+                enemy_num = 2**(old_weight - new_weight)
+                offset = 120*(1.5**(new_weight - 1))
                 if old_enemy_id in large_enemies:
                     offset *= 1.5
                 for num in range(enemy_num):
@@ -938,7 +938,7 @@ def change_room_enemies(room):
                     else:
                         vertical_offset = 0
                     add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, horizontal_offset, vertical_offset)
-            #If the new wheight is identical then do a standard replacement
+            #If the new weight is identical then do a standard replacement
             else:
                 add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location, rotation, scale, 0, 0)
 

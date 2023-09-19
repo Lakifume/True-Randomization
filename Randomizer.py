@@ -242,15 +242,15 @@ class Generate(QThread):
         #Apply parameters
         
         Item.set_logic_complexity(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
-        Item.set_shop_event_wheight(config.getint("ItemRandomization", "iShopPoolWheight"))
-        Shop.set_shop_price_wheight(config.getint("ShopRandomization", "iItemCostAndSellingPriceWheight"))
-        Library.set_requirement_wheight(config.getint("LibraryRandomization", "iMapRequirementsWheight"))
-        Shard.set_shard_power_wheight(config.getint("ShardRandomization", "iShardPowerAndMagicCostWheight"))
-        Equipment.set_global_stat_wheight(config.getint("EquipmentRandomization", "iGlobalGearStatsWheight"))
-        Enemy.set_enemy_level_wheight(config.getint("EnemyRandomization", "iEnemyLevelsWheight"))
-        Enemy.set_boss_level_wheight(config.getint("EnemyRandomization", "iBossLevelsWheight"))
-        Enemy.set_enemy_tolerance_wheight(config.getint("EnemyRandomization", "iEnemyTolerancesWheight"))
-        Enemy.set_boss_tolerance_wheight(config.getint("EnemyRandomization", "iBossTolerancesWheight"))
+        Item.set_shop_event_weight(config.getint("ItemRandomization", "iShopPoolWeight"))
+        Shop.set_shop_price_weight(config.getint("ShopRandomization", "iItemCostAndSellingPriceWeight"))
+        Library.set_requirement_weight(config.getint("LibraryRandomization", "iMapRequirementsWeight"))
+        Shard.set_shard_power_weight(config.getint("ShardRandomization", "iShardPowerAndMagicCostWeight"))
+        Equipment.set_global_stat_weight(config.getint("EquipmentRandomization", "iGlobalGearStatsWeight"))
+        Enemy.set_enemy_level_weight(config.getint("EnemyRandomization", "iEnemyLevelsWeight"))
+        Enemy.set_boss_level_weight(config.getint("EnemyRandomization", "iBossLevelsWeight"))
+        Enemy.set_enemy_tolerance_weight(config.getint("EnemyRandomization", "iEnemyTolerancesWeight"))
+        Enemy.set_boss_tolerance_weight(config.getint("EnemyRandomization", "iBossTolerancesWeight"))
         Sound.set_voice_language(config.getint("SoundRandomization", "iDialoguesLanguage"))
         Bloodless.set_logic_complexity(config.getint("ExtraRandomization", "iBloodlessCandlesComplexity"))
         
@@ -768,18 +768,17 @@ class Main(QWidget):
             self.first_time = True
         
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}"
-        + "QMenu{background-color: #21222e; selection-background-color: #320288ff}"
         + "QComboBox{background-color: #21222e; selection-background-color: #320288ff}"
         + "QComboBox QAbstractItemView{border: 1px solid #21222e}"
         + "QScrollBar::add-page{background-color: #1b1c26}"
         + "QScrollBar::sub-page{background-color: #1b1c26}"
-        + "QMessageBox{background-color: #21222e}"
         + "QDialog{background-color: #21222e}"
-        + "QProgressDialog{background-color: #21222e}"
+        + "QMessageBox{background-color: #21222e}"
         + "QPushButton{background-color: #21222e}"
+        + "QProgressDialog{background-color: #21222e}"
+        + "QProgressBar{border: 2px solid white; text-align: center; font: bold}"
         + "QSpinBox{background-color: #21222e; selection-background-color: #320288ff}"
         + "QLineEdit{background-color: #21222e; selection-background-color: #320288ff}"
-        + "QProgressBar{border: 2px solid white; text-align: center; font: bold}"
         + "QToolTip{border: 0px; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}")
         self.map = ""
         
@@ -1081,7 +1080,7 @@ class Main(QWidget):
         
         self.spin_button_2 = QPushButton()
         self.spin_button_2.setAccessibleName("spin_button_2")
-        self.spin_button_2.setToolTip("Wheight of shop items locked behind events.")
+        self.spin_button_2.setToolTip("Weight of shop items locked behind events.")
         self.spin_button_2.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_2.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_2.clicked.connect(self.spin_button_2_clicked)
@@ -1091,7 +1090,7 @@ class Main(QWidget):
         
         self.spin_button_3 = QPushButton()
         self.spin_button_3.setAccessibleName("spin_button_3")
-        self.spin_button_3.setToolTip("Price wheight. The higher the value the more extreme\nthe price differences.")
+        self.spin_button_3.setToolTip("Price weight. The higher the value the more extreme\nthe price differences.")
         self.spin_button_3.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_3.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_3.clicked.connect(self.spin_button_3_clicked)
@@ -1101,7 +1100,7 @@ class Main(QWidget):
         
         self.spin_button_4 = QPushButton()
         self.spin_button_4.setAccessibleName("spin_button_4")
-        self.spin_button_4.setToolTip("Requirement wheight. 2 is linear, 1 and 3 favor early and\nlate map completion respectively.")
+        self.spin_button_4.setToolTip("Requirement weight. 2 is linear, 1 and 3 favor early and\nlate map completion respectively.")
         self.spin_button_4.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_4.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_4.clicked.connect(self.spin_button_4_clicked)
@@ -1111,7 +1110,7 @@ class Main(QWidget):
         
         self.spin_button_5 = QPushButton()
         self.spin_button_5.setAccessibleName("spin_button_5")
-        self.spin_button_5.setToolTip("Power wheight. The higher the value the more extreme\nthe power differences.")
+        self.spin_button_5.setToolTip("Power weight. The higher the value the more extreme\nthe power differences.")
         self.spin_button_5.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_5.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_5.clicked.connect(self.spin_button_5_clicked)
@@ -1121,7 +1120,7 @@ class Main(QWidget):
         
         self.spin_button_6 = QPushButton()
         self.spin_button_6.setAccessibleName("spin_button_6")
-        self.spin_button_6.setToolTip("Stat wheight. The higher the value the more extreme\nthe stat differences.")
+        self.spin_button_6.setToolTip("Stat weight. The higher the value the more extreme\nthe stat differences.")
         self.spin_button_6.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_6.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_6.clicked.connect(self.spin_button_6_clicked)
@@ -1131,7 +1130,7 @@ class Main(QWidget):
         
         self.spin_button_8 = QPushButton()
         self.spin_button_8.setAccessibleName("spin_button_8")
-        self.spin_button_8.setToolTip("Level wheight. The higher the value the more extreme\nthe level differences.")
+        self.spin_button_8.setToolTip("Level weight. The higher the value the more extreme\nthe level differences.")
         self.spin_button_8.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_8.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_8.clicked.connect(self.spin_button_8_clicked)
@@ -1141,7 +1140,7 @@ class Main(QWidget):
         
         self.spin_button_9 = QPushButton()
         self.spin_button_9.setAccessibleName("spin_button_9")
-        self.spin_button_9.setToolTip("Level wheight. The higher the value the more extreme\nthe level differences.")
+        self.spin_button_9.setToolTip("Level weight. The higher the value the more extreme\nthe level differences.")
         self.spin_button_9.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_9.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_9.clicked.connect(self.spin_button_9_clicked)
@@ -1151,7 +1150,7 @@ class Main(QWidget):
         
         self.spin_button_10 = QPushButton()
         self.spin_button_10.setAccessibleName("spin_button_10")
-        self.spin_button_10.setToolTip("Tolerance wheight. The higher the value the more extreme\nthe tolerance differences.")
+        self.spin_button_10.setToolTip("Tolerance weight. The higher the value the more extreme\nthe tolerance differences.")
         self.spin_button_10.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_10.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_10.clicked.connect(self.spin_button_10_clicked)
@@ -1161,7 +1160,7 @@ class Main(QWidget):
         
         self.spin_button_11 = QPushButton()
         self.spin_button_11.setAccessibleName("spin_button_11")
-        self.spin_button_11.setToolTip("Tolerance wheight. The higher the value the more extreme\nthe tolerance differences.")
+        self.spin_button_11.setToolTip("Tolerance weight. The higher the value the more extreme\nthe tolerance differences.")
         self.spin_button_11.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.spin_button_11.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
         self.spin_button_11.clicked.connect(self.spin_button_11_clicked)
@@ -1336,38 +1335,27 @@ class Main(QWidget):
         self.check_box_21.setChecked(config.getboolean("ExtraRandomization", "bBloodlessCandles"))
         
         self.spin_button_1_set_index(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
-        self.spin_button_2_set_index(config.getint("ItemRandomization", "iShopPoolWheight"))
-        self.spin_button_3_set_index(config.getint("ShopRandomization", "iItemCostAndSellingPriceWheight"))
-        self.spin_button_4_set_index(config.getint("LibraryRandomization", "iMapRequirementsWheight"))
-        self.spin_button_5_set_index(config.getint("ShardRandomization", "iShardPowerAndMagicCostWheight"))
-        self.spin_button_6_set_index(config.getint("EquipmentRandomization", "iGlobalGearStatsWheight"))
-        self.spin_button_8_set_index(config.getint("EnemyRandomization", "iEnemyLevelsWheight"))
-        self.spin_button_9_set_index(config.getint("EnemyRandomization", "iBossLevelsWheight"))
-        self.spin_button_10_set_index(config.getint("EnemyRandomization", "iEnemyTolerancesWheight"))
-        self.spin_button_11_set_index(config.getint("EnemyRandomization", "iBossTolerancesWheight"))
+        self.spin_button_2_set_index(config.getint("ItemRandomization", "iShopPoolWeight"))
+        self.spin_button_3_set_index(config.getint("ShopRandomization", "iItemCostAndSellingPriceWeight"))
+        self.spin_button_4_set_index(config.getint("LibraryRandomization", "iMapRequirementsWeight"))
+        self.spin_button_5_set_index(config.getint("ShardRandomization", "iShardPowerAndMagicCostWeight"))
+        self.spin_button_6_set_index(config.getint("EquipmentRandomization", "iGlobalGearStatsWeight"))
+        self.spin_button_8_set_index(config.getint("EnemyRandomization", "iEnemyLevelsWeight"))
+        self.spin_button_9_set_index(config.getint("EnemyRandomization", "iBossLevelsWeight"))
+        self.spin_button_10_set_index(config.getint("EnemyRandomization", "iEnemyTolerancesWeight"))
+        self.spin_button_11_set_index(config.getint("EnemyRandomization", "iBossTolerancesWeight"))
         self.spin_button_12_set_index(config.getint("SoundRandomization", "iDialoguesLanguage"))
         self.spin_button_13_set_index(config.getint("ExtraRandomization", "iBloodlessCandlesComplexity"))
         
-        if config.getboolean("GameDifficulty", "bNormal"):
-            self.radio_button_1.setChecked(True)
-        elif config.getboolean("GameDifficulty", "bHard"):
-            self.radio_button_2.setChecked(True)
-        else:
-            self.radio_button_3.setChecked(True)
+        self.radio_button_1.setChecked(config.getboolean("GameDifficulty", "bNormal"))
+        self.radio_button_2.setChecked(config.getboolean("GameDifficulty", "bHard"))
+        self.radio_button_3.setChecked(config.getboolean("GameDifficulty", "bNightmare"))
         
-        if config.getboolean("SpecialMode", "bNone"):
-            self.radio_button_14.setChecked(True)
-        elif config.getboolean("SpecialMode", "bCustomNG"):
-            self.radio_button_5.setChecked(True)
-        else:
-            self.radio_button_15.setChecked(True)
+        self.radio_button_14.setChecked(config.getboolean("SpecialMode", "bNone"))
+        self.radio_button_5.setChecked(config.getboolean("SpecialMode", "bCustomNG"))
+        self.radio_button_15.setChecked(config.getboolean("SpecialMode", "bProgressiveZ"))
         
-        if config.getfloat("Misc", "fWindowSize") == 0.8:
-            self.size_drop_down.setCurrentIndex(0)
-        elif config.getfloat("Misc", "fWindowSize") == 0.9:
-            self.size_drop_down.setCurrentIndex(1)
-        elif config.getfloat("Misc", "fWindowSize") == 1.0:
-            self.size_drop_down.setCurrentIndex(2)
+        self.size_drop_down.setCurrentIndex([0.8, 0.9, 1.0].index(config.getfloat("Misc", "fWindowSize")))
         
         self.matches_preset()
 
@@ -1855,7 +1843,7 @@ class Main(QWidget):
 
     def spin_button_2_set_index(self, index):
         self.spin_button_2.setText(str(index))
-        config.set("ItemRandomization", "iShopPoolWheight", str(index))
+        config.set("ItemRandomization", "iShopPoolWeight", str(index))
         self.change_sub_setting(self.spin_button_2, index)
         return True
 
@@ -1871,7 +1859,7 @@ class Main(QWidget):
 
     def spin_button_3_set_index(self, index):
         self.spin_button_3.setText(str(index))
-        config.set("ShopRandomization", "iItemCostAndSellingPriceWheight", str(index))
+        config.set("ShopRandomization", "iItemCostAndSellingPriceWeight", str(index))
         self.change_sub_setting(self.spin_button_3, index)
         return True
 
@@ -1887,7 +1875,7 @@ class Main(QWidget):
 
     def spin_button_4_set_index(self, index):
         self.spin_button_4.setText(str(index))
-        config.set("LibraryRandomization", "iMapRequirementsWheight", str(index))
+        config.set("LibraryRandomization", "iMapRequirementsWeight", str(index))
         self.change_sub_setting(self.spin_button_4, index)
         return True
 
@@ -1903,7 +1891,7 @@ class Main(QWidget):
 
     def spin_button_5_set_index(self, index):
         self.spin_button_5.setText(str(index))
-        config.set("ShardRandomization", "iShardPowerAndMagicCostWheight", str(index))
+        config.set("ShardRandomization", "iShardPowerAndMagicCostWeight", str(index))
         self.change_sub_setting(self.spin_button_5, index)
         return True
 
@@ -1919,7 +1907,7 @@ class Main(QWidget):
 
     def spin_button_6_set_index(self, index):
         self.spin_button_6.setText(str(index))
-        config.set("EquipmentRandomization", "iGlobalGearStatsWheight", str(index))
+        config.set("EquipmentRandomization", "iGlobalGearStatsWeight", str(index))
         self.change_sub_setting(self.spin_button_6, index)
         return True
 
@@ -1935,7 +1923,7 @@ class Main(QWidget):
 
     def spin_button_8_set_index(self, index):
         self.spin_button_8.setText(str(index))
-        config.set("EnemyRandomization", "iEnemyLevelsWheight", str(index))
+        config.set("EnemyRandomization", "iEnemyLevelsWeight", str(index))
         self.change_sub_setting(self.spin_button_8, index)
         return True
 
@@ -1951,7 +1939,7 @@ class Main(QWidget):
 
     def spin_button_9_set_index(self, index):
         self.spin_button_9.setText(str(index))
-        config.set("EnemyRandomization", "iBossLevelsWheight", str(index))
+        config.set("EnemyRandomization", "iBossLevelsWeight", str(index))
         self.change_sub_setting(self.spin_button_9, index)
         return True
 
@@ -1967,7 +1955,7 @@ class Main(QWidget):
 
     def spin_button_10_set_index(self, index):
         self.spin_button_10.setText(str(index))
-        config.set("EnemyRandomization", "iEnemyTolerancesWheight", str(index))
+        config.set("EnemyRandomization", "iEnemyTolerancesWeight", str(index))
         self.change_sub_setting(self.spin_button_10, index)
         return True
 
@@ -1983,7 +1971,7 @@ class Main(QWidget):
 
     def spin_button_11_set_index(self, index):
         self.spin_button_11.setText(str(index))
-        config.set("EnemyRandomization", "iBossTolerancesWheight", str(index))
+        config.set("EnemyRandomization", "iBossTolerancesWeight", str(index))
         self.change_sub_setting(self.spin_button_11, index)
         return True
 

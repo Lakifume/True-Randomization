@@ -177,14 +177,14 @@ def candle_logic():
             continue
         #Place key item
         if check_to_requirement:
-            #Wheight checks
+            #Weight checks
             requirement_list_list = []
             for check in check_to_requirement:
                 requirement_list = check_to_requirement[check]
                 if not requirement_list in requirement_list_list:
                     requirement_list_list.append(requirement_list)
             chosen_requirement_list = random.choice(requirement_list_list)
-            #Wheight requirements
+            #Weight requirements
             requirement_list = []
             for requirement in chosen_requirement_list:
                 for num in range(key_abilities[requirement]):

@@ -642,9 +642,9 @@ def set_logic_complexity(complexity):
     global logic_complexity
     logic_complexity = (complexity - 1)/2
 
-def set_shop_event_wheight(wheight):
-    global shop_event_wheight
-    shop_event_wheight = 0.2 * wheight
+def set_shop_event_weight(weight):
+    global shop_event_weight
+    shop_event_weight = 0.2 * weight
 
 def set_hard_mode():
     global difficulty
@@ -785,17 +785,17 @@ def key_logic():
             continue
         #Place key item
         if check_to_requirement:
-            #Wheight checks
+            #Weight checks
             requirement_list_list = []
             for check in check_to_requirement:
                 requirement_list = check_to_requirement[check]
                 if not requirement_list in requirement_list_list:
                     requirement_list_list.append(requirement_list)
             chosen_requirement_list = random.choice(requirement_list_list)
-            #Wheight requirements
+            #Weight requirements
             requirement_list = []
             for requirement in chosen_requirement_list:
-                for num in range(get_requirement_wheight(requirement)):
+                for num in range(get_requirement_weight(requirement)):
                     requirement_list.append(requirement)
             chosen_requirement = random.choice(requirement_list)
             #Choose requirement and key item
@@ -900,7 +900,7 @@ def split_enemy_profile(profile):
         difficulty = "Hard"
     return (enemy_id, difficulty)
 
-def get_requirement_wheight(requirement):
+def get_requirement_weight(requirement):
     if type(requirement) is list:
         return 1
     elif requirement in key_shards:
@@ -1104,7 +1104,7 @@ def randomize_overworld_shards():
             datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardRate"]
 
 def randomize_classic_mode_drops():
-    #Convert the drop dictionary to a wheighted list
+    #Convert the drop dictionary to a weighted list
     classic_pool = []
     for item in constant["ClassicDrop"]:
         for num in range(constant["ClassicDrop"][item]):
@@ -1459,7 +1459,7 @@ def randomize_shop_items():
                 chosen = pick_and_remove(constant["ItemDrop"][entry]["ItemPool"], True, "None")
                 while datatable["PB_DT_ItemMaster"][chosen]["buyPrice"] == 0 or chosen in shop_skip_list:
                     chosen = pick_and_remove(constant["ItemDrop"][entry]["ItemPool"], True, "None")
-                if random.random() < shop_event_wheight:
+                if random.random() < shop_event_weight:
                     datatable["PB_DT_ItemMaster"][chosen]["Producted"] = random.choice(boss_shop_events)
                 else:
                     datatable["PB_DT_ItemMaster"][chosen]["Producted"] = default_shop_event

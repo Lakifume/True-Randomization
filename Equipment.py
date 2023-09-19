@@ -133,9 +133,9 @@ def init():
     global high_bound_multiplier
     high_bound_multiplier = 1.2
 
-def set_global_stat_wheight(wheight):
-    global global_stat_wheight
-    global_stat_wheight = Utility.wheight_exponents[wheight - 1]
+def set_global_stat_weight(weight):
+    global global_stat_weight
+    global_stat_weight = Utility.weight_exponents[weight - 1]
 
 def reset_zangetsu_black_belt():
     #Playable Zangetsu has the Black Belt on by default giving him extra stats
@@ -155,7 +155,7 @@ def randomize_equipment_stats():
                 if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
                     continue
                 list.append(abs(datatable["PB_DT_ArmorMaster"][entry][stat]))
-            multiplier = Utility.random_weighted(min(list), 1, int(min(list)*1.2), 1, global_stat_wheight)/min(list)
+            multiplier = Utility.random_weighted(min(list), 1, int(min(list)*1.2), 1, global_stat_weight)/min(list)
             for stat in stat_to_property:
                 if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
                     continue
@@ -169,11 +169,11 @@ def randomize_equipment_stats():
                     max_value = 20
                 else:
                     max_value = equipment_type_to_max_value[datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
-                datatable["PB_DT_ArmorMaster"][entry][stat] = Utility.random_weighted(datatable["PB_DT_ArmorMaster"][entry][stat], 1, int(max_value*1.2), 1, global_stat_wheight)
+                datatable["PB_DT_ArmorMaster"][entry][stat] = Utility.random_weighted(datatable["PB_DT_ArmorMaster"][entry][stat], 1, int(max_value*1.2), 1, global_stat_weight)
     #Shovel Armor's attack
     max_value = weapon_type_to_max_value["LargeSword"]
     min_value = round(max_value*min_value_multiplier)
-    datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Utility.random_weighted(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"]), int(min_value*low_bound_multiplier), int(max_value*high_bound_multiplier), 1, global_stat_wheight)
+    datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Utility.random_weighted(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"]), int(min_value*low_bound_multiplier), int(max_value*high_bound_multiplier), 1, global_stat_weight)
 
 def randomize_weapon_power():
     for entry in datatable["PB_DT_WeaponMaster"]:
@@ -184,14 +184,14 @@ def randomize_weapon_power():
         reduction = get_weapon_reduction(entry)
         #Make 8 bit weapons retain their tier system
         if entry in bit_weapons:
-            bweapon_power = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry + "3"]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_wheight)/3
+            bweapon_power = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry + "3"]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_weight)/3
             datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power)
         elif entry[:-1] in bit_weapons and entry[-1] == "2":
             datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power*2)
         elif entry[:-1] in bit_weapons and entry[-1] == "3":
             datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power*3)
         else:
-            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_wheight)
+            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_weight)
         #Update magic attack for weapons with elemental attributes
         if datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] != 0:
             datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"]

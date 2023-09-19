@@ -12,8 +12,8 @@ import Sound
 import Bloodless
 
 def init():
-    global wheight_exponents
-    wheight_exponents = [3, 1.8, 1.25]
+    global weight_exponents
+    weight_exponents = [3, 1.8, 1.25]
 
 def simplify_item_name(name):
     return name.replace("Familiar:", "").replace(" ", "").replace("'", "").replace("-", "").replace(".", "").replace("é", "e").replace("è", "e").replace("&", "and").lower()

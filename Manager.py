@@ -797,7 +797,8 @@ def apply_default_tweaks():
     for num in range(2):
         constant["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #With this mod vanilla rando is pointless and obselete so remove its widget
-    remove_vanilla_rando()
+    #Also prevent going online with this mod active
+    remove_unwanted_modes()
     #Test
     #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
     #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
@@ -862,12 +863,12 @@ def update_item_descriptions():
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
-def remove_vanilla_rando():
+def remove_unwanted_modes():
     for index in [293, 294]:
         new_list = []
         count = 0
         for data in game_data["TitleExtraMenu"].Exports[index].Data[0].Value:
-            if count != 2:
+            if not count in [2, 5, 6]:
                 new_list.append(data)
             count += 1
         game_data["TitleExtraMenu"].Exports[index].Data[0].Value = new_list

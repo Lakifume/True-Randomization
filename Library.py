@@ -20,15 +20,15 @@ def init():
     global tome_to_properties
     tome_to_properties = {}
 
-def set_requirement_wheight(wheight):
-    global requirement_wheight
-    requirement_wheight = ReqCurve(wheight-1)
+def set_requirement_weight(weight):
+    global requirement_weight
+    requirement_weight = ReqCurve(weight-1)
 
 def randomize_library_requirements():
     #Fill requirement list
     property_list = []
     for num in range(20):
-        match requirement_wheight:
+        match requirement_weight:
             case ReqCurve.Concave:
                 completion = round(Utility.squircle(num/20, 1.5)*100)
             case ReqCurve.Linear:
