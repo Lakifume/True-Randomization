@@ -958,9 +958,9 @@ def pick_key_enemy(available_enemies):
     return random.choice(possible_enemies)
 
 def get_door_destination(door):
-    if door in Room.map_doors:
-        if Room.map_connections[Room.map_doors[door].room][door]:
-            return Room.map_connections[Room.map_doors[door].room][door][0]
+    if door in Room.door_string_to_door:
+        if Room.map_connections[Room.door_string_to_door[door].room][door]:
+            return Room.map_connections[Room.door_string_to_door[door].room][door][0]
         else:
             return None
     elif door.split("_")[0] == "TO":

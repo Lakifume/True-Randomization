@@ -341,8 +341,8 @@ def init():
     }
     global map_connections
     map_connections = {}
-    global map_doors
-    map_doors = {}
+    global door_string_to_door
+    door_string_to_door = {}
     global custom_actor_prefix
     custom_actor_prefix = "TR_"
     global global_room_pickups
@@ -355,12 +355,10 @@ def get_map_info():
         doors = convert_flag_to_door(room, datatable["PB_DT_RoomMaster"][room]["DoorFlag"], datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
         for door in doors:
             door_string = "_".join([door.room[3:], str(door.x_block), str(door.z_block), door.direction_part.name])
-            map_doors[door_string] = door
+            door_string_to_door[door_string] = door
             map_connections[room][door_string] = []
     for room_1 in datatable["PB_DT_RoomMaster"]:
         for room_2 in datatable["PB_DT_RoomMaster"]:
-            if datatable["PB_DT_RoomMaster"][room_1]["OutOfMap"] != datatable["PB_DT_RoomMaster"][room_2]["OutOfMap"]:
-                continue
             is_room_adjacent(room_1, room_2)
 
 def update_any_map():
@@ -416,14 +414,14 @@ def update_map_doors():
                 if cannot_add_actor_to_door(exit):
                     continue
                 #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
-                if map_doors[exit].room == "m20JRN_002":
+                if door_string_to_door[exit].room == "m20JRN_002":
                     filename = "m20JRN_002_BG"
                 else:
-                    filename = get_gimmick_filename(map_doors[exit].room)
+                    filename = get_gimmick_filename(door_string_to_door[exit].room)
                 #Offset the door for Journey
-                if map_doors[exit].room == "m20JRN_004":
+                if door_string_to_door[exit].room == "m20JRN_004":
                     x_offset = 180
-                elif "m20JRN" in map_doors[exit].room:
+                elif "m20JRN" in door_string_to_door[exit].room:
                     x_offset = -60
                 else:
                     x_offset = 0
@@ -432,20 +430,20 @@ def update_map_doors():
                 scale    = FVector(1, 3, 1)
                 properties = {}
                 properties["BossID"] = FName.FromString(game_data[filename], room_to_boss[room])
-                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -180
                     properties["IsRight"] = False
                     if exit in arched_doors:
                         rotation.Yaw += 15
-                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - x_offset
+                if door_string_to_door[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["AreaWidthSize"]*1260 - x_offset
                     properties["IsRight"] = True
                     if exit in arched_doors:
                         rotation.Yaw -= 15
-                location.Z = map_doors[exit].z_block*720 + 240.0
-                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = door_string_to_door[exit].z_block*720 + 240.0
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "PBBossDoor_BP_C", location, rotation, scale, properties)
                 #If the door is a breakable wall we don't want the boss door to overlay it, so break it by default
@@ -464,7 +462,7 @@ def update_map_doors():
             for exit in map_connections[room][entrance]:
                 if cannot_add_actor_to_door(exit):
                     continue
-                filename = get_gimmick_filename(map_doors[exit].room)
+                filename = get_gimmick_filename(door_string_to_door[exit].room)
                 location = FVector(0, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
@@ -474,18 +472,18 @@ def update_map_doors():
                 properties["TutorialID"] = FName.FromString(game_data[filename], "KeyDoor" + "{:02x}".format(room_to_backer[room][1]))
                 if room_to_backer[room][0] == "None":
                     properties["IsMusicBoxRoom"] =  True
-                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -180
                     if exit in arched_doors:
                         rotation.Yaw += 15
-                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260
+                if door_string_to_door[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["AreaWidthSize"]*1260
                     if exit in arched_doors:
                         rotation.Yaw -= 15
-                location.Z = map_doors[exit].z_block*720 + 240.0
-                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = door_string_to_door[exit].z_block*720 + 240.0
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 actor_index = len(game_data[filename].Exports)
                 add_level_actor(filename, "PBBakkerDoor_BP_C", location, rotation, scale, properties)
@@ -511,26 +509,26 @@ def update_map_doors():
                 if exit in doors_done or exit in arched_doors or exit in transitionless_doors:
                     continue
                 #If the door is too close to a cutscene disable the event to prevent softlocks
-                if map_doors[exit].room == "m03ENT_006":
+                if door_string_to_door[exit].room == "m03ENT_006":
                     datatable["PB_DT_EventFlagMaster"]["Event_05_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
                 if exit == "ARC_001_0_0_LEFT":
                     datatable["PB_DT_EventFlagMaster"]["Event_09_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
                 if exit == "TAR_000_0_0_LEFT":
                     datatable["PB_DT_EventFlagMaster"]["Event_12_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-                filename = get_gimmick_filename(map_doors[exit].room)
+                filename = get_gimmick_filename(door_string_to_door[exit].room)
                 x_offset = 40
                 location = FVector(x_offset, -180, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
-                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     class_name = "BP_AreaDoor_C(Left)"
-                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - x_offset
+                if door_string_to_door[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["AreaWidthSize"]*1260 - x_offset
                     class_name = "BP_AreaDoor_C(Right)"
-                location.Z = map_doors[exit].z_block*720 + 240.0
-                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = door_string_to_door[exit].z_block*720 + 240.0
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 #If the door should remain open replace it with a regular event door
                 if exit in open_transition_doors:
@@ -580,21 +578,21 @@ def update_map_indicators():
                     continue
                 if exit in ["VIL_005_0_0_RIGHT", "VIL_006_0_1_LEFT"]:
                     continue
-                filename = get_gimmick_filename(map_doors[exit].room)
+                filename = get_gimmick_filename(door_string_to_door[exit].room)
                 location = FVector(-80, -120, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 1, 1)
                 properties = {}
                 properties["DiaryID"] = FName.FromString(game_data[filename], "None")
-                if map_doors[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                     rotation.Yaw = -30
-                if map_doors[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
-                    location.X = datatable["PB_DT_RoomMaster"][map_doors[exit].room]["AreaWidthSize"]*1260 - 50
+                if door_string_to_door[exit].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+                    location.X = datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["AreaWidthSize"]*1260 - 50
                     rotation.Yaw = 30
-                location.Z = map_doors[exit].z_block*720 + 240.0
-                if map_doors[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+                location.Z = door_string_to_door[exit].z_block*720 + 240.0
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                     location.Z -= 180.0
-                if map_doors[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+                if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "ReadableBookShelf_C", location, rotation, scale, properties)
                 #Remove the magic door in that one galleon room so that it never overlays with anything
@@ -615,33 +613,33 @@ def update_map_indicators():
             rotation = FRotator(0, 0, 0)
             scale    = FVector(1, 1, 1)
             #Global direction
-            if map_doors[door].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
+            if door_string_to_door[door].direction_part in [Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP]:
                 location.X = -18
-                location.Z = map_doors[door].z_block*720 + door_height
+                location.Z = door_string_to_door[door].z_block*720 + door_height
                 lever_offset = -360
                 if door in arched_doors:
                     rotation.Yaw += 20
-            if map_doors[door].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
+            if door_string_to_door[door].direction_part in [Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP]:
                 location.X = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260 + 18
-                location.Z = map_doors[door].z_block*720 + door_height
+                location.Z = door_string_to_door[door].z_block*720 + door_height
                 lever_offset = 360
                 if door in arched_doors:
                     rotation.Yaw -= 20
-            if map_doors[door].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
-                location.X = map_doors[door].x_block*1260 + 510.0
+            if door_string_to_door[door].direction_part in [Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT]:
+                location.X = door_string_to_door[door].x_block*1260 + 510.0
                 location.Z = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"]*720 - 5
                 rotation.Pitch = -90
                 lever_offset = -360
-            if map_doors[door].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
-                location.X = map_doors[door].x_block*1260 + 510.0
+            if door_string_to_door[door].direction_part in [Direction.BOTTOM, Direction.BOTTOM_LEFT, Direction.BOTTOM_RIGHT]:
+                location.X = door_string_to_door[door].x_block*1260 + 510.0
                 location.Z = 5
                 rotation.Pitch = -90
                 lever_offset = 360
             #Sub direction
-            if map_doors[door].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
+            if door_string_to_door[door].direction_part in [Direction.LEFT_BOTTOM, Direction.RIGHT_BOTTOM]:
                 if "m10BIG" in room:
                     location.Z -= door_height
-                elif "_".join([room[3:], str(map_doors[door].x_block), str(map_doors[door].z_block), map_doors[door].direction_part.name.split("_")[0]]) in map_connections[room]:
+                elif "_".join([room[3:], str(door_string_to_door[door].x_block), str(door_string_to_door[door].z_block), door_string_to_door[door].direction_part.name.split("_")[0]]) in map_connections[room]:
                     location.Z -= door_height
                     scale.X = 4.25
                     scale.Z = 4.25
@@ -649,25 +647,25 @@ def update_map_indicators():
                     location.Z -= door_height*scale.Z - door_height
                 else:
                     location.Z -= 180
-            if map_doors[door].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
+            if door_string_to_door[door].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                 if "m10BIG" in room:
                     location.Z += door_height
-                elif "_".join([room[3:], str(map_doors[door].x_block), str(map_doors[door].z_block), map_doors[door].direction_part.name.split("_")[0]]) in map_connections[room]:
+                elif "_".join([room[3:], str(door_string_to_door[door].x_block), str(door_string_to_door[door].z_block), door_string_to_door[door].direction_part.name.split("_")[0]]) in map_connections[room]:
                     location.Z += door_height
                     scale.X = 4.25
                     scale.Z = 4.25
-                    if map_doors[door].direction_part == Direction.LEFT_TOP:
+                    if door_string_to_door[door].direction_part == Direction.LEFT_TOP:
                         location.X -= (door_width*scale.Z - door_width)/2 - door_width
                     else:
                         location.X += (door_width*scale.Z - door_width)/2 - door_width
                 else:
                     location.Z += 180
-            if map_doors[door].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
+            if door_string_to_door[door].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
                 if "m10BIG" in room:
                     location.X -= 510
                 else:
                     location.X -= 370
-            if map_doors[door].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
+            if door_string_to_door[door].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
                 if "m10BIG" in room:
                     location.X += 510
                 else:
@@ -680,7 +678,7 @@ def update_map_indicators():
                 remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
 
 def cannot_add_actor_to_door(door):
-    room = map_doors[door].room
+    room = door_string_to_door[door].room
     return door in door_skip or room in room_to_boss or room in room_to_backer or not room in constant["RoomRequirement"]
 
 def update_room_containers(room):
@@ -828,20 +826,20 @@ def update_map_connections():
                 #Make it so that an area is only connected to its corresponding transition rooms when possible
                 #This avoids having the next area name tag show up within the transition
                 #With the exception of standalone transitions with no fallbacks as well as the first entrance transition fallback
-                if datatable["PB_DT_RoomMaster"][map_doors[exit].room]["RoomType"] == "ERoomType::Load" and map_doors[exit].room[0:6] != room[0:6] and datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] != "None":
-                    if is_vanilla_start or map_doors[exit].room != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] != "m03ENT_1200":
+                if datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["RoomType"] == "ERoomType::Load" and door_string_to_door[exit].room[0:6] != room[0:6] and datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["SameRoom"] != "None":
+                    if is_vanilla_start or door_string_to_door[exit].room != "m02VIL_1200" and datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["SameRoom"] != "m03ENT_1200":
                         continue
                 #The first entrance transition room is hardcoded to bring you back to the village regardless of its position on the canvas
                 #Ignore that room and don't connect it to anything
                 #Meanwhile the village version of that transition is always needed to trigger the curved effect of the following bridge room
                 #So ignore any other transitions overlayed on top of it
-                if not is_vanilla_start and (datatable["PB_DT_RoomMaster"][map_doors[exit].room]["SameRoom"] == "m02VIL_1200" or map_doors[exit].room == "m03ENT_1200"):
+                if not is_vanilla_start and (datatable["PB_DT_RoomMaster"][door_string_to_door[exit].room]["SameRoom"] == "m02VIL_1200" or door_string_to_door[exit].room == "m03ENT_1200"):
                     continue
-                if not map_doors[exit].room in datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"]:
-                    datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"].append(map_doors[exit].room)
+                if not door_string_to_door[exit].room in datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"]:
+                    datatable["PB_DT_RoomMaster"][room]["AdjacentRoomName"].append(door_string_to_door[exit].room)
             #Update door list
             if map_connections[room][entrance]:
-                open_doors.append(map_doors[entrance])
+                open_doors.append(door_string_to_door[entrance])
         if not open_doors and datatable["PB_DT_RoomMaster"][room]["DoorFlag"]:
             datatable["PB_DT_RoomMaster"][room]["OutOfMap"] = True
         datatable["PB_DT_RoomMaster"][room]["DoorFlag"] = convert_door_to_flag(open_doors, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
@@ -945,7 +943,7 @@ def fix_bathin_left_entrance():
     #If Bathin's intro event triggers when the player entered the room from the left they will be stuck in an endless walk cycle
     #To fix this add a special door to warp the player in the room's player start instead
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
-        room = map_doors[door].room
+        room = door_string_to_door[door].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
         new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
@@ -958,7 +956,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[0].Data[3].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 720, 720*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
         new_file.Exports[12].Data[0].Value[0].Value = FVector(  21*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],  12,  12*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
         #Change the door's properties
-        new_file.Exports[2].Data[0].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 0, 720*map_doors[door].z_block + 360)
+        new_file.Exports[2].Data[0].Value[0].Value  = FVector(1260*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"], 0, 720*door_string_to_door[door].z_block + 360)
         new_file.Exports[2].Data[1].Value[0].Value  = FRotator(0, 0, 0)
         new_file.Exports[8].Data[0].Value = FName.FromString(new_file, room[3:])
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, "dummy")
@@ -968,7 +966,7 @@ def fix_bathin_left_entrance():
     adjacent_room = None
     #Get Bathin's adjacent room while prioritizing the same area
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
-        room = map_doors[door].room
+        room = door_string_to_door[door].room
         adjacent_room = room
         if datatable["PB_DT_RoomMaster"][room]["AreaID"] == datatable["PB_DT_RoomMaster"]["m13ARC_005"]["AreaID"]:
             break
@@ -1187,13 +1185,15 @@ def convert_door_to_flag(door_list, room_width):
     return door_flag
 
 def is_room_adjacent(room_1, room_2):
+    if datatable["PB_DT_RoomMaster"][room_1]["OutOfMap"] != datatable["PB_DT_RoomMaster"][room_2]["OutOfMap"]:
+        return
     if left_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
-    elif bottom_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    if bottom_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
-    elif right_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    if right_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
-    elif top_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
+    if top_room_check(datatable["PB_DT_RoomMaster"][room_1], datatable["PB_DT_RoomMaster"][room_2]):
         door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
 
 def left_room_check(room_1, room_2):
@@ -1210,36 +1210,35 @@ def top_room_check(room_1, room_2):
 
 def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
     for door_1 in map_connections[room_1]:
-        if map_doors[door_1].direction_part == direction_1:
+        if door_string_to_door[door_1].direction_part == direction_1:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_1] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
                     map_connections[room_1][door_1].append(door_2)
-        elif map_doors[door_1].direction_part == direction_2:
+        if door_string_to_door[door_1].direction_part == direction_2:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_2] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
                     map_connections[room_1][door_1].append(door_2)
-        elif map_doors[door_1].direction_part == direction_3:
+        if door_string_to_door[door_1].direction_part == direction_3:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_3] and map_doors[door_1].z_block == (map_doors[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
                     map_connections[room_1][door_1].append(door_2)
 
 def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3):
     for door_1 in map_connections[room_1]:
-        if map_doors[door_1].direction_part == direction_1:
+        if door_string_to_door[door_1].direction_part == direction_1:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_1] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
                     map_connections[room_1][door_1].append(door_2)
-        elif map_doors[door_1].direction_part == direction_2:
+        if door_string_to_door[door_1].direction_part == direction_2:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_2] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
                     map_connections[room_1][door_1].append(door_2)
-        elif map_doors[door_1].direction_part == direction_3:
+        if door_string_to_door[door_1].direction_part == direction_3:
             for door_2 in map_connections[room_2]:
-                if map_doors[door_2].direction_part == OppositeDirection[direction_3] and map_doors[door_1].x_block == (map_doors[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
                     map_connections[room_1][door_1].append(door_2)
 
 def get_gimmick_filename(room):
     if room in room_to_gimmick:
         return room_to_gimmick[room]
-    else:
-        return room + "_Gimmick"
+    return room + "_Gimmick"
