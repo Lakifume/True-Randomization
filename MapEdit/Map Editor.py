@@ -1,3 +1,7 @@
+from PySide6.QtCore import *
+from PySide6.QtGui import *
+from PySide6.QtWidgets import *
+
 import json
 import sys
 import os
@@ -5,15 +9,16 @@ import math
 import copy
 import colorsys
 import decimal
+import time
+
 from enum import Enum
 from collections import OrderedDict
-from PySide6.QtCore import *
-from PySide6.QtGui import *
-from PySide6.QtWidgets import *
 
 script_name, script_extension = os.path.splitext(os.path.basename(__file__))
 
 DEFAULT_MAP = "Data\\PB_DT_RoomMaster.json"
+DEFAULT_MAP_SURFACE = 1553
+DEFAULT_MAP_ROOMS   = 383
 
 TILEWIDTH = 25
 TILEHEIGHT = 15
@@ -75,29 +80,34 @@ boss_room = [
     "m53BRV_005"
 ]
 
+constant = {}
+translation = {}
 music_id = []
 music_name = []
 play_id = []
 play_name = []
-    
-with open("Data\\Constant\\ConnectedRooms.json", "r", encoding="utf8") as file_reader:
-    connected_room = json.load(file_reader)
 
-with open("Data\\Translation\\MusicTranslation.json", "r", encoding="utf8") as file_reader:
-    music_translate = json.load(file_reader)
+for file in os.listdir("Data\\Constant"):
+    name, extension = os.path.splitext(file)
+    with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
+        constant[name] = json.load(file_reader)
 
-with open("Data\\Translation\\PlayTranslation.json", "r", encoding="utf8") as file_reader:
-    play_translate = json.load(file_reader)
+for file in os.listdir("Data\\Translation"):
+    name, extension = os.path.splitext(file)
+    with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
+        translation[name] = json.load(file_reader)
 
 music_id.append(None)
 music_name.append("None")
-for i in music_translate:
-    music_id.append(i)
-    music_name.append(music_translate[i])
+for entry in translation["Music"]:
+    music_id.append(entry)
+    music_name.append(translation["Music"][entry])
 
-for i in play_translate:
-    play_id.append(i)
-    play_name.append(play_translate[i])
+for entry in translation["Play"]:
+    play_id.append(entry)
+    play_name.append(translation["Play"][entry])
+
+#Global functions
 
 def modify_color_with_hsv(color, hue_mod, sat_mod, val_mod):
     hsv = colorsys.rgb_to_hsv(int(color[-6:-4], 16)/255, int(color[-4:-2], 16)/255, int(color[-2: len(color)], 16)/255)
@@ -112,6 +122,67 @@ def modify_color_with_hsv(color, hue_mod, sat_mod, val_mod):
         val = hsv[2] + (1 - hsv[2])*(val_mod - 1)
     rgb = colorsys.hsv_to_rgb(hue, sat, val)
     return color[:-6] + "{:02x}".format(round(rgb[0]*255)) + "{:02x}".format(round(rgb[1]*255)) + "{:02x}".format(round(rgb[2]*255))
+    
+def is_room_adjacent(room_1, room_2, consider_hard_one_ways = False):
+    if room_1.out_of_map != room_2.out_of_map:
+        return False
+    if left_room_check(room_1, room_2):
+        return door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
+    if bottom_room_check(room_1, room_2):
+        return door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
+    if right_room_check(room_1, room_2):
+        if consider_hard_one_ways and room_2.name == "m08TWR_019":
+            return False
+        return door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
+    if top_room_check(room_1, room_2):
+        if consider_hard_one_ways and room_1.name == "m07LIB_000":
+            return False
+        return door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
+    return False
+
+def left_room_check(room_1, room_2):
+    return bool(room_2.offset_x == room_1.offset_x - 1 * room_2.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
+
+def bottom_room_check(room_1, room_2):
+    return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z - 1 * room_2.height)
+
+def right_room_check(room_1, room_2):
+    return bool(room_2.offset_x == room_1.offset_x + 1 * room_1.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
+
+def top_room_check(room_1, room_2):
+    return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z + 1 * room_1.height)
+
+def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
+    for door_1 in room_1.door_flag:
+        if door_1.direction_part == direction_1:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_1] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                    return True
+        if door_1.direction_part == direction_2:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_2] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                    return True
+        if door_1.direction_part == direction_3:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_3] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
+                    return True
+    return False
+
+def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3):
+    for door_1 in room_1.door_flag:
+        if door_1.direction_part == direction_1:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_1] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                    return True
+        if door_1.direction_part == direction_2:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_2] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                    return True
+        if door_1.direction_part == direction_3:
+            for door_2 in room_2.door_flag:
+                if door_2.direction_part == OppositeDirection[direction_3] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
+                    return True
+    return False
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -142,6 +213,8 @@ OppositeDirection = {
     Direction.BOTTOM_LEFT:  Direction.TOP_LEFT,
 }
 
+#Classes
+
 class RoomTheme(Enum):
     Default = 0
     Light   = 1
@@ -170,45 +243,35 @@ class Door:
         self.direction_part = direction_part
         self.breakable = breakable
 
-class Void:
-    def __init__(self, x_block, z_block):
-        self.x_block = x_block
-        self.z_block = z_block
-
 class RoomItem(QGraphicsRectItem):
-    def __init__(self, index, room_data, outline, fill, opacity, can_move, group_list, main_window, metadata=None, parent=None):
+    def __init__(self, index, room_data, can_move, group_list, main_window, metadata=None, parent=None):
         super().__init__(0, 0, room_data.width * TILEWIDTH, room_data.height * TILEHEIGHT, parent)
         self.setData(KEY_METADATA, metadata)
         self.setCursor(Qt.PointingHandCursor)
         
         self.index = index
         self.room_data = room_data
-        self.outline = QPen(outline)
-        self.outline.setWidth(OUTLINE)
-        self.outline.setJoinStyle(Qt.MiterJoin)
-        self.fill = fill
-        self.opacity = opacity
         self.can_move = can_move
         self.group_list = group_list
         self.main_window = main_window
         
-        self.room_theme = {}
+        self.theme_to_fill = {}
         self.current_theme = RoomTheme.Default
         self.icon_inverted = False
         
-        self.setPen(self.outline)
-        self.set_fill(self.fill)
-        self.set_theme(self.current_theme)
+        outline = QPen("#ffffff")
+        outline.setWidth(OUTLINE)
+        outline.setJoinStyle(Qt.MiterJoin)
+        
+        self.setPen(outline)
         self.setToolTip(room_data.name)
+        
+        self.reset_fill()
         self.reset_pos()
         self.reset_flags()
         self.reset_layer(False)
-    
-    def set_fill(self, color):
-        self.room_theme[RoomTheme.Default] = color
-        self.room_theme[RoomTheme.Light]   = modify_color_with_hsv(color, 0, 1/3, 1.75)
-        self.room_theme[RoomTheme.Dark]    = modify_color_with_hsv(color, 0,   1, 0.25)
-        self.reset_brush()
+        
+        self.set_theme(self.current_theme)
     
     def set_theme(self, theme):
         self.current_theme = theme
@@ -219,15 +282,27 @@ class RoomItem(QGraphicsRectItem):
             self.invert_icon()
         self.reset_brush()
     
+    def reset_fill(self):
+        color = area_color[18]
+        if not self.room_data.out_of_map:
+            color = area_color[int(self.room_data.area.split("::")[-1][1:3]) - 1]
+        self.theme_to_fill[RoomTheme.Default] = color
+        self.theme_to_fill[RoomTheme.Light]   = modify_color_with_hsv(color, 0, 1/3, 1.75)
+        self.theme_to_fill[RoomTheme.Dark]    = modify_color_with_hsv(color, 0,   1, 0.25)
+        self.reset_brush()
+    
     def reset_pos(self):
         self.setPos(self.room_data.offset_x * TILEWIDTH, self.room_data.offset_z * TILEHEIGHT)
     
     def reset_brush(self):
-        self.fill = self.room_theme[self.current_theme]
-        self.setBrush(QColor(self.fill[:1] + "{:02x}".format(round(self.opacity*255)) + self.fill[1:]))
-        for i in self.childItems():
-            if type(i) == QGraphicsRectItem:
-                i.setBrush(QColor(self.fill))
+        opacity = 1
+        if self.room_data.room_type == "ERoomType::Load" or self.room_data.name == "m02VIL_000":
+            opacity = 0.5
+        current_fill = self.theme_to_fill[self.current_theme]
+        self.setBrush(QColor(current_fill[:1] + "{:02x}".format(round(opacity*255)) + current_fill[1:]))
+        for item in self.childItems():
+            if type(item) == QGraphicsRectItem:
+                item.setBrush(QColor(current_fill))
     
     def reset_flags(self):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
@@ -239,21 +314,21 @@ class RoomItem(QGraphicsRectItem):
     
     def invert_icon(self):
         self.icon_inverted = not self.icon_inverted
-        for i in self.childItems():
-            if type(i) == QGraphicsPixmapItem:
-                image = i.pixmap().toImage()
+        for item in self.childItems():
+            if type(item) == QGraphicsPixmapItem:
+                image = item.pixmap().toImage()
                 image.invertPixels()
-                i.setPixmap(QPixmap.fromImage(image))
+                item.setPixmap(QPixmap.fromImage(image))
     
     def paint(self, painter, option, widget):
         option.state &= ~QStyle.State_Selected
         super().paint(painter, option, widget)
     
     def reset_layer(self, has_priority):
+        offset = 0
         if has_priority:
-            self.setZValue(74 - self.room_data.width*self.room_data.height)
-        else:
-            self.setZValue(0 - self.room_data.width*self.room_data.height)
+            offset = 74
+        self.setZValue(offset - self.room_data.width*self.room_data.height)
     
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSelectedChange:
@@ -267,12 +342,12 @@ class RoomItem(QGraphicsRectItem):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         if event.button() == Qt.LeftButton and self.main_window.restrictions:
-            for i in self.scene().selectedItems():
-                for e in i.group_list:
+            for room in self.scene().selectedItems():
+                for e in room.group_list:
                     self.main_window.room_list[e].setSelected(True)
         if event.button() == Qt.RightButton and not self.isSelected():
-            for i in self.scene().selectedItems():
-                i.setSelected(False)
+            for room in self.scene().selectedItems():
+                room.setSelected(False)
             self.setSelected(True)
     
     def mouseMoveEvent(self, event):
@@ -282,33 +357,17 @@ class RoomItem(QGraphicsRectItem):
     def mouseReleaseEvent(self, event):
         super().mouseReleaseEvent(event)
         #Place room
-        for i in self.scene().selectedItems():
-            i.apply_round()
+        for room_1 in self.scene().selectedItems():
+            room_1.apply_round()
             #Change a backer room's area id based on what it is connected to
-            if "m88BKR" in i.room_data.name:
-                for e in self.main_window.room_list:
-                    if "m88BKR" in e.room_data.name:
+            if "m88BKR" in room_1.room_data.name:
+                for room_2 in self.main_window.room_list:
+                    if "m88BKR" in room_2.room_data.name:
                         continue
-                    if e.room_data.out_of_map:
-                        continue
-                    if i.room_data.room_path == "ERoomPath::Left":
-                        if e.room_data.offset_x == round(i.room_data.offset_x - e.room_data.width) and round(i.room_data.offset_z - e.room_data.height - 1, 1) <= e.room_data.offset_z <= round(i.room_data.offset_z + i.room_data.height - 1):
-                            for o in e.room_data.door_flag:
-                                if o.direction_part == Direction.RIGHT and 0 == (o.z_block + e.room_data.offset_z - i.room_data.offset_z):
-                                    if e.room_data.area != i.room_data.area:
-                                        i.room_data.area = e.room_data.area
-                                        self.main_window.music_drop_down.setCurrentIndex(music_id.index(e.room_data.music))
-                    if i.room_data.room_path == "ERoomPath::Right":
-                        if e.room_data.offset_x == round(i.room_data.offset_x + i.room_data.width) and round(i.room_data.offset_z - e.room_data.height - 1, 1) <= e.room_data.offset_z <= round(i.room_data.offset_z + i.room_data.height - 1):
-                            for o in e.room_data.door_flag:
-                                if o.direction_part == Direction.LEFT and 0 == (o.z_block + e.room_data.offset_z - i.room_data.offset_z):
-                                    if e.room_data.area != i.room_data.area:
-                                        i.room_data.area = e.room_data.area
-                                        self.main_window.music_drop_down.setCurrentIndex(music_id.index(e.room_data.music))
-                if i.room_data.area == "EAreaID::None":
-                    i.set_fill(area_color[18])
-                else:
-                    i.set_fill(area_color[int(i.room_data.area.split("::")[-1][1:3]) - 1])
+                    if is_room_adjacent(room_1.room_data, room_2.room_data):
+                        room_1.room_data.area = room_2.room_data.area
+                        room_1.reset_fill()
+                        self.main_window.music_drop_down.setCurrentIndex(music_id.index(room_2.room_data.music))
         if event.button() == Qt.LeftButton:
             self.main_window.set_unsaved()
     
@@ -316,9 +375,9 @@ class RoomItem(QGraphicsRectItem):
         super().mouseDoubleClickEvent(event)
         #Select all rooms belonging to the same area
         if self.room_data.area != "EAreaID::None":
-            for i in self.main_window.room_list:
-                if i.room_data.area == self.room_data.area:
-                    i.setSelected(True)
+            for room in self.main_window.room_list:
+                if room.room_data.area == self.room_data.area:
+                    room.setSelected(True)
 
     def apply_round(self):
         #Snap room to grid
@@ -375,6 +434,7 @@ class Main(QMainWindow):
         + "QComboBox QAbstractItemView{border: 1px solid #21222e}"
         + "QMessageBox{background-color: #21222e}"
         + "QDialog{background-color: #21222e}"
+        + "QGroupBox{background-color: #21222e; border: 2px solid white}"
         + "QPushButton{background-color: #21222e}"
         + "QListWidget{background-color: #21222e; border: 1px solid #21222e}"
         + "QScrollBar::add-page{background-color: #1b1c26}"
@@ -471,15 +531,15 @@ class Main(QMainWindow):
         self.area_order.triggered.connect(self.area_order_action)
         tool_bar.addAction(self.area_order)
         
-        self.key_location = QAction("Key Locations", self, checkable = True)
-        self.key_location.setShortcut(QKeySequence(Qt.Key_K))
-        self.key_location.triggered.connect(self.key_location_action)
-        tool_bar.addAction(self.key_location)
-        
         self.comp_check = QAction("Completion Check", self, checkable = True)
         self.comp_check.setShortcut(QKeySequence(Qt.Key_C))
         self.comp_check.triggered.connect(self.comp_check_action)
         tool_bar.addAction(self.comp_check)
+        
+        self.key_location = QAction("Key Locations", self, checkable = True)
+        self.key_location.setShortcut(QKeySequence(Qt.Key_K))
+        self.key_location.triggered.connect(self.key_location_action)
+        tool_bar.addAction(self.key_location)
         
         how_to = QAction("How to use", self)
         how_to.triggered.connect(self.how_to)
@@ -560,6 +620,37 @@ class Main(QMainWindow):
         retain.setRetainSizeWhenHidden(True)
         self.seed_label.setSizePolicy(retain)
         
+        #Groupboxes
+        
+        comp_box_layout = QVBoxLayout()
+        self.comp_box = QGroupBox()
+        self.comp_box.setLayout(comp_box_layout)
+        self.comp_box.setVisible(False)
+        self.comp_box.setFixedSize(200, 70)
+        retain = self.comp_box.sizePolicy()
+        retain.setRetainSizeWhenHidden(True)
+        self.comp_box.setSizePolicy(retain)
+        
+        comp_name_label_1 = QLabel()
+        comp_name_label_1.setText("Rooms used:")
+        comp_name_label_2 = QLabel()
+        comp_name_label_2.setText("Surface used:")
+        self.comp_value_label_1 = QLabel()
+        self.comp_value_label_2 = QLabel()
+        
+        comp_hbox_top = QHBoxLayout()
+        comp_hbox_bot = QHBoxLayout()
+        
+        comp_hbox_top.addWidget(comp_name_label_1)
+        comp_hbox_top.addStretch(1)
+        comp_hbox_top.addWidget(self.comp_value_label_1)
+        comp_hbox_bot.addWidget(comp_name_label_2)
+        comp_hbox_bot.addStretch(1)
+        comp_hbox_bot.addWidget(self.comp_value_label_2)
+        
+        comp_box_layout.addLayout(comp_hbox_top)
+        comp_box_layout.addLayout(comp_hbox_bot)
+        
         #Drop down lists
         
         self.key_drop_down = QComboBox()
@@ -617,6 +708,7 @@ class Main(QMainWindow):
         hbox_top.addWidget(self.play_drop_down)
         
         hbox_center = QHBoxLayout()
+        hbox_center.addWidget(self.comp_box)
         hbox_center.addStretch(1)
         hbox_center.addLayout(list_layout)
         
@@ -735,47 +827,34 @@ class Main(QMainWindow):
         else:
             self.restrictions = False
             self.lock_label.setPixmap(QPixmap("Data\\Icon\\unlock_icon.png"))
-        for i in self.room_list:
-            i.reset_flags()
-            i.setSelected(False)
+        for room in self.room_list:
+            room.reset_flags()
+            room.setSelected(False)
     
     def select_all_action(self):
-        for i in self.room_list:
-            i.setSelected(True)
+        for room in self.room_list:
+            room.setSelected(True)
     
     def select_none_action(self):
-        for i in self.room_list:
-            i.setSelected(False)
+        for room in self.room_list:
+            room.setSelected(False)
     
     def select_invert_action(self):
-        for i in self.room_list:
-            if i.isSelected():
-                i.setSelected(False)
-            else:
-                i.setSelected(True)
+        for room in self.room_list:
+            room.setSelected(not room.isSelected())
     
     def show_out_action(self):
-        for i in self.room_list:
-            if i.room_data.out_of_map:
-                if self.show_out.isChecked():
-                    i.setVisible(True)
-                else:
-                    i.setVisible(False)
+        for room in self.room_list:
+            if room.room_data.out_of_map:
+                room.setVisible(self.show_out.isChecked())
     
     def show_name_action(self):
-        for i in self.room_list:
-            if self.show_name.isChecked():
-                for e in i.childItems():
-                    if type(e) == QGraphicsTextItem:
-                        e.setVisible(True)
-                    if type(e) == QGraphicsPixmapItem:
-                        e.setVisible(False)
-            else:
-                for e in i.childItems():
-                    if type(e) == QGraphicsTextItem:
-                        e.setVisible(False)
-                    if type(e) == QGraphicsPixmapItem:
-                        e.setVisible(True)
+        for room in self.room_list:
+            for item in room.childItems():
+                if type(item) == QGraphicsTextItem:
+                    item.setVisible(self.show_name.isChecked())
+                if type(item) == QGraphicsPixmapItem:
+                    item.setVisible(not self.show_name.isChecked())
     
     def room_search_action(self):
         if self.room_search.isChecked():
@@ -789,9 +868,9 @@ class Main(QMainWindow):
             #Initiate
             self.disable_menus()
             self.disable_buttons()
-            for i in self.room_list:
-                i.setSelected(False)
-                i.set_static()
+            for room in self.room_list:
+                room.setSelected(False)
+                room.set_static()
             self.room_search_list.setCurrentItem(self.room_search_list.item(0))
             self.room_search_list_change(self.room_search_list.item(0))
             self.room_search_list.setVisible(True)
@@ -814,14 +893,58 @@ class Main(QMainWindow):
             #Initiate
             self.disable_menus()
             self.disable_buttons()
-            for i in self.room_list:
-                i.setSelected(False)
-                i.set_static()
+            for room in self.room_list:
+                room.setSelected(False)
+                room.set_static()
             self.area_order_list.setCurrentItem(self.area_order_list.item(0))
             self.area_order_list_change(self.area_order_list.item(0))
             self.area_order_list.setVisible(True)
         else:
             self.area_order_list.setVisible(False)
+            self.enable_menus()
+            self.enable_buttons()
+            self.reset_rooms()
+    
+    def comp_check_action(self):
+        if self.comp_check.isChecked():
+            #Disable other tools
+            self.room_search.setChecked(False)
+            self.room_search_action()
+            self.area_order.setChecked(False)
+            self.area_order_action()
+            self.key_location.setChecked(False)
+            self.key_location_action()
+            #Initiate
+            self.disable_menus()
+            self.disable_buttons()
+            for room in self.room_list:
+                room.setSelected(False)
+                room.set_static()
+                room.set_theme(RoomTheme.Dark)
+            self.comp_box.setVisible(True)
+            #Move through rooms
+            current_rooms = [self.room_list[0]]
+            self.completion_1 = 0
+            self.completion_2 = 0
+            self.completion_list = []
+            while current_rooms:
+                for room in current_rooms:
+                    self.add_room_to_completion(room)
+                current_rooms_copy = [elem for elem in current_rooms]
+                for room_1 in current_rooms_copy:
+                    for room_2 in self.room_list:
+                        if room_1.room_data.name in constant["ConnectedRooms"] and room_2.current_theme == RoomTheme.Dark:
+                            if room_2.room_data.name in constant["ConnectedRooms"][room_1.room_data.name]:
+                                current_rooms.append(room_2)
+                        if is_room_adjacent(room_1.room_data, room_2.room_data, True) and room_2.current_theme == RoomTheme.Dark:
+                            current_rooms.append(room_2)
+                    current_rooms.remove(room_1)
+                current_rooms = list(dict.fromkeys(current_rooms))
+                self.comp_value_label_1.setText(str("{:.2f}".format(round((self.completion_1/DEFAULT_MAP_ROOMS)  *100, 2))) + "%")
+                self.comp_value_label_2.setText(str("{:.2f}".format(round((self.completion_2/DEFAULT_MAP_SURFACE)*100, 2))) + "%")
+                QApplication.processEvents()
+        else:
+            self.comp_box.setVisible(False)
             self.enable_menus()
             self.enable_buttons()
             self.reset_rooms()
@@ -872,14 +995,14 @@ class Main(QMainWindow):
             self.show_out.setEnabled(False)
             #Fill information
             self.key_drop_down.clear()
-            for i in self.log["Key"]:
-                self.key_drop_down.addItem(i)
+            for entry in self.log["Key"]:
+                self.key_drop_down.addItem(entry)
             #Initiate
             self.disable_menus()
             self.disable_buttons()
-            for i in self.room_list:
-                i.setSelected(False)
-                i.set_static()
+            for room in self.room_list:
+                room.setSelected(False)
+                room.set_static()
             self.key_drop_down.setCurrentIndex(0)
             self.key_drop_down_change(0)
             self.key_drop_down.setVisible(True)
@@ -888,89 +1011,6 @@ class Main(QMainWindow):
             self.key_drop_down.setVisible(False)
             self.seed_label.setVisible(False)
             self.show_out.setEnabled(True)
-            self.enable_menus()
-            self.enable_buttons()
-            self.reset_rooms()
-    
-    def is_room_adjacent(self, room_1, room_2):
-        if self.left_room_check(room_1, room_2):
-            return self.door_vertical_check(room_1, room_2, Direction.LEFT, Direction.LEFT_BOTTOM, Direction.LEFT_TOP)
-        elif self.bottom_room_check(room_1, room_2):
-            return self.door_horizontal_check(room_1, room_2, Direction.BOTTOM, Direction.BOTTOM_RIGHT, Direction.BOTTOM_LEFT)
-        elif self.right_room_check(room_1, room_2):
-            return self.door_vertical_check(room_1, room_2, Direction.RIGHT, Direction.RIGHT_BOTTOM, Direction.RIGHT_TOP)
-        elif self.top_room_check(room_1, room_2):
-            return self.door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
-        return False
-    
-    def left_room_check(self, room_1, room_2):
-        return bool(room_2.offset_x == room_1.offset_x - 1 * room_2.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
-    
-    def bottom_room_check(self, room_1, room_2):
-        return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z - 1 * room_2.height)
-    
-    def right_room_check(self, room_1, room_2):
-        return bool(room_2.offset_x == room_1.offset_x + 1 * room_1.width and room_1.offset_z - 1 * (room_2.height - 1) <= room_2.offset_z <= room_1.offset_z + 1 * (room_1.height - 1))
-    
-    def top_room_check(self, room_1, room_2):
-        return bool(room_1.offset_x - 1 * (room_2.width - 1) <= room_2.offset_x <= room_1.offset_x + 1 * (room_1.width - 1) and room_2.offset_z == room_1.offset_z + 1 * room_1.height)
-    
-    def door_vertical_check(self, room_1, room_2, direction_1, direction_2, direction_3):
-        for door_1 in room_1.door_flag:
-            if door_1.direction_part == direction_1:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_1] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
-                        return True
-            if door_1.direction_part == direction_2:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_2] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
-                        return True
-            if door_1.direction_part == direction_3:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_3] and door_1.z_block == (door_2.z_block + (room_2.offset_z - room_1.offset_z)):
-                        return True
-        return False
-    
-    def door_horizontal_check(self, room_1, room_2, direction_1, direction_2, direction_3):
-        for door_1 in room_1.door_flag:
-            if door_1.direction_part == direction_1:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_1] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
-                        return True
-            if door_1.direction_part == direction_2:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_2] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
-                        return True
-            if door_1.direction_part == direction_3:
-                for door_2 in room_2.door_flag:
-                    if door_2.direction_part == OppositeDirection[direction_3] and door_1.x_block == (door_2.x_block + (room_2.offset_x - room_1.offset_x)):
-                        return True
-        return False
-    
-    def comp_check_action(self):
-        if self.comp_check.isChecked():
-            #Initiate
-            self.disable_menus()
-            self.disable_buttons()
-            for i in self.room_list:
-                i.setSelected(False)
-                i.set_static()
-            current_rooms = [self.room_list[0]]
-            available_rooms = [self.room_list[0]]
-            while current_rooms:
-                newList = [elem for elem in current_rooms]
-                for i in newList:
-                    for e in self.room_list:
-                        if self.is_room_adjacent(i.room_data, e.room_data) and not e in available_rooms:
-                            available_rooms.append(e)
-                            current_rooms.append(e)
-                    current_rooms.remove(i)
-            for i in self.room_list:
-                if i in available_rooms:
-                    i.set_theme(RoomTheme.Default)
-                else:
-                    i.set_theme(RoomTheme.Dark)
-        else:
             self.enable_menus()
             self.enable_buttons()
             self.reset_rooms()
@@ -1001,7 +1041,9 @@ class Main(QMainWindow):
         box.setWindowTitle("Map guidelines")
         box.setText("Here are some tips that will help you build maps that are fun to play on:"
         + "\n\n"
-        + "• making use of as many rooms as possible\n• connecting as many entrances as possible"
+        + "• making use of as many rooms as possible"
+        + "\n"
+        + "• connecting as many entrances as possible"
         + "\n"
         + "• keeping each area separated using transition rooms"
         + "\n"
@@ -1035,79 +1077,79 @@ class Main(QMainWindow):
         box.exec()
     
     def reverse_action(self):
-        for i in self.scene.selectedItems():
-            if i.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]:
-                if i.room_data.room_path == "ERoomPath::Left":
-                    i.room_data.room_path = "ERoomPath::Right"
-                    i.room_data.door_flag = self.convert_flag_to_door([1, 4], i.room_data.width)
-                    i.childItems()[1].setVisible(False)
-                    i.childItems()[2].setVisible(True)
-                elif i.room_data.room_path == "ERoomPath::Right":
-                    i.room_data.room_path = "ERoomPath::Both"
-                    i.room_data.door_flag = self.convert_flag_to_door([1, 5], i.room_data.width)
-                    i.childItems()[1].setVisible(True)
-                    i.childItems()[2].setVisible(True)
-                elif i.room_data.room_path == "ERoomPath::Both":
-                    i.room_data.room_path = "ERoomPath::Left"
-                    i.room_data.door_flag = self.convert_flag_to_door([1, 1], i.room_data.width)
-                    i.childItems()[1].setVisible(True)
-                    i.childItems()[2].setVisible(False)
+        for room in self.scene.selectedItems():
+            if room.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]:
+                if room.room_data.room_path == "ERoomPath::Left":
+                    room.room_data.room_path = "ERoomPath::Right"
+                    room.room_data.door_flag = self.convert_flag_to_door([1, 4], room.room_data.width)
+                    room.childItems()[1].setVisible(False)
+                    room.childItems()[2].setVisible(True)
+                elif room.room_data.room_path == "ERoomPath::Right":
+                    room.room_data.room_path = "ERoomPath::Both"
+                    room.room_data.door_flag = self.convert_flag_to_door([1, 5], room.room_data.width)
+                    room.childItems()[1].setVisible(True)
+                    room.childItems()[2].setVisible(True)
+                elif room.room_data.room_path == "ERoomPath::Both":
+                    room.room_data.room_path = "ERoomPath::Left"
+                    room.room_data.door_flag = self.convert_flag_to_door([1, 1], room.room_data.width)
+                    room.childItems()[1].setVisible(True)
+                    room.childItems()[2].setVisible(False)
                 self.set_unsaved()
     
     def swap_action(self):
-        for i in self.scene.selectedItems():
-            if i.room_data.room_type == "ERoomType::Save":
-                i.room_data.room_type = "ERoomType::Warp"
-                i.childItems()[0].setPixmap(QPixmap("Data\\Icon\\warp.png"))
+        for room in self.scene.selectedItems():
+            if room.room_data.room_type == "ERoomType::Save":
+                room.room_data.room_type = "ERoomType::Warp"
+                room.childItems()[0].setPixmap(QPixmap("Data\\Icon\\warp.png"))
                 self.set_unsaved()
-            elif i.room_data.room_type == "ERoomType::Warp":
-                i.room_data.room_type = "ERoomType::Save"
-                i.childItems()[0].setPixmap(QPixmap("Data\\Icon\\save.png"))
+            elif room.room_data.room_type == "ERoomType::Warp":
+                room.room_data.room_type = "ERoomType::Save"
+                room.childItems()[0].setPixmap(QPixmap("Data\\Icon\\save.png"))
                 self.set_unsaved()
     
     def duplicate_action(self):
-        for i in self.scene.selectedItems():
-            i.setSelected(False)
-            if i.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp", "ERoomType::Load"]:
+        for room_1 in self.scene.selectedItems():
+            room_1.setSelected(False)
+            if room_1.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp", "ERoomType::Load"]:
                 #Determine the new room name with an inst number that isn't taken
                 taken_inst = []
-                for e in self.room_list:
-                    current_inst = int(e.room_data.name.split("_")[-1])
-                    if e.room_data.area == i.room_data.area and current_inst//100 == 13:
+                for room_2 in self.room_list:
+                    current_inst = int(room_2.room_data.name.split("_")[-1])
+                    if room_2.room_data.area == room_1.room_data.area and current_inst//100 == 13:
                         taken_inst.append(current_inst)
                 taken_inst.sort()
+                max_inst = 1300
                 if taken_inst:
                     max_inst = taken_inst[-1]
-                else:
-                    max_inst = 1300
-                for e in range(1300, max_inst + 2):
-                    if not e in taken_inst:
-                        new_inst = e
+                for num in range(1300, max_inst + 2):
+                    if not num in taken_inst:
+                        new_inst = num
                         break
                 if new_inst >= 1400:
                     return
-                room_data = copy.deepcopy(i.room_data)
+                #Add the new room
+                room_data = copy.deepcopy(room_1.room_data)
                 room_data.name = room_data.area.split("::")[-1] + "_" + str(new_inst)
-                room_data.offset_x = i.room_data.offset_x + 1
-                room_data.offset_z = i.room_data.offset_z - 1
-                room = RoomItem(len(self.room_list), room_data, i.outline, i.fill, i.opacity, True, [], self)
-                self.scene.addItem(room)
-                self.room_list.append(room)
-                self.add_room_items(room)
+                room_data.offset_x = room_1.room_data.offset_x + 1
+                room_data.offset_z = room_1.room_data.offset_z - 1
+                new_room = RoomItem(len(self.room_list), room_data, True, [], self)
+                self.scene.addItem(new_room)
+                self.room_list.append(new_room)
+                self.add_room_items(new_room)
                 self.room_search_list.addItem(room_data.name)
                 self.use_restr_action()
                 self.show_out_action()
                 self.show_name_action()
-                room.setSelected(True)
+                new_room.setSelected(True)
     
     def delete_action(self):
         #Only delete rooms that were previously added by the user
-        for i in self.scene.selectedItems():   
-            current_inst = int(i.room_data.name.split("_")[-1])
+        for room in self.scene.selectedItems():   
+            current_inst = int(room.room_data.name.split("_")[-1])
             if current_inst//100 == 13:
-                self.scene.removeItem(i)
-                self.room_list.remove(i)
-                self.room_search_list.takeItem(self.room_search_list.row(self.room_search_list.findItems(i.room_data.name, Qt.MatchExactly)[0]))
+                self.scene.removeItem(room)
+                self.room_list.remove(room)
+                self.room_search_list.takeItem(self.room_search_list.row(self.room_search_list.findItems(room.room_data.name, Qt.MatchExactly)[0]))
         self.show_out_action()
     
     def zoom_in_action(self):
@@ -1137,35 +1179,49 @@ class Main(QMainWindow):
             self.map_limit.setVisible(False)
     
     def room_search_list_change(self, item):
-        for i in self.room_list:
-            i.set_theme(RoomTheme.Dark)
+        for room in self.room_list:
+            room.set_theme(RoomTheme.Dark)
         self.room_list[self.room_search_list.currentRow()].set_theme(RoomTheme.Default)
     
     def area_order_list_change(self, item):
-        for i in self.room_list:
-            if i.room_data.area == "EAreaID::" + item.text():
-                i.set_theme(RoomTheme.Default)
+        for room in self.room_list:
+            if room.room_data.area == "EAreaID::" + item.text():
+                room.set_theme(RoomTheme.Default)
             else:
-                i.set_theme(RoomTheme.Dark)
+                room.set_theme(RoomTheme.Dark)
         if self.area_order_list.isVisible():
             self.set_unsaved()
     
+    def add_room_to_completion(self, room):
+        room.set_theme(RoomTheme.Default)
+        if not room.room_data.out_of_map and room.room_data.room_type == "ERoomType::Normal":
+            self.completion_1 += 1
+        for tile in range(room.room_data.width*room.room_data.height):
+            tile_relative_coord = (tile % room.room_data.width, tile // room.room_data.width)
+            if tile_relative_coord in room.room_data.no_traverse:
+                continue
+            tile_absolute_coord = (room.room_data.offset_x + tile_relative_coord[0], room.room_data.offset_z + tile_relative_coord[1])
+            if tile_absolute_coord in self.completion_list:
+                continue
+            self.completion_list.append(tile_absolute_coord)
+            self.completion_2 += 1
+    
     def key_drop_down_change(self, index):
-        for i in self.room_list:
-            if i.room_data.name in self.log["Key"][self.key_drop_down.itemText(index)]:
-                i.set_theme(RoomTheme.Default)
+        for room in self.room_list:
+            if room.room_data.name in self.log["Key"][self.key_drop_down.itemText(index)]:
+                room.set_theme(RoomTheme.Default)
             else:
-                i.set_theme(RoomTheme.Dark)
+                room.set_theme(RoomTheme.Dark)
     
     def music_drop_down_change(self, index):
-        for i in self.scene.selectedItems():
-            i.room_data.music = music_id[index]
+        for room in self.scene.selectedItems():
+            room.room_data.music = music_id[index]
         if self.music_drop_down.isVisible():
             self.set_unsaved()
     
     def play_drop_down_change(self, index):
-        for i in self.scene.selectedItems():
-            i.room_data.play = play_id[index]
+        for room in self.scene.selectedItems():
+            room.room_data.play = play_id[index]
         if self.play_drop_down.isVisible():
             self.set_unsaved()
     
@@ -1177,24 +1233,24 @@ class Main(QMainWindow):
         #Copy music from the vanilla map
         with open(DEFAULT_MAP, "r") as file_reader:
             copy_from = json.load(file_reader)
-        for i in self.room_list:
-            if i.room_data.name in copy_from["MapData"]:
-                i.room_data.music = copy_from["MapData"][i.room_data.name]["BgmID"]
-                i.room_data.play  = copy_from["MapData"][i.room_data.name]["BgmType"]
+        for room in self.room_list:
+            if room.room_data.name in copy_from["MapData"]:
+                room.room_data.music = copy_from["MapData"][room.room_data.name]["BgmID"]
+                room.room_data.play  = copy_from["MapData"][room.room_data.name]["BgmType"]
             else:
-                area_save = i.room_data.name.split("_")[0] + "_1000"
-                i.room_data.music = copy_from["MapData"][area_save]["BgmID"]
-                i.room_data.play  = copy_from["MapData"][area_save]["BgmType"]
-            i.setSelected(False)
+                area_save = room.room_data.name.split("_")[0] + "_1000"
+                room.room_data.music = copy_from["MapData"][area_save]["BgmID"]
+                room.room_data.play  = copy_from["MapData"][area_save]["BgmType"]
+            room.setSelected(False)
         self.set_unsaved()
     
     def reset_rooms(self):
-        for i in self.room_list:
-            if not i.room_data.out_of_map:
-                i.setVisible(True)
-            i.setSelected(False)
-            i.set_theme(RoomTheme.Default)
-            i.reset_flags()
+        for room in self.room_list:
+            if not room.room_data.out_of_map:
+                room.setVisible(True)
+            room.setSelected(False)
+            room.set_theme(RoomTheme.Default)
+            room.reset_flags()
     
     def change_title(self, suffix):
         self.setWindowTitle(script_name + self.title_string + suffix)
@@ -1271,6 +1327,8 @@ class Main(QMainWindow):
             self.area_order_action()
         if self.key_location.isChecked():
             self.key_location_action()
+        if self.comp_check.isChecked():
+            self.comp_check_action()
         self.unsaved = False
     
     def save_to_json(self, filename):
@@ -1291,7 +1349,7 @@ class Main(QMainWindow):
         offset_x    = round(json["OffsetX"]/12.6)
         offset_z    = round(json["OffsetZ"]/7.2)
         door_flag   = self.convert_flag_to_door(json["DoorFlag"], width)
-        no_traverse = self.convert_no_traverse_to_block(json["NoTraverse"], width)
+        no_traverse = self.convert_no_traverse_to_void(json["NoTraverse"], width)
         music       = json["BgmID"]
         play        = json["BgmType"]
         
@@ -1300,9 +1358,9 @@ class Main(QMainWindow):
     
     def convert_flag_to_door(self, door_flag, width):
         door_list = []
-        for i in range(0, len(door_flag), 2):
-            tile_index = door_flag[i]
-            direction = door_flag[i+1]
+        for num in range(0, len(door_flag), 2):
+            tile_index = door_flag[num]
+            direction = door_flag[num+1]
             tile_index -= 1
             if width == 0:
                 x_block = tile_index
@@ -1335,50 +1393,33 @@ class Main(QMainWindow):
             door_flag.extend([tile_index_in_room, dir_flags])
         return door_flag
     
-    def convert_no_traverse_to_block(self, no_traverse, width):
+    def convert_no_traverse_to_void(self, no_traverse, width):
         void_list = []
-        for i in no_traverse:
-            tile_index = i - 1
+        for void in no_traverse:
+            tile_index = void - 1
             if width == 0:
                 x_block = tile_index
                 z_block = 0
             else:
                 x_block = tile_index % width
                 z_block = tile_index // width
-            void = Void(x_block, z_block)
-            void_list.append(void)
+            void_list.append((x_block, z_block))
         return void_list
     
-    def convert_block_to_no_traverse(self, block, width):
-        no_traverse_list = []
-        for i in block:
-            no_traverse_list.append(i.x_block + i.z_block*width + 1)
-        return no_traverse_list
+    def convert_void_to_no_traverse(self, void_list, width):
+        no_traverse = []
+        for void in void_list:
+            no_traverse.append(void[0] + void[1]*width + 1)
+        return no_traverse
     
     def convert_group_to_index(self, group_list):
         new_group_list = []
         index = 0
-        for i in self.json_file["MapData"]:
-            if i in group_list:
+        for room in self.json_file["MapData"]:
+            if room in group_list:
                 new_group_list.append(index)
             index += 1
         return new_group_list
-    
-    def convert_gate_to_index(self, gate_list):
-        new_gate_list = []
-        index = 0
-        for i in self.json_file["MapData"]:
-            if i in gate_list:
-                new_gate_list.append(index)
-            index += 1
-        return new_gate_list
-    
-    def convert_index_to_gate(self, gate_list):
-        new_gate_list = []
-        for i in self.room_list:
-            if i.index in gate_list:
-                new_gate_list.append(i.room_data.name)
-        return new_gate_list
     
     def draw_map(self):
         outline = QPen("#ffffff")
@@ -1408,11 +1449,11 @@ class Main(QMainWindow):
         self.map_limit.setVisible(False)
         
         index = 0
-        for i in self.json_file["MapData"]:
+        for room in self.json_file["MapData"]:
             
             #Converting data
             
-            room_data = self.convert_json_to_room(i, self.json_file["MapData"][i])
+            room_data = self.convert_json_to_room(room, self.json_file["MapData"][room])
             self.room_search_list.addItem(room_data.name)
             group_list = []
             can_move = True
@@ -1424,38 +1465,20 @@ class Main(QMainWindow):
             if room_data.height == 0:
                 room_data.height = 0.5
             
-            #Area color
-            
-            if room_data.out_of_map:
-                fill = area_color[18]
-            else:
-                fill = area_color[int(room_data.area.split("::")[-1][1:3]) - 1]
-            
-            #Room outline
-            
-            outline = "#ffffff"
-            
             #Room group
             
-            for e in connected_room:
-                if room_data.name in e["Room"]:
-                    group_list = e["Room"]
-                    can_move = e["CanMove"]
+            for entry in constant["RestrictedRooms"]:
+                if room_data.name in entry["Room"]:
+                    group_list = entry["Room"]
+                    can_move = entry["CanMove"]
                     break
-            
-            #Room opacity
-            
-            if room_data.room_type == "ERoomType::Load"or room_data.name == "m02VIL_000":
-                opacity = 0.5
-            else:
-                opacity = 1
             
             #Creating room
             
-            room = RoomItem(index, room_data, outline, fill, opacity, can_move, self.convert_group_to_index(group_list), self)
-            self.scene.addItem(room)
-            self.room_list.append(room)
-            self.add_room_items(room)
+            new_room = RoomItem(index, room_data, can_move, self.convert_group_to_index(group_list), self)
+            self.scene.addItem(new_room)
+            self.room_list.append(new_room)
+            self.add_room_items(new_room)
             
             index += 1
             
@@ -1463,7 +1486,6 @@ class Main(QMainWindow):
         outline = QPen("#00000000")
         outline.setWidth(OUTLINE)
         outline.setJoinStyle(Qt.MiterJoin)
-        default_fill = room.room_theme[room.current_theme]
         
         #Icons
         
@@ -1570,7 +1592,7 @@ class Main(QMainWindow):
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*TILEWIDTH/2 - 1, TILEHEIGHT - 1.5)
             icon.setParentItem(room)
-        if room.room_data.name == "m05SAN_019":
+        if room.room_data.name in ["m05SAN_019", "m08TWR_019"]:
             icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(TILEWIDTH - 23.5, TILEHEIGHT - 1.5)
@@ -1659,132 +1681,109 @@ class Main(QMainWindow):
         #Water
         
         if room.room_data.name in ["m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_026", "m11UGD_044", "m11UGD_045"]:
-            for e in range(room.room_data.width):
-                for o in range(room.room_data.height):
+            for num_1 in range(room.room_data.width):
+                for num_2 in range(room.room_data.height):
                     icon = self.scene.addPixmap(QPixmap("Data\\Icon\\bubble.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
-                    icon.setPos(e*TILEWIDTH + 6, o*TILEHEIGHT + 13.5)
+                    icon.setPos(num_1*TILEWIDTH + 6, num_2*TILEHEIGHT + 13.5)
                     icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_005", "m11UGD_036"]:
-            for e in range(room.room_data.width):
+            for num in range(room.room_data.width):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(e*TILEWIDTH + 6, 20.5)
+                icon.setPos(num*TILEWIDTH + 6, 20.5)
                 icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_019", "m11UGD_040"]:
-            for e in range(room.room_data.width):
+            for num in range(room.room_data.width):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(e*TILEWIDTH + 6, 28.5)
+                icon.setPos(num*TILEWIDTH + 6, 28.5)
                 icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_042", "m11UGD_046"]:
-            for e in range(room.room_data.width):
+            for num in range(room.room_data.width):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(e*TILEWIDTH + 6, 43.5)
+                icon.setPos(num*TILEWIDTH + 6, 43.5)
                 icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_043"]:
-            for e in range(room.room_data.width - 1):
+            for num in range(room.room_data.width - 1):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
-                icon.setPos(e*TILEWIDTH + 6, 13.5)
+                icon.setPos(num*TILEWIDTH + 6, 13.5)
                 icon.setParentItem(room)
         
         #No traverse
         
-        for e in room.room_data.no_traverse:
+        for void in room.room_data.no_traverse:
             icon = self.scene.addPixmap(QPixmap("Data\\Icon\\void.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
-            icon.setPos(e.x_block*TILEWIDTH + 0.5, (e.z_block + 1)*TILEHEIGHT + 4.5)
+            icon.setPos(void[0]*TILEWIDTH + 0.5, (void[1] + 1)*TILEHEIGHT + 4.5)
             icon.setParentItem(room)
         
         #Doors
         
-        for e in room.room_data.door_flag:
-            if e.direction_part == Direction.LEFT or (room.room_data.room_type == "ERoomType::Save" or room.room_data.room_type == "ERoomType::Warp") and len(room.room_data.door_flag) == 1:
-                door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
-                door.setParentItem(room)
-                if e.direction_part != Direction.LEFT:
-                    door.setVisible(False)
-            if e.direction_part == Direction.BOTTOM:
-                door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(room.fill))
-                door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT - 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.RIGHT or (room.room_data.room_type == "ERoomType::Save" or room.room_data.room_type == "ERoomType::Warp") and len(room.room_data.door_flag) == 1:
-                door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 4.5)
-                door.setParentItem(room)
-                if e.direction_part != Direction.RIGHT:
-                    door.setVisible(False)
-            if e.direction_part == Direction.TOP:
-                door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(room.fill))
-                door.setPos(e.x_block*TILEWIDTH + 9.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.LEFT_BOTTOM:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
-                else:
-                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.RIGHT_BOTTOM:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT - 0.5)
-                else:
-                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.LEFT_TOP:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                else:
-                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.RIGHT_TOP:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, OUTLINE, 8, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                else:
-                    door = self.scene.addRect(0, 0, OUTLINE, 6, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + TILEWIDTH - 1.5, e.z_block*TILEHEIGHT + 7.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.TOP_LEFT:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                else:
-                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.TOP_RIGHT:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                else:
-                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(QColor(room.fill)))
-                    door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.BOTTOM_RIGHT:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
-                else:
-                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + 17.5, e.z_block*TILEHEIGHT - 1.5)
-                door.setParentItem(room)
-            if e.direction_part == Direction.BOTTOM_LEFT:
-                if room.room_data.area == "EAreaID::m10BIG":
-                    door = self.scene.addRect(0, 0, 8, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH - 0.5, e.z_block*TILEHEIGHT - 1.5)
-                else:
-                    door = self.scene.addRect(0, 0, 6, OUTLINE, outline, QColor(room.fill))
-                    door.setPos(e.x_block*TILEWIDTH + 1.5, e.z_block*TILEHEIGHT - 1.5)
-                door.setParentItem(room)
+        default_fill = QColor(room.theme_to_fill[RoomTheme.Default])
+        
+        if room.room_data.area == "EAreaID::m10BIG":
+            door_offset = -0.5
+            door_height =  8
+        else:
+            door_offset =  1.5
+            door_height =  6
+        
+        for door in room.room_data.door_flag:
+            if door.direction_part == Direction.LEFT or (room.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]) and len(room.room_data.door_flag) == 1:
+                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 4.5)
+                new_door.setParentItem(room)
+                if door.direction_part != Direction.LEFT:
+                    new_door.setVisible(False)
+            if door.direction_part == Direction.RIGHT or (room.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]) and len(room.room_data.door_flag) == 1:
+                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 4.5)
+                new_door.setParentItem(room)
+                if door.direction_part != Direction.RIGHT:
+                    new_door.setVisible(False)
+            if door.direction_part == Direction.BOTTOM:
+                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + 9.5, door.z_block*TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.TOP:
+                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + 9.5, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.LEFT_BOTTOM:
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + door_offset)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.RIGHT_BOTTOM:
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + door_offset)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.LEFT_TOP:
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 7.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.RIGHT_TOP:
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 7.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.TOP_LEFT:
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + door_offset, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.TOP_RIGHT:
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, QColor(default_fill))
+                new_door.setPos(door.x_block*TILEWIDTH + 17.5, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.BOTTOM_RIGHT:
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + 17.5, door.z_block*TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
+            if door.direction_part == Direction.BOTTOM_LEFT:
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door.setPos(door.x_block*TILEWIDTH + door_offset, door.z_block*TILEHEIGHT - 1.5)
+                new_door.setParentItem(room)
         
         #Text
         
@@ -1800,20 +1799,20 @@ class Main(QMainWindow):
 
     def update_map(self):
         self.json_file["MapData"].clear()
-        for i in self.room_list:
-            self.json_file["MapData"][i.room_data.name] = {}
-            self.json_file["MapData"][i.room_data.name]["AreaID"]         = i.room_data.area
-            self.json_file["MapData"][i.room_data.name]["OutOfMap"]       = i.room_data.out_of_map
-            self.json_file["MapData"][i.room_data.name]["RoomType"]       = i.room_data.room_type
-            self.json_file["MapData"][i.room_data.name]["RoomPath"]       = i.room_data.room_path
-            self.json_file["MapData"][i.room_data.name]["AreaWidthSize"]  = i.room_data.width
-            self.json_file["MapData"][i.room_data.name]["AreaHeightSize"] = i.room_data.height
-            self.json_file["MapData"][i.room_data.name]["OffsetX"]        = round(i.room_data.offset_x * 12.6, 1)
-            self.json_file["MapData"][i.room_data.name]["OffsetZ"]        = round(i.room_data.offset_z *  7.2, 1)
-            self.json_file["MapData"][i.room_data.name]["DoorFlag"]       = self.convert_door_to_flag(i.room_data.door_flag, self.json_file["MapData"][i.room_data.name]["AreaWidthSize"])
-            self.json_file["MapData"][i.room_data.name]["NoTraverse"]     = self.convert_block_to_no_traverse(i.room_data.no_traverse, self.json_file["MapData"][i.room_data.name]["AreaWidthSize"])
-            self.json_file["MapData"][i.room_data.name]["BgmID"]          = i.room_data.music
-            self.json_file["MapData"][i.room_data.name]["BgmType"]        = i.room_data.play
+        for room in self.room_list:
+            self.json_file["MapData"][room.room_data.name] = {}
+            self.json_file["MapData"][room.room_data.name]["AreaID"]         = room.room_data.area
+            self.json_file["MapData"][room.room_data.name]["OutOfMap"]       = room.room_data.out_of_map
+            self.json_file["MapData"][room.room_data.name]["RoomType"]       = room.room_data.room_type
+            self.json_file["MapData"][room.room_data.name]["RoomPath"]       = room.room_data.room_path
+            self.json_file["MapData"][room.room_data.name]["AreaWidthSize"]  = room.room_data.width
+            self.json_file["MapData"][room.room_data.name]["AreaHeightSize"] = room.room_data.height
+            self.json_file["MapData"][room.room_data.name]["OffsetX"]        = round(room.room_data.offset_x * 12.6, 1)
+            self.json_file["MapData"][room.room_data.name]["OffsetZ"]        = round(room.room_data.offset_z *  7.2, 1)
+            self.json_file["MapData"][room.room_data.name]["DoorFlag"]       = self.convert_door_to_flag(room.room_data.door_flag, room.room_data.width)
+            self.json_file["MapData"][room.room_data.name]["NoTraverse"]     = self.convert_void_to_no_traverse(room.room_data.no_traverse, room.room_data.width)
+            self.json_file["MapData"][room.room_data.name]["BgmID"]          = room.room_data.music
+            self.json_file["MapData"][room.room_data.name]["BgmType"]        = room.room_data.play
         #Village fix
         self.json_file["MapData"]["m02VIL_099"]["OffsetX"] = self.json_file["MapData"]["m02VIL_002"]["OffsetX"]
         self.json_file["MapData"]["m02VIL_099"]["OffsetZ"] = self.json_file["MapData"]["m02VIL_002"]["OffsetZ"]
@@ -1825,33 +1824,33 @@ class Main(QMainWindow):
     
     def update_order(self):
         self.json_file["AreaOrder"].clear()
-        for i in range(self.area_order_list.count()):
-            self.json_file["AreaOrder"].append(self.area_order_list.item(i).text())
+        for index in range(self.area_order_list.count()):
+            self.json_file["AreaOrder"].append(self.area_order_list.item(index).text())
     
     def update_json(self):
         #Update 2.9.0
         if "KeyLogic" in self.json_file:
             del self.json_file["KeyLogic"]
-        for i in self.json_file["MapData"]:
-            if "Unused" in self.json_file["MapData"][i]:
-                del self.json_file["MapData"][i]["Unused"]
+        for room in self.json_file["MapData"]:
+            if "Unused" in self.json_file["MapData"][room]:
+                del self.json_file["MapData"][room]["Unused"]
         #Update 2.9.1
         offset = 2
-        for i in ["m11UGD_013", "m11UGD_031"]:
+        for room in ["m11UGD_013", "m11UGD_031"]:
             no_traverse = []
             outdated = False
-            for e in self.json_file["MapData"][i]["NoTraverse"]:
-                no_traverse.append(e + offset*self.json_file["MapData"][i]["AreaWidthSize"])
-                if e < 0:
+            for void in self.json_file["MapData"][room]["NoTraverse"]:
+                no_traverse.append(void + offset*self.json_file["MapData"][room]["AreaWidthSize"])
+                if void < 0:
                     outdated = True
             if outdated:
-                self.json_file["MapData"][i]["NoTraverse"] = sorted(no_traverse)
+                self.json_file["MapData"][room]["NoTraverse"] = sorted(no_traverse)
             offset += 1
         #Update 2.9.2
-        for i in os.listdir("Data\\ExtraRoom"):
-            name, extension = os.path.splitext(i)
+        for file in os.listdir("Data\\ExtraRoom"):
+            name, extension = os.path.splitext(file)
             if not name in self.json_file["MapData"]:
-                with open("Data\\ExtraRoom\\" + i, "r", encoding="utf8") as file_reader:
+                with open("Data\\ExtraRoom\\" + file, "r", encoding="utf8") as file_reader:
                     extra_room = json.load(file_reader)
                 self.json_file["MapData"][name] = extra_room
 
