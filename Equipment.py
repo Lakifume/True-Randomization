@@ -196,6 +196,36 @@ def randomize_weapon_power():
         if datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] != 0:
             datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"]
 
+def rand_equip_unbound():
+    #Equipment stats are completely random
+    for entry in Manager.datatable["PB_DT_ArmorMaster"]:
+        #Only randomize equipment that has a description entry
+        if not "ITEM_EXPLAIN_" + entry in Manager.stringtable["PBMasterStringTable"]:
+            continue
+        for stat in stat_to_property:
+            #Avoid having direct attack stats as this would favor rapid weapons over slow ones
+            if stat_to_property[stat] == "Attack":
+                continue
+            if random.random() < 0.25:
+                max_value = equipment_type_to_max_value[Manager.datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
+                if random.random() < 7/8:
+                    Manager.datatable["PB_DT_ArmorMaster"][entry][stat] =  random.randint(1, int(max_value*1.2))
+                else:
+                    Manager.datatable["PB_DT_ArmorMaster"][entry][stat] = -random.randint(1, int(max_value*1.2)*2)
+    #Shovel Armor's attack
+    Manager.datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"] = Utility.random_weighted(50, 0, 400, 1, global_stat_wheight)
+
+def rand_weapon_unbound():
+    #Weapon stats are completely random
+    for entry in Manager.datatable["PB_DT_WeaponMaster"]:
+        Manager.datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = Utility.random_weighted(50, 0, 400, 1, global_stat_wheight)
+        #Update magic attack for weapons with elemental attributes
+        if Manager.datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] != 0:
+            Manager.datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] = Manager.datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"]
+        #Randomize special effect rate too
+        if Manager.datatable["PB_DT_WeaponMaster"][entry]["SpecialEffectDenominator"] != 0.0:
+            Manager.datatable["PB_DT_WeaponMaster"][entry]["SpecialEffectDenominator"] = random.randint(1, 3)
+
 def randomize_cheat_equipment_stats():
     #Cheat equipments stats are completely random
     #Gives them a chance to not be useless

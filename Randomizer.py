@@ -41,7 +41,7 @@ graphic_color = "#80ffbf"
 sound_color   = "#ff80ff"
 extra_color   = "#ff80bf"
 
-main_setting_length = 6
+main_setting_length = 7
 sub_setting_length = 6
 main_widget_to_setting = {}
 sub_widget_to_setting = {}
@@ -401,6 +401,11 @@ class Generate(QThread):
             random.seed(self.seed)
             Equipment.randomize_cheat_equipment_stats()
             Equipment.randomize_cheat_weapon_power()
+        
+        if config.getboolean("EquipmentRandomization", "bUnboundGearStats"):
+            random.seed(self.seed)
+            Equipment.rand_equip_unbound()
+            Equipment.rand_weapon_unbound()
         
         if config.getboolean("EnemyRandomization", "bEnemyLevels"):
             random.seed(self.seed)
@@ -994,10 +999,16 @@ class Main(QWidget):
         box_5_grid.addWidget(self.check_box_23, 0, 0)
         main_widget_to_setting[self.check_box_23] = 0x000800
 
+        self.check_box_28 = QCheckBox("Unbounded Gear Stats")
+        self.check_box_28.setToolTip("Completely randomize the stats of all weapons and pieces of\nequipment.")
+        self.check_box_28.stateChanged.connect(self.check_box_28_changed)
+        box_5_grid.addWidget(self.check_box_28, 1, 0)
+        main_widget_to_setting[self.check_box_28] = 0x1000000
+
         self.check_box_9 = QCheckBox("Cheat Gear Stats")
         self.check_box_9.setToolTip("Completely randomize the stats of the weapons, headgears\nand accessories that are originally obtained via cheatcodes.")
         self.check_box_9.stateChanged.connect(self.check_box_9_changed)
-        box_5_grid.addWidget(self.check_box_9, 1, 0)
+        box_5_grid.addWidget(self.check_box_9, 2, 0)
         main_widget_to_setting[self.check_box_9] = 0x001000
 
         self.check_box_25 = QCheckBox("Enemy Locations")
@@ -1321,6 +1332,7 @@ class Main(QWidget):
         self.check_box_7.setChecked(config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"))
         self.check_box_8.setChecked(config.getboolean("ShardRandomization", "bScaleMagicCostWithPower"))
         self.check_box_23.setChecked(config.getboolean("EquipmentRandomization", "bGlobalGearStats"))
+        self.check_box_28.setChecked(config.getboolean("EquipmentRandomization", "bUnboundGearStats"))
         self.check_box_9.setChecked(config.getboolean("EquipmentRandomization", "bCheatGearStats"))
         self.check_box_25.setChecked(config.getboolean("EnemyRandomization", "bEnemyLocations"))
         self.check_box_10.setChecked(config.getboolean("EnemyRandomization", "bEnemyLevels"))
@@ -1595,7 +1607,7 @@ class Main(QWidget):
             config.set("EquipmentRandomization", "bGlobalGearStats", "true")
             self.add_main_setting(self.check_box_23)
             self.check_box_23.setStyleSheet("color: " + equip_color)
-            if self.check_box_9.isChecked():
+            if self.check_box_9.isChecked() and self.check_box_28.isChecked():
                 self.box_5.setStyleSheet("color: " + equip_color)
         else:
             config.set("EquipmentRandomization", "bGlobalGearStats", "false")
@@ -1606,12 +1618,27 @@ class Main(QWidget):
         self.fix_background_glitch()
         self.matches_preset()
 
+    def check_box_28_changed(self):
+        if self.check_box_28.isChecked():
+            config.set("EquipmentRandomization", "bUnboundGearStats", "true")
+            self.add_main_setting(self.check_box_28)
+            self.check_box_28.setStyleSheet("color: " + equip_color)
+            if self.check_box_23.isChecked() and self.check_box_9.isChecked():
+                self.box_5.setStyleSheet("color: " + equip_color)
+        else:
+            config.set("EquipmentRandomization", "bUnboundGearStats", "false")
+            self.remove_main_setting(self.check_box_28)
+            self.check_box_28.setStyleSheet("color: #ffffff")
+            self.box_5.setStyleSheet("color: #ffffff")
+        self.fix_background_glitch()
+        self.matches_preset()
+
     def check_box_9_changed(self):
         if self.check_box_9.isChecked():
             config.set("EquipmentRandomization", "bCheatGearStats", "true")
             self.add_main_setting(self.check_box_9)
             self.check_box_9.setStyleSheet("color: " + equip_color)
-            if self.check_box_23.isChecked():
+            if self.check_box_23.isChecked() and self.check_box_28.isChecked():
                 self.box_5.setStyleSheet("color: " + equip_color)
         else:
             config.set("EquipmentRandomization", "bCheatGearStats", "false")
@@ -2209,6 +2236,8 @@ class Main(QWidget):
         if config.getboolean("ShardRandomization", "bShardPowerAndMagicCost"):
             return True
         if config.getboolean("EquipmentRandomization", "bGlobalGearStats"):
+            return True
+        if config.getboolean("EquipmentRandomization", "bUnboundGearStats"):
             return True
         if config.getboolean("EquipmentRandomization", "bCheatGearStats"):
             return True
