@@ -9,7 +9,6 @@ import math
 import copy
 import colorsys
 import decimal
-import time
 
 from enum import Enum
 from collections import OrderedDict
@@ -23,8 +22,6 @@ DEFAULT_MAP_ROOMS   = 383
 TILEWIDTH = 25
 TILEHEIGHT = 15
 OUTLINE = 3
-
-KEY_METADATA = 1
 
 area_color = [
     "#000080",
@@ -106,22 +103,6 @@ for entry in translation["Music"]:
 for entry in translation["Play"]:
     play_id.append(entry)
     play_name.append(translation["Play"][entry])
-
-#Global functions
-
-def modify_color_with_hsv(color, hue_mod, sat_mod, val_mod):
-    hsv = colorsys.rgb_to_hsv(int(color[-6:-4], 16)/255, int(color[-4:-2], 16)/255, int(color[-2: len(color)], 16)/255)
-    hue = (hsv[0] + hue_mod) % 1
-    if sat_mod < 1:
-        sat = hsv[1] * sat_mod
-    else:
-        sat = hsv[1] + (1 - hsv[1])*(sat_mod - 1)
-    if val_mod < 1:
-        val = hsv[2] * val_mod
-    else:
-        val = hsv[2] + (1 - hsv[2])*(val_mod - 1)
-    rgb = colorsys.hsv_to_rgb(hue, sat, val)
-    return color[:-6] + "{:02x}".format(round(rgb[0]*255)) + "{:02x}".format(round(rgb[1]*255)) + "{:02x}".format(round(rgb[2]*255))
     
 def is_room_adjacent(room_1, room_2, consider_hard_one_ways = False):
     if room_1.out_of_map != room_2.out_of_map:
@@ -244,9 +225,8 @@ class Door:
         self.breakable = breakable
 
 class RoomItem(QGraphicsRectItem):
-    def __init__(self, index, room_data, can_move, group_list, main_window, metadata=None, parent=None):
-        super().__init__(0, 0, room_data.width * TILEWIDTH, room_data.height * TILEHEIGHT, parent)
-        self.setData(KEY_METADATA, metadata)
+    def __init__(self, index, room_data, can_move, group_list, main_window):
+        super().__init__(0, 0, room_data.width * TILEWIDTH, room_data.height * TILEHEIGHT)
         self.setCursor(Qt.PointingHandCursor)
         
         self.index = index
@@ -286,23 +266,24 @@ class RoomItem(QGraphicsRectItem):
         color = area_color[18]
         if not self.room_data.out_of_map:
             color = area_color[int(self.room_data.area.split("::")[-1][1:3]) - 1]
+        color = QColor(color)
         self.theme_to_fill[RoomTheme.Default] = color
-        self.theme_to_fill[RoomTheme.Light]   = modify_color_with_hsv(color, 0, 1/3, 1.75)
-        self.theme_to_fill[RoomTheme.Dark]    = modify_color_with_hsv(color, 0,   1, 0.25)
+        self.theme_to_fill[RoomTheme.Light]   = self.modify_color(color, 0, 1/3, 1.75)
+        self.theme_to_fill[RoomTheme.Dark]    = self.modify_color(color, 0,   1, 0.25)
         self.reset_brush()
     
     def reset_pos(self):
         self.setPos(self.room_data.offset_x * TILEWIDTH, self.room_data.offset_z * TILEHEIGHT)
     
     def reset_brush(self):
-        opacity = 1
+        current_door_fill = self.theme_to_fill[self.current_theme]
+        current_room_fill = QColor(current_door_fill.name())
         if self.room_data.room_type == "ERoomType::Load" or self.room_data.name == "m02VIL_000":
-            opacity = 0.5
-        current_fill = self.theme_to_fill[self.current_theme]
-        self.setBrush(QColor(current_fill[:1] + "{:02x}".format(round(opacity*255)) + current_fill[1:]))
+            current_room_fill.setAlphaF(0.5)
+        self.setBrush(current_room_fill)
         for item in self.childItems():
             if type(item) == QGraphicsRectItem:
-                item.setBrush(QColor(current_fill))
+                item.setBrush(current_door_fill)
     
     def reset_flags(self):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
@@ -393,6 +374,18 @@ class RoomItem(QGraphicsRectItem):
         if self.room_data.name == "m09TRN_002" and self.room_data.offset_z < 0 and self.main_window.restrictions:
             self.room_data.offset_z = 0
         self.reset_pos()
+    
+    def modify_color(self, color, hue_mod, sat_mod, val_mod):
+        hue = (color.hueF() + hue_mod) % 1
+        if sat_mod < 1:
+            sat = color.saturationF() * sat_mod
+        else:
+            sat = color.saturationF() + (1 - color.saturationF())*(sat_mod - 1)
+        if val_mod < 1:
+            val = color.valueF() * val_mod
+        else:
+            val = color.valueF() + (1 - color.valueF())*(val_mod - 1)
+        return QColor.fromHsvF(hue, sat, val)
 
 class GraphicsView(QGraphicsView):
     def wheelEvent(self, event):
@@ -730,9 +723,8 @@ class Main(QMainWindow):
         
         self.view.setLayout(vbox)
         self.setMinimumSize(1200, 700)
-        self.showMaximized()
         self.setWindowIcon(QIcon("Data\\icon.png"))
-        self.show()
+        self.showMaximized()
     
     def eventFilter(self, obj, event):
         #Try to prevent holding several mouse buttons at once as that can cause major glitches
@@ -933,8 +925,8 @@ class Main(QMainWindow):
                 current_rooms_copy = [elem for elem in current_rooms]
                 for room_1 in current_rooms_copy:
                     for room_2 in self.room_list:
-                        if room_1.room_data.name in constant["ConnectedRooms"] and room_2.current_theme == RoomTheme.Dark:
-                            if room_2.room_data.name in constant["ConnectedRooms"][room_1.room_data.name]:
+                        if room_1.room_data.name in constant["ConnectedRoom"] and room_2.current_theme == RoomTheme.Dark:
+                            if room_2.room_data.name in constant["ConnectedRoom"][room_1.room_data.name]:
                                 current_rooms.append(room_2)
                         if is_room_adjacent(room_1.room_data, room_2.room_data, True) and room_2.current_theme == RoomTheme.Dark:
                             current_rooms.append(room_2)
@@ -1467,7 +1459,7 @@ class Main(QMainWindow):
             
             #Room group
             
-            for entry in constant["RestrictedRooms"]:
+            for entry in constant["RestrictedRoom"]:
                 if room_data.name in entry["Room"]:
                     group_list = entry["Room"]
                     can_move = entry["CanMove"]
@@ -1680,13 +1672,22 @@ class Main(QMainWindow):
         
         #Water
         
-        if room.room_data.name in ["m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_026", "m11UGD_044", "m11UGD_045"]:
+        if room.room_data.name in ["m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_044", "m11UGD_045"]:
             for num_1 in range(room.room_data.width):
                 for num_2 in range(room.room_data.height):
                     icon = self.scene.addPixmap(QPixmap("Data\\Icon\\bubble.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
                     icon.setPos(num_1*TILEWIDTH + 6, num_2*TILEHEIGHT + 13.5)
                     icon.setParentItem(room)
+        if room.room_data.name == "m11UGD_026":
+            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\bubble.png"))
+            icon.setTransform(QTransform.fromScale(1, -1))
+            icon.setPos(6, 13.5)
+            icon.setParentItem(room)
+            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+            icon.setTransform(QTransform.fromScale(1, -1))
+            icon.setPos(TILEWIDTH + 6, 13.5)
+            icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_005", "m11UGD_036"]:
             for num in range(room.room_data.width):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
@@ -1705,7 +1706,7 @@ class Main(QMainWindow):
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(num*TILEWIDTH + 6, 43.5)
                 icon.setParentItem(room)
-        if room.room_data.name in ["m11UGD_043"]:
+        if room.room_data.name == "m11UGD_043":
             for num in range(room.room_data.width - 1):
                 icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
