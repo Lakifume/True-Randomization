@@ -70,8 +70,30 @@ def init():
     character_to_event = {}
     global event_to_face_anim
     event_to_face_anim = {}
-    global all_replacement
-    all_replacement = {}
+    global music_list
+    music_list = [
+        "BGM_m01SIP",
+        "BGM_m03ENT",
+        "BGM_m04GDN",
+        "BGM_m05SAN",
+        "BGM_m08TWR",
+        "BGM_m07LIB",
+        "BGM_m09TRN",
+        "BGM_m13ARC",
+        "BGM_m06KNG",
+        "BGM_m11UGD",
+        "BGM_m12SND",
+        "BGM_m17RVA",
+        "BGM_m15JPN",
+        "BGM_m10BIG",
+        "BGM_m18ICE",
+        "BGM_m19K2C",
+        "BGM_m20JRN"
+    ]
+    global event_replacement
+    event_replacement = {}
+    global music_replacement
+    music_replacement = {}
 
 def set_voice_language(language):
     global voice_language
@@ -160,56 +182,65 @@ def randomize_dialogues():
                 except KeyError:
                     pass
                 new_list.remove(chosen)
-                all_replacement[event] = chosen
+                event_replacement[event] = chosen
         for event in character_to_event[character]:
             if not event in background_events:
                 chosen = random.choice(new_list)
                 new_list.remove(chosen)
-                all_replacement[event] = chosen
+                event_replacement[event] = chosen
     #Apply the changes
-    for event in all_replacement:
+    for event in event_replacement:
         direction = datatable["PB_DT_DialogueTableItems"][event]["SpeakingPosition"].split("::")[-1]
-        if all_replacement[event] in event_to_face_anim:
-            datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = event_to_face_anim[all_replacement[event]]
+        if event_replacement[event] in event_to_face_anim:
+            datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = event_to_face_anim[event_replacement[event]]
         else:
             datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = "None"
         try:
-            datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"]    = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["DialogueText"]
-            datatable["PB_DT_DialogueTextMaster"][event]["DialogueAudioID"] = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["DialogueAudioID"]
-            datatable["PB_DT_DialogueTextMaster"][event]["JPLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["JPLipRef"]
-            datatable["PB_DT_DialogueTextMaster"][event]["ENLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][all_replacement[event]]["ENLipRef"]
+            datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"]    = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["DialogueText"]
+            datatable["PB_DT_DialogueTextMaster"][event]["DialogueAudioID"] = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["DialogueAudioID"]
+            datatable["PB_DT_DialogueTextMaster"][event]["JPLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["JPLipRef"]
+            datatable["PB_DT_DialogueTextMaster"][event]["ENLipRef"]        = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["ENLipRef"]
         except KeyError:
             pass
         try:
-            datatable["PB_DT_SoundMaster"][voice_language + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][voice_language + "_" + all_replacement[event] + "_SE"]["AssetPath"]
+            datatable["PB_DT_SoundMaster"][voice_language + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][voice_language + "_" + event_replacement[event] + "_SE"]["AssetPath"]
         except KeyError:
             pass
+
+def randomize_music():
+    new_list = copy.deepcopy(music_list)
+    random.shuffle(new_list)
+    new_dict = dict(zip(music_list, new_list))
+    music_replacement.update(new_dict)
+    for room in datatable["PB_DT_RoomMaster"]:
+        if datatable["PB_DT_RoomMaster"][room]["BgmID"] in music_replacement:
+            datatable["PB_DT_RoomMaster"][room]["BgmID"] = music_replacement[datatable["PB_DT_RoomMaster"][room]["BgmID"]]
 
 def update_lip_movement():
     #While the dialogue datatable contains lip movement information it is completely ignored by the game
     #So the only solution left is to rename the pointer of every lip file to match the random dialogue
     #Quite a bit costly but this is the only way
-    for event in all_replacement:
-        update_lip_pointer(event, all_replacement[event], voice_language)
+    for event in event_replacement:
+        update_lip_pointer(event, event_replacement[event], voice_language)
 
-def update_lip_pointer(event, event_replacement, prefix):
+def update_lip_pointer(old_event, new_event, prefix):
     #Simply swap the file's name in the name map and save as the new name
-    event = prefix + "_" + event + "_LIP"
-    event_replacement = prefix + "_" + event_replacement + "_LIP"
+    old_event = prefix + "_" + old_event + "_LIP"
+    new_event = prefix + "_" + new_event + "_LIP"
     
-    if event_replacement + ".uasset" in os.listdir("Data\\LipSync"):
-        event_replacement_data = UAsset("Data\\LipSync\\" + event_replacement + ".uasset", UE4Version.VER_UE4_22)
-        index = event_replacement_data.SearchNameReference(FString(event_replacement))
-        event_replacement_data.SetNameReference(index, FString(event))
-        index = event_replacement_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + event_replacement))
-        event_replacement_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + event))
-        event_replacement_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
-    elif event + ".uasset" in os.listdir("Data\\LipSync"):
-        event_data = UAsset("Data\\LipSync\\" + event + ".uasset", UE4Version.VER_UE4_22)
-        for export in event_data.Exports:
-            if str(export.ObjectName) == event:
+    if new_event + ".uasset" in os.listdir("Data\\LipSync"):
+        new_event_data = UAsset("Data\\LipSync\\" + new_event + ".uasset", UE4Version.VER_UE4_22)
+        index = new_event_data.SearchNameReference(FString(new_event))
+        new_event_data.SetNameReference(index, FString(old_event))
+        index = new_event_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + new_event))
+        new_event_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + old_event))
+        new_event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + old_event + ".uasset")
+    elif old_event + ".uasset" in os.listdir("Data\\LipSync"):
+        old_event_data = UAsset("Data\\LipSync\\" + old_event + ".uasset", UE4Version.VER_UE4_22)
+        for export in old_event_data.Exports:
+            if str(export.ObjectName) == old_event:
                 export.Data.Clear()
-        event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + event + ".uasset")
+        old_event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + old_event + ".uasset")
 
 def add_music_file(filename):
     #Check if the filename is valid

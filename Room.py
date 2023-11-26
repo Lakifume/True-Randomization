@@ -840,13 +840,11 @@ def update_map_connections():
             #Update door list
             if map_connections[room][entrance]:
                 open_doors.append(door_string_to_door[entrance])
-        if not open_doors and datatable["PB_DT_RoomMaster"][room]["DoorFlag"]:
-            datatable["PB_DT_RoomMaster"][room]["OutOfMap"] = True
         datatable["PB_DT_RoomMaster"][room]["DoorFlag"] = convert_door_to_flag(open_doors, datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"])
     #Some rooms need specific setups
-    #Connect Vepar room to its overlayed village counterpart
+    #Vepar room
     datatable["PB_DT_RoomMaster"]["m01SIP_022"]["AdjacentRoomName"].append("m02VIL_000")
-    #Some tower rooms are overlayed and need to be connected manually as the above script ignores all overlayed rooms
+    #Tower rooms
     datatable["PB_DT_RoomMaster"]["m08TWR_000"]["AdjacentRoomName"].append("m08TWR_017")
     datatable["PB_DT_RoomMaster"]["m08TWR_005"]["AdjacentRoomName"].append("m08TWR_018")
     datatable["PB_DT_RoomMaster"]["m08TWR_006"]["AdjacentRoomName"].append("m08TWR_018")
@@ -874,6 +872,14 @@ def update_map_connections():
     datatable["PB_DT_RoomMaster"]["m08TWR_018"]["DoorFlag"].append(8)
     datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(39)
     datatable["PB_DT_RoomMaster"]["m08TWR_019"]["DoorFlag"].append(8)
+    #Train rooms
+    datatable["PB_DT_RoomMaster"]["m09TRN_001"]["AdjacentRoomName"].append("m09TRN_002")
+    datatable["PB_DT_RoomMaster"]["m09TRN_002"]["AdjacentRoomName"].append("m09TRN_001")
+    datatable["PB_DT_RoomMaster"]["m09TRN_002"]["AdjacentRoomName"].append("m09TRN_003")
+    datatable["PB_DT_RoomMaster"]["m09TRN_003"]["AdjacentRoomName"].append("m09TRN_002")
+    #Garden Den
+    datatable["PB_DT_RoomMaster"]["m04GDN_001"]["AdjacentRoomName"].append("m10BIG_000")
+    datatable["PB_DT_RoomMaster"]["m10BIG_000"]["AdjacentRoomName"].append("m04GDN_001")
     #Extra mode rooms
     datatable["PB_DT_RoomMaster"]["m53BRV_000"]["AdjacentRoomName"].append("m53BRV_001")
     datatable["PB_DT_RoomMaster"]["m53BRV_001"]["AdjacentRoomName"].append("m53BRV_002")
@@ -929,15 +935,29 @@ def update_map_connections():
     datatable["PB_DT_RoomMaster"]["m50BRM_078"]["AdjacentRoomName"].append("m50BRM_059")
     datatable["PB_DT_RoomMaster"]["m50BRM_059"]["AdjacentRoomName"].append("m50BRM_151")
     datatable["PB_DT_RoomMaster"]["m50BRM_059"]["AdjacentRoomName"].append("m50BRM_171")
+    #Give overlayed rooms the same door flag as their counterparts
+    datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
+    datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
+    #Update out of map based on accessible rooms
+    for room in datatable["PB_DT_RoomMaster"]:
+        datatable["PB_DT_RoomMaster"][room]["OutOfMap"] = True
+    current_rooms = ["m01SIP_000"]
+    while current_rooms:
+        for room in current_rooms:
+            datatable["PB_DT_RoomMaster"][room]["OutOfMap"] = False
+        current_rooms_copy = copy.deepcopy(current_rooms)
+        for room_1 in current_rooms_copy:
+            for room_2 in datatable["PB_DT_RoomMaster"][room_1]["AdjacentRoomName"]:
+                if datatable["PB_DT_RoomMaster"][room_2]["OutOfMap"]:
+                    current_rooms.append(room_2)
+            current_rooms.remove(room_1)
+        current_rooms = list(dict.fromkeys(current_rooms))
     #Fix bad ending cutscene not transitioning to the village
     if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"]:
         datatable["PB_DT_RoomMaster"]["m06KNG_020"]["AdjacentRoomName"].append("m02VIL_099")
     #Fix good ending cutscene not transitioning to the village
     if not "m02VIL_099" in datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"]:
         datatable["PB_DT_RoomMaster"]["m18ICE_019"]["AdjacentRoomName"].append("m02VIL_099")
-    #Give overlayed rooms the same door flag as their counterparts
-    datatable["PB_DT_RoomMaster"]["m01SIP_022"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m02VIL_000"]["DoorFlag"]
-    datatable["PB_DT_RoomMaster"]["m18ICE_020"]["DoorFlag"] = datatable["PB_DT_RoomMaster"]["m18ICE_019"]["DoorFlag"]
 
 def fix_bathin_left_entrance():
     #If Bathin's intro event triggers when the player entered the room from the left they will be stuck in an endless walk cycle

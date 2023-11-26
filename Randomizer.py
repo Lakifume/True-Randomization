@@ -61,7 +61,8 @@ preset_to_bytes = {
 bytes_to_preset = {value: key for key, value in preset_to_bytes.items()}
 
 cheats = {
-    "BIGTOSS": Manager.set_bigtoss_mode
+    "BIGTOSS": Manager.set_bigtoss_mode,
+    "MUZIK":   Sound.randomize_music
 }
 
 modified_files = {
@@ -254,20 +255,6 @@ class Generate(QThread):
         Sound.set_voice_language(config.getint("SoundRandomization", "iDialoguesLanguage"))
         Bloodless.set_logic_complexity(config.getint("ExtraRandomization", "iBloodlessCandlesComplexity"))
         
-        #Apply tweaks
-        
-        Manager.apply_default_tweaks()
-        Shard.set_default_shard_power()
-        Enemy.get_original_enemy_stats()
-        
-        #Apply cheats
-        
-        if type(self.seed) is str:
-            for code in cheats:
-                if code in self.seed:
-                    random.seed(self.seed)
-                    cheats[code]()
-        
         #Map
         
         random.seed(self.seed)
@@ -283,6 +270,20 @@ class Generate(QThread):
         Manager.load_map(self.map)
         Room.get_map_info()
         Room.update_any_map()
+        
+        #Apply tweaks
+        
+        Manager.apply_default_tweaks()
+        Shard.set_default_shard_power()
+        Enemy.get_original_enemy_stats()
+        
+        #Apply cheats
+        
+        if type(self.seed) is str:
+            for code in cheats:
+                if code in self.seed:
+                    random.seed(self.seed)
+                    cheats[code]()
         
         #Color
         
@@ -2152,8 +2153,6 @@ class Main(QWidget):
     
     def cast_seed(self, seed):
         #Cast seed to another object type if possible
-        #By default it is a string
-        seed = str(seed)
         try:
             if "." in seed:
                 return float(seed)

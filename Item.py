@@ -475,6 +475,10 @@ def init():
     all_keys = key_items + list(key_shards)
     global difficulty
     difficulty = "Normal"
+    global previous_available_chests
+    previous_available_chests = []
+    global previous_available_enemies
+    previous_available_enemies = []
     global current_available_doors
     current_available_doors = ["SIP_000_START"]
     global current_available_chests
@@ -491,6 +495,13 @@ def init():
     check_to_requirement = {}
     global special_check_to_door
     special_check_to_door = {}
+    global special_check_to_requirement
+    special_check_to_requirement = {
+        "TO_BIG_000_START": den_portal_available,
+        "TO_JRN_000_START": journey_area_available,
+        "Qu07_Last":        last_benjamin_available,
+        "N2012":            orlok_dracule_available
+    }
     global macro_to_requirements
     macro_to_requirements = {
         "Height": ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
@@ -734,8 +745,7 @@ def satisfies_requirement(requirement):
 def check_requirement(requirement):
     if requirement in macro_to_requirements:
         return satisfies_requirement(macro_to_requirements[requirement])
-    else:
-        return requirement in key_order
+    return requirement in key_order
 
 def key_logic():
     #Logic that adapts to any map layout
@@ -747,7 +757,7 @@ def key_logic():
             if room in constant["RoomRequirement"]:
                 for check, requirement in constant["RoomRequirement"][room][door].items():
                     #Don't automatically unlock certain checks
-                    if check in ["TO_BIG_000_START", "TO_JRN_000_START", "Qu07_Last", "N2012"]:
+                    if check in special_check_to_requirement:
                         if check in special_check_to_door:
                             special_check_to_door[check].append(door)
                         else:
@@ -764,22 +774,11 @@ def key_logic():
         if current_available_doors:
             continue
         #Check special requirements
-        if "TO_BIG_000_START" in special_check_to_door and den_portal_available():
-            for door in special_check_to_door["TO_BIG_000_START"]:
-                analyse_check("TO_BIG_000_START", constant["RoomRequirement"][get_door_room(door)][door]["TO_BIG_000_START"])
-            del special_check_to_door["TO_BIG_000_START"]
-        if "TO_JRN_000_START" in special_check_to_door and journey_area_available():
-            for door in special_check_to_door["TO_JRN_000_START"]:
-                analyse_check("TO_JRN_000_START", constant["RoomRequirement"][get_door_room(door)][door]["TO_JRN_000_START"])
-            del special_check_to_door["TO_JRN_000_START"]
-        if "Qu07_Last" in special_check_to_door and last_benjamin_available():
-            for door in special_check_to_door["Qu07_Last"]:
-                analyse_check("Qu07_Last", constant["RoomRequirement"][get_door_room(door)][door]["Qu07_Last"])
-            del special_check_to_door["Qu07_Last"]
-        if "N2012" in special_check_to_door and orlok_dracule_available():
-            for door in special_check_to_door["N2012"]:
-                analyse_check("N2012", constant["RoomRequirement"][get_door_room(door)][door]["N2012"])
-            del special_check_to_door["N2012"]
+        for special_check in special_check_to_requirement:
+            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
+                for door in special_check_to_door[special_check]:
+                    analyse_check(special_check, constant["RoomRequirement"][get_door_room(door)][door][special_check])
+                del special_check_to_door[special_check]
         #Keep going until stuck
         if current_available_doors:
             continue
@@ -801,19 +800,18 @@ def key_logic():
             #Choose requirement and key item
             if type(chosen_requirement) is list:
                 for item in chosen_requirement:
-                    if item in macro_to_requirements:
-                        chosen_item = random.choice(macro_to_requirements[item])
-                    else:
-                        chosen_item = item
-                    if chosen_item in all_keys:
-                        place_next_key(chosen_item)
+                    if satisfies_requirement([item]):
+                        continue
+                    chosen_item = pick_next_key(item)
+                    place_next_key(chosen_item)
             else:
-                if chosen_requirement in macro_to_requirements:
-                    chosen_item = random.choice(macro_to_requirements[chosen_requirement])
-                else:
-                    chosen_item = chosen_requirement
+                chosen_item = pick_next_key(chosen_requirement)
                 place_next_key(chosen_item)
+            previous_available_chests.clear()
+            previous_available_chests.extend(current_available_chests)
             current_available_chests.clear()
+            previous_available_enemies.clear()
+            previous_available_enemies.extend(current_available_enemies)
             current_available_enemies.clear()
             #Check which obstacles were lifted
             for check in list(check_to_requirement):
@@ -829,6 +827,15 @@ def key_logic():
         #Stop when all keys are placed and all doors are explored
         else:
             break
+
+def pick_next_key(chosen_requirement):
+    if chosen_requirement in macro_to_requirements:
+        requirement_list = []
+        for requirement in macro_to_requirements[chosen_requirement]:
+            for num in range(get_requirement_weight(requirement)):
+                requirement_list.append(requirement)
+        return random.choice(requirement_list)
+    return chosen_requirement
 
 def analyse_check(check, requirement):
     #If accessible try to remove it from requirement list no matter what
@@ -871,10 +878,22 @@ def analyse_check(check, requirement):
     #Add to requirement list
     else:
         if check in check_to_requirement:
-            check_to_requirement[check].extend(requirement)
-            check_to_requirement[check] = remove_duplicates(check_to_requirement[check])
+            add_requirement_to_check(check, requirement)
         else:
             check_to_requirement[check] = requirement
+
+def add_requirement_to_check(check, requirement):
+    old_list = check_to_requirement[check] + requirement
+    new_list = []
+    for req in old_list:
+        to_add = not req in new_list
+        if type(req) is list:
+            for subreq in old_list:
+                if subreq in req:
+                    to_add = False
+        if to_add:
+            new_list.append(req)
+    check_to_requirement[check] = new_list
 
 def get_check_type(check):
     if check in used_chests:
@@ -911,26 +930,45 @@ def get_requirement_weight(requirement):
 def place_next_key(chosen_item):
     #Item
     if chosen_item in key_items:
-        try:
-            if random.random() < (1 - 1/(1+len(current_available_chests)))*logic_complexity:
+        if should_place_key_in(current_available_chests):
+            try:
                 chosen_chest = pick_key_chest(current_available_chests)
-            else:
+            except IndexError:
+                try:
+                    chosen_chest = pick_key_chest(previous_available_chests)
+                except IndexError:
+                    chosen_chest = pick_key_chest(all_available_chests)
+        elif should_place_key_in(previous_available_chests):
+            try:
+                chosen_chest = pick_key_chest(previous_available_chests)
+            except IndexError:
                 chosen_chest = pick_key_chest(all_available_chests)
-        except IndexError:
+        else:
             chosen_chest = pick_key_chest(all_available_chests)
         key_item_to_location[chosen_item] = chosen_chest
     #Shard
     if chosen_item in key_shards:
-        try:
-            if random.random() < (1 - 1/(1+len(current_available_enemies)))*logic_complexity:
+        if should_place_key_in(current_available_enemies):
+            try:
                 chosen_enemy = pick_key_enemy(current_available_enemies)
-            else:
+            except IndexError:
+                try:
+                    chosen_enemy = pick_key_enemy(previous_available_enemies)
+                except IndexError:
+                    chosen_enemy = pick_key_enemy(all_available_enemies)
+        elif should_place_key_in(previous_available_enemies):
+            try:
+                chosen_enemy = pick_key_enemy(previous_available_enemies)
+            except IndexError:
                 chosen_enemy = pick_key_enemy(all_available_enemies)
-        except IndexError:
+        else:
             chosen_enemy = pick_key_enemy(all_available_enemies)
         key_shard_to_location[chosen_item] = chosen_enemy
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)
+
+def should_place_key_in(list):
+    return random.random() < (1 - 1/(1+len(list)))*logic_complexity
 
 def pick_key_chest(available_chests):
     possible_chests = []
@@ -1362,8 +1400,8 @@ def randomize_quest_requirements():
     enemy_requirement = []
     for num in range(19):
         chosen = pick_and_remove(all_enemies, True, "None")
-        #Don't pick IGA, Miriam, or shard candles
-        while chosen in ["N2013", "N0000"] or chosen in datatable["PB_DT_ShardMaster"]:
+        #Don't pick Dom, Bael, IGA, Miriam, or shard candles
+        while Enemy.is_final_boss(chosen) or chosen in ["N2013", "N0000"] or chosen in datatable["PB_DT_ShardMaster"]:
             chosen = pick_and_remove(all_enemies, True, "None")
         enemy_requirement.append(chosen)
     #Order them by level, appending bosses at the end
@@ -1524,7 +1562,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
         if craftable:
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
+        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
     if item_type == "Armor":                                                  
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
@@ -1535,7 +1573,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
         if craftable:
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]                = index
+        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
     if item_type == "Bullet":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
@@ -1555,7 +1593,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
             datatable["PB_DT_DamageMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint"])
             datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
             datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
-        Manager.datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]           = index
+        Manager.datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]   = index
     if item_type == "Potion":                                                 
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
         datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
@@ -1572,7 +1610,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
         if craftable:
             datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
             datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]           = index
+        Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]   = index
 
 def pick_and_remove(item_array, remove, item_type):
     #Function for picking and remove an item at random
@@ -1592,13 +1630,6 @@ def pick_and_remove(item_array, remove, item_type):
         while item in item_array:
             item_array.remove(item)
     return item
-
-def remove_duplicates(list):
-    new_list = []
-    for element in list:
-        if not element in new_list:
-            new_list.append(element)
-    return new_list
 
 def invert_ratio():
     #Complex function for inverting all item ratios in item drop dictionary

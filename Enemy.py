@@ -998,6 +998,8 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
     #Some enemies are in inconvenient spots
     if filename == "m03ENT_023_Enemy" and export_name == "Chr_N3087_2":
         location.Z += 120
+    if filename == "m04GDN_008_Enemy" and export_name == "Chr_N3091_2":
+        location.X += 200
     if filename == "m05SAN_008_Enemy" and export_name == "Chr_N3055_2407":
         location.X += 340
     if filename == "m05SAN_008_Enemy_Hard" and export_name == "Chr_N3073_1952":
@@ -1043,6 +1045,24 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.Z -= 90
     if filename == "m51EBT_000_Enemy" and export_name in ["Chr_N3143", "Chr_N3146"]:
         location.Z += 90
+    #Swap some enemy positions
+    if filename == "m08TWR_011_Enemy":
+        if export_name == "Chr_N3100_008_58":
+            location.X = 1080
+        if export_name == "Chr_N3100_026_109":
+            location.X = 1560
+    if filename == "m11UGD_036_Enemy":
+        if export_name == "Chr_N3078_566":
+            location.X = 1380
+        if export_name == "Chr_N3079":
+            location.X = 3120
+    if filename == "m13ARC_000_Enemy_Hard":
+        if export_name == "Chr_N3026_1052":
+            location.X = 660
+            location.Z = 150
+        if export_name == "Chr_N3027":
+            location.X = 1980
+            location.Z = 630
     #Avoid placing 8 bit zombies near the vertical edges of the room
     if new_enemy_id == "N3121" and room != "m19K2C_000":
         location.Z = max(min(location.Z, room_height - 360), 360)
@@ -1061,17 +1081,29 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         location.Z = max(min(location.Z, room_height - 60), 60)
     #If the enemy is right next to an entrance do not add it
     if not room in Room.rotating_room_to_center:
-        #Left
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),   "LEFT"]) in Room.map_connections[room] and location.X%1260 <  120 and 230 < location.Z%720 < 490:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),         "LEFT"]) in Room.map_connections[room] and location.X%1260 <   120 and 230   < location.Z%720 <  490:
             return
-        #Right
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "RIGHT"]) in Room.map_connections[room] and location.X%1260 > 1140 and 230 < location.Z%720 < 490:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),        "RIGHT"]) in Room.map_connections[room] and location.X%1260 >  1140 and 230   < location.Z%720 <  490:
             return
-        #Top
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "TOP"]) in Room.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 > 420:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),          "TOP"]) in Room.map_connections[room] and  500  < location.X%1260 <   760 and location.Z%720 >  420:
             return
-        #Bottom
-        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "BOTTOM"]) in Room.map_connections[room] and 500 < location.X%1260 < 760 and location.Z%720 < 360:
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),       "BOTTOM"]) in Room.map_connections[room] and  500  < location.X%1260 <   760 and location.Z%720 <  360:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),     "LEFT_TOP"]) in Room.map_connections[room] and location.X%1260 <   120 and 460   < location.Z%720 <= 720:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "RIGHT_TOP"]) in Room.map_connections[room] and location.X%1260 >  1140 and 460   < location.Z%720 <= 720:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),     "TOP_LEFT"]) in Room.map_connections[room] and    0 <= location.X%1260 <   260 and location.Z%720 >  420:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "BOTTOM_LEFT"]) in Room.map_connections[room] and    0 <= location.X%1260 <   260 and location.Z%720 <  360:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),  "LEFT_BOTTOM"]) in Room.map_connections[room] and location.X%1260 <   120 and   0  <= location.Z%720 <  260:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "RIGHT_BOTTOM"]) in Room.map_connections[room] and location.X%1260 >  1140 and   0  <= location.Z%720 <  260:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)),    "TOP_RIGHT"]) in Room.map_connections[room] and 1000  < location.X%1260 <= 1260 and location.Z%720 >  420:
+            return
+        if "_".join([room[3:], str(int(location.X//1260)), str(int(location.Z//720)), "BOTTOM_RIGHT"]) in Room.map_connections[room] and 1000  < location.X%1260 <= 1260 and location.Z%720 <  360:
             return
     #One of the Journey rooms has a faulty persistent level export in its enemy file, so add in its bg file instead
     if room == "m20JRN_002":

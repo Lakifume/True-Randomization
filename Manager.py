@@ -567,6 +567,8 @@ def apply_default_tweaks():
     datatable["PB_DT_CraftMaster"]["TissRosain"]["OpenKeyRecipeID"] = "Medal019"
     #Make the second train gate a regular gate rather than a debug
     game_data["m09TRN_004_Gimmick"].Exports[257].Data[18].Value = False
+    #Move the Craftwork staircase closer to the edge of the screen so that Dimension Shift cannot pass
+    game_data["m07LIB_023_Gimmick"].Exports[57].Data[0].Value[0].Value = FVector(1160, 0, 2400)
     #Move the Alfred magical seal closer to the edge of the screen so that Dimension Shift cannot pass
     game_data["m12SND_023_Gimmick"].Exports[7].Data[0].Value[0].Value = FVector(1200, 0, 2520)
     #Give the lever door in upper cathedral its own gimmick flag instead of being shared with the hall one
@@ -616,8 +618,6 @@ def apply_default_tweaks():
     datatable["PB_DT_GimmickFlagMaster"]["IgniculusLantarn001"]["Id"] = get_available_gimmick_flag()
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["FamiliaArcher_Shard"])
     datatable["PB_DT_DropRateMaster"]["FamiliaIgniculus_Shard"]["ShardId"] = "FamiliaIgniculus"
-    datatable["PB_DT_ItemMaster"]["FamiliaIgniculus"]["NotListedInArchive"]     = False
-    datatable["PB_DT_ItemMaster"]["FamiliaIgniculus"]["NotCountAsCompleteness"] = False
     #The HavePatchPureMiriam gimmick flag triggers as soon as a Pure Miriam chest is loaded in a room
     #So place one in the first ship room for this flag to trigger as soon as the game starts
     Room.add_level_actor("m01SIP_000_Gimmick", "PBPureMiriamTreasureBox_BP_C", FVector(-999, 0, 0), FRotator(0, 0, 0), FVector(1, 1, 1), {"DropItemID": FName.FromString(game_data["m01SIP_000_Gimmick"], "AAAA_Shard"), "ItemID": FName.FromString(game_data["m01SIP_000_Gimmick"], "AAAA_Shard")})

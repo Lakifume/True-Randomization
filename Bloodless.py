@@ -108,6 +108,8 @@ def init():
     global bloodless_datatable
     bloodless_datatable = {}
     #Logic
+    global previous_available_candles
+    previous_available_candles = []
     global current_available_doors
     current_available_doors = ["SAN_023_START"]
     global current_available_candles
@@ -124,6 +126,12 @@ def init():
     check_to_requirement = {}
     global special_check_to_door
     special_check_to_door = {}
+    global special_check_to_requirement
+    special_check_to_requirement = {
+        "TO_BIG_000_START":  den_portal_available,
+        "ICE_015_0_0_LEFT":  wall_room_available,
+        "ICE_015_1_0_RIGHT": wall_room_available
+    }
 
 def set_logic_complexity(complexity):
     global logic_complexity
@@ -147,7 +155,7 @@ def candle_logic():
             if room in constant["BloodlessRoomRequirement"]:
                 for check, requirement in constant["BloodlessRoomRequirement"][room][door].items():
                     #Don't automatically unlock certain checks
-                    if check in ["TO_BIG_000_START", "ICE_015_0_0_LEFT", "ICE_015_1_0_RIGHT"]:
+                    if check in special_check_to_requirement:
                         if check in special_check_to_door:
                             special_check_to_door[check].append(door)
                         else:
@@ -163,15 +171,11 @@ def candle_logic():
         if current_available_doors:
             continue
         #Check special requirements
-        if "TO_BIG_000_START" in special_check_to_door and den_portal_available():
-            for door in special_check_to_door["TO_BIG_000_START"]:
-                analyse_check("TO_BIG_000_START", constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door]["TO_BIG_000_START"])
-            del special_check_to_door["TO_BIG_000_START"]
-        for check in ["ICE_015_0_0_LEFT", "ICE_015_1_0_RIGHT"]:
-            if check in special_check_to_door and wall_room_available():
-                for door in special_check_to_door[check]:
-                    analyse_check(check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][check])
-                del special_check_to_door[check]
+        for special_check in special_check_to_requirement:
+            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
+                for door in special_check_to_door[special_check]:
+                    analyse_check(special_check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][special_check])
+                del special_check_to_door[special_check]
         #Keep going until stuck
         if current_available_doors:
             continue
@@ -190,9 +194,10 @@ def candle_logic():
                 for num in range(key_abilities[requirement]):
                     requirement_list.append(requirement)
             chosen_requirement = random.choice(requirement_list)
-            #Choose requirement
-            chosen_item = chosen_requirement
-            place_next_key(chosen_item)
+            #Place item
+            place_next_key(chosen_requirement)
+            previous_available_candles.clear()
+            previous_available_candles.extend(current_available_candles)
             current_available_candles.clear()
             current_available_bosses.clear()
             #Check which obstacles were lifted
@@ -244,10 +249,22 @@ def analyse_check(check, requirement):
                 all_available_bosses.append(check)
     else:
         if check in check_to_requirement:
-            check_to_requirement[check].extend(requirement)
-            check_to_requirement[check] = Item.remove_duplicates(check_to_requirement[check])
+            add_requirement_to_check(check, requirement)
         else:
             check_to_requirement[check] = requirement
+
+def add_requirement_to_check(check, requirement):
+    old_list = check_to_requirement[check] + requirement
+    new_list = []
+    for req in old_list:
+        to_add = not req in new_list
+        if type(req) is list:
+            for subreq in old_list:
+                if subreq in req:
+                    to_add = False
+        if to_add:
+            new_list.append(req)
+    check_to_requirement[check] = new_list
 
 def get_check_type(check):
     if check in all_candles:
@@ -257,16 +274,27 @@ def get_check_type(check):
     return CheckType.Door
 
 def place_next_key(chosen_item):
-    try:
-        if random.random() < (1 - 1/(1+len(current_available_candles)))*logic_complexity:
+    if should_place_key_in(current_available_candles):
+        try:
             chosen_candle = pick_key_candle(current_available_candles)
-        else:
+        except IndexError:
+            try:
+                chosen_candle = pick_key_candle(previous_available_candles)
+            except IndexError:
+                chosen_candle = pick_key_candle(all_available_candles)
+    elif should_place_key_in(previous_available_candles):
+        try:
+            chosen_candle = pick_key_candle(previous_available_candles)
+        except IndexError:
             chosen_candle = pick_key_candle(all_available_candles)
-    except IndexError:
-        chosen_chest = pick_key_candle(all_available_candles)
+    else:
+        chosen_candle = pick_key_candle(all_available_candles)
     key_ability_to_location[chosen_item] = chosen_candle
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)
+
+def should_place_key_in(list):
+    return random.random() < (1 - 1/(1+len(list)))*logic_complexity
 
 def pick_key_candle(available_candle):
     possible_candle = []
