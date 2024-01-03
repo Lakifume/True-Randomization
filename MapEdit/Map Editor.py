@@ -13,7 +13,7 @@ import decimal
 from enum import Enum
 from collections import OrderedDict
 
-script_name, script_extension = os.path.splitext(os.path.basename(__file__))
+script_name = os.path.splitext(os.path.basename(__file__))[0]
 
 DEFAULT_MAP = "Data\\PB_DT_RoomMaster.json"
 DEFAULT_MAP_SURFACE = 1553
@@ -85,12 +85,12 @@ play_id = []
 play_name = []
 
 for file in os.listdir("Data\\Constant"):
-    name, extension = os.path.splitext(file)
+    name = os.path.splitext(file)[0]
     with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
         constant[name] = json.load(file_reader)
 
 for file in os.listdir("Data\\Translation"):
-    name, extension = os.path.splitext(file)
+    name = os.path.splitext(file)[0]
     with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
         translation[name] = json.load(file_reader)
 
@@ -103,6 +103,12 @@ for entry in translation["Music"]:
 for entry in translation["Play"]:
     play_id.append(entry)
     play_name.append(translation["Play"][entry])
+    
+def modify_color(color, hsv_mod):
+    hue = (color.hueF() + hsv_mod[0]) % 1
+    sat = color.saturationF() * hsv_mod[1] if hsv_mod[1] < 1 else color.saturationF() + (1 - color.saturationF())*(hsv_mod[1] - 1)
+    val = color.valueF() * hsv_mod[2]      if hsv_mod[2] < 1 else color.valueF() + (1 - color.valueF())*(hsv_mod[2] - 1)
+    return QColor.fromHsvF(hue, sat, val)
     
 def is_room_adjacent(room_1, room_2, consider_hard_one_ways = False):
     if room_1.out_of_map != room_2.out_of_map:
@@ -197,9 +203,15 @@ OppositeDirection = {
 #Classes
 
 class RoomTheme(Enum):
-    Default = 0
-    Light   = 1
-    Dark    = 2
+    Default = 1
+    Light   = 2
+    Dark    = 0
+
+theme_to_mod = {
+    RoomTheme.Default: (0,   1,    1),
+    RoomTheme.Light:   (0, 1/3, 1.75),
+    RoomTheme.Dark:    (0,   1, 0.25)
+}
 
 class Room:
     def __init__(self, name, area, out_of_map, room_type, room_path, width, height, offset_x, offset_z, door_flag, no_traverse, music, play):
@@ -235,89 +247,57 @@ class RoomItem(QGraphicsRectItem):
         self.group_list = group_list
         self.main_window = main_window
         
-        self.theme_to_fill = {}
-        self.current_theme = RoomTheme.Default
-        self.icon_inverted = False
+        self.outline = QPen()
+        self.outline.setWidth(OUTLINE)
+        self.outline.setJoinStyle(Qt.MiterJoin)
         
-        outline = QPen("#ffffff")
-        outline.setWidth(OUTLINE)
-        outline.setJoinStyle(Qt.MiterJoin)
-        
-        self.setPen(outline)
         self.setToolTip(room_data.name)
         
-        self.reset_fill()
         self.reset_pos()
         self.reset_flags()
-        self.reset_layer(False)
         
-        self.set_theme(self.current_theme)
+        self.set_theme(RoomTheme.Default)
     
     def set_theme(self, theme):
         self.current_theme = theme
-        if theme == RoomTheme.Dark:
-            if not self.icon_inverted:
-                self.invert_icon()
-        elif self.icon_inverted:
-            self.invert_icon()
+        self.reset_layer(theme.value)
         self.reset_brush()
-    
-    def reset_fill(self):
-        color = area_color[18]
-        if not self.room_data.out_of_map:
-            color = area_color[int(self.room_data.area.split("::")[-1][1:3]) - 1]
-        color = QColor(color)
-        self.theme_to_fill[RoomTheme.Default] = color
-        self.theme_to_fill[RoomTheme.Light]   = self.modify_color(color, 0, 1/3, 1.75)
-        self.theme_to_fill[RoomTheme.Dark]    = self.modify_color(color, 0,   1, 0.25)
-        self.reset_brush()
-    
-    def reset_pos(self):
-        self.setPos(self.room_data.offset_x * TILEWIDTH, self.room_data.offset_z * TILEHEIGHT)
     
     def reset_brush(self):
-        current_door_fill = self.theme_to_fill[self.current_theme]
-        current_room_fill = QColor(current_door_fill.name())
+        #Fill
+        area_index = 18 if self.room_data.out_of_map else int(self.room_data.area.split("::")[-1][1:3]) - 1
+        current_fill = QColor(area_color[area_index])
+        current_door_fill = modify_color(current_fill, theme_to_mod[self.current_theme])
+        current_room_fill = modify_color(current_fill, theme_to_mod[self.current_theme])
         if self.room_data.room_type == "ERoomType::Load" or self.room_data.name == "m02VIL_000":
             current_room_fill.setAlphaF(0.5)
         self.setBrush(current_room_fill)
+        #Outline
+        current_outline = modify_color(QColor("#ffffff"), theme_to_mod[self.current_theme])
+        self.outline.setColor(current_outline)
+        self.setPen(self.outline)
+        #Child items
         for item in self.childItems():
             if type(item) == QGraphicsRectItem:
                 item.setBrush(current_door_fill)
+            if type(item) == QGraphicsTextItem:
+                item.setDefaultTextColor(current_outline)
     
     def reset_flags(self):
         self.setFlags(QGraphicsItem.ItemIsSelectable | QGraphicsItem.ItemIsFocusable)
-        if self.can_move or not self.main_window.restrictions:
-            self.setFlag(QGraphicsItem.ItemIsMovable, True)
+        self.setFlag(QGraphicsItem.ItemIsMovable, self.can_move or not self.main_window.restrictions)
     
     def set_static(self):
         self.setFlags(QGraphicsItem.ItemSendsGeometryChanges)
     
-    def invert_icon(self):
-        self.icon_inverted = not self.icon_inverted
-        for item in self.childItems():
-            if type(item) == QGraphicsPixmapItem:
-                image = item.pixmap().toImage()
-                image.invertPixels()
-                item.setPixmap(QPixmap.fromImage(image))
-    
-    def paint(self, painter, option, widget):
-        option.state &= ~QStyle.State_Selected
-        super().paint(painter, option, widget)
-    
-    def reset_layer(self, has_priority):
-        offset = 0
-        if has_priority:
-            offset = 74
-        self.setZValue(offset - self.room_data.width*self.room_data.height)
+    def reset_layer(self, priority):
+        self.setZValue(priority*100 - self.room_data.width*self.room_data.height)
     
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSelectedChange:
-            if value:
-                self.set_theme(RoomTheme.Light)
-            else:
-                self.set_theme(RoomTheme.Default)
-            self.reset_layer(value and (self.can_move or not self.main_window.restrictions))
+            self.set_theme(RoomTheme.Light if value else RoomTheme.Default)
+            if value and not self.can_move and self.main_window.restrictions:
+                self.reset_layer(RoomTheme.Default.value)
         return super().itemChange(change, value)
 
     def mousePressEvent(self, event):
@@ -339,7 +319,7 @@ class RoomItem(QGraphicsRectItem):
         super().mouseReleaseEvent(event)
         #Place room
         for room_1 in self.scene().selectedItems():
-            room_1.apply_round()
+            room_1.snap_to_grid()
             #Change a backer room's area id based on what it is connected to
             if "m88BKR" in room_1.room_data.name:
                 for room_2 in self.main_window.room_list:
@@ -360,14 +340,9 @@ class RoomItem(QGraphicsRectItem):
                 if room.room_data.area == self.room_data.area:
                     room.setSelected(True)
 
-    def apply_round(self):
-        #Snap room to grid
-        x_round_mode = decimal.ROUND_HALF_DOWN
-        y_round_mode = decimal.ROUND_HALF_DOWN
-        if self.pos().x() < 0:
-            x_round_mode = decimal.ROUND_HALF_UP
-        if self.pos().y() < 0:
-            y_round_mode = decimal.ROUND_HALF_UP
+    def snap_to_grid(self):
+        x_round_mode = decimal.ROUND_HALF_UP if self.pos().x() < 0 else decimal.ROUND_HALF_DOWN
+        y_round_mode = decimal.ROUND_HALF_UP if self.pos().y() < 0 else decimal.ROUND_HALF_DOWN
         self.room_data.offset_x = float(decimal.Decimal(self.pos().x() /  TILEWIDTH).quantize(0, x_round_mode))
         self.room_data.offset_z = float(decimal.Decimal(self.pos().y() / TILEHEIGHT).quantize(0, y_round_mode))
         #The train room's z offset must always be positive
@@ -375,17 +350,12 @@ class RoomItem(QGraphicsRectItem):
             self.room_data.offset_z = 0
         self.reset_pos()
     
-    def modify_color(self, color, hue_mod, sat_mod, val_mod):
-        hue = (color.hueF() + hue_mod) % 1
-        if sat_mod < 1:
-            sat = color.saturationF() * sat_mod
-        else:
-            sat = color.saturationF() + (1 - color.saturationF())*(sat_mod - 1)
-        if val_mod < 1:
-            val = color.valueF() * val_mod
-        else:
-            val = color.valueF() + (1 - color.valueF())*(val_mod - 1)
-        return QColor.fromHsvF(hue, sat, val)
+    def paint(self, painter, option, widget):
+        option.state &= ~QStyle.State_Selected
+        super().paint(painter, option, widget)
+    
+    def reset_pos(self):
+        self.setPos(self.room_data.offset_x * TILEWIDTH, self.room_data.offset_z * TILEHEIGHT)
 
 class GraphicsView(QGraphicsView):
     def wheelEvent(self, event):
@@ -399,7 +369,7 @@ class GraphicsView(QGraphicsView):
         else:
             super().wheelEvent(event)
 
-class Main(QMainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.initUI()
@@ -761,10 +731,7 @@ class Main(QMainWindow):
             self.context_menu.exec(event.globalPos())
     
     def closeEvent(self, event):
-        if self.safety_save():
-            event.accept()
-        else:
-            event.ignore()
+        event.accept() if self.safety_save() else event.ignore()
     
     def safety_save(self):
         #Before closing the current map prompt a safety save message
@@ -951,7 +918,7 @@ class Main(QMainWindow):
             self.comp_check.setChecked(False)
             self.comp_check_action()
             #CheckLog
-            name, extension = os.path.splitext(self.string)
+            name = os.path.splitext(self.string)[0]
             box = QMessageBox(self)
             box.setWindowTitle("Error")
             box.setIcon(QMessageBox.Critical)
@@ -1354,12 +1321,8 @@ class Main(QMainWindow):
             tile_index = door_flag[num]
             direction = door_flag[num+1]
             tile_index -= 1
-            if width == 0:
-                x_block = tile_index
-                z_block = 0
-            else:
-                x_block = tile_index % width
-                z_block = tile_index // width
+            x_block = tile_index % width
+            z_block = tile_index // width
             for direction_part in Direction:
                 if (direction & direction_part.value) != 0:
                     breakable = (direction & (direction_part.value << 16)) != 0
@@ -1373,11 +1336,9 @@ class Main(QMainWindow):
             coords = (door.x_block, door.z_block)
             if coords not in door_flags_by_coords:
                 door_flags_by_coords[coords] = 0
-                
             door_flags_by_coords[coords] |= door.direction_part.value
             if door.breakable:
                 door_flags_by_coords[coords] |= (door.direction_part.value << 16)
-            
         door_flag = []
         for (x, z), dir_flags in door_flags_by_coords.items():
             tile_index_in_room = z*width + x
@@ -1389,12 +1350,8 @@ class Main(QMainWindow):
         void_list = []
         for void in no_traverse:
             tile_index = void - 1
-            if width == 0:
-                x_block = tile_index
-                z_block = 0
-            else:
-                x_block = tile_index % width
-                z_block = tile_index // width
+            x_block = tile_index % width
+            z_block = tile_index // width
             void_list.append((x_block, z_block))
         return void_list
     
@@ -1450,13 +1407,6 @@ class Main(QMainWindow):
             group_list = []
             can_move = True
             
-            #No width rooms
-            
-            if room_data.width == 0:
-                room_data.width = 0.5
-            if room_data.height == 0:
-                room_data.height = 0.5
-            
             #Room group
             
             for entry in constant["RestrictedRoom"]:
@@ -1475,9 +1425,6 @@ class Main(QMainWindow):
             index += 1
             
     def add_room_items(self, room):
-        outline = QPen("#00000000")
-        outline.setWidth(OUTLINE)
-        outline.setJoinStyle(Qt.MiterJoin)
         
         #Icons
         
@@ -1723,7 +1670,7 @@ class Main(QMainWindow):
         
         #Doors
         
-        default_fill = QColor(room.theme_to_fill[RoomTheme.Default])
+        outline = QPen("#00000000")
         
         if room.room_data.area == "EAreaID::m10BIG":
             door_offset = -0.5
@@ -1734,65 +1681,66 @@ class Main(QMainWindow):
         
         for door in room.room_data.door_flag:
             if door.direction_part == Direction.LEFT or (room.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]) and len(room.room_data.door_flag) == 1:
-                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline)
                 new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 4.5)
                 new_door.setParentItem(room)
                 if door.direction_part != Direction.LEFT:
                     new_door.setVisible(False)
             if door.direction_part == Direction.RIGHT or (room.room_data.room_type in ["ERoomType::Save", "ERoomType::Warp"]) and len(room.room_data.door_flag) == 1:
-                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, 6, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 4.5)
                 new_door.setParentItem(room)
                 if door.direction_part != Direction.RIGHT:
                     new_door.setVisible(False)
             if door.direction_part == Direction.BOTTOM:
-                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + 9.5, door.z_block*TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.TOP:
-                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, 6, OUTLINE, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + 9.5, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.LEFT_BOTTOM:
-                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline)
                 new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + door_offset)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.RIGHT_BOTTOM:
-                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + door_offset)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.LEFT_TOP:
-                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline)
                 new_door.setPos(door.x_block*TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 7.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.RIGHT_TOP:
-                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, OUTLINE, door_height, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + TILEWIDTH - 1.5, door.z_block*TILEHEIGHT + 7.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.TOP_LEFT:
-                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + door_offset, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.TOP_RIGHT:
-                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, QColor(default_fill))
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + 17.5, door.z_block*TILEHEIGHT + TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.BOTTOM_RIGHT:
-                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline)
                 new_door.setPos(door.x_block*TILEWIDTH + 17.5, door.z_block*TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
             if door.direction_part == Direction.BOTTOM_LEFT:
-                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline, default_fill)
+                new_door = self.scene.addRect(0, 0, door_height, OUTLINE, outline,)
                 new_door.setPos(door.x_block*TILEWIDTH + door_offset, door.z_block*TILEHEIGHT - 1.5)
                 new_door.setParentItem(room)
         
         #Text
         
         text = self.scene.addText(room.room_data.name.replace("_", ""), "Impact")
-        text.setDefaultTextColor(QColor("#ffffff"))
         text.setTransform(QTransform.fromScale(0.25, -0.5))
         text.setPos(room.room_data.width*TILEWIDTH/2 - text.document().size().width()/8, room.room_data.height*TILEHEIGHT/2 + TILEHEIGHT/2 - 0.5)
         text.setParentItem(room)
+        
+        room.reset_brush()
     
     def fill_area(self):
         for i in self.json_file["AreaOrder"]:
@@ -1849,7 +1797,7 @@ class Main(QMainWindow):
             offset += 1
         #Update 2.9.2
         for file in os.listdir("Data\\ExtraRoom"):
-            name, extension = os.path.splitext(file)
+            name = os.path.splitext(file)[0]
             if not name in self.json_file["MapData"]:
                 with open("Data\\ExtraRoom\\" + file, "r", encoding="utf8") as file_reader:
                     extra_room = json.load(file_reader)
@@ -1857,7 +1805,7 @@ class Main(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
-    main = Main()
+    main = MainWindow()
     sys.exit(app.exec())
 
 if __name__ == '__main__':
