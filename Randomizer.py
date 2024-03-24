@@ -619,7 +619,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Packing files...")
         
         with open("Tools\\UnrealPak\\filelist.txt", "w") as file_writer:
-            file_writer.write("\"Mod\*.*\" \"..\..\..\*.*\" \n")
+            file_writer.write("\"Mod\\*.*\" \"..\\..\\..\\*.*\" \n")
         
         root = os.getcwd()
         os.chdir("Tools\\UnrealPak")
@@ -1357,7 +1357,7 @@ class MainWindow(QWidget):
         #Text field
         
         self.starting_items_field = QLineEdit(config.get("StartWith", "sStartItem"))
-        self.starting_items_field.setToolTip("Items to start with. Input their english names\nwith | as separator. If unsure refer to the files\nin Data\Translation for item names.")
+        self.starting_items_field.setToolTip("Items to start with. Input their english names\nwith | as separator. If unsure refer to the files\nin Data\\Translation for item names.")
         self.starting_items_field.textChanged[str].connect(self.starting_items_field_changed)
         center_box_16_layout.addWidget(self.starting_items_field, 0, 0)
         
@@ -1369,7 +1369,7 @@ class MainWindow(QWidget):
         center_box_13_layout.addWidget(self.param_string_field, 0, 0)
         
         self.game_path_field = QLineEdit(config.get("Misc", "sGamePath"))
-        self.game_path_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks).")
+        self.game_path_field.setToolTip("Path to your game's data (...\\BloodstainedRotN\\Content\\Paks).")
         self.game_path_field.textChanged[str].connect(self.game_path_field_changed)
         center_box_14_layout.addWidget(self.game_path_field, 0, 0)
         
@@ -2462,7 +2462,7 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\\BloodstainedRotN\\Content\\Paks).")
             return
         
         #Check if starting items are valid
@@ -2514,7 +2514,7 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\\BloodstainedRotN\\Content\\Paks).")
             return
         
         self.import_assets(list(Manager.file_to_path), self.import_finished)

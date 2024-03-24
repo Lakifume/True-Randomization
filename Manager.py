@@ -828,12 +828,6 @@ def set_randomizer_events():
     #Tower cutscene/garden red moon removal
     datatable["PB_DT_EventFlagMaster"]["Event_07_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
     datatable["PB_DT_EventFlagMaster"]["Event_19_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-    #Temporary Craftwork softlock workaround
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemId"]       = "Demoniccapture"
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemQuantity"] = 1
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemRate"]     = 100.0
-    Room.add_global_room_pickup("m05SAN_012", "Safe_Demoniccapture")
 
 def remove_fire_shard_requirement():
     #Break galleon cannon wall

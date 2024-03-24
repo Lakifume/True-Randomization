@@ -314,7 +314,7 @@ def import_texture(filename):
     
     root = os.getcwd()
     os.chdir("Tools\\UE4 DDS Tools")
-    os.system("cmd /c python\python.exe src\main.py \"" + absolute_asset_dir  + "\\" + filename + ".uasset\" \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_mod_dir + "\" --mode=inject --version=4.22")
+    os.system("cmd /c python\\python.exe src\\main.py \"" + absolute_asset_dir  + "\\" + filename + ".uasset\" \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_mod_dir + "\" --mode=inject --version=4.22")
     os.chdir(root)
     
     #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here

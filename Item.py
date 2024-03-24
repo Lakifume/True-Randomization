@@ -542,10 +542,7 @@ def init():
         "Event_24_001_0000"  #Bloodless
     ]
     global enemy_skip_list
-    enemy_skip_list = [
-        "N2001",
-        "N2013"
-    ]
+    enemy_skip_list = []
     global shop_skip_list
     shop_skip_list = [
         "Potion",
