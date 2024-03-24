@@ -233,7 +233,7 @@ def update_special_properties():
 def add_armor_reference(armor_id):
     #Give a specific armor its own graphical asset pointer when equipped
     datatable["PB_DT_ArmorMaster"][armor_id]["ReferencePath"] = "/Game/Core/Item/Body/BDBP_" + armor_id + ".BDBP_" + armor_id
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_BodyValkyrie.uasset", UE4Version.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_BodyValkyrie.uasset", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("BDBP_BodyValkyrie_C"))
     new_file.SetNameReference(index, FString("BDBP_" + armor_id + "_C"))
     index = new_file.SearchNameReference(FString("Default__BDBP_BodyValkyrie_C"))

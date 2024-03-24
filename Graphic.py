@@ -187,7 +187,7 @@ def init():
 
 def update_portrait_pointer(portrait, portrait_replacement):
     #Simply swap the file's name in the name map and save as the new name
-    portrait_replacement_data = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
+    portrait_replacement_data = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", EngineVersion.VER_UE4_22)
     index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString(portrait))
     index = portrait_replacement_data.SearchNameReference(FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait_replacement))
@@ -293,7 +293,7 @@ def set_material_hsv(filename, parameter, new_hsv):
 
 def import_mesh(filename):
     #Import a mesh file at the right location by reading it in the file
-    new_file = UAsset("Data\\Mesh\\" + filename + ".uasset", UE4Version.VER_UE4_22)
+    new_file = UAsset("Data\\Mesh\\" + filename + ".uasset", EngineVersion.VER_UE4_22)
     name_map = new_file.GetNameMapIndexList()
     filepath = None
     for name in name_map:

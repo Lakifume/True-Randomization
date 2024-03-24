@@ -16,18 +16,12 @@ sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
 clr.AddReference("UAssetAPI")
 clr.AddReference("UAssetSnippet")
 
-from UAssetAPI import *
-from UAssetAPI.FieldTypes import *
-from UAssetAPI.JSON import *
-from UAssetAPI.Kismet import *
-from UAssetAPI.Kismet.Bytecode import *
-from UAssetAPI.Kismet.Bytecode.Expressions import *
-from UAssetAPI.PropertyTypes import *
-from UAssetAPI.PropertyTypes.Objects import *
-from UAssetAPI.PropertyTypes.Structs import *
-from UAssetAPI.UnrealTypes import *
-from UAssetAPI.Unversioned import *
-from UAssetSnippet import *
+from UAssetAPI import Import, UAsset
+from UAssetAPI.PropertyTypes.Objects import BoolPropertyData, BytePropertyType, BytePropertyData, EnumPropertyData, FloatPropertyData, \
+    IntPropertyData, NamePropertyData, SoftObjectPropertyData, StrPropertyData, TextPropertyData
+from UAssetAPI.PropertyTypes.Structs import RotatorPropertyData, StructPropertyData, VectorPropertyData
+from UAssetAPI.UnrealTypes import EngineVersion, FName, FPackageIndex, FRotator, FString, FVector
+from UAssetSnippet import UAssetSnippet
 
 #test = UAsset("PB_DT_DropRateMaster.uasset", UE4Version.VER_UE4_22)
 #test.AddNameReference(FString("FloatProperty"))

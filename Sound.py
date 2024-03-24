@@ -229,14 +229,14 @@ def update_lip_pointer(old_event, new_event, prefix):
     new_event = prefix + "_" + new_event + "_LIP"
     
     if new_event + ".uasset" in os.listdir("Data\\LipSync"):
-        new_event_data = UAsset("Data\\LipSync\\" + new_event + ".uasset", UE4Version.VER_UE4_22)
+        new_event_data = UAsset("Data\\LipSync\\" + new_event + ".uasset", EngineVersion.VER_UE4_22)
         index = new_event_data.SearchNameReference(FString(new_event))
         new_event_data.SetNameReference(index, FString(old_event))
         index = new_event_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + new_event))
         new_event_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + old_event))
         new_event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + old_event + ".uasset")
     elif old_event + ".uasset" in os.listdir("Data\\LipSync"):
-        old_event_data = UAsset("Data\\LipSync\\" + old_event + ".uasset", UE4Version.VER_UE4_22)
+        old_event_data = UAsset("Data\\LipSync\\" + old_event + ".uasset", EngineVersion.VER_UE4_22)
         for export in old_event_data.Exports:
             if str(export.ObjectName) == old_event:
                 export.Data.Clear()
@@ -271,7 +271,7 @@ def add_music_file(filename):
     datatable["PB_DT_SoundMaster"][music_id] = copy.deepcopy(datatable["PB_DT_SoundMaster"]["BGM_m50BRM"])
     datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = datatable["PB_DT_SoundMaster"][music_id]["AssetPath"].replace("BGM_m50BRM", music_id)
     #Copy the act file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", UE4Version.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -291,7 +291,7 @@ def add_music_file(filename):
         count += 1
     new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
     #Copy the bgm file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", UE4Version.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))

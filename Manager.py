@@ -93,7 +93,7 @@ def load_game_data():
                 extension = ".umap"
             else:
                 extension = ".uasset"
-            game_data[file] = UAsset(asset_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension, UE4Version.VER_UE4_22)
+            game_data[file] = UAsset(asset_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension, EngineVersion.VER_UE4_22)
             #Store struct data types for later on
             if file_to_type[file] == FileType.DataTable:
                 for entry in game_data[file].Exports[0].Table.Data:
