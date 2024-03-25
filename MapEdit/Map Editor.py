@@ -327,12 +327,14 @@ class RoomItem(QGraphicsRectItem):
                         continue
                     if is_room_adjacent(room_1.room_data, room_2.room_data):
                         room_1.room_data.area = room_2.room_data.area
-                        room_1.reset_fill()
+                        room_1.reset_brush()
                         self.main_window.music_drop_down.setCurrentIndex(music_id.index(room_2.room_data.music))
         if event.button() == Qt.LeftButton:
             self.main_window.set_unsaved()
     
     def mouseDoubleClickEvent(self, event):
+        if not event.button() == Qt.LeftButton:
+            return
         super().mouseDoubleClickEvent(event)
         #Select all rooms belonging to the same area
         if self.room_data.area != "EAreaID::None":
@@ -358,6 +360,31 @@ class RoomItem(QGraphicsRectItem):
         self.setPos(self.room_data.offset_x * TILEWIDTH, self.room_data.offset_z * TILEHEIGHT)
 
 class GraphicsView(QGraphicsView):
+    def __init__(self, scene, window):
+        super().__init__(scene, window)
+        self.middle_button_held = False
+        self.start_pos = None
+
+    def mousePressEvent(self, event):
+        if event.button() in [Qt.LeftButton, Qt.RightButton]:
+            super().mousePressEvent(event)
+        if event.button() == Qt.MiddleButton:
+            self.middle_button_held = True
+            self.start_pos = event.position()
+
+    def mouseMoveEvent(self, event):
+        super().mouseMoveEvent(event)
+        if self.middle_button_held:
+            self.horizontalScrollBar().setValue(self.horizontalScrollBar().value() - (event.position().x() - self.start_pos.x()))
+            self.verticalScrollBar().setValue(self.verticalScrollBar().value() - (event.position().y() - self.start_pos.y()))
+            self.start_pos = event.position()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() in [Qt.LeftButton, Qt.RightButton]:
+            super().mouseReleaseEvent(event)
+        if event.button() == Qt.MiddleButton:
+            self.middle_button_held = False
+    
     def wheelEvent(self, event):
         if event.modifiers() & Qt.ControlModifier:
             current_scale = abs(self.transform().m11())
@@ -375,10 +402,6 @@ class MainWindow(QMainWindow):
         self.initUI()
         self.unsaved      = False
         self.restrictions = False
-        self.right_held   = False
-        self.mid_held     = False
-        self.x1_held      = False
-        self.x2_held      = False
         self.reset()
         
     def initUI(self):
@@ -696,35 +719,11 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon("Data\\icon.png"))
         self.showMaximized()
     
-    def eventFilter(self, obj, event):
-        #Try to prevent holding several mouse buttons at once as that can cause major glitches
+    def eventFilter(self, object, event):
         if event.type() in [QEvent.GraphicsSceneMousePress, QEvent.GraphicsSceneMouseDoubleClick]:
-            if event.button() == Qt.LeftButton and not self.right_held and not self.mid_held and not self.x1_held and not self.x2_held:
+            if event.button() in [Qt.LeftButton, Qt.RightButton]:
                 self.view.setDragMode(QGraphicsView.RubberBandDrag)
-            if event.button() == Qt.RightButton:
-                self.view.setDragMode(QGraphicsView.NoDrag)
-                self.right_held = True
-            if event.button() == Qt.MiddleButton:
-                self.view.setDragMode(QGraphicsView.NoDrag)
-                self.mid_held = True
-            if event.button() == Qt.XButton1:
-                self.view.setDragMode(QGraphicsView.NoDrag)
-                self.x1_held = True
-            if event.button() == Qt.XButton2:
-                self.view.setDragMode(QGraphicsView.NoDrag)
-                self.x2_held = True
-        elif event.type() == QEvent.GraphicsSceneMouseRelease:
-            if event.button() == Qt.LeftButton and not self.right_held and not self.mid_held and not self.x1_held and not self.x2_held:
-                self.view.setDragMode(QGraphicsView.NoDrag)
-            if event.button() == Qt.RightButton:
-                self.right_held = False
-            if event.button() == Qt.MiddleButton:
-                self.mid_held = False
-            if event.button() == Qt.XButton1:
-                self.x1_held = False
-            if event.button() == Qt.XButton2:
-                self.x2_held = False
-        return super().eventFilter(obj, event)
+        return super().eventFilter(object, event)
     
     def contextMenuEvent(self, event):
         if self.scene.selectedItems():
@@ -750,7 +749,7 @@ class MainWindow(QMainWindow):
         self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="Custom", filter="*.json"))[0]
         if self.path:
             self.string = self.path.replace("/", "\\")
-            self.title_string = " (" + self.string + ")"
+            self.title_string = f" ({self.string})"
             self.load_from_json(self.string)
             self.direct_save = True
 
@@ -765,7 +764,7 @@ class MainWindow(QMainWindow):
         self.path = (QFileDialog.getSaveFileName(parent=self, caption="Save as", dir="Custom", filter="*.json"))[0]
         if self.path:
             self.string = self.path.replace("/", "\\")
-            self.title_string = " (" + self.string + ")"
+            self.title_string = f" ({self.string})"
             self.save_to_json(self.string)
             self.direct_save = True
             return True
@@ -1033,6 +1032,7 @@ class MainWindow(QMainWindow):
         box = QDialog(self)
         box.setLayout(layout)
         box.setWindowTitle("Boss restrictions")
+        box.setFixedSize(0, 0)
         box.exec()
     
     def reverse_action(self):
@@ -1384,9 +1384,9 @@ class MainWindow(QMainWindow):
         
         #Map boundary
         
-        bound_1_horizontal = self.scene.addLine(-256*TILEWIDTH, -32*TILEHEIGHT, -256*TILEWIDTH + (TILEHEIGHT/2 - 1.5), -32*TILEHEIGHT)
+        bound_1_horizontal = self.scene.addLine(-32*TILEWIDTH, -32*TILEHEIGHT, -32*TILEWIDTH + (TILEHEIGHT/2 - 1.5), -32*TILEHEIGHT)
         bound_1_horizontal.setPen(outline)
-        bound_1_vertical = self.scene.addLine(-256*TILEWIDTH, -32*TILEHEIGHT + (TILEHEIGHT/2 - 1.5), -256*TILEWIDTH, -32*TILEHEIGHT)
+        bound_1_vertical = self.scene.addLine(-32*TILEWIDTH, -32*TILEHEIGHT + (TILEHEIGHT/2 - 1.5), -32*TILEWIDTH, -32*TILEHEIGHT)
         bound_1_vertical.setPen(outline)
         
         bound_2_horizontal = self.scene.addLine(256*TILEWIDTH - (TILEHEIGHT/2 - 1.5), 128*TILEHEIGHT, 256*TILEWIDTH, 128*TILEHEIGHT)
