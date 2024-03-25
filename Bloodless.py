@@ -95,18 +95,16 @@ def init():
         "BLD_ABILITY_BLOOD_STEAL":   3,
         "BLD_ABILITY_FLOATING_UP":   3
     }
+    global ability_to_location
+    ability_to_location = {}
     global key_ability_to_location
     key_ability_to_location = {}
     global all_keys
     all_keys = list(key_abilities)
-    global key_order
-    key_order = []
     global all_candles
     all_candles = list(candle_to_ability)
     global all_abilities
     all_abilities = list(candle_to_ability.values())
-    global bloodless_datatable
-    bloodless_datatable = {}
     #Logic
     global previous_available_candles
     previous_available_candles = []
@@ -117,7 +115,7 @@ def init():
     global current_available_bosses
     current_available_bosses = []
     global all_available_doors
-    all_available_doors = copy.deepcopy(current_available_doors)
+    all_available_doors = []
     global all_available_candles
     all_available_candles = []
     global all_available_bosses
@@ -140,45 +138,15 @@ def set_logic_complexity(complexity):
 def satisfies_requirement(requirement):
     check = True
     for req in requirement:
-        check = req in key_order
+        check = req in key_ability_to_location
         if check:
             break
     return check
 
 def candle_logic():
     #Simplified version of the function from Item
+    move_through_rooms()
     while True:
-        #Move through rooms
-        for door in copy.deepcopy(current_available_doors):
-            current_available_doors.remove(door)
-            room = Item.get_door_room(door)
-            if room in constant["BloodlessRoomRequirement"]:
-                for check, requirement in constant["BloodlessRoomRequirement"][room][door].items():
-                    #Don't automatically unlock certain checks
-                    if check in special_check_to_requirement:
-                        if check in special_check_to_door:
-                            special_check_to_door[check].append(door)
-                        else:
-                            special_check_to_door[check] = [door]
-                        continue
-                    analyse_check(check, requirement)
-            else:
-                for subdoor in Room.map_connections[room]:
-                    if subdoor == door:
-                        continue
-                    analyse_check(subdoor, [])
-        #Keep going until stuck
-        if current_available_doors:
-            continue
-        #Check special requirements
-        for special_check in special_check_to_requirement:
-            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
-                for door in special_check_to_door[special_check]:
-                    analyse_check(special_check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][special_check])
-                del special_check_to_door[special_check]
-        #Keep going until stuck
-        if current_available_doors:
-            continue
         #Place key item
         if check_to_requirement:
             #Weight checks
@@ -196,30 +164,66 @@ def candle_logic():
             chosen_requirement = random.choice(requirement_list)
             #Place item
             place_next_key(chosen_requirement)
-            previous_available_candles.clear()
-            previous_available_candles.extend(current_available_candles)
-            current_available_candles.clear()
-            current_available_bosses.clear()
-            #Check which obstacles were lifted
-            for check in list(check_to_requirement):
-                if not check in check_to_requirement:
-                    continue
-                requirement = check_to_requirement[check]
-                analyse_check(check, requirement)
         #Place last unecessary keys
         elif all_keys:
             place_next_key(random.choice(all_keys))
-            current_available_candles.clear()
-            current_available_bosses.clear()
         #Stop when all keys are placed and all doors are explored
         else:
             break
 
+def move_through_rooms():
+    #Move through each door
+    while True:
+        for door in copy.deepcopy(current_available_doors):
+            current_available_doors.remove(door)
+            room = Item.get_door_room(door)
+            if room in constant["BloodlessRoomRequirement"]:
+                for check, requirement in constant["BloodlessRoomRequirement"][room][door].items():
+                    #Don't automatically unlock certain checks
+                    if check in special_check_to_requirement:
+                        if not check in special_check_to_door:
+                            special_check_to_door[check] = []
+                        special_check_to_door[check].append(door)
+                        continue
+                    analyse_check(check, requirement)
+            else:
+                for subdoor in Room.map_connections[room]:
+                    if subdoor == door:
+                        continue
+                    analyse_check(subdoor, [])
+        #Keep going until stuck
+        if current_available_doors:
+            continue
+        #Check special requirements
+        for special_check in special_check_to_requirement:
+            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
+                for door in special_check_to_door[special_check]:
+                    analyse_check(special_check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][special_check])
+                del special_check_to_door[special_check]
+        #Stop if no more doors are found
+        if not current_available_doors:
+            break
+
+def check_lifted_obstacles():
+    for check in list(check_to_requirement):
+        if not check in check_to_requirement:
+            continue
+        requirement = check_to_requirement[check]
+        analyse_check(check, requirement)
+
+def reset_available_checks():
+    previous_available_candles.clear()
+    previous_available_candles.extend(current_available_candles)
+    current_available_candles.clear()
+    current_available_bosses.clear()
+
 def analyse_check(check, requirement):
+    #If accessible remove it from the requirement list
     accessible = satisfies_requirement(requirement)
     if accessible:
         if check in check_to_requirement:
             del check_to_requirement[check]
+    #Handle each check type differently
     check_type = get_check_type(check)
     match check_type:
         case CheckType.Door:
@@ -231,6 +235,7 @@ def analyse_check(check, requirement):
         case CheckType.Boss:
             if check in all_available_bosses:
                 return
+    #Set check as available
     if accessible:
         match check_type:
             case CheckType.Door:
@@ -247,6 +252,7 @@ def analyse_check(check, requirement):
             case CheckType.Boss:
                 current_available_bosses.append(check)
                 all_available_bosses.append(check)
+    #Add to requirement list
     else:
         if check in check_to_requirement:
             add_requirement_to_check(check, requirement)
@@ -291,7 +297,10 @@ def place_next_key(chosen_item):
         chosen_candle = pick_key_candle(all_available_candles)
     key_ability_to_location[chosen_item] = chosen_candle
     all_keys.remove(chosen_item)
-    key_order.append(chosen_item)
+    #Analyse the game again
+    reset_available_checks()
+    check_lifted_obstacles()
+    move_through_rooms()
 
 def should_place_key_in(list):
     return random.random() < (1 - 1/(1+len(list)))*logic_complexity
@@ -318,27 +327,31 @@ def final_boss_available():
 def randomize_bloodless_candles():
     candle_logic()
     #Key abilities
-    for item in key_abilities:
-        bloodless_datatable[item] = key_ability_to_location[item]
+    for item in key_ability_to_location:
+        ability_to_location[item] = key_ability_to_location[item]
         all_candles.remove(key_ability_to_location[item])
-    #Since there is no datatable for Bloodless ability drops create one here
+        all_abilities.remove(item)
+    #Remaining abilities
     for item in all_abilities:
-        if item in key_abilities:
-            continue
         chosen_room = pick_and_remove(all_candles)
-        bloodless_datatable[item] = chosen_room
+        ability_to_location[item] = chosen_room
 
 def update_shard_candles():
     #All of Bloodless' abilities are stored inside of shard candles
     #Just like for Miriam those are defined inside of the level files
-    for item in bloodless_datatable:
-        Manager.search_and_replace_string(Item.chest_to_room(bloodless_datatable[item]) + "_Gimmick", "BP_DM_BloodlessAbilityGimmick_C", "UnlockAbilityType", "EPBBloodlessAbilityType::" + candle_to_ability[bloodless_datatable[item]], "EPBBloodlessAbilityType::" + item)
+    for item in ability_to_location:
+        file_name = f"{Item.chest_to_room(ability_to_location[item])}_Gimmick"
+        class_name = "BP_DM_BloodlessAbilityGimmick_C"
+        data_name = "UnlockAbilityType"
+        old_value = f"EPBBloodlessAbilityType::{candle_to_ability[ability_to_location[item]]}"
+        new_value = f"EPBBloodlessAbilityType::{item}"
+        Manager.search_and_replace_string(file_name, class_name, data_name, old_value, new_value)
 
 def increase_starting_stats():
     #Give Bloodless 4 of each stat to start with
     for stat in ["STR", "INT", "CON", "MND"]:
         for index in range(4):
-            datatable["PB_DT_BloodlessAbilityData"]["BLD_ABILITY_" + stat + "_UP_" + str(index + 1)]["IsUnlockedByDefault"] = True
+            datatable["PB_DT_BloodlessAbilityData"][f"BLD_ABILITY_{stat}_UP_{index + 1}"]["IsUnlockedByDefault"] = True
 
 def remove_gremory_cutscene():
     #Remove the new cutscene when entering the Gremory fight since it causes a softlock on custom maps
@@ -355,44 +368,33 @@ def pick_and_remove(array):
 
 def create_log(seed, map):
     #Log compatible with the map editor to show key item locations
-    name, extension = os.path.splitext(map)
+    file_name = os.path.split(os.path.splitext(map)[0])[-1]
     log = {}
     log["Seed"] = seed
-    log["Map"]  = name.split("\\")[-1]
+    log["Map"]  = file_name
     log["Key"]  = {}
-    for item in key_order:
-        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]] = []
-    for item in bloodless_datatable:
-        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]] = []
-    for item in bloodless_datatable:
-        log["Key"][translation["Bloodless"][Utility.remove_inst_number(item)]].append(Item.chest_to_room(bloodless_datatable[item]))
+    for item in ability_to_location:
+        item_name = translation["Bloodless"][Utility.remove_inst_number(item)]
+        if not item_name in log["Key"]:
+            log["Key"][item_name] = []
+        log["Key"][item_name].append(Item.chest_to_room(ability_to_location[item]))
     log["Beatable"] = final_boss_available()
     return log
 
 def create_log_string(seed, map):
     #Log string for quickly showing answer to a seed
-    name, extension = os.path.splitext(map)
-    if name.split("\\")[-1]:
-        map_name = name.split("\\")[-1]
-    else:
-        map_name = "Default"
+    file_name = os.path.split(os.path.splitext(map)[0])[-1]
+    map_name = file_name if file_name else "Default"
     log_string = ""
-    log_string += "Seed: " + str(seed) + "\n"
-    log_string += "Map: " + map_name + "\n"
+    log_string += f"Seed: {seed}\n"
+    log_string += f"Map: {map_name}\n"
     log_string += "Key:\n"
-    for item in key_order:
-        log_string += "  " + translation["Bloodless"][Utility.remove_inst_number(item)] + ": " + bloodless_datatable[item]
-        log_string += "\n"
-    for item in bloodless_datatable:
-        if item in key_order:
-            continue
+    for item in ability_to_location:
         if "_UP_" in item:
             break
-        log_string += "  " + translation["Bloodless"][Utility.remove_inst_number(item)] + ": " + bloodless_datatable[item]
+        item_name = translation["Bloodless"][Utility.remove_inst_number(item)]
+        log_string += f"  {item_name}: {ability_to_location[item]}"
         log_string += "\n"
     log_string += "Beatable: "
-    if final_boss_available():
-        log_string += "Yes"
-    else:
-        log_string += "No"
+    log_string += "Yes" if final_boss_available() else "No"
     return log_string

@@ -89,10 +89,7 @@ def load_game_data():
     for file in file_to_type:
         if file_to_type[file] in load_types:
             #Load all game data in one dict
-            if file_to_type[file] == FileType.Level:
-                extension = ".umap"
-            else:
-                extension = ".uasset"
+            extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
             game_data[file] = UAsset(asset_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension, UE4Version.VER_UE4_22)
             #Store struct data types for later on
             if file_to_type[file] == FileType.DataTable:
@@ -234,10 +231,7 @@ def read_datatable_value(struct):
             elif sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
                 sub_value = str(element.Value)
             elif sub_type == "StrProperty":
-                if element.Value:
-                    sub_value = str(element.Value)
-                else:
-                    sub_value = ""
+                sub_value = str(element.Value) if element.Value else ""
             elif sub_type == "StructProperty":
                 sub_value = {}
                 for sub_element in element.Value:
@@ -249,23 +243,14 @@ def read_datatable_value(struct):
                     elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
                         sub_sub_value = str(sub_element.Value)
                     elif sub_sub_type == "StrProperty":
-                        if sub_element.Value:
-                            sub_sub_value = str(sub_element.Value)
-                        else:
-                            sub_sub_value = ""
+                        sub_sub_value = str(sub_element.Value) if sub_element.Value else ""
                     elif sub_sub_type == "TextProperty":
-                        if sub_element.CultureInvariantString:
-                            sub_sub_value = str(sub_element.CultureInvariantString)
-                        else:
-                            sub_sub_value = ""
+                        sub_sub_value = str(sub_element.CultureInvariantString) if sub_element.CultureInvariantString else ""
                     else:
                         sub_sub_value = sub_element.Value
                     sub_value[str(sub_element.Name)] = sub_sub_value
             elif sub_type == "TextProperty":
-                if element.CultureInvariantString:
-                    sub_value = str(element.CultureInvariantString)
-                else:
-                    sub_value = ""
+                sub_value = str(element.CultureInvariantString) if element.CultureInvariantString else ""
             else:
                 sub_value = element.Value
             value.append(sub_value)
@@ -276,15 +261,9 @@ def read_datatable_value(struct):
     elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
         value = str(struct.Value)
     elif struct_type == "StrProperty":
-        if struct.Value:
-            value = str(struct.Value)
-        else:
-            value = ""
+        value = str(struct.Value) if struct.Value else ""
     elif struct_type == "TextProperty":
-        if struct.CultureInvariantString:
-            value = str(struct.CultureInvariantString)
-        else:
-            value = ""
+        value = str(struct.CultureInvariantString) if struct.CultureInvariantString else ""
     else:
         value = struct.Value
     return value
@@ -321,10 +300,7 @@ def patch_datatable_value(file, entry, data, value):
                 sub_struct.Value = FName.FromString(game_data[file], element)
             elif sub_type == "StrProperty":
                 sub_struct = StrPropertyData()
-                if element:
-                    sub_struct.Value = FString(element)
-                else:
-                    sub_struct.Value = None
+                sub_struct.Value = FString(element) if element else None
             elif sub_type == "StructProperty":
                 sub_struct = data_struct[str(struct.Name)].Clone()
                 count = 0
@@ -335,24 +311,15 @@ def patch_datatable_value(file, entry, data, value):
                     elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
                         sub_struct.Value[count].Value = FName.FromString(game_data[file], element[sub_element])
                     elif sub_sub_type == "StrProperty":
-                        if element[sub_element]:
-                            sub_struct.Value[count].Value = FString(element[sub_element])
-                        else:
-                            sub_struct.Value[count].Value = None
+                        sub_struct.Value[count].Value = FString(element[sub_element]) if element[sub_element] else None
                     elif sub_sub_type == "TextProperty":
-                        if element[sub_element]:
-                            sub_struct.Value[count].CultureInvariantString = FString(element[sub_element])
-                        else:
-                            sub_struct.Value[count].CultureInvariantString = None
+                        sub_struct.Value[count].CultureInvariantString = FString(element[sub_element]) if element[sub_element] else None
                     else:
                         sub_struct.Value[count].Value = element[sub_element]
                     count += 1
             elif sub_type == "TextProperty":
                 sub_struct = TextPropertyData()
-                if element:
-                    sub_struct.CultureInvariantString = FString(element)
-                else:
-                    sub_struct.CultureInvariantString = None
+                sub_struct.CultureInvariantString = FString(element) if element else None
             new_list.append(sub_struct)
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = new_list
     elif struct_type == "ByteProperty":
@@ -360,15 +327,9 @@ def patch_datatable_value(file, entry, data, value):
     elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName.FromString(game_data[file], value)
     elif struct_type == "StrProperty":
-        if value:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
-        else:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = None
+        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value) if value else None
     elif struct_type == "TextProperty":
-        if value:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value)
-        else:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = None
+        game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value) if value else None
     else:
         game_data[file].Exports[0].Table.Data[entry].Value[data].Value = value
 
@@ -487,10 +448,7 @@ def apply_default_tweaks():
         else:
             drop_rate = constant["EnemyDrop"]["EnemyMat"]["ItemRate"]
         #Keep dulla head drops relatively low due to their spawn frequency
-        if entry.split("_")[0] in ["N3090", "N3099"]:
-            drop_rate_multiplier = 0.5
-        else:
-            drop_rate_multiplier = 1.0
+        drop_rate_multiplier = 0.5 if entry.split("_")[0] in ["N3090", "N3099"] else 1.0
         if 0.0 < datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] < 100.0:
             datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = constant["ShardDrop"]["ItemRate"]*drop_rate_multiplier
         for data in ["RareItemRate", "CommonRate", "RareIngredientRate", "CommonIngredientRate"]:
@@ -799,25 +757,6 @@ def apply_default_tweaks():
     #With this mod vanilla rando is pointless and obselete so remove its widget
     #Also prevent going online with this mod active
     remove_unwanted_modes()
-    #Test
-    #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemId"]       = "Demoniccapture"
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N1003_Shard"]["ShardId"] = "AccelWorld"
-    #add_global_room_pickup("m06KNG_020", "TestNeverSatisfied")
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemId"]       = "NeverSatisfied"
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N2013_Shard"]["ShardId"] = "AccelWorld"
-    #add_global_room_pickup("m09TRN_002", "TestHammerknuckle")
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemId"]       = "Hammerknuckle"
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N2001_Shard"]["ShardId"] = "AccelWorld"
 
 def set_randomizer_events():
     #Some events need to be triggered by default to avoid conflicts or tedium
@@ -828,12 +767,6 @@ def set_randomizer_events():
     #Tower cutscene/garden red moon removal
     datatable["PB_DT_EventFlagMaster"]["Event_07_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
     datatable["PB_DT_EventFlagMaster"]["Event_19_001_0000"]["Id"] = datatable["PB_DT_EventFlagMaster"]["Event_01_001_0000"]["Id"]
-    #Temporary Craftwork softlock workaround
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemId"]       = "Demoniccapture"
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemQuantity"] = 1
-    datatable["PB_DT_DropRateMaster"]["Safe_Demoniccapture"]["RareItemRate"]     = 100.0
-    Room.add_global_room_pickup("m05SAN_012", "Safe_Demoniccapture")
 
 def remove_fire_shard_requirement():
     #Break galleon cannon wall
@@ -935,10 +868,7 @@ def write_log(filename, log):
 def write_files():
     #Dump all uasset objects to files
     for file in game_data:
-        if file_to_type[file] == FileType.Level:
-            extension = ".umap"
-        else:
-            extension = ".uasset"
+        extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
         game_data[file].Write(mod_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension)
 
 def remove_unchanged_files():
@@ -967,10 +897,7 @@ def search_and_replace_string(filename, class_name, data_name, old_value, new_va
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines
-    if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry in string_entry_exceptions:
-        prefix = " "
-    else:
-        prefix = "\r\n"
+    prefix = " " if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry in string_entry_exceptions else "\r\n"
     stringtable[file][entry] += prefix + text
 
 def get_available_gimmick_flag():

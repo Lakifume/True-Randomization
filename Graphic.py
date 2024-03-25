@@ -12,6 +12,8 @@ import Bloodless
 import Utility
 
 def init():
+    global portrait_replacement
+    portrait_replacement = {}
     global shard_type_to_hsv
     shard_type_to_hsv = {
         "Skill":       (  0,   0, 100),
@@ -185,15 +187,6 @@ def init():
         ]
     }
 
-def update_portrait_pointer(portrait, portrait_replacement):
-    #Simply swap the file's name in the name map and save as the new name
-    portrait_replacement_data = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path[portrait_replacement] + "\\" + portrait_replacement + ".uasset", UE4Version.VER_UE4_22)
-    index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
-    portrait_replacement_data.SetNameReference(index, FString(portrait))
-    index = portrait_replacement_data.SearchNameReference(FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait_replacement))
-    portrait_replacement_data.SetNameReference(index, FString("/Game/Core/Character/N3100/Material/TextureMaterial/" + portrait))
-    portrait_replacement_data.Write(Manager.mod_dir + "\\" + Manager.file_to_path[portrait] + "\\" + portrait + ".uasset")
-
 def update_default_outfit_hsv(parameter_string):
     #Set the salon sliders to match the default outfit color
     parameter_list = []
@@ -203,6 +196,31 @@ def update_default_outfit_hsv(parameter_string):
         for parameter in parameter_list:
             datatable["PB_DT_HairSalonOldDefaults"]["Body_01_" + "{:02d}".format(index + 1)][parameter[0] + "1"] = int(parameter[1:4])
 
+def randomize_backer_portraits():
+    #Shuffle backer portraits in a dict
+    portraits = []
+    for directory in os.listdir(Manager.asset_dir + "\\" + Manager.file_to_path["Ml_N3100_picture_001"]):
+        file_name = os.path.splitext(directory)[0]
+        portraits.append(file_name)
+    portraits = list(dict.fromkeys(portraits))
+    new_list = copy.deepcopy(portraits)
+    random.shuffle(new_list)
+    portrait_replacement = dict(zip(portraits, new_list))
+
+def update_backer_portraits():
+    #Update the portrait material pointer
+    for portrait in portrait_replacement:
+        update_portrait_pointer(portrait, portrait_replacement[portrait])
+
+def update_portrait_pointer(portrait, portrait_replacement):
+    #Simply swap the file's name in the name map and save as the new name
+    portrait_replacement_data = UAsset(f"{Manager.asset_dir}\\{Manager.file_to_path[portrait_replacement]}\\{portrait_replacement}.uasset", UE4Version.VER_UE4_22)
+    index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
+    portrait_replacement_data.SetNameReference(index, FString(portrait))
+    index = portrait_replacement_data.SearchNameReference(FString(f"/Game/Core/Character/N3100/Material/TextureMaterial/{portrait_replacement}"))
+    portrait_replacement_data.SetNameReference(index, FString(f"/Game/Core/Character/N3100/Material/TextureMaterial/{portrait}"))
+    portrait_replacement_data.Write(f"{Manager.mod_dir}\\{Manager.file_to_path[portrait]}\\{portrait}.uasset")
+
 def update_boss_crystal_color():
     #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
     #So update it manually in the material files
@@ -210,7 +228,7 @@ def update_boss_crystal_color():
         if Manager.file_to_type[file] == Manager.FileType.Material:
             enemy_id = Manager.file_to_path[file].split("\\")[-2]
             if Enemy.is_boss(enemy_id) or enemy_id == "N2008":
-                shard_name = datatable["PB_DT_DropRateMaster"][enemy_id + "_Shard"]["ShardId"]
+                shard_name = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
                 shard_type = datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
                 shard_hsv  = shard_type_to_hsv[shard_type.split("::")[-1]]
                 set_material_hsv(file, "ShardColor", shard_hsv)
@@ -242,18 +260,9 @@ def set_material_hsv(filename, parameter, new_hsv):
                 rgb.append(struct.unpack("!f", bytes.fromhex(string))[0])
             #Convert
             hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
-            if new_hsv[0] < 0:
-                new_hue = hsv[0]
-            else:
-                new_hue = new_hsv[0]/360
-            if new_hsv[1] < 0:
-                new_sat = hsv[1]
-            else:
-                new_sat = new_hsv[1]/100
-            if new_hsv[2] < 0:
-                new_val = hsv[2]
-            else:
-                new_val = new_hsv[2]/100
+            new_hue = hsv[0] if new_hsv[0] < 0 else new_hsv[0]/360
+            new_sat = hsv[1] if new_hsv[1] < 0 else new_hsv[1]/100
+            new_val = hsv[2] if new_hsv[2] < 0 else new_hsv[2]/100
             rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
             #Write rgb
             for num in range(3):
@@ -274,18 +283,9 @@ def set_material_hsv(filename, parameter, new_hsv):
                         rgb.append(sub_data.Value[1].Value[0].Value.G)
                         rgb.append(sub_data.Value[1].Value[0].Value.B)
                         hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
-                        if new_hsv[0] < 0:
-                            new_hue = hsv[0]
-                        else:
-                            new_hue = new_hsv[0]/360
-                        if new_hsv[1] < 0:
-                            new_sat = hsv[1]
-                        else:
-                            new_sat = new_hsv[1]/100
-                        if new_hsv[2] < 0:
-                            new_val = hsv[2]
-                        else:
-                            new_val = new_hsv[2]/100
+                        new_hue = hsv[0] if new_hsv[0] < 0 else new_hsv[0]/360
+                        new_sat = hsv[1] if new_hsv[1] < 0 else new_hsv[1]/100
+                        new_val = hsv[2] if new_hsv[2] < 0 else new_hsv[2]/100
                         rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
                         sub_data.Value[1].Value[0].Value.R = rgb[0]
                         sub_data.Value[1].Value[0].Value.G = rgb[1]
@@ -293,7 +293,7 @@ def set_material_hsv(filename, parameter, new_hsv):
 
 def import_mesh(filename):
     #Import a mesh file at the right location by reading it in the file
-    new_file = UAsset("Data\\Mesh\\" + filename + ".uasset", UE4Version.VER_UE4_22)
+    new_file = UAsset(f"Data\\Mesh\\{filename}.uasset", UE4Version.VER_UE4_22)
     name_map = new_file.GetNameMapIndexList()
     filepath = None
     for name in name_map:
@@ -301,22 +301,22 @@ def import_mesh(filename):
             filepath = str(name)[6:][:-(len(filename)+1)].replace("/", "\\")
             break
     if not filepath:
-        raise Exception("Failed to obtain filepath of asset " + filename)
-    if not os.path.isdir(Manager.mod_dir + "\\" + filepath):
-        os.makedirs(Manager.mod_dir + "\\" + filepath)
-    new_file.Write(Manager.mod_dir + "\\" + filepath + "\\" + filename + ".uasset")
+        raise Exception(f"Failed to obtain filepath of asset {filename}")
+    if not os.path.isdir(f"{Manager.mod_dir}\\{filepath}"):
+        os.makedirs(f"{Manager.mod_dir}\\{filepath}")
+    new_file.Write(f"{Manager.mod_dir}\\{filepath}\\{filename}.uasset")
 
 def import_texture(filename):
     #Convert DDS to game assets dynamically instead of cooking them within Unreal Editor
-    absolute_asset_dir   = os.path.abspath(Manager.asset_dir + "\\" + Manager.file_to_path[filename])
+    absolute_asset_dir   = os.path.abspath(f"{Manager.asset_dir}\\{Manager.file_to_path[filename]}")
     absolute_texture_dir = os.path.abspath("Data\\Texture")
-    absolute_mod_dir     = os.path.abspath(Manager.mod_dir + "\\" + Manager.file_to_path[filename])
+    absolute_mod_dir     = os.path.abspath(f"{Manager.mod_dir}\\{Manager.file_to_path[filename]}")
     
     root = os.getcwd()
     os.chdir("Tools\\UE4 DDS Tools")
-    os.system("cmd /c python\python.exe src\main.py \"" + absolute_asset_dir  + "\\" + filename + ".uasset\" \"" + absolute_texture_dir + "\\" + filename + ".dds\" --save_folder=\"" + absolute_mod_dir + "\" --mode=inject --version=4.22")
+    os.system(f"cmd /c python\python.exe src\main.py \"{absolute_asset_dir}\\{filename}.uasset\" \"{absolute_texture_dir}\\{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
     os.chdir(root)
     
     #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here
-    if not os.path.isfile(absolute_mod_dir + "\\" + filename + ".uasset"):
-        raise FileNotFoundError(filename + ".dds failed to inject")
+    if not os.path.isfile(f"{absolute_mod_dir}\\{filename}.uasset"):
+        raise FileNotFoundError(f"{filename}.dds failed to inject")

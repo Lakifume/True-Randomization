@@ -165,10 +165,7 @@ def randomize_equipment_stats():
             for stat in stat_to_property:
                 if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
                     continue
-                if entry == "SkullNecklace":
-                    max_value = 20
-                else:
-                    max_value = equipment_type_to_max_value[datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
+                max_value = 20 if entry == "SkullNecklace" else equipment_type_to_max_value[datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
                 datatable["PB_DT_ArmorMaster"][entry][stat] = Utility.random_weighted(datatable["PB_DT_ArmorMaster"][entry][stat], 1, int(max_value*1.2), 1, global_stat_weight)
     #Shovel Armor's attack
     max_value = weapon_type_to_max_value["LargeSword"]
@@ -232,12 +229,12 @@ def update_special_properties():
 
 def add_armor_reference(armor_id):
     #Give a specific armor its own graphical asset pointer when equipped
-    datatable["PB_DT_ArmorMaster"][armor_id]["ReferencePath"] = "/Game/Core/Item/Body/BDBP_" + armor_id + ".BDBP_" + armor_id
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_BodyValkyrie.uasset", UE4Version.VER_UE4_22)
+    datatable["PB_DT_ArmorMaster"][armor_id]["ReferencePath"] = f"/Game/Core/Item/Body/BDBP_{armor_id}.BDBP_{armor_id}"
+    new_file = UAsset("\\".join([Manager.asset_dir, Manager.file_to_path["BDBP_BodyValkyrie"], "BDBP_BodyValkyrie.uasset"]), UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("BDBP_BodyValkyrie_C"))
-    new_file.SetNameReference(index, FString("BDBP_" + armor_id + "_C"))
+    new_file.SetNameReference(index, FString(f"BDBP_{armor_id}_C"))
     index = new_file.SearchNameReference(FString("Default__BDBP_BodyValkyrie_C"))
-    new_file.SetNameReference(index, FString("Default__BDBP_" + armor_id + "_C"))
+    new_file.SetNameReference(index, FString(f"Default__BDBP_{armor_id}_C"))
     default_body_mat          = constant["ArmorReference"][armor_id]["DefaultBodyMat"]         + "." + constant["ArmorReference"][armor_id]["DefaultBodyMat"].split("/")[-1]
     chroma_body_mat           = constant["ArmorReference"][armor_id]["ChromaBodyMat"]          + "." + constant["ArmorReference"][armor_id]["ChromaBodyMat"].split("/")[-1]
     default_skin_mat          = constant["ArmorReference"][armor_id]["DefaultSkinMat"]         + "." + constant["ArmorReference"][armor_id]["DefaultSkinMat"].split("/")[-1]
@@ -259,7 +256,7 @@ def add_armor_reference(armor_id):
     new_file.Exports[1].Data[7].Value          = False
     new_file.Exports[1].Data[8].Value          = 1
     new_file.Exports[1].Data[9].Value          = 0
-    new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["BDBP_BodyValkyrie"] + "\\BDBP_" + armor_id + ".uasset")
+    new_file.Write("\\".join([Manager.mod_dir, Manager.file_to_path["BDBP_BodyValkyrie"], f"BDBP_{armor_id}.uasset"]))
 
 def has_negative_stat(equipment):
     for stat in stat_to_property:

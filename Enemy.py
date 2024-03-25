@@ -556,10 +556,7 @@ def update_brv_damage(difficulty):
         elif datatable["PB_DT_BRVAttackDamage"][brv_entry]["Owner"] == "Miriam":
             base = calculate_stat_with_level("N0000", target_level, "STR")
         #Multiplier for crits on Gremory
-        if datatable["PB_DT_BRVAttackDamage"][brv_entry]["IsZangetsutoAttack"]:
-            critical = 2.5
-        else:
-            critical = 1.0
+        critical = 2.5 if datatable["PB_DT_BRVAttackDamage"][brv_entry]["IsZangetsutoAttack"] else 1.0
         #Getting attack multiplier and attributes from DamageMaster
         multiplier = 1.0
         attribute  = []
@@ -686,15 +683,9 @@ def randomize_boss_levels():
 def randomize_level_for(entry, weight):
     for suffix in ["", "BloodlessMode"]:
         #Some bosses have a cap for either being too boring or having a time limit
-        if entry in capped_enemies:
-            max_level = 50
-        else:
-            max_level = 99
+        max_level = 50 if entry in capped_enemies else 99
         #The final boss should be an average of 50 for both
-        if is_final_boss(entry):
-            default_level = 50
-        else:
-            default_level = datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
+        default_level = 50 if is_final_boss(entry) else datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
         #Patch level
         patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, weight), entry, suffix)
 
@@ -1063,6 +1054,20 @@ def add_level_enemy(filename, export_name, old_enemy_id, new_enemy_id, location,
         if export_name == "Chr_N3027":
             location.X = 1980
             location.Z = 630
+    if filename == "m15JPN_010_Enemy":
+        if export_name == "Chr_N3035_1682":
+            location.X = 2700
+            location.Z = 145
+        if export_name == "Chr_N3042":
+            location.X = 2040
+            location.Z = 1165
+    if filename == "m15JPN_010_Enemy":
+        if export_name == "Chr_N3054_2":
+            location.X = 540
+            location.Z = 580
+        if export_name == "Chr_N3055":
+            location.X = 2460
+            location.Z = 1120
     #Avoid placing 8 bit zombies near the vertical edges of the room
     if new_enemy_id == "N3121" and room != "m19K2C_000":
         location.Z = max(min(location.Z, room_height - 360), 360)
@@ -1280,21 +1285,13 @@ def scale_status_resistances(entry):
             attr_num += 25.0
         if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] > original_enemy_stats[entry]["Level"] + ((99 - original_enemy_stats[entry]["Level"]) * 0.55):
             attr_num += 25.0
-        if attr == "STO":
-            attr_num = min(attr_num, 99.99)
-        else:
-            attr_num = min(attr_num, 100.0)
+        attr_num = min(attr_num, 99.99 if attr == "STO" else 100.0)
         #Loss
         if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < original_enemy_stats[entry]["Level"] * 0.90:
             attr_num = math.ceil(attr_num - 25.0)
         if datatable["PB_DT_CharacterParameterMaster"][entry]["DefaultEnemyLevel"] < original_enemy_stats[entry]["Level"] * 0.45:
             attr_num -= 25.0
-        if attr == "STO":
-            attr_num = max(attr_num, 50.0)
-        elif attr == "SLO":
-            attr_num = max(attr_num, 25.0)
-        else:
-            attr_num = max(attr_num, 0.0)
+        attr_num = max(attr_num, 50.0 if attr == "STO" else 25.0 if attr == "SLO" else 0.0)
         datatable["PB_DT_CharacterParameterMaster"][entry][attr] = attr_num
 
 def update_special_properties():
@@ -1461,10 +1458,7 @@ def create_log():
         for attr in status_resistances:
             log[enemy_name]["Resistances"][attr] = int(datatable["PB_DT_CharacterParameterMaster"][enemy][attr])
         if enemy in enemy_replacement:
-            if enemy_replacement[enemy] != enemy:
-                log[enemy_name]["Position"] = translation["Enemy"][enemy_replacement_invert[enemy]]
-            else:
-                log[enemy_name]["Position"] = "Unchanged"
+            log[enemy_name]["Position"] = translation["Enemy"][enemy_replacement_invert[enemy]] if enemy_replacement[enemy] != enemy else "Unchanged"
         else:
             log[enemy_name]["Position"] = "Unchanged"
         if enemy == "N0000":

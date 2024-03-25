@@ -255,6 +255,8 @@ def init():
     floorless_doors = [
         "SIP_006_0_2_RIGHT",
         "SIP_017_0_0_LEFT",
+        "VIL_000_1_0_RIGHT",
+        "VIL_001_0_0_LEFT",
         "VIL_006_0_1_LEFT",
         "GDN_006_0_0_LEFT",
         "GDN_013_0_0_LEFT",
@@ -269,6 +271,7 @@ def init():
         "LIB_023_0_0_LEFT",
         "LIB_023_0_0_RIGHT",
         "UGD_006_0_2_LEFT",
+        "UGD_009_1_0_RIGHT",
         "UGD_016_0_1_RIGHT",
         "UGD_019_0_2_LEFT",
         "UGD_019_1_2_RIGHT",
@@ -545,7 +548,7 @@ def update_map_doors():
                     #If the door is a breakable wall we don't want the area door to overlay it, so break it by default
                     if exit in wall_to_gimmick_flag:
                         datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
-                    #If the entrance has very little floor shift the door closer to the transition to prevent softlocks
+                    #If the entrance has very little floor add a wooden platform to avoid softlocks
                     if exit in floorless_doors:
                         platform_location = FVector(0, -250, location.Z - 20)
                         platform_rotation = FRotator(0, 0, 0)
@@ -643,7 +646,8 @@ def update_map_indicators():
                     location.Z -= door_height
                     scale.X = 4.25
                     scale.Z = 4.25
-                    location.X -= (door_width*scale.Z - door_width)/2 - door_width
+                    direction = -1 if door_string_to_door[door].direction_part == Direction.LEFT_BOTTOM else 1
+                    location.X += direction*((door_width*scale.Z - door_width)/2 - door_width)
                     location.Z -= door_height*scale.Z - door_height
                 else:
                     location.Z -= 180
@@ -654,22 +658,14 @@ def update_map_indicators():
                     location.Z += door_height
                     scale.X = 4.25
                     scale.Z = 4.25
-                    if door_string_to_door[door].direction_part == Direction.LEFT_TOP:
-                        location.X -= (door_width*scale.Z - door_width)/2 - door_width
-                    else:
-                        location.X += (door_width*scale.Z - door_width)/2 - door_width
+                    direction = -1 if door_string_to_door[door].direction_part == Direction.LEFT_TOP else 1
+                    location.X += direction*((door_width*scale.Z - door_width)/2 - door_width)
                 else:
                     location.Z += 180
             if door_string_to_door[door].direction_part in [Direction.TOP_LEFT, Direction.BOTTOM_LEFT]:
-                if "m10BIG" in room:
-                    location.X -= 510
-                else:
-                    location.X -= 370
+                location.X -= 510 if "m10BIG" in room else 370
             if door_string_to_door[door].direction_part in [Direction.TOP_RIGHT, Direction.BOTTOM_RIGHT]:
-                if "m10BIG" in room:
-                    location.X += 510
-                else:
-                    location.X += 370
+                location.X += 510 if "m10BIG" in room else 370
             lever_index = len(game_data[filename].Exports) + 1
             add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
             game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(lever_offset, 360, 0)
