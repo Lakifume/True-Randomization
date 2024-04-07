@@ -185,7 +185,7 @@ class Generate(QThread):
         #Check IGA DLC
         
         has_iga_dlc = os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\pakchunk2-WindowsNoEditor.pak")
-        if has_iga_dlc:
+        if not has_iga_dlc:
             for file in list(Manager.file_to_path):
                 if "DLC_0002" in Manager.file_to_path[file]:
                     del Manager.file_to_path[file]
@@ -223,6 +223,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Processing data...")
         
         Manager.table_complex_to_simple()
+        #Manager.debug_output_datatables()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -267,7 +268,7 @@ class Generate(QThread):
         elif config.getboolean("MapRandomization", "bRoomLayout"):
             self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
         else:
-            self.selected_map = None
+            self.selected_map = ""
         Manager.load_map(self.selected_map)
         Room.get_map_info()
         Room.update_any_map()
@@ -297,8 +298,8 @@ class Generate(QThread):
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.set_hard_mode()
         
-        if not remove_iga_dlc:
-            Item.set_hard_mode()
+        if not has_iga_dlc:
+            Item.remove_iga_dlc()
         
         if config.getboolean("EnemyRandomization", "bEnemyLocations"):
             random.seed(self.selected_seed)
@@ -639,6 +640,20 @@ class Generate(QThread):
             os.makedirs(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods")
         shutil.move("Tools\\UnrealPak\\Randomizer.pak", config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods\\Randomizer.pak")
         
+        #Copy UE4SS
+        
+        exe_directory = config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Binaries\\Win64"
+        if not os.path.isfile(f"{exe_directory}\\UE4SS.dll"):
+            for item in os.listdir("Tools\\UE4SS"):
+                if os.path.isfile(f"Tools\\UE4SS\\{item}"):
+                    shutil.copyfile(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}")
+                if os.path.isdir(f"Tools\\UE4SS\\{item}"):
+                    shutil.copytree(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}", dirs_exist_ok=True)
+        for directory in os.listdir("Data\\UE4SS"):
+            shutil.copytree(f"Data\\UE4SS\\{directory}", f"{exe_directory}\\Mods\\{directory}", dirs_exist_ok=True)
+            if not os.path.isfile(f"{exe_directory}\\Mods\\{directory}\\enabled.txt"): 
+                open(f"{exe_directory}\\Mods\\{directory}\\enabled.txt", "w").close()
+        
         #User randomly chosen mod
         
         if os.path.isdir("Data\\Mod"):
@@ -688,6 +703,7 @@ class Update(QThread):
         shutil.rmtree("Data")
         shutil.rmtree("MapEdit\\Data")
         shutil.rmtree("Tools\\UE4 DDS Tools")
+        shutil.rmtree("Tools\\UE4SS")
         shutil.rmtree("Tools\\UModel")
         shutil.rmtree("Tools\\UnrealPak")
         
@@ -1384,7 +1400,7 @@ class MainWindow(QWidget):
         center_box_13_layout.addWidget(self.param_string_field, 0, 0)
         
         self.game_path_field = QLineEdit(config.get("Misc", "sGamePath"))
-        self.game_path_field.setToolTip("Path to your game's data (...\BloodstainedRotN\Content\Paks).")
+        self.game_path_field.setToolTip("Path to your game's data (...\steamapps\common\Bloodstained Ritual of the Night).")
         self.game_path_field.textChanged[str].connect(self.game_path_field_changed)
         center_box_14_layout.addWidget(self.game_path_field, 0, 0)
         
@@ -2225,7 +2241,7 @@ class MainWindow(QWidget):
             elif config.getboolean("MapRandomization", "bRoomLayout"):
                 self.selected_test_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
             else:
-                self.selected_test_map = None
+                self.selected_test_map = ""
             Manager.load_map(self.selected_test_map)
             Room.get_map_info()
             
@@ -2366,7 +2382,13 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
+            return
+        
+        #Check AP incompatibility
+        
+        if config.getboolean("SpecialMode", "bArchipelago") and config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            self.notify_error("Bloodless randomizer is not compatible with Archipelago.")
             return
         
         #Check if starting items are valid
@@ -2533,7 +2555,7 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\BloodstainedRotN\Content\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
             return
         
         self.import_assets(list(Manager.file_to_path), self.import_finished)

@@ -441,7 +441,9 @@ def init():
         "Treasurebox_JRN004_1"
     ]
     global important_check_ratio
-    important_check_ratio = 4
+    important_check_ratio = 2
+    global important_enemy_ratio
+    important_enemy_ratio = 4
     global key_order
     key_order = []
     global key_items
@@ -561,80 +563,26 @@ def init():
     constant["ItemDrop"]["CookingMat"]["ShopRatio"]  -= 3
     constant["ItemDrop"]["StandardMat"]["ShopRatio"] -= 3
     #Classic mode
-    global classic_item_to_properties
-    classic_item_to_properties = {
-        "BP_PBC_ItemCommonMoneyMedium_C": {
-            "Level": "Stage_00",
-            "Index": [0, 9]
-        },
-        "BP_PBC_ItemCommonMoneySmall_C": {
-            "Level": "Stage_00",
-            "Index": [1, 10]
-        },
-        "BP_PBC_ItemCommonMPLarge_C": {
-            "Level": "Stage_00",
-            "Index": [2, 11]
-        },
-        "BP_PBC_ItemCommonMPSmall_C": {
-            "Level": "Stage_00",
-            "Index": [3, 12]
-        },
-        "BP_PBC_ItemCommonWeaponDagger_C": {
-            "Level": "Stage_00",
-            "Index": [4, 13]
-        },
-        "BP_PBC_ItemCommonMagicKillAll_C": {
-            "Level": "Stage_01",
-            "Index": [0, 28]
-        },
-        "BP_PBC_ItemCommonMoneyLarge_C": {
-            "Level": "Stage_01",
-            "Index": [1, 29]
-        },
-        "BP_PBC_ItemCommonPotionInvisible_C": {
-            "Level": "Stage_01",
-            "Index": [5, 33]
-        },
-        "BP_PBC_ItemCommonWeaponBoneArc_C": {
-            "Level": "Stage_01",
-            "Index": [6, 34]
-        },
-        "BP_PBC_ItemCommonWeaponRuinousRood_C": {
-            "Level": "Stage_01",
-            "Index": [8, 36]
-        },
-        "BP_PBC_ItemCommonWeaponUnholyFire_C": {
-            "Level": "Stage_01",
-            "Index": [9, 37]
-        },
-        "BP_PBC_ItemCommonMagicTimeShard_C": {
-            "Level": "Stage_02",
-            "Index": [9, 37]
-        },
-        "BP_PBC_ItemSecretCrown_C": {
-            "Level": "Stage_02",
-            "Index": [14, 46]
-        },
-        "BP_PBC_ItemSecretGoblet_C": {
-            "Level": "Stage_03",
-            "Index": [10, 39]
-        },
-        "BP_PBC_ItemSpecialExtraLife_C": {
-            "Level": "Stage_03",
-            "Index": [11, 40]
-        },
-        "BP_PBC_ItemTreasureChest_C": {
-            "Level": "Stage_04",
-            "Index": [11, 41]
-        },
-        "BP_PBC_ItemSecretLuckyCat_C": {
-            "Level": "Stage_5A",
-            "Index": [10, 43]
-        },
-        "BP_PBC_ItemSpecialFood_C": {
-            "Level": "Stage_5B",
-            "Index": [9, 33]
-        }
+    global classic_item_to_level
+    classic_item_to_level = {
+        "ItemCommonMoneyMedium":       "Stage_00",
+        "ItemCommonMoneySmall":        "Stage_00",
+        "ItemCommonMPLarge":           "Stage_00",
+        "ItemCommonMPSmall":           "Stage_00",
+        "ItemCommonWeaponDagger":      "Stage_00",
+        "ItemCommonMagicKillAll":      "Stage_01",
+        "ItemCommonMoneyLarge":        "Stage_01",
+        "ItemCommonPotionInvisible":   "Stage_01",
+        "ItemCommonWeaponBoneArc":     "Stage_01",
+        "ItemCommonWeaponRuinousRood": "Stage_01",
+        "ItemCommonWeaponUnholyFire":  "Stage_01",
+        "ItemCommonMagicTimeShard":    "Stage_02",
+        "ItemSecretCrown":             "Stage_02",
+        "ItemSecretGoblet":            "Stage_03",
+        "ItemSpecialExtraLife":        "Stage_03",
+        "ItemTreasureChest":           "Stage_04",
+        "ItemSecretLuckyCat":          "Stage_5A",
+        "ItemSpecialFood":             "Stage_5B"
     }
     #Filling loot types
     for entry in constant["ItemDrop"]:
@@ -664,6 +612,8 @@ def remove_iga_dlc():
     enemy_skip_list.append("N2013")
     while "NeverSatisfied" in constant["ShardDrop"]["ItemPool"]:
         constant["ShardDrop"]["ItemPool"].remove("NeverSatisfied")
+    while "SwordWhip" in constant["ItemDrop"]["Weapon"]["ItemPool"]:
+        constant["ItemDrop"]["Weapon"]["ItemPool"].remove("SwordWhip")
 
 def fill_enemy_to_room():
     #Gather a list of rooms per enemy
@@ -932,40 +882,46 @@ def get_requirement_weight(requirement):
 
 def place_next_key(chosen_item):
     #Item
+    current_valid_chests = validate_chest_list(current_available_chests)
+    previous_valid_chests = validate_chest_list(previous_available_chests)
+    all_valid_chests = validate_chest_list(all_available_chests)
     if chosen_item in key_items:
-        if should_place_key_in(current_available_chests):
+        if should_place_key_in(current_valid_chests):
             try:
-                chosen_chest = pick_key_chest(current_available_chests)
+                chosen_chest = pick_key_chest(current_valid_chests)
             except IndexError:
                 try:
-                    chosen_chest = pick_key_chest(previous_available_chests)
+                    chosen_chest = pick_key_chest(previous_valid_chests)
                 except IndexError:
-                    chosen_chest = pick_key_chest(all_available_chests)
-        elif should_place_key_in(previous_available_chests):
+                    chosen_chest = pick_key_chest(all_valid_chests)
+        elif should_place_key_in(previous_valid_chests):
             try:
-                chosen_chest = pick_key_chest(previous_available_chests)
+                chosen_chest = pick_key_chest(previous_valid_chests)
             except IndexError:
-                chosen_chest = pick_key_chest(all_available_chests)
+                chosen_chest = pick_key_chest(all_valid_chests)
         else:
-            chosen_chest = pick_key_chest(all_available_chests)
+            chosen_chest = pick_key_chest(all_valid_chests)
         key_item_to_location[chosen_item] = chosen_chest
     #Shard
+    current_valid_enemies = validate_enemy_list(current_available_enemies)
+    previous_valid_enemies = validate_enemy_list(previous_available_enemies)
+    all_valid_enemies = validate_enemy_list(all_available_enemies)
     if chosen_item in key_shards:
-        if should_place_key_in(current_available_enemies):
+        if should_place_key_in(current_valid_enemies):
             try:
-                chosen_enemy = pick_key_enemy(current_available_enemies)
+                chosen_enemy = pick_key_enemy(current_valid_enemies)
             except IndexError:
                 try:
-                    chosen_enemy = pick_key_enemy(previous_available_enemies)
+                    chosen_enemy = pick_key_enemy(previous_valid_enemies)
                 except IndexError:
-                    chosen_enemy = pick_key_enemy(all_available_enemies)
-        elif should_place_key_in(previous_available_enemies):
+                    chosen_enemy = pick_key_enemy(all_valid_enemies)
+        elif should_place_key_in(previous_valid_enemies):
             try:
-                chosen_enemy = pick_key_enemy(previous_available_enemies)
+                chosen_enemy = pick_key_enemy(previous_valid_enemies)
             except IndexError:
-                chosen_enemy = pick_key_enemy(all_available_enemies)
+                chosen_enemy = pick_key_enemy(all_valid_enemies)
         else:
-            chosen_enemy = pick_key_enemy(all_available_enemies)
+            chosen_enemy = pick_key_enemy(all_valid_enemies)
         key_shard_to_location[chosen_item] = chosen_enemy
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)
@@ -977,30 +933,40 @@ def place_next_key(chosen_item):
 def should_place_key_in(list):
     return random.random() < (1 - 1/(1+len(list)))*logic_complexity
 
-def pick_key_chest(available_chests):
-    possible_chests = []
+def validate_chest_list(available_chests):
+    valid_chests = []
     for chest in available_chests:
         if not chest in list(key_item_to_location.values()) and not chest in keyless_chests:
-            odds = 1
-            #Increase odds of important checks
-            if chest in important_checks:
-                odds *= important_check_ratio
-            for num in range(odds):
-                possible_chests.append(chest)
-    return random.choice(possible_chests)
+            valid_chests.append(chest)
+    return valid_chests
 
-def pick_key_enemy(available_enemies):
+def validate_enemy_list(available_enemies):
     #Giant dulla heads and Dullahammer EX share their drop with their early game counterpart
     available_enemies = ["N3090" if item == "N3126" else item for item in available_enemies]
     available_enemies = ["N3015" if item == "N3127" else item for item in available_enemies]
-    possible_enemies = []
+    valid_enemies = []
     for enemy in available_enemies:
         if not enemy in list(key_shard_to_location.values()) and not enemy in enemy_skip_list and constant["EnemyInfo"][enemy]["HasShard"]:
-            #Increase odds the more uncommon the enemy
-            odds = important_check_ratio - min(len(enemy_shard_to_room(enemy)), important_check_ratio) + 1
-            for num in range(odds):
-                possible_enemies.append(enemy)
-    return random.choice(possible_enemies)
+            valid_enemies.append(enemy)
+    return valid_enemies
+
+def pick_key_chest(valid_chests):
+    #Increase odds of important checks
+    weighted_chests = []
+    for chest in valid_chests:
+        odds = 2**important_check_ratio if chest in important_checks else 1
+        for num in range(odds):
+            weighted_chests.append(chest)
+    return random.choice(weighted_chests)
+
+def pick_key_enemy(valid_enemies):
+    #Increase odds the more uncommon the enemy
+    weighted_enemies = []
+    for enemy in valid_enemies:
+        odds = important_enemy_ratio - min(len(enemy_shard_to_room(enemy)), important_enemy_ratio)
+        for num in range(2**odds):
+            weighted_enemies.append(enemy)
+    return random.choice(weighted_enemies)
 
 def get_door_destination(door):
     if door in Room.door_string_to_door:
@@ -1153,63 +1119,18 @@ def randomize_classic_mode_drops():
             classic_pool.append(item)
     #Search for any instance of SpawnItemTypeClass and replace it with a random item
     for stage in ["Stage_00", "Stage_01", "Stage_02", "Stage_03", "Stage_04", "Stage_05A", "Stage_05B"]:
-        filename = "Classic_" + stage + "_Objects"
+        filename = f"Classic_{stage}_Objects"
         for export in game_data[filename].Exports:
             for data in export.Data:
-                if str(data.Name) == "SpawnItemTypeClass":
-                    if int(str(data.Value)) == 0:
-                        item_name = "None"
-                    else:
-                        item_name = str(game_data[filename].Imports[abs(int(str(data.Value))) - 1].ObjectName).replace("BP_PBC_", "").replace("_C", "")
-                    #Don't randomize the item if it isn't in the pool list
-                    if not item_name in classic_pool:
-                        continue
-                    chosen = random.choice(classic_pool)
-                    if chosen == "None":
-                        data.Value = FPackageIndex(0)
-                        break
-                    else:
-                        item_class = "BP_PBC_" + chosen + "_C"
-                    #First check is the item is already in the level's imports
-                    count = 0
-                    found = False
-                    for uimport in game_data[filename].Imports:
-                        count -= 1
-                        if str(uimport.ObjectName) == item_class:
-                            data.Value = FPackageIndex(count)
-                            found = True
-                            break
-                    if found:
-                        break
-                    #If not then add the import manually
-                    new_import_index = len(game_data[filename].Imports)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][0]]
-                    package_index = abs(int(str(old_import.OuterIndex.Index))) - 1
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][1]]
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[package_index]
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(0),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    data.Value = FPackageIndex(-(new_import_index + 1))
-                    break
+                if str(data.Name) != "SpawnItemTypeClass":
+                    continue
+                item_name = "None" if int(str(data.Value)) == 0 else str(game_data[filename].Imports[abs(int(str(data.Value))) - 1].ObjectName).split("_")[2]
+                #Don't randomize the item if it isn't in the pool list
+                if not item_name in classic_pool:
+                    continue
+                chosen_item = random.choice(classic_pool)
+                data.Value = FPackageIndex(0) if chosen_item == "None" else Utility.copy_asset_import(chosen_item, f"Classic_{classic_item_to_level[chosen_item]}_Objects", filename)
+                break
 
 def add_pre_vepar_waystone():
     datatable["PB_DT_DropRateMaster"]["Treasurebox_SIP020_1"]["RareItemId"] = "Waystone"
@@ -1529,7 +1450,7 @@ def update_shard_candles():
     #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
     for shard in ["Shortcut", "Deepsinker", "FamiliaSilverKnight", "Aquastream", "FamiliaIgniculus"]:
         for room in enemy_to_room[shard]:
-            Manager.search_and_replace_string(room + "_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][shard + "_Shard"]["ShardId"])
+            Manager.search_and_replace_string(f"{room}_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][f"{shard}_Shard"]["ShardId"])
 
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
@@ -1539,14 +1460,14 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
     icon_path                                                              = (icon_coord[1]//128)*32 + icon_coord[0]//128
     datatable["PB_DT_ItemMaster"][item_id]                                 = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
     datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                     = str(icon_path)
-    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = "ITEM_NAME_" + item_id
-    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = "ITEM_EXPLAIN_" + item_id
+    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = f"ITEM_NAME_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = f"ITEM_EXPLAIN_{item_id}"
     datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                     = price
     datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                    = 1 if 0 < price < 100 else price//10
     datatable["PB_DT_ItemMaster"][item_id]["Producted"]                    = "None"
     #Edit string entries                                                   
-    stringtable["PBMasterStringTable"]["ITEM_NAME_" + item_id]             = name
-    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + item_id]          = description
+    stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]             = name
+    stringtable["PBMasterStringTable"][f"ITEM_EXPLAIN_{item_id}"]          = description
     #Edit case by case properties                                          
     if item_type == "Accessory":                                                
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"

@@ -387,7 +387,7 @@ def update_custom_map():
     datatable["PB_DT_GimmickFlagMaster"]["TRN_002_LeverDoor"]["Id"]        = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
     #Remove the few forced transitions that aren't necessary at all
     for room in ["m04GDN_006", "m06KNG_013", "m07LIB_036", "m15JPN_011", "m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]:
-        remove_level_class(room + "_RV", "RoomChange_C")
+        remove_level_class(f"{room}_RV", "RoomChange_C")
     #Add a second lever to the right of the tower elevator so that it can be activated from either sides
     add_level_actor("m08TWR_009_Gimmick", "TWR009_ElevatorLever_BP_C", FVector(1110, 0, 11040), FRotator(0, 0, 0), FVector(1, 1, 1), {})
     #Make Bathin's room enterable from the left without softlocking the boss
@@ -395,7 +395,7 @@ def update_custom_map():
     #Each area has limitations as to where it can be displayed on the canvas
     #Change area IDs based on their X positions so that everything is always displayed
     for room in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][room]["OffsetX"] < 214.2:
+        if   datatable["PB_DT_RoomMaster"][room]["OffsetX"] < 214.2:
             datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m01SIP"
         elif datatable["PB_DT_RoomMaster"][room]["OffsetX"] + datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*12.6 > 1108.8:
             datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m13ARC"
@@ -417,17 +417,9 @@ def update_map_doors():
                 if cannot_add_actor_to_door(exit):
                     continue
                 #One of the Journey rooms has a faulty persistent level export in its gimmick file, so add in its bg file instead
-                if door_string_to_door[exit].room == "m20JRN_002":
-                    filename = "m20JRN_002_BG"
-                else:
-                    filename = get_gimmick_filename(door_string_to_door[exit].room)
+                filename = "m20JRN_002_BG" if door_string_to_door[exit].room == "m20JRN_002" else get_gimmick_filename(door_string_to_door[exit].room)
                 #Offset the door for Journey
-                if door_string_to_door[exit].room == "m20JRN_004":
-                    x_offset = 180
-                elif "m20JRN" in door_string_to_door[exit].room:
-                    x_offset = -60
-                else:
-                    x_offset = 0
+                x_offset = 180 if door_string_to_door[exit].room == "m20JRN_004" else -60 if "m20JRN" in door_string_to_door[exit].room else 0
                 location = FVector(x_offset, 0, 0)
                 rotation = FRotator(0, 0, 0)
                 scale    = FVector(1, 3, 1)
@@ -449,12 +441,7 @@ def update_map_doors():
                 if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "PBBossDoor_BP_C", location, rotation, scale, properties)
-                #If the door is a breakable wall we don't want the boss door to overlay it, so break it by default
-                if exit in wall_to_gimmick_flag:
-                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
-                #Remove the magic door in that one galleon room so that it never overlays with anything
-                if exit == "SIP_002_0_0_RIGHT":
-                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+                clear_door_exit(exit, True)
     #Backer doors
     #Remove originals
     for room in backer_door_rooms:
@@ -488,14 +475,8 @@ def update_map_doors():
                     location.Z -= 180.0
                 if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
-                actor_index = len(game_data[filename].Exports)
                 add_level_actor(filename, "PBBakkerDoor_BP_C", location, rotation, scale, properties)
-                #If the door is a breakable wall we don't want the backer door to overlay it, so break it by default
-                if exit in wall_to_gimmick_flag:
-                    datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
-                #Remove the magic door in that one galleon room so that it never overlays with anything
-                if exit == "SIP_002_0_0_RIGHT":
-                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+                clear_door_exit(exit, True)
     #Area doors
     #Remove originals
     for room in area_door_rooms:
@@ -536,10 +517,7 @@ def update_map_doors():
                 #If the door should remain open replace it with a regular event door
                 if exit in open_transition_doors:
                     scale.Y = 1/3
-                    if "Left" in class_name:
-                        rotation.Yaw -= 90
-                    if "Right" in class_name:
-                        rotation.Yaw += 90
+                    rotation.Yaw += -90 if "Left" in class_name else 90
                     lever_index = len(game_data[filename].Exports) + 1
                     add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
                     game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(0, -600, 0)
@@ -553,14 +531,9 @@ def update_map_doors():
                         platform_location = FVector(0, -250, location.Z - 20)
                         platform_rotation = FRotator(0, 0, 0)
                         platform_scale    = FVector(12/11, 1, 1)
-                        if "Left" in class_name:
-                            platform_location.X = location.X + 35
-                        if "Right" in class_name:
-                            platform_location.X = location.X - 35 - 120*12/11
+                        platform_location.X = location.X + 35 if "Left" in class_name else location.X - 35 - 120*12/11
                         add_level_actor(filename, "UGD_WeakPlatform_C", platform_location, platform_rotation, platform_scale, {"SecondsToDestroy": 9999.0})
-                #Remove the magic door in that one galleon room so that it never overlays with anything
-                if exit == "SIP_002_0_0_RIGHT":
-                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+                clear_door_exit(exit, True)
                 #Since transition rooms are double make sure that a door only gets added once
                 doors_done.append(exit)
 
@@ -598,9 +571,7 @@ def update_map_indicators():
                 if door_string_to_door[exit].direction_part in [Direction.LEFT_TOP, Direction.RIGHT_TOP]:
                     location.Z += 180.0
                 add_level_actor(filename, "ReadableBookShelf_C", location, rotation, scale, properties)
-                #Remove the magic door in that one galleon room so that it never overlays with anything
-                if exit == "SIP_002_0_0_RIGHT":
-                    remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+                clear_door_exit(exit, False)
     #Fill empty entrances with an impassable door to prevent softlocks
     #Add new
     door_height = 240
@@ -669,13 +640,19 @@ def update_map_indicators():
             lever_index = len(game_data[filename].Exports) + 1
             add_level_actor(filename, "BP_SwitchDoor_C", location, rotation, scale, {"GimmickFlag": FName.FromString(game_data[filename], "None")})
             game_data[filename].Exports[lever_index].Data[2].Value[0].Value = FVector(lever_offset, 360, 0)
-            #Remove the magic door in that one galleon room so that it never overlays with anything
-            if door == "SIP_002_0_0_RIGHT":
-                remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
+            clear_door_exit(door, False)
 
 def cannot_add_actor_to_door(door):
     room = door_string_to_door[door].room
     return door in door_skip or room in room_to_boss or room in room_to_backer or not room in constant["RoomRequirement"]
+
+def clear_door_exit(exit, heavy_door):
+    #If the door is a breakable wall we don't want the backer door to overlay it, so break it by default
+    if exit in wall_to_gimmick_flag and heavy_door:
+        datatable["PB_DT_GimmickFlagMaster"][wall_to_gimmick_flag[exit]]["Id"] = datatable["PB_DT_GimmickFlagMaster"]["HavePatchPureMiriam"]["Id"]
+    #Remove the magic door in that one galleon room so that it never overlays with anything
+    if exit == "SIP_002_0_0_RIGHT":
+        remove_level_class("m01SIP_002_Gimmick", "BP_MagicDoor_C")
 
 def update_room_containers(room):
     filename = get_gimmick_filename(room)
@@ -687,7 +664,7 @@ def update_room_containers(room):
         #Check if it is a golden chest
         if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[export_index].Data[4].Name) == "IsAutoMaterial":
             old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
-        #Pure miriam is considered a different class but honestly it's the same as regular chests
+        #Pure miriam is considered a different class but it's the same as regular chests
         if old_class_name == "PBPureMiriamTreasureBox_BP_C":
             old_class_name = "PBEasyTreasureBox_BP_C"
         if old_class_name in ["PBEasyTreasureBox_BP_C", "PBEasyTreasureBox_BP_C(Gold)", "HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
@@ -990,11 +967,11 @@ def fix_bathin_left_entrance():
     if adjacent_room:
         room = "m13ARC_005"
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        new_file = UAsset(f"{Manager.asset_dir}\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
-        new_file.SetNameReference(index, FString(room + "_RV"))
+        new_file.SetNameReference(index, FString(f"{room}_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
-        new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+        new_file.SetNameReference(index, FString(f"/Game/Core/Environment/{area_path}/Level/{room}_RV"))
         new_file.Exports[9].Data[1].Value = FName.FromString(new_file, room)
         #Correct the room dimension settings
         new_file.Exports[0].Data[2].Value[0].Value  = FVector( 630*datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"],   0, 360*datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"])
@@ -1007,7 +984,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
-        new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+        new_file.Write(f"{Manager.mod_dir}\\Core\\Environment\\{area_path}\\Level\\{room}_RV.umap")
 
 def add_global_room_pickup(room, drop_id):
     #Place an upgrade in a room at its origin
@@ -1029,11 +1006,11 @@ def add_game_room(room):
     area_path = "ACT" + room[1:3] + "_" + room[3:6]
     new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
-    new_file.SetNameReference(index, FString(room + "_RV"))
+    new_file.SetNameReference(index, FString(f"{room}_RV"))
     index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
-    new_file.SetNameReference(index, FString("/Game/Core/Environment/" + area_path + "/Level/" + room + "_RV"))
+    new_file.SetNameReference(index, FString(f"/Game/Core/Environment/{area_path}/Level/{room}_RV"))
     new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
-    new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+    new_file.Write(f"{Manager.mod_dir}\\Core\\Environment\\{area_path}\\Level\\{room}_RV.umap")
 
 def add_level_actor(filename, actor_class, location, rotation, scale, properties):
     actor_index = len(game_data[filename].Exports)
@@ -1049,10 +1026,7 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
     #Change class parameters
     for data in game_data[filename].Exports[actor_index].Data:
         if str(data.Name) in properties:
-            if str(data.PropertyType) == "ByteProperty":
-                data.EnumValue = properties[str(data.Name)]
-            else:
-                data.Value = properties[str(data.Name)]
+            Utility.unreal_to_unreal_data(properties[str(data.Name)], data)
             del properties[str(data.Name)]
         if str(data.Name) == "ActorLabel":
             data.Value = FString(Utility.remove_inst_number(actor_name))
@@ -1150,10 +1124,10 @@ def remove_level_actor(filename, export_index):
                 if str(data.Name) == "RelativeLocation":
                     data.Value[0].Value = FVector(-999, 0, 0)
     else:
-        level_index = Utility.export_name_to_index(filename, "PersistentLevel")
         game_data[filename].Exports[export_index].OuterIndex = FPackageIndex(0)
-        game_data[filename].Exports[level_index].IndexData.Remove(export_index + 1)
-        game_data[filename].Exports[level_index].CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))
+        level_export = Utility.get_export_by_name(filename, "PersistentLevel")
+        level_export.IndexData.Remove(export_index + 1)
+        level_export.CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))
 
 def remove_level_class(filename, class_name):
     #Remove all actors of class in a level
