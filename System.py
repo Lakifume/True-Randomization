@@ -4,6 +4,7 @@ import json
 import math
 import random
 import sys
+import shutil
 import copy
 import filecmp
 import struct

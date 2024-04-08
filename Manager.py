@@ -36,8 +36,6 @@ def init():
         FileType.DataTable,
         FileType.StringTable
     ]
-    global data_struct
-    data_struct = {}
     global original_datatable
     original_datatable = {}
     global datatable_entry_index
@@ -88,31 +86,19 @@ def load_file_info():
 def load_game_data():
     for file in file_to_type:
         if file_to_type[file] in load_types:
-            #Load all game data in one dict
-            if file_to_type[file] == FileType.Level:
-                extension = ".umap"
-            else:
-                extension = ".uasset"
-            game_data[file] = UAsset(asset_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension, EngineVersion.VER_UE4_22)
-            #Store struct data types for later on
-            if file_to_type[file] == FileType.DataTable:
-                for entry in game_data[file].Exports[0].Table.Data:
-                    for data in entry.Value:
-                        if str(data.PropertyType) == "ArrayProperty":
-                            if str(data.ArrayType) == "StructProperty":
-                                for struct in data.Value:
-                                    data_struct[str(struct.Name)] = struct
+            extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
+            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\" + file.split("(")[0] + extension, UE4Version.VER_UE4_22)
     
 def load_constant():
     for file in os.listdir("Data\\Constant"):
         name, extension = os.path.splitext(file)
-        with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
+        with open(f"Data\\Constant\\{file}", "r", encoding="utf8") as file_reader:
             constant[name] = json.load(file_reader)
 
 def load_translation():
     for file in os.listdir("Data\\Translation"):
         name, extension = os.path.splitext(file)
-        with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
+        with open(f"Data\\Translation\\{file}", "r", encoding="utf8") as file_reader:
             translation[name] = json.load(file_reader)
     global start_item_translation
     start_item_translation = {}
@@ -187,7 +173,7 @@ def table_complex_to_simple():
                 for entry in game_data[file].Exports[0].Table.Data:
                     datatable[file][str(entry.Name)] = {}
                     for data in entry.Value:
-                        datatable[file][str(entry.Name)][str(data.Name)] = read_datatable_value(data)
+                        datatable[file][str(entry.Name)][str(data.Name)] = Utility.unreal_to_python_data(data)
                 original_datatable[file] = copy.deepcopy(datatable[file])
                 datatable_entry_index[file] = {}
             elif file_to_type[file] == FileType.StringTable:
@@ -212,165 +198,14 @@ def table_simple_to_complex():
                             if datatable[file][entry][data] == original_datatable[file][entry][data]:
                                 data_count += 1
                                 continue
-                        patch_datatable_value(file, entry_count, data_count, datatable[file][entry][data])
+                        struct = game_data[file].Exports[0].Table.Data[entry_count].Value[data_count]
+                        Utility.python_to_unreal_data(datatable[file][entry][data], struct, game_data[file])
                         data_count += 1
                     entry_count += 1
             elif file_to_type[file] == FileType.StringTable:
                 game_data[file].Exports[0].Table.Clear()
                 for entry in stringtable[file]:
                     game_data[file].Exports[0].Table.Add(FString(entry), FString(stringtable[file][entry]))
-
-def read_datatable_value(struct):
-    #Read a uasset variable as a python variable
-    struct_type = str(struct.PropertyType)
-    if struct_type == "ArrayProperty":
-        sub_type = str(struct.ArrayType)
-        value = []
-        for element in struct.Value:
-            if sub_type == "ByteProperty":
-                sub_value = str(element.EnumValue)
-            elif sub_type == "FloatProperty":
-                sub_value = round(element.Value, 3)
-            elif sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-                sub_value = str(element.Value)
-            elif sub_type == "StrProperty":
-                if element.Value:
-                    sub_value = str(element.Value)
-                else:
-                    sub_value = ""
-            elif sub_type == "StructProperty":
-                sub_value = {}
-                for sub_element in element.Value:
-                    sub_sub_type = str(sub_element.PropertyType)
-                    if sub_sub_type == "ByteProperty":
-                        sub_sub_value = str(sub_element.EnumValue)
-                    elif sub_sub_type == "FloatProperty":
-                        sub_sub_value = round(sub_element.Value, 3)
-                    elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-                        sub_sub_value = str(sub_element.Value)
-                    elif sub_sub_type == "StrProperty":
-                        if sub_element.Value:
-                            sub_sub_value = str(sub_element.Value)
-                        else:
-                            sub_sub_value = ""
-                    elif sub_sub_type == "TextProperty":
-                        if sub_element.CultureInvariantString:
-                            sub_sub_value = str(sub_element.CultureInvariantString)
-                        else:
-                            sub_sub_value = ""
-                    else:
-                        sub_sub_value = sub_element.Value
-                    sub_value[str(sub_element.Name)] = sub_sub_value
-            elif sub_type == "TextProperty":
-                if element.CultureInvariantString:
-                    sub_value = str(element.CultureInvariantString)
-                else:
-                    sub_value = ""
-            else:
-                sub_value = element.Value
-            value.append(sub_value)
-    elif struct_type == "ByteProperty":
-        value = str(struct.EnumValue)
-    elif struct_type == "FloatProperty":
-        value = round(struct.Value, 3)
-    elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-        value = str(struct.Value)
-    elif struct_type == "StrProperty":
-        if struct.Value:
-            value = str(struct.Value)
-        else:
-            value = ""
-    elif struct_type == "TextProperty":
-        if struct.CultureInvariantString:
-            value = str(struct.CultureInvariantString)
-        else:
-            value = ""
-    else:
-        value = struct.Value
-    return value
-
-def patch_datatable_value(file, entry, data, value):
-    #Patch a python variable over a uasset's variable
-    struct = game_data[file].Exports[0].Table.Data[entry].Value[data]
-    struct_type = str(struct.PropertyType)
-    if struct_type == "ArrayProperty":
-        sub_type = str(struct.ArrayType)
-        new_list = []
-        for element in value:
-            if sub_type == "BoolProperty":
-                sub_struct = BoolPropertyData()
-                sub_struct.Value = element
-            elif sub_type == "ByteProperty":
-                sub_struct = BytePropertyData()
-                sub_struct.ByteType = BytePropertyType.FName
-                sub_struct.EnumValue = FName.FromString(game_data[file], element)
-            elif sub_type == "EnumProperty":
-                sub_struct = EnumPropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], element)
-            elif sub_type == "FloatProperty":
-                sub_struct = FloatPropertyData()
-                sub_struct.Value = element
-            elif sub_type == "IntProperty":
-                sub_struct = IntPropertyData()
-                sub_struct.Value = element
-            elif sub_type == "NameProperty":
-                sub_struct = NamePropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], element)
-            elif sub_type == "SoftObjectProperty":
-                sub_struct = SoftObjectPropertyData()
-                sub_struct.Value = FName.FromString(game_data[file], element)
-            elif sub_type == "StrProperty":
-                sub_struct = StrPropertyData()
-                if element:
-                    sub_struct.Value = FString(element)
-                else:
-                    sub_struct.Value = None
-            elif sub_type == "StructProperty":
-                sub_struct = data_struct[str(struct.Name)].Clone()
-                count = 0
-                for sub_element in element:
-                    sub_sub_type = str(sub_struct.Value[count].PropertyType)
-                    if sub_sub_type == "ByteProperty":
-                        sub_struct.Value[count].EnumValue = FName.FromString(game_data[file], element[sub_element])
-                    elif sub_sub_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-                        sub_struct.Value[count].Value = FName.FromString(game_data[file], element[sub_element])
-                    elif sub_sub_type == "StrProperty":
-                        if element[sub_element]:
-                            sub_struct.Value[count].Value = FString(element[sub_element])
-                        else:
-                            sub_struct.Value[count].Value = None
-                    elif sub_sub_type == "TextProperty":
-                        if element[sub_element]:
-                            sub_struct.Value[count].CultureInvariantString = FString(element[sub_element])
-                        else:
-                            sub_struct.Value[count].CultureInvariantString = None
-                    else:
-                        sub_struct.Value[count].Value = element[sub_element]
-                    count += 1
-            elif sub_type == "TextProperty":
-                sub_struct = TextPropertyData()
-                if element:
-                    sub_struct.CultureInvariantString = FString(element)
-                else:
-                    sub_struct.CultureInvariantString = None
-            new_list.append(sub_struct)
-        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = new_list
-    elif struct_type == "ByteProperty":
-        game_data[file].Exports[0].Table.Data[entry].Value[data].EnumValue = FName.FromString(game_data[file], value)
-    elif struct_type in ["EnumProperty", "NameProperty", "SoftObjectProperty"]:
-        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FName.FromString(game_data[file], value)
-    elif struct_type == "StrProperty":
-        if value:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = FString(value)
-        else:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].Value = None
-    elif struct_type == "TextProperty":
-        if value:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = FString(value)
-        else:
-            game_data[file].Exports[0].Table.Data[entry].Value[data].CultureInvariantString = None
-    else:
-        game_data[file].Exports[0].Table.Data[entry].Value[data].Value = value
 
 def append_datatable_entry(file, entry):
     #Append a new datatable entry to the end to be edited later on
@@ -487,10 +322,7 @@ def apply_default_tweaks():
         else:
             drop_rate = constant["EnemyDrop"]["EnemyMat"]["ItemRate"]
         #Keep dulla head drops relatively low due to their spawn frequency
-        if entry.split("_")[0] in ["N3090", "N3099"]:
-            drop_rate_multiplier = 0.5
-        else:
-            drop_rate_multiplier = 1.0
+        drop_rate_multiplier = 0.5 if entry.split("_")[0] in ["N3090", "N3099"] else 1.0
         if 0.0 < datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] < 100.0:
             datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = constant["ShardDrop"]["ItemRate"]*drop_rate_multiplier
         for data in ["RareItemRate", "CommonRate", "RareIngredientRate", "CommonIngredientRate"]:
@@ -658,6 +490,9 @@ def apply_default_tweaks():
     #Add magic doors instead to truly prevent tanking through
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
+    #Neutralize the golden chest interaction box transforms to prevent issues when copying
+    game_data["m08TWR_019_Gimmick"].Exports[1020].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1020].Data[4])
+    game_data["m08TWR_019_Gimmick"].Exports[1020].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1020].Data[4])
     #Change Dark Matter so that consuming it puts the player in OHKO mode until the next death
     datatable["PB_DT_SpecialEffectMaster"]["DarkMatter"]["LifeTime"] = -1
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatter"]["Type"]                     = "EPBSpecialEffect::None"
@@ -779,10 +614,10 @@ def apply_default_tweaks():
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["Ingredient3Total"] = 1
     datatable["PB_DT_CraftMaster"]["RagdollBullet"]["OpenKeyRecipeID"]  = "BalletRecipe002"
     for suffix in ["", "_EX", "_EX2"]:
-        datatable["PB_DT_DamageMaster"]["RagdollBullet" + suffix]["SA_Attack"] = 9999
+        datatable["PB_DT_DamageMaster"][f"RagdollBullet{suffix}"]["SA_Attack"] = 9999
     for num in range(5):
         constant["ItemDrop"]["Bullet"]["ItemPool"].append("RagdollBullet")
-    #Add a tonic that speeds up all of Miriam's movement for 10 seconds
+    #Add a tonic that speeds up all of Miriam's movement for 15 seconds
     Item.add_game_item(9, "TimeTonic", "Potion", "None", (3840, 0), translation["Item"]["TimeTonic"], "An ancient drink that grants the ability to view the world at a slower pace.", 2000, True)
     datatable["PB_DT_ItemMaster"]["TimeTonic"]["max"] = 5
     datatable["PB_DT_CraftMaster"]["TimeTonic"]["Ingredient1Id"] = "MonsterBirdTears"
@@ -793,31 +628,12 @@ def apply_default_tweaks():
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter01"] = 1.5
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter02"] = 1.0
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["TimeTonic"]["Parameter03"] = 20.0
-    datatable["PB_DT_SpecialEffectMaster"]["TimeTonic"]["LifeTime"] = 10.0
+    datatable["PB_DT_SpecialEffectMaster"]["TimeTonic"]["LifeTime"] = 15.0
     for num in range(2):
         constant["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #With this mod vanilla rando is pointless and obselete so remove its widget
     #Also prevent going online with this mod active
     remove_unwanted_modes()
-    #Test
-    #add_global_room_pickup("m05SAN_012", "TestDemoniccapture")
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemId"]       = "Demoniccapture"
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestDemoniccapture"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N1003_Shard"]["ShardId"] = "AccelWorld"
-    #add_global_room_pickup("m06KNG_020", "TestNeverSatisfied")
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemId"]       = "NeverSatisfied"
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestNeverSatisfied"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N2013_Shard"]["ShardId"] = "AccelWorld"
-    #add_global_room_pickup("m09TRN_002", "TestHammerknuckle")
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemId"]       = "Hammerknuckle"
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemQuantity"] = 1
-    #datatable["PB_DT_DropRateMaster"]["TestHammerknuckle"]["RareItemRate"]     = 100.0
-    #datatable["PB_DT_DropRateMaster"]["N2001_Shard"]["ShardId"] = "AccelWorld"
 
 def set_randomizer_events():
     #Some events need to be triggered by default to avoid conflicts or tedium
@@ -839,21 +655,21 @@ def update_item_descriptions():
         if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"] != 0:
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
+            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
         if datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"] != 0:
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
+            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
     #Add restoration amount to descriptions
     for entry in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
         if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeHP":
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeMP":
-            append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
     for entry in datatable["PB_DT_AmmunitionMaster"]:
         if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
             continue
-        append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_" + entry, "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
+        append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
@@ -871,11 +687,9 @@ def remove_unwanted_modes():
 
 def show_mod_stats(seed, mod_version):
     game_version = str(game_data["VersionNumber"].Exports[6].Data[0].CultureInvariantString)
-    mod_stats = "Bloodstained " + game_version + "\r\nTrue Randomization v" + mod_version
-    height = 0.4
-    if seed:
-        mod_stats += "\r\nSeed # " + seed
-        height = 0.66
+    mod_stats = f"Bloodstained {game_version}\r\nTrue Randomization v{mod_version}"
+    mod_stats += f"\r\nSeed # {seed}" if seed else ""
+    height = 0.66 if seed else 0.4
     for num in range(2):
         game_data["VersionNumber"].Exports[4 + num].Data[0].Value[2].Value[0].X = 19
         game_data["VersionNumber"].Exports[4 + num].Data[0].Value[2].Value[0].Y = height
@@ -891,7 +705,7 @@ def set_single_difficulty(difficulty):
     new_list = []
     sub_struct = BytePropertyData()
     sub_struct.ByteType = BytePropertyType.FName
-    sub_struct.EnumValue = FName.FromString(game_data["DifficultSelecter"], "EPBGameLevel::" + difficulty)
+    sub_struct.EnumValue = FName.FromString(game_data["DifficultSelecter"], f"EPBGameLevel::{difficulty}")
     new_list = [sub_struct]
     game_data["DifficultSelecter"].Exports[2].Data[1].Value = new_list
 
@@ -923,33 +737,38 @@ def set_bigtoss_mode():
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMax"] = float(random.randint(-180, 180))
 
 def write_log(filename, log):
-    with open("SpoilerLog\\" + filename + ".json", "w", encoding="utf8") as file_writer:
+    with open(f"SpoilerLog\\{filename}.json", "w", encoding="utf8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def write_files():
     #Dump all uasset objects to files
     for file in game_data:
-        if file_to_type[file] == FileType.Level:
-            extension = ".umap"
-        else:
-            extension = ".uasset"
+        extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
         game_data[file].Write(mod_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension)
+
+def debug_output_datatables():
+    if os.path.isdir("Debug"):
+        shutil.rmtree("Debug")
+    os.makedirs("Debug")
+    for file in datatable:
+        with open(f"Debug\\{file}.json", "w", encoding="utf8") as file_writer:
+            file_writer.write(json.dumps(datatable[file], ensure_ascii=False, indent=2))
 
 def remove_unchanged_files():
     #Since uasset objects cannot be compared successfully we need to compare the files after they've been written
     #That way unchanged files get removed from the pak
     for file in file_to_path:
         remove = True
-        for sub_file in os.listdir(mod_dir + "\\" + file_to_path[file]):
+        for sub_file in os.listdir(f"{mod_dir}\\{file_to_path[file]}"):
             name, extension = os.path.splitext(sub_file)
             if name == file:
-                if not filecmp.cmp(mod_dir + "\\" + file_to_path[file] + "\\" + sub_file, asset_dir + "\\" + file_to_path[file] + "\\" + sub_file, shallow=False):
+                if not filecmp.cmp(f"{mod_dir}\\{file_to_path[file]}\\{sub_file}", f"{asset_dir}\\{file_to_path[file]}\\{sub_file}", shallow=False):
                     remove = False
         if remove:
-            for sub_file in os.listdir(mod_dir + "\\" + file_to_path[file]):
+            for sub_file in os.listdir(f"{mod_dir}\\{file_to_path[file]}"):
                 name, extension = os.path.splitext(sub_file)
                 if name == file:
-                    os.remove(mod_dir + "\\" + file_to_path[file] + "\\" + sub_file)
+                    os.remove(f"{mod_dir}\\{file_to_path[file]}\\{sub_file}")
 
 def search_and_replace_string(filename, class_name, data_name, old_value, new_value):
     #Search for a specific piece of data to change in a blueprint file and swap it
@@ -961,10 +780,7 @@ def search_and_replace_string(filename, class_name, data_name, old_value, new_va
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines
-    if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry in string_entry_exceptions:
-        prefix = " "
-    else:
-        prefix = "\r\n"
+    prefix = " " if "\r\n" in stringtable[file][entry] or len(stringtable[file][entry]) > 60 or entry in string_entry_exceptions else "\r\n"
     stringtable[file][entry] += prefix + text
 
 def get_available_gimmick_flag():

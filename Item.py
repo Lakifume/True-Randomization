@@ -441,7 +441,9 @@ def init():
         "Treasurebox_JRN004_1"
     ]
     global important_check_ratio
-    important_check_ratio = 4
+    important_check_ratio = 2
+    global important_enemy_ratio
+    important_enemy_ratio = 4
     global key_order
     key_order = []
     global key_items
@@ -465,6 +467,7 @@ def init():
         "Reflectionray":  3,
         "Aquastream":     4,
         "Demoniccapture": 4,
+        "Accelerator":    4,
         "Bloodsteel":     4
     }
     global key_item_to_location
@@ -486,7 +489,7 @@ def init():
     global current_available_enemies
     current_available_enemies = []
     global all_available_doors
-    all_available_doors = copy.deepcopy(current_available_doors)
+    all_available_doors = []
     global all_available_chests
     all_available_chests = []
     global all_available_enemies
@@ -500,16 +503,19 @@ def init():
         "TO_BIG_000_START": den_portal_available,
         "TO_JRN_000_START": journey_area_available,
         "Qu07_Last":        last_benjamin_available,
-        "N2012":            orlok_dracule_available
+        "N2012":            orlok_dracule_available,
+        "N2013":            iga_dlc_boss_available
     }
     global macro_to_requirements
     macro_to_requirements = {
         "Height": ["Doublejump", "HighJump", "Invert", "Dimensionshift", "Reflectionray"],
         "Flight": ["HighJump", "Invert", "Dimensionshift"],
-        "Water":  ["Invert", "Deepsinker", "Aquastream"]
+        "WaterM": ["Invert", "Deepsinker", "Aquastream"]
     }
     global enemy_to_room
     enemy_to_room = {}
+    global enemy_skip_list
+    enemy_skip_list = []
     #Pool
     global chest_type
     chest_type = []
@@ -541,8 +547,6 @@ def init():
         "Event_20_001_0000", #Valefar
         "Event_24_001_0000"  #Bloodless
     ]
-    global enemy_skip_list
-    enemy_skip_list = []
     global shop_skip_list
     shop_skip_list = [
         "Potion",
@@ -559,80 +563,26 @@ def init():
     constant["ItemDrop"]["CookingMat"]["ShopRatio"]  -= 3
     constant["ItemDrop"]["StandardMat"]["ShopRatio"] -= 3
     #Classic mode
-    global classic_item_to_properties
-    classic_item_to_properties = {
-        "BP_PBC_ItemCommonMoneyMedium_C": {
-            "Level": "Stage_00",
-            "Index": [0, 9]
-        },
-        "BP_PBC_ItemCommonMoneySmall_C": {
-            "Level": "Stage_00",
-            "Index": [1, 10]
-        },
-        "BP_PBC_ItemCommonMPLarge_C": {
-            "Level": "Stage_00",
-            "Index": [2, 11]
-        },
-        "BP_PBC_ItemCommonMPSmall_C": {
-            "Level": "Stage_00",
-            "Index": [3, 12]
-        },
-        "BP_PBC_ItemCommonWeaponDagger_C": {
-            "Level": "Stage_00",
-            "Index": [4, 13]
-        },
-        "BP_PBC_ItemCommonMagicKillAll_C": {
-            "Level": "Stage_01",
-            "Index": [0, 28]
-        },
-        "BP_PBC_ItemCommonMoneyLarge_C": {
-            "Level": "Stage_01",
-            "Index": [1, 29]
-        },
-        "BP_PBC_ItemCommonPotionInvisible_C": {
-            "Level": "Stage_01",
-            "Index": [5, 33]
-        },
-        "BP_PBC_ItemCommonWeaponBoneArc_C": {
-            "Level": "Stage_01",
-            "Index": [6, 34]
-        },
-        "BP_PBC_ItemCommonWeaponRuinousRood_C": {
-            "Level": "Stage_01",
-            "Index": [8, 36]
-        },
-        "BP_PBC_ItemCommonWeaponUnholyFire_C": {
-            "Level": "Stage_01",
-            "Index": [9, 37]
-        },
-        "BP_PBC_ItemCommonMagicTimeShard_C": {
-            "Level": "Stage_02",
-            "Index": [9, 37]
-        },
-        "BP_PBC_ItemSecretCrown_C": {
-            "Level": "Stage_02",
-            "Index": [14, 46]
-        },
-        "BP_PBC_ItemSecretGoblet_C": {
-            "Level": "Stage_03",
-            "Index": [10, 39]
-        },
-        "BP_PBC_ItemSpecialExtraLife_C": {
-            "Level": "Stage_03",
-            "Index": [11, 40]
-        },
-        "BP_PBC_ItemTreasureChest_C": {
-            "Level": "Stage_04",
-            "Index": [11, 41]
-        },
-        "BP_PBC_ItemSecretLuckyCat_C": {
-            "Level": "Stage_5A",
-            "Index": [10, 43]
-        },
-        "BP_PBC_ItemSpecialFood_C": {
-            "Level": "Stage_5B",
-            "Index": [9, 33]
-        }
+    global classic_item_to_level
+    classic_item_to_level = {
+        "ItemCommonMoneyMedium":       "Stage_00",
+        "ItemCommonMoneySmall":        "Stage_00",
+        "ItemCommonMPLarge":           "Stage_00",
+        "ItemCommonMPSmall":           "Stage_00",
+        "ItemCommonWeaponDagger":      "Stage_00",
+        "ItemCommonMagicKillAll":      "Stage_01",
+        "ItemCommonMoneyLarge":        "Stage_01",
+        "ItemCommonPotionInvisible":   "Stage_01",
+        "ItemCommonWeaponBoneArc":     "Stage_01",
+        "ItemCommonWeaponRuinousRood": "Stage_01",
+        "ItemCommonWeaponUnholyFire":  "Stage_01",
+        "ItemCommonMagicTimeShard":    "Stage_02",
+        "ItemSecretCrown":             "Stage_02",
+        "ItemSecretGoblet":            "Stage_03",
+        "ItemSpecialExtraLife":        "Stage_03",
+        "ItemTreasureChest":           "Stage_04",
+        "ItemSecretLuckyCat":          "Stage_5A",
+        "ItemSpecialFood":             "Stage_5B"
     }
     #Filling loot types
     for entry in constant["ItemDrop"]:
@@ -658,6 +608,13 @@ def set_hard_mode():
     global difficulty
     difficulty = "Hard"
 
+def remove_iga_dlc():
+    enemy_skip_list.append("N2013")
+    while "NeverSatisfied" in constant["ShardDrop"]["ItemPool"]:
+        constant["ShardDrop"]["ItemPool"].remove("NeverSatisfied")
+    while "SwordWhip" in constant["ItemDrop"]["Weapon"]["ItemPool"]:
+        constant["ItemDrop"]["Weapon"]["ItemPool"].remove("SwordWhip")
+
 def fill_enemy_to_room():
     #Gather a list of rooms per enemy
     for enemy in constant["EnemyInfo"]:
@@ -673,8 +630,7 @@ def fill_enemy_to_room():
 def chest_to_room(chest):
     if chest in special_chest_to_room:
         return special_chest_to_room[chest]
-    else:
-        return room_to_area[chest.split("_")[1][:3]] + chest.split("_")[1][:3] + "_" + chest.split("_")[1][3:]
+    return room_to_area[chest.split("_")[1][:3]] + chest.split("_")[1][:3] + "_" + chest.split("_")[1][3:]
 
 def enemy_shard_to_room(enemy):
     if enemy in ["N3090", "N3126"]:
@@ -704,10 +660,7 @@ def add_starting_item(item):
             if item in constant[string + "Drop"][data]["ItemPool"]:
                 quantity = constant[string + "Drop"][data]["ItemHighQuantity"]
     if not quantity:
-        if item == "Shortcut":
-            quantity = 7
-        else:
-            quantity = 1
+        quantity = 7 if item == "Shortcut" else 1
     datatable["PB_DT_DropRateMaster"][entry] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])
     datatable["PB_DT_DropRateMaster"][entry]["RareItemId"]       = item
     datatable["PB_DT_DropRateMaster"][entry]["RareItemQuantity"] = quantity
@@ -746,39 +699,8 @@ def check_requirement(requirement):
 
 def key_logic():
     #Logic that adapts to any map layout
+    move_through_rooms()
     while True:
-        #Move through rooms
-        for door in copy.deepcopy(current_available_doors):
-            current_available_doors.remove(door)
-            room = get_door_room(door)
-            if room in constant["RoomRequirement"]:
-                for check, requirement in constant["RoomRequirement"][room][door].items():
-                    #Don't automatically unlock certain checks
-                    if check in special_check_to_requirement:
-                        if check in special_check_to_door:
-                            special_check_to_door[check].append(door)
-                        else:
-                            special_check_to_door[check] = [door]
-                        continue
-                    analyse_check(check, requirement)
-            #Saves/warps/transitions
-            else:
-                for subdoor in Room.map_connections[room]:
-                    if subdoor == door:
-                        continue
-                    analyse_check(subdoor, [])
-        #Keep going until stuck
-        if current_available_doors:
-            continue
-        #Check special requirements
-        for special_check in special_check_to_requirement:
-            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
-                for door in special_check_to_door[special_check]:
-                    analyse_check(special_check, constant["RoomRequirement"][get_door_room(door)][door][special_check])
-                del special_check_to_door[special_check]
-        #Keep going until stuck
-        if current_available_doors:
-            continue
         #Place key item
         if check_to_requirement:
             #Weight checks
@@ -804,26 +726,61 @@ def key_logic():
             else:
                 chosen_item = pick_next_key(chosen_requirement)
                 place_next_key(chosen_item)
-            previous_available_chests.clear()
-            previous_available_chests.extend(current_available_chests)
-            current_available_chests.clear()
-            previous_available_enemies.clear()
-            previous_available_enemies.extend(current_available_enemies)
-            current_available_enemies.clear()
-            #Check which obstacles were lifted
-            for check in list(check_to_requirement):
-                if not check in check_to_requirement:
-                    continue
-                requirement = check_to_requirement[check]
-                analyse_check(check, requirement)
         #Place last unecessary keys
         elif all_keys:
             place_next_key(random.choice(all_keys))
-            current_available_chests.clear()
-            current_available_enemies.clear()
         #Stop when all keys are placed and all doors are explored
         else:
             break
+
+def move_through_rooms():
+    #Move through each door
+    while True:
+        for door in copy.deepcopy(current_available_doors):
+            current_available_doors.remove(door)
+            room = get_door_room(door)
+            if room in constant["RoomRequirement"]:
+                for check, requirement in constant["RoomRequirement"][room][door].items():
+                    #Don't automatically unlock certain checks
+                    if check in special_check_to_requirement:
+                        if not check in special_check_to_door:
+                            special_check_to_door[check] = []
+                        special_check_to_door[check].append(door)
+                        continue
+                    analyse_check(check, requirement)
+            #Saves/warps/transitions
+            else:
+                for subdoor in Room.map_connections[room]:
+                    if subdoor == door:
+                        continue
+                    analyse_check(subdoor, [])
+        #Keep going until stuck
+        if current_available_doors:
+            continue
+        #Check special requirements
+        for special_check in special_check_to_requirement:
+            if special_check in special_check_to_door and special_check_to_requirement[special_check]():
+                for door in special_check_to_door[special_check]:
+                    analyse_check(special_check, constant["RoomRequirement"][get_door_room(door)][door][special_check])
+                del special_check_to_door[special_check]
+        #Stop if no more doors are found
+        if not current_available_doors:
+            break
+
+def check_lifted_obstacles():
+    for check in list(check_to_requirement):
+        if not check in check_to_requirement:
+            continue
+        requirement = check_to_requirement[check]
+        analyse_check(check, requirement)
+
+def reset_available_checks():
+    previous_available_chests.clear()
+    previous_available_chests.extend(current_available_chests)
+    current_available_chests.clear()
+    previous_available_enemies.clear()
+    previous_available_enemies.extend(current_available_enemies)
+    current_available_enemies.clear()
 
 def pick_next_key(chosen_requirement):
     if chosen_requirement in macro_to_requirements:
@@ -835,7 +792,7 @@ def pick_next_key(chosen_requirement):
     return chosen_requirement
 
 def analyse_check(check, requirement):
-    #If accessible try to remove it from requirement list no matter what
+    #If accessible remove it from the requirement list
     accessible = satisfies_requirement(requirement)
     if accessible:
         if check in check_to_requirement:
@@ -921,76 +878,95 @@ def get_requirement_weight(requirement):
         return 1
     elif requirement in key_shards:
         return key_shards[requirement]
-    else:
-        return 4
+    return 4
 
 def place_next_key(chosen_item):
     #Item
+    current_valid_chests = validate_chest_list(current_available_chests)
+    previous_valid_chests = validate_chest_list(previous_available_chests)
+    all_valid_chests = validate_chest_list(all_available_chests)
     if chosen_item in key_items:
-        if should_place_key_in(current_available_chests):
+        if should_place_key_in(current_valid_chests):
             try:
-                chosen_chest = pick_key_chest(current_available_chests)
+                chosen_chest = pick_key_chest(current_valid_chests)
             except IndexError:
                 try:
-                    chosen_chest = pick_key_chest(previous_available_chests)
+                    chosen_chest = pick_key_chest(previous_valid_chests)
                 except IndexError:
-                    chosen_chest = pick_key_chest(all_available_chests)
-        elif should_place_key_in(previous_available_chests):
+                    chosen_chest = pick_key_chest(all_valid_chests)
+        elif should_place_key_in(previous_valid_chests):
             try:
-                chosen_chest = pick_key_chest(previous_available_chests)
+                chosen_chest = pick_key_chest(previous_valid_chests)
             except IndexError:
-                chosen_chest = pick_key_chest(all_available_chests)
+                chosen_chest = pick_key_chest(all_valid_chests)
         else:
-            chosen_chest = pick_key_chest(all_available_chests)
+            chosen_chest = pick_key_chest(all_valid_chests)
         key_item_to_location[chosen_item] = chosen_chest
     #Shard
+    current_valid_enemies = validate_enemy_list(current_available_enemies)
+    previous_valid_enemies = validate_enemy_list(previous_available_enemies)
+    all_valid_enemies = validate_enemy_list(all_available_enemies)
     if chosen_item in key_shards:
-        if should_place_key_in(current_available_enemies):
+        if should_place_key_in(current_valid_enemies):
             try:
-                chosen_enemy = pick_key_enemy(current_available_enemies)
+                chosen_enemy = pick_key_enemy(current_valid_enemies)
             except IndexError:
                 try:
-                    chosen_enemy = pick_key_enemy(previous_available_enemies)
+                    chosen_enemy = pick_key_enemy(previous_valid_enemies)
                 except IndexError:
-                    chosen_enemy = pick_key_enemy(all_available_enemies)
-        elif should_place_key_in(previous_available_enemies):
+                    chosen_enemy = pick_key_enemy(all_valid_enemies)
+        elif should_place_key_in(previous_valid_enemies):
             try:
-                chosen_enemy = pick_key_enemy(previous_available_enemies)
+                chosen_enemy = pick_key_enemy(previous_valid_enemies)
             except IndexError:
-                chosen_enemy = pick_key_enemy(all_available_enemies)
+                chosen_enemy = pick_key_enemy(all_valid_enemies)
         else:
-            chosen_enemy = pick_key_enemy(all_available_enemies)
+            chosen_enemy = pick_key_enemy(all_valid_enemies)
         key_shard_to_location[chosen_item] = chosen_enemy
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)
+    #Analyse the game again
+    reset_available_checks()
+    check_lifted_obstacles()
+    move_through_rooms()
 
 def should_place_key_in(list):
     return random.random() < (1 - 1/(1+len(list)))*logic_complexity
 
-def pick_key_chest(available_chests):
-    possible_chests = []
+def validate_chest_list(available_chests):
+    valid_chests = []
     for chest in available_chests:
         if not chest in list(key_item_to_location.values()) and not chest in keyless_chests:
-            odds = 1
-            #Increase odds of important checks
-            if chest in important_checks:
-                odds *= important_check_ratio
-            for num in range(odds):
-                possible_chests.append(chest)
-    return random.choice(possible_chests)
+            valid_chests.append(chest)
+    return valid_chests
 
-def pick_key_enemy(available_enemies):
+def validate_enemy_list(available_enemies):
     #Giant dulla heads and Dullahammer EX share their drop with their early game counterpart
     available_enemies = ["N3090" if item == "N3126" else item for item in available_enemies]
     available_enemies = ["N3015" if item == "N3127" else item for item in available_enemies]
-    possible_enemies = []
+    valid_enemies = []
     for enemy in available_enemies:
         if not enemy in list(key_shard_to_location.values()) and not enemy in enemy_skip_list and constant["EnemyInfo"][enemy]["HasShard"]:
-            #Increase odds the more uncommon the enemy
-            odds = important_check_ratio - min(len(enemy_shard_to_room(enemy)), important_check_ratio) + 1
-            for num in range(odds):
-                possible_enemies.append(enemy)
-    return random.choice(possible_enemies)
+            valid_enemies.append(enemy)
+    return valid_enemies
+
+def pick_key_chest(valid_chests):
+    #Increase odds of important checks
+    weighted_chests = []
+    for chest in valid_chests:
+        odds = 2**important_check_ratio if chest in important_checks else 1
+        for num in range(odds):
+            weighted_chests.append(chest)
+    return random.choice(weighted_chests)
+
+def pick_key_enemy(valid_enemies):
+    #Increase odds the more uncommon the enemy
+    weighted_enemies = []
+    for enemy in valid_enemies:
+        odds = important_enemy_ratio - min(len(enemy_shard_to_room(enemy)), important_enemy_ratio)
+        for num in range(2**odds):
+            weighted_enemies.append(enemy)
+    return random.choice(weighted_enemies)
 
 def get_door_destination(door):
     if door in Room.door_string_to_door:
@@ -1019,6 +995,9 @@ def last_benjamin_available():
     return "VIL_004_1_0_RIGHT_BOTTOM" in all_available_doors and "ENT_015_0_0_LEFT" in all_available_doors and "UGD_049_0_0_LEFT" in all_available_doors and "Treasurebox_JPN002_1" in all_available_chests
 
 def orlok_dracule_available():
+    return "N1009_Enemy" in all_available_enemies
+
+def iga_dlc_boss_available():
     return "N1009_Enemy" in all_available_enemies
 
 def final_boss_available():
@@ -1089,10 +1068,7 @@ def randomize_overworld_items():
         if datatable["PB_DT_DropRateMaster"][entry]["RareItemRate"] == 0.0 and datatable["PB_DT_DropRateMaster"][entry]["CommonRate"] == 0.0 and datatable["PB_DT_DropRateMaster"][entry]["RareIngredientRate"] == 0.0 and datatable["PB_DT_DropRateMaster"][entry]["CommonIngredientRate"] == 0.0:
             continue
         #Reduce dulla head drop rate
-        if enemy_id in ["N3090", "N3099"]:
-            drop_rate_multiplier = 0.5
-        else:
-            drop_rate_multiplier = 1.0
+        drop_rate_multiplier = 0.5 if enemy_id in ["N3090", "N3099"] else 1.0
         #Assign drops
         if entry == enemy_id + "_Shard":
             patch_enemy_entry(random.choice(enemy_type), drop_rate_multiplier, entry)
@@ -1125,10 +1101,7 @@ def randomize_overworld_shards():
         if enemy_id in list(key_shard_to_location.values()):
             continue
         #Reduce dulla head drop rate
-        if enemy_id in ["N3090", "N3099"]:
-            drop_rate_multiplier = 0.5
-        else:
-            drop_rate_multiplier = 1.0
+        drop_rate_multiplier = 0.5 if enemy_id in ["N3090", "N3099"] else 1.0
         #Assign shard
         if entry == enemy_id + "_Shard":
             datatable["PB_DT_DropRateMaster"][entry]["ShardId"] = pick_and_remove(constant["ShardDrop"]["ItemPool"], True, "None")
@@ -1146,63 +1119,18 @@ def randomize_classic_mode_drops():
             classic_pool.append(item)
     #Search for any instance of SpawnItemTypeClass and replace it with a random item
     for stage in ["Stage_00", "Stage_01", "Stage_02", "Stage_03", "Stage_04", "Stage_05A", "Stage_05B"]:
-        filename = "Classic_" + stage + "_Objects"
+        filename = f"Classic_{stage}_Objects"
         for export in game_data[filename].Exports:
             for data in export.Data:
-                if str(data.Name) == "SpawnItemTypeClass":
-                    if int(str(data.Value)) == 0:
-                        item_name = "None"
-                    else:
-                        item_name = str(game_data[filename].Imports[abs(int(str(data.Value))) - 1].ObjectName).replace("BP_PBC_", "").replace("_C", "")
-                    #Don't randomize the item if it isn't in the pool list
-                    if not item_name in classic_pool:
-                        continue
-                    chosen = random.choice(classic_pool)
-                    if chosen == "None":
-                        data.Value = FPackageIndex(0)
-                        break
-                    else:
-                        item_class = "BP_PBC_" + chosen + "_C"
-                    #First check is the item is already in the level's imports
-                    count = 0
-                    found = False
-                    for uimport in game_data[filename].Imports:
-                        count -= 1
-                        if str(uimport.ObjectName) == item_class:
-                            data.Value = FPackageIndex(count)
-                            found = True
-                            break
-                    if found:
-                        break
-                    #If not then add the import manually
-                    new_import_index = len(game_data[filename].Imports)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][0]]
-                    package_index = abs(int(str(old_import.OuterIndex.Index))) - 1
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[classic_item_to_properties[item_class]["Index"][1]]
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(-(new_import_index + 1 + 2)),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    old_import = game_data["Classic_" + classic_item_to_properties[item_class]["Level"] + "_Objects"].Imports[package_index]
-                    new_import = Import(
-                        FName.FromString(game_data[filename], str(old_import.ClassPackage)),
-                        FName.FromString(game_data[filename], str(old_import.ClassName)),
-                        FPackageIndex(0),
-                        FName.FromString(game_data[filename], str(old_import.ObjectName))
-                    )
-                    game_data[filename].Imports.Add(new_import)
-                    data.Value = FPackageIndex(-(new_import_index + 1))
-                    break
+                if str(data.Name) != "SpawnItemTypeClass":
+                    continue
+                item_name = "None" if int(str(data.Value)) == 0 else str(game_data[filename].Imports[abs(int(str(data.Value))) - 1].ObjectName).split("_")[2]
+                #Don't randomize the item if it isn't in the pool list
+                if not item_name in classic_pool:
+                    continue
+                chosen_item = random.choice(classic_pool)
+                data.Value = FPackageIndex(0) if chosen_item == "None" else Utility.copy_asset_import(chosen_item, f"Classic_{classic_item_to_level[chosen_item]}_Objects", filename)
+                break
 
 def add_pre_vepar_waystone():
     datatable["PB_DT_DropRateMaster"]["Treasurebox_SIP020_1"]["RareItemId"] = "Waystone"
@@ -1248,10 +1176,7 @@ def patch_key_item_entry(item, container):
 def patch_key_shard_entry(shard, enemy):
     #Assign a key shard to an entry
     #Unlike regular shards those will be more likely to drop but can only be dropped once
-    if enemy in ["N3090", "N3099"]:
-        drop_rate_multiplier = 0.5
-    else:
-        drop_rate_multiplier = 1.0
+    drop_rate_multiplier = 0.5 if enemy in ["N3090", "N3099"] else 1.0
     for entry in datatable["PB_DT_DropRateMaster"]:
         if entry == enemy + "_Shard":
             datatable["PB_DT_DropRateMaster"][entry]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
@@ -1417,16 +1342,14 @@ def randomize_quest_requirements():
     #Update requirement
     for index in range(19):
         enemy = list(level_to_enemy.values())[index]
-        datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(index + 1)]["Enemy01"] = enemy
-        datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(index + 1)]["EnemyNum01"] = len(enemy_to_room[enemy])
+        quest_name = "Quest_Enemy" + "{:02d}".format(index + 1)
+        datatable["PB_DT_QuestMaster"][quest_name]["Enemy01"] = enemy
+        datatable["PB_DT_QuestMaster"][quest_name]["EnemyNum01"] = len(enemy_to_room[enemy])
         enemy_room_string = ""
         for room in enemy_to_room[enemy]:
             if not datatable["PB_DT_RoomMaster"][room]["OutOfMap"]:
                 enemy_room_string += room + ","
-        if enemy_room_string:
-            datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(index + 1)]["EnemySpawnLocations"] = enemy_room_string[:-1]
-        else:
-            datatable["PB_DT_QuestMaster"]["Quest_Enemy" + "{:02d}".format(index + 1)]["EnemySpawnLocations"] = "none"
+        datatable["PB_DT_QuestMaster"][quest_name]["EnemySpawnLocations"] = enemy_room_string[:-1] if enemy_room_string else "none"
     #Memento quests
     for index in range(15):
         datatable["PB_DT_QuestMaster"]["Quest_Memento" + "{:02d}".format(index + 1)]["Item01"] = pick_and_remove(constant["QuestRequirement"]["Memento"]["ItemPool"], True, "None")
@@ -1527,7 +1450,7 @@ def update_shard_candles():
     #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
     for shard in ["Shortcut", "Deepsinker", "FamiliaSilverKnight", "Aquastream", "FamiliaIgniculus"]:
         for room in enemy_to_room[shard]:
-            Manager.search_and_replace_string(room + "_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][shard + "_Shard"]["ShardId"])
+            Manager.search_and_replace_string(f"{room}_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][f"{shard}_Shard"]["ShardId"])
 
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
@@ -1537,17 +1460,14 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
     icon_path                                                              = (icon_coord[1]//128)*32 + icon_coord[0]//128
     datatable["PB_DT_ItemMaster"][item_id]                                 = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
     datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                     = str(icon_path)
-    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = "ITEM_NAME_" + item_id
-    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = "ITEM_EXPLAIN_" + item_id
+    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = f"ITEM_NAME_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = f"ITEM_EXPLAIN_{item_id}"
     datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                     = price
-    if 0 < price < 100:                                                    
-        datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                = 1
-    else:                                                                  
-        datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                = price//10
+    datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                    = 1 if 0 < price < 100 else price//10
     datatable["PB_DT_ItemMaster"][item_id]["Producted"]                    = "None"
     #Edit string entries                                                   
-    stringtable["PBMasterStringTable"]["ITEM_NAME_" + item_id]             = name
-    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_" + item_id]          = description
+    stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]             = name
+    stringtable["PBMasterStringTable"][f"ITEM_EXPLAIN_{item_id}"]          = description
     #Edit case by case properties                                          
     if item_type == "Accessory":                                                
         datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"
@@ -1656,10 +1576,10 @@ def invert_ratio():
 
 def create_log(seed, map):
     #Log compatible with the map editor to show key item locations
-    name, extension = os.path.splitext(map)
+    file_name = os.path.split(os.path.splitext(map)[0])[-1]
     log = {}
     log["Seed"] = seed
-    log["Map"]  = name.split("\\")[-1]
+    log["Map"]  = file_name
     log["Key"]  = {}
     for item in key_order:
         if item in key_items:
@@ -1671,14 +1591,11 @@ def create_log(seed, map):
 
 def create_log_string(seed, map, original_enemies):
     #Log string for quickly showing answer to a seed
-    name, extension = os.path.splitext(map)
-    if name.split("\\")[-1]:
-        map_name = name.split("\\")[-1]
-    else:
-        map_name = "Default"
+    file_name = os.path.split(os.path.splitext(map)[0])[-1]
+    map_name = file_name if file_name else "Default"
     log_string = ""
-    log_string += "Seed: " + str(seed) + "\n"
-    log_string += "Map: " + map_name + "\n"
+    log_string += f"Seed: {seed}\n"
+    log_string += f"Map: {map_name}\n"
     log_string += "Key:\n"
     for item in key_order:
         if item in key_items:
@@ -1689,8 +1606,5 @@ def create_log_string(seed, map, original_enemies):
                 log_string += " (over " + translation["Enemy"][original_enemies[key_shard_to_location[item]]] + ")"
         log_string += "\n"
     log_string += "Beatable: "
-    if final_boss_available():
-        log_string += "Yes"
-    else:
-        log_string += "No"
+    log_string += "Yes" if final_boss_available() else "No"
     return log_string

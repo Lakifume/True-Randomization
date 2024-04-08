@@ -100,26 +100,22 @@ def set_voice_language(language):
     voice_language = ["jp", "en"][language - 1]
 
 def randomize_dialogues():
+    #Gather all events for each character
     for entry in datatable["PB_DT_DialogueTableItems"]:
         if entry in event_skip:
             continue
         direction = datatable["PB_DT_DialogueTableItems"][entry]["SpeakingPosition"].split("::")[-1]
         #Zangetsu has an event that doesn't have his name
         if entry == "Event_06_001":
-            character_to_event["Zangetsu"] = []
-        else:
-            character_to_event[Utility.remove_inst_number(datatable["PB_DT_DialogueTableItems"][entry]["SpeakerID_" + direction])] = []
-        #Anything past this is dummy events
-        if entry == "Tutorial_Open_Door":
-            break
-    for entry in datatable["PB_DT_DialogueTableItems"]:
-        if entry in event_skip:
-            continue
-        direction = datatable["PB_DT_DialogueTableItems"][entry]["SpeakingPosition"].split("::")[-1]
-        if entry == "Event_06_001":
+            if not "Zangetsu" in character_to_event:
+                character_to_event["Zangetsu"] = []
             character_to_event["Zangetsu"].append(entry)
         else:
-            character_to_event[Utility.remove_inst_number(datatable["PB_DT_DialogueTableItems"][entry]["SpeakerID_" + direction])].append(entry)
+            character = Utility.remove_inst_number(datatable["PB_DT_DialogueTableItems"][entry][f"SpeakerID_{direction}"])
+            if not character in character_to_event:
+                character_to_event[character] = []
+            character_to_event[character].append(entry)
+        #Anything past this is dummy events
         if entry == "Tutorial_Open_Door":
             break
     #Get every event's face anim, taking in consideration that null fields inherit previous anim 
@@ -127,7 +123,7 @@ def randomize_dialogues():
         #Start with standard consecutions
         for entry in datatable["PB_DT_DialogueTableItems"]:
             #Get anim of current event
-            current_anim = datatable["PB_DT_DialogueTableItems"][entry]["FaceAnim_" + direction]
+            current_anim = datatable["PB_DT_DialogueTableItems"][entry][f"FaceAnim_{direction}"]
             next_event = datatable["PB_DT_DialogueTableItems"][entry]["Branches"]
             if current_anim == "None":
                 continue
@@ -138,7 +134,7 @@ def randomize_dialogues():
             if ";" in next_event:
                 next_event = next_event.split(";")[0]
             #Get anim of following events
-            while datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + direction] == "None":
+            while datatable["PB_DT_DialogueTableItems"][next_event][f"FaceAnim_{direction}"] == "None":
                 if datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == direction:
                     event_to_face_anim[next_event] = current_anim
                 next_event = datatable["PB_DT_DialogueTableItems"][next_event]["Branches"]
@@ -149,7 +145,7 @@ def randomize_dialogues():
         #Loop again to get the few branching paths
         for entry in datatable["PB_DT_DialogueTableItems"]:
             #Get anim of current event
-            current_anim = datatable["PB_DT_DialogueTableItems"][entry]["FaceAnim_" + direction]
+            current_anim = datatable["PB_DT_DialogueTableItems"][entry][f"FaceAnim_{direction}"]
             next_event = datatable["PB_DT_DialogueTableItems"][entry]["Branches"]
             if current_anim == "None":
                 continue
@@ -159,7 +155,7 @@ def randomize_dialogues():
                 continue
             next_event = next_event.split(";")[1]
             #Get anim of following events
-            while datatable["PB_DT_DialogueTableItems"][next_event]["FaceAnim_" + direction] == "None":
+            while datatable["PB_DT_DialogueTableItems"][next_event][f"FaceAnim_{direction}"] == "None":
                 if datatable["PB_DT_DialogueTableItems"][next_event]["SpeakingPosition"].split("::")[-1] == direction:
                     event_to_face_anim[next_event] = event_to_face_anim[entry]
                 next_event = datatable["PB_DT_DialogueTableItems"][next_event]["Branches"]
@@ -191,10 +187,7 @@ def randomize_dialogues():
     #Apply the changes
     for event in event_replacement:
         direction = datatable["PB_DT_DialogueTableItems"][event]["SpeakingPosition"].split("::")[-1]
-        if event_replacement[event] in event_to_face_anim:
-            datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = event_to_face_anim[event_replacement[event]]
-        else:
-            datatable["PB_DT_DialogueTableItems"][event]["FaceAnim_" + direction] = "None"
+        datatable["PB_DT_DialogueTableItems"][event][f"FaceAnim_{direction}"] = event_to_face_anim[event_replacement[event]] if event_replacement[event] in event_to_face_anim else "None"
         try:
             datatable["PB_DT_DialogueTextMaster"][event]["DialogueText"]    = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["DialogueText"]
             datatable["PB_DT_DialogueTextMaster"][event]["DialogueAudioID"] = Manager.original_datatable["PB_DT_DialogueTextMaster"][event_replacement[event]]["DialogueAudioID"]
@@ -203,7 +196,7 @@ def randomize_dialogues():
         except KeyError:
             pass
         try:
-            datatable["PB_DT_SoundMaster"][voice_language + "_" + event + "_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][voice_language + "_" + event_replacement[event] + "_SE"]["AssetPath"]
+            datatable["PB_DT_SoundMaster"][f"{voice_language}_{event}_SE"]["AssetPath"] = Manager.original_datatable["PB_DT_SoundMaster"][f"{voice_language}_{event_replacement[event]}_SE"]["AssetPath"]
         except KeyError:
             pass
 
@@ -212,55 +205,58 @@ def randomize_music():
     random.shuffle(new_list)
     new_dict = dict(zip(music_list, new_list))
     music_replacement.update(new_dict)
-    for room in datatable["PB_DT_RoomMaster"]:
-        if datatable["PB_DT_RoomMaster"][room]["BgmID"] in music_replacement:
-            datatable["PB_DT_RoomMaster"][room]["BgmID"] = music_replacement[datatable["PB_DT_RoomMaster"][room]["BgmID"]]
+    for music_id in music_replacement:
+        if not music_id in datatable["PB_DT_SoundMaster"]:
+            continue
+        replacement = music_replacement[music_id]
+        datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = f"/Game/Core/Sound/bgm/{replacement}.{replacement}"
 
 def update_lip_movement():
     #While the dialogue datatable contains lip movement information it is completely ignored by the game
     #So the only solution left is to rename the pointer of every lip file to match the random dialogue
     #Quite a bit costly but this is the only way
     for event in event_replacement:
-        update_lip_pointer(event, event_replacement[event], voice_language)
+        update_lip_pointer(event, event_replacement[event])
 
-def update_lip_pointer(old_event, new_event, prefix):
+def update_lip_pointer(old_event, new_event):
     #Simply swap the file's name in the name map and save as the new name
-    old_event = prefix + "_" + old_event + "_LIP"
-    new_event = prefix + "_" + new_event + "_LIP"
+    old_event = f"{voice_language}_{old_event}_LIP"
+    new_event = f"{voice_language}_{new_event}_LIP"
     
-    if new_event + ".uasset" in os.listdir("Data\\LipSync"):
-        new_event_data = UAsset("Data\\LipSync\\" + new_event + ".uasset", EngineVersion.VER_UE4_22)
+    if f"{new_event}.uasset" in os.listdir("Data\\LipSync"):
+        new_event_data = UAsset(f"Data\\LipSync\\{new_event}.uasset", UE4Version.VER_UE4_22)
         index = new_event_data.SearchNameReference(FString(new_event))
         new_event_data.SetNameReference(index, FString(old_event))
-        index = new_event_data.SearchNameReference(FString("/Game/Core/UI/Dialog/Data/LipSync/" + new_event))
-        new_event_data.SetNameReference(index, FString("/Game/Core/UI/Dialog/Data/LipSync/" + old_event))
-        new_event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + old_event + ".uasset")
-    elif old_event + ".uasset" in os.listdir("Data\\LipSync"):
-        old_event_data = UAsset("Data\\LipSync\\" + old_event + ".uasset", EngineVersion.VER_UE4_22)
+        index = new_event_data.SearchNameReference(FString(f"/Game/Core/UI/Dialog/Data/LipSync/{new_event}"))
+        new_event_data.SetNameReference(index, FString(f"/Game/Core/UI/Dialog/Data/LipSync/{old_event}"))
+        new_event_data.Write(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync\\{old_event}.uasset")
+    elif f"{old_event}.uasset" in os.listdir("Data\\LipSync"):
+        old_event_data = UAsset(f"Data\\LipSync\\{old_event}.uasset", UE4Version.VER_UE4_22)
         for export in old_event_data.Exports:
             if str(export.ObjectName) == old_event:
                 export.Data.Clear()
-        old_event_data.Write(Manager.mod_dir + "\\Core\\UI\\Dialog\\Data\\LipSync\\" + old_event + ".uasset")
+        old_event_data.Write(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync\\{old_event}.uasset")
 
 def add_music_file(filename):
     #Check if the filename is valid
     if len(filename.split("_")) != 2:
-        raise TypeError("Invalid music name: " + filename)
+        raise TypeError(f"Invalid music name: {filename}")
     if len(filename.split("_")[0]) != 5 or len(filename.split("_")[-1]) != 3:
-        raise TypeError("Invalid music name: " + filename)
+        raise TypeError(f"Invalid music name: {filename}")
     if filename[0:3] != "ACT":
-        raise TypeError("Invalid music name: " + filename)
+        raise TypeError(f"Invalid music name: {filename}")
     try:
         int(filename[3:5])
     except ValueError:
-        raise TypeError("Invalid music name: " + filename)
+        raise TypeError(f"Invalid music name: {filename}")
     #Copy the awb and import the new music in it
-    filesize = None
-    with open(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb", "rb") as inputfile, open(Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".awb", "wb") as outfile:
+    old_awb_name = Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb"
+    new_awb_name = Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".awb"
+    with open(old_awb_name, "rb") as inputfile, open(new_awb_name, "wb") as outfile:
         offset = inputfile.read().find(str.encode("HCA"))
         inputfile.seek(0)
         outfile.write(inputfile.read(offset))
-        with open("Data\\Music\\" + filename + ".hca", "rb") as hca:
+        with open(f"Data\\Music\\{filename}.hca", "rb") as hca:
             outfile.write(hca.read())
         outfile.seek(0, os.SEEK_END)
         filesize = outfile.tell()
@@ -269,9 +265,10 @@ def add_music_file(filename):
     #Add the music pointer in soundmaster
     music_id = "BGM_m" + filename[3:5] + filename.split("_")[-1]
     datatable["PB_DT_SoundMaster"][music_id] = copy.deepcopy(datatable["PB_DT_SoundMaster"]["BGM_m50BRM"])
-    datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = datatable["PB_DT_SoundMaster"][music_id]["AssetPath"].replace("BGM_m50BRM", music_id)
+    replacement = music_replacement[music_id] if music_id in music_replacement else music_id
+    datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = f"/Game/Core/Sound/bgm/{replacement}.{replacement}"
     #Copy the act file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", EngineVersion.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -291,15 +288,15 @@ def add_music_file(filename):
         count += 1
     new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
     #Copy the bgm file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", EngineVersion.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", UE4Version.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
-    new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + filename))
+    new_file.SetNameReference(index, FString(f"/Game/Core/Sound/bgm/{filename}"))
     index = new_file.SearchNameReference(FString("BGM_m50BRM"))
     new_file.SetNameReference(index, FString(music_id))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/BGM_m50BRM"))
-    new_file.SetNameReference(index, FString("/Game/Core/Sound/bgm/" + music_id))
+    new_file.SetNameReference(index, FString(f"/Game/Core/Sound/bgm/{music_id}"))
     new_file.Exports[0].Data[1].Value = FString(music_id)
     new_file.Exports[0].Data[2].Value = 300.0
     new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\" + music_id + ".uasset")

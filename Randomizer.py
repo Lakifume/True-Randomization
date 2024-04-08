@@ -41,10 +41,10 @@ graphic_color = "#80ffbf"
 sound_color   = "#ff80ff"
 extra_color   = "#ff80bf"
 
-main_setting_length = 6
-sub_setting_length = 6
-main_widget_to_setting = {}
-sub_widget_to_setting = {}
+main_param_length = 6
+sub_param_length = 6
+main_widget_to_param = {}
+sub_widget_to_param = {}
 spin_index_to_shift = {1: 0, 2: 2, 3: 1}
 shift_to_spin_index = {value: key for key, value in spin_index_to_shift.items()}
     
@@ -53,11 +53,11 @@ window_sizes = [0.8, 0.9, 1.0]
 
 preset_to_bytes = {
     "Empty": 0x000000,
-    "Trial": 0x7807FF,
-    "Race":  0x3806EF,
+    "Trial": 0x3807FF,
+    "Race":  0x5806EF,
     "Meme":  0x7F3AAF,
     "Risk":  0x7FFFFF,
-    "Blood": 0xB80001
+    "Blood": 0x980001
 }
 bytes_to_preset = {value: key for key, value in preset_to_bytes.items()}
 
@@ -184,7 +184,8 @@ class Generate(QThread):
         
         #Check IGA DLC
         
-        if len(glob.glob(config.get("Misc", "sGamePath") + "\\*.pak")) < 2:
+        has_iga_dlc = os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\pakchunk2-WindowsNoEditor.pak")
+        if not has_iga_dlc:
             for file in list(Manager.file_to_path):
                 if "DLC_0002" in Manager.file_to_path[file]:
                     del Manager.file_to_path[file]
@@ -202,6 +203,7 @@ class Generate(QThread):
             os.makedirs(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync")
         
         #Logs
+        
         if os.path.isdir("SpoilerLog"):
             shutil.rmtree("SpoilerLog")
         os.makedirs("SpoilerLog")
@@ -221,6 +223,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Processing data...")
         
         Manager.table_complex_to_simple()
+        #Manager.debug_output_datatables()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -239,6 +242,8 @@ class Generate(QThread):
         Sound.init()
         Bloodless.init()
         Utility.init()
+        miriam_color = None
+        zangetsu_color = None
         
         #Apply parameters
         
@@ -261,7 +266,7 @@ class Generate(QThread):
         if self.selected_map:
             pass
         elif config.getboolean("MapRandomization", "bRoomLayout"):
-            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
+            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
         else:
             self.selected_map = ""
         Manager.load_map(self.selected_map)
@@ -292,6 +297,9 @@ class Generate(QThread):
         
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.set_hard_mode()
+        
+        if not has_iga_dlc:
+            Item.remove_iga_dlc()
         
         if config.getboolean("EnemyRandomization", "bEnemyLocations"):
             random.seed(self.selected_seed)
@@ -401,10 +409,10 @@ class Generate(QThread):
             Enemy.randomize_boss_tolerances()
         
         if config.getboolean("GraphicRandomization", "bOutfitColor"):
-            miriam_outfit_list = config.get("OutfitConfig", "bMiriamList").split(",")
+            miriam_outfit_list = config.get("OutfitConfig", "sMiriamList").split(",")
             random.seed(self.selected_seed)
             miriam_color = random.choice(miriam_outfit_list) if miriam_outfit_list else None
-            zangetsu_outfit_list = config.get("OutfitConfig", "bZangetsuList").split(",")
+            zangetsu_outfit_list = config.get("OutfitConfig", "sZangetsuList").split(",")
             random.seed(self.selected_seed)
             zangetsu_color = random.choice(zangetsu_outfit_list) if zangetsu_outfit_list else None
             if miriam_color:
@@ -412,16 +420,7 @@ class Generate(QThread):
         
         if config.getboolean("GraphicRandomization", "bBackerPortraits"):
             random.seed(self.selected_seed)
-            portraits = []
-            for directory in os.listdir(Manager.asset_dir + "\\" + Manager.file_to_path["Ml_N3100_picture_001"]):
-                file_name = os.path.splitext(directory)[0]
-                portraits.append(file_name)
-            portraits = list(dict.fromkeys(portraits))
-            new_list = copy.deepcopy(portraits)
-            random.shuffle(new_list)
-            portrait_replacement = dict(zip(portraits, new_list))
-            for portrait in portrait_replacement:
-                Graphic.update_portrait_pointer(portrait, portrait_replacement[portrait])
+            Graphic.randomize_backer_portraits()
         
         if config.getboolean("SoundRandomization", "bDialogues"):
             random.seed(self.selected_seed)
@@ -608,6 +607,8 @@ class Generate(QThread):
             for texture in os.listdir(f"Data\\Texture\\Zangetsu\\{zangetsu_color}"):
                 os.remove(f"Data\\Texture\\{texture}")
         
+        Graphic.update_backer_portraits()
+        
         #Clean up the mod folder
         
         Manager.remove_unchanged_files()
@@ -619,7 +620,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Packing files...")
         
         with open("Tools\\UnrealPak\\filelist.txt", "w") as file_writer:
-            file_writer.write("\"Mod\\*.*\" \"..\\..\\..\\*.*\" \n")
+            file_writer.write("\"Mod\*.*\" \"..\..\..\*.*\" \n")
         
         root = os.getcwd()
         os.chdir("Tools\\UnrealPak")
@@ -635,9 +636,30 @@ class Generate(QThread):
         
         #Move
         
-        if not os.path.isdir(config.get("Misc", "sGamePath") + "\\~mods"):
-            os.makedirs(config.get("Misc", "sGamePath") + "\\~mods")
-        shutil.move("Tools\\UnrealPak\\Randomizer.pak", config.get("Misc", "sGamePath") + "\\~mods\\Randomizer.pak")
+        if not os.path.isdir(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods"):
+            os.makedirs(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods")
+        shutil.move("Tools\\UnrealPak\\Randomizer.pak", config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods\\Randomizer.pak")
+        
+        #Copy UE4SS
+        
+        exe_directory = config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Binaries\\Win64"
+        if not os.path.isfile(f"{exe_directory}\\UE4SS.dll"):
+            for item in os.listdir("Tools\\UE4SS"):
+                if os.path.isfile(f"Tools\\UE4SS\\{item}"):
+                    shutil.copyfile(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}")
+                if os.path.isdir(f"Tools\\UE4SS\\{item}"):
+                    shutil.copytree(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}", dirs_exist_ok=True)
+        for directory in os.listdir("Data\\UE4SS"):
+            shutil.copytree(f"Data\\UE4SS\\{directory}", f"{exe_directory}\\Mods\\{directory}", dirs_exist_ok=True)
+            if not os.path.isfile(f"{exe_directory}\\Mods\\{directory}\\enabled.txt"): 
+                open(f"{exe_directory}\\Mods\\{directory}\\enabled.txt", "w").close()
+        
+        #User randomly chosen mod
+        
+        if os.path.isdir("Data\\Mod"):
+            for directory in os.listdir("Data\\Mod"):
+                chosen_mod = random.choice(glob.glob(f"Data\\Mod\\{directory}\\*.pak"))
+                shutil.copyfile(chosen_mod, config.get("Misc", "sGamePath") + f"\\BloodstainedRotN\\Content\\Paks\\~mods\\{directory}.pak")
         
         current += 1
         self.signaller.progress.emit(current)
@@ -681,6 +703,7 @@ class Update(QThread):
         shutil.rmtree("Data")
         shutil.rmtree("MapEdit\\Data")
         shutil.rmtree("Tools\\UE4 DDS Tools")
+        shutil.rmtree("Tools\\UE4SS")
         shutil.rmtree("Tools\\UModel")
         shutil.rmtree("Tools\\UnrealPak")
         
@@ -694,7 +717,7 @@ class Update(QThread):
             zip_ref.extractall("")
         os.remove(zip_name)
         
-        #Carry previous config settings
+        #Carry previous config params
         
         new_config = configparser.ConfigParser()
         new_config.optionxform = str
@@ -742,7 +765,7 @@ class Import(QThread):
             
             root = os.getcwd()
             os.chdir("Tools\\UModel")
-            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[asset] + "\\" + asset.split("(")[0] + "\"")
+            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[asset] + "\\" + asset.split("(")[0] + "\"")
             os.chdir(root)
             
             current += 1
@@ -778,8 +801,9 @@ class MainWindow(QWidget):
         + "QProgressBar{border: 2px solid white; text-align: center; font: bold}"
         + "QSpinBox{background-color: #21222e; selection-background-color: #320288ff}"
         + "QLineEdit{background-color: #21222e; selection-background-color: #320288ff}"
+        + "QListWidget{background-color: #21222e; border: 1px solid #21222e}"
+        + "QListWidget::item:selected:!active{background-color: #320288ff; color: #ffffff}"
         + "QToolTip{border: 1px solid white; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}")
-        self.selected_map = ""
         
         #Main layout
         
@@ -936,145 +960,145 @@ class MainWindow(QWidget):
         self.check_box_1.setToolTip("Randomize all items and shards found in the overworld, now with\nnew improved logic. Everything you pick up will be 100% random\nso say goodbye to the endless sea of fried fish.")
         self.check_box_1.stateChanged.connect(self.check_box_1_changed)
         center_box_1_layout.addWidget(self.check_box_1, 0, 0)
-        main_widget_to_setting[self.check_box_1] = 0x000001
+        main_widget_to_param[self.check_box_1] = 0x000001
 
         self.check_box_16 = QCheckBox("Quest Pool")
         self.check_box_16.setToolTip("Randomize all quest rewards.")
         self.check_box_16.stateChanged.connect(self.check_box_16_changed)
         center_box_1_layout.addWidget(self.check_box_16, 1, 0)
-        main_widget_to_setting[self.check_box_16] = 0x000002
+        main_widget_to_param[self.check_box_16] = 0x000002
 
         self.check_box_2 = QCheckBox("Shop Pool")
         self.check_box_2.setToolTip("Randomize all items sold at the shop.")
         self.check_box_2.stateChanged.connect(self.check_box_2_changed)
         center_box_1_layout.addWidget(self.check_box_2, 2, 0)
-        main_widget_to_setting[self.check_box_2] = 0x000004
+        main_widget_to_param[self.check_box_2] = 0x000004
 
         self.check_box_17 = QCheckBox("Quest Requirements")
         self.check_box_17.setToolTip("Randomize the requirements for Susie, Abigail and Lindsay's quests.\nBenjamin will still ask you for waystones.")
         self.check_box_17.stateChanged.connect(self.check_box_17_changed)
         center_box_1_layout.addWidget(self.check_box_17, 3, 0)
-        main_widget_to_setting[self.check_box_17] = 0x000008
+        main_widget_to_param[self.check_box_17] = 0x000008
 
         self.check_box_18 = QCheckBox("Remove Infinites")
         self.check_box_18.setToolTip("Guarantee Gebel's Glasses and Recycle Hat to never appear.\nUseful for runs that favor magic and bullet management.")
         self.check_box_18.stateChanged.connect(self.check_box_18_changed)
         center_box_1_layout.addWidget(self.check_box_18, 4, 0)
-        main_widget_to_setting[self.check_box_18] = 0x000010
+        main_widget_to_param[self.check_box_18] = 0x000010
 
         self.check_box_3 = QCheckBox("Item Cost And Selling Price")
         self.check_box_3.setToolTip("Randomize the cost and selling price of every item in the shop.")
         self.check_box_3.stateChanged.connect(self.check_box_3_changed)
         center_box_2_layout.addWidget(self.check_box_3, 0, 0)
-        main_widget_to_setting[self.check_box_3] = 0x000020
+        main_widget_to_param[self.check_box_3] = 0x000020
 
         self.check_box_4 = QCheckBox("Scale Selling Price With Cost")
         self.check_box_4.setToolTip("Make the selling price scale with the item's random cost.")
         self.check_box_4.stateChanged.connect(self.check_box_4_changed)
         center_box_2_layout.addWidget(self.check_box_4, 1, 0)
-        main_widget_to_setting[self.check_box_4] = 0x000040
+        main_widget_to_param[self.check_box_4] = 0x000040
 
         self.check_box_5 = QCheckBox("Map Requirements")
         self.check_box_5.setToolTip("Randomize the completion requirement for each tome.")
         self.check_box_5.stateChanged.connect(self.check_box_5_changed)
         center_box_3_layout.addWidget(self.check_box_5, 0, 0)
-        main_widget_to_setting[self.check_box_5] = 0x000080
+        main_widget_to_param[self.check_box_5] = 0x000080
 
         self.check_box_6 = QCheckBox("Tome Appearance")
         self.check_box_6.setToolTip("Randomize which books are available in the game at all.\nDoes not affect Tome of Conquest.")
         self.check_box_6.stateChanged.connect(self.check_box_6_changed)
         center_box_3_layout.addWidget(self.check_box_6, 1, 0)
-        main_widget_to_setting[self.check_box_6] = 0x000100
+        main_widget_to_param[self.check_box_6] = 0x000100
 
         self.check_box_7 = QCheckBox("Shard Power And Magic Cost")
         self.check_box_7.setToolTip("Randomize the efficiency and MP cost of each shard.\nDoes not affect progression shards.")
         self.check_box_7.stateChanged.connect(self.check_box_7_changed)
         center_box_4_layout.addWidget(self.check_box_7, 0, 0)
-        main_widget_to_setting[self.check_box_7] = 0x000200
+        main_widget_to_param[self.check_box_7] = 0x000200
 
         self.check_box_8 = QCheckBox("Scale Magic Cost With Power")
         self.check_box_8.setToolTip("Make the MP cost scale with the shard's random power.")
         self.check_box_8.stateChanged.connect(self.check_box_8_changed)
         center_box_4_layout.addWidget(self.check_box_8, 1, 0)
-        main_widget_to_setting[self.check_box_8] = 0x000400
+        main_widget_to_param[self.check_box_8] = 0x000400
 
         self.check_box_23 = QCheckBox("Global Gear Stats")
         self.check_box_23.setToolTip("Slightly randomize the stats of all weapons and pieces of\nequipment with odds that still favor their original values.")
         self.check_box_23.stateChanged.connect(self.check_box_23_changed)
         center_box_5_layout.addWidget(self.check_box_23, 0, 0)
-        main_widget_to_setting[self.check_box_23] = 0x000800
+        main_widget_to_param[self.check_box_23] = 0x000800
 
         self.check_box_9 = QCheckBox("Cheat Gear Stats")
         self.check_box_9.setToolTip("Completely randomize the stats of the weapons, headgears\nand accessories that are originally obtained via cheatcodes.")
         self.check_box_9.stateChanged.connect(self.check_box_9_changed)
         center_box_5_layout.addWidget(self.check_box_9, 1, 0)
-        main_widget_to_setting[self.check_box_9] = 0x001000
+        main_widget_to_param[self.check_box_9] = 0x001000
 
         self.check_box_25 = QCheckBox("Enemy Locations")
         self.check_box_25.setToolTip("Randomize which enemies appear where.")
         self.check_box_25.stateChanged.connect(self.check_box_25_changed)
         center_box_6_layout.addWidget(self.check_box_25, 0, 0)
-        main_widget_to_setting[self.check_box_25] = 0x002000
+        main_widget_to_param[self.check_box_25] = 0x002000
 
         self.check_box_10 = QCheckBox("Enemy Levels")
         self.check_box_10.setToolTip("Randomize the level of every enemy. Stats that scale with\nlevel include HP, attack, defense, luck, EXP and expertise.\nPicking this option will give you more starting HP and MP\nand reduce their growth to compensate.")
         self.check_box_10.stateChanged.connect(self.check_box_10_changed)
         center_box_6_layout.addWidget(self.check_box_10, 1, 0)
-        main_widget_to_setting[self.check_box_10] = 0x004000
+        main_widget_to_param[self.check_box_10] = 0x004000
 
         self.check_box_26 = QCheckBox("Boss Levels")
         self.check_box_26.setToolTip("Only recommended for Miriam mode.")
         self.check_box_26.stateChanged.connect(self.check_box_26_changed)
         center_box_6_layout.addWidget(self.check_box_26, 2, 0)
-        main_widget_to_setting[self.check_box_26] = 0x008000
+        main_widget_to_param[self.check_box_26] = 0x008000
 
         self.check_box_11 = QCheckBox("Enemy Tolerances")
         self.check_box_11.setToolTip("Randomize the first 8 resistance/weakness attributes of every enemy.")
         self.check_box_11.stateChanged.connect(self.check_box_11_changed)
         center_box_6_layout.addWidget(self.check_box_11, 3, 0)
-        main_widget_to_setting[self.check_box_11] = 0x010000
+        main_widget_to_param[self.check_box_11] = 0x010000
 
         self.check_box_27 = QCheckBox("Boss Tolerances")
         self.check_box_27.setToolTip("Only recommended for Miriam mode.")
         self.check_box_27.stateChanged.connect(self.check_box_27_changed)
         center_box_6_layout.addWidget(self.check_box_27, 4, 0)
-        main_widget_to_setting[self.check_box_27] = 0x020000
+        main_widget_to_param[self.check_box_27] = 0x020000
 
         self.check_box_12 = QCheckBox("Room Layout")
         self.check_box_12.setToolTip(f"Randomly pick from a folder of map presets ({map_num}).")
         self.check_box_12.stateChanged.connect(self.check_box_12_changed)
         center_box_7_layout.addWidget(self.check_box_12, 0, 0)
-        main_widget_to_setting[self.check_box_12] = 0x040000
+        main_widget_to_param[self.check_box_12] = 0x040000
 
         self.check_box_13 = QCheckBox("Outfit Color")
-        self.check_box_13.setToolTip("Randomize the color of Miriam's outfit.")
+        self.check_box_13.setToolTip("Randomize the color of Miriam's and Zangetsu's outfits.")
         self.check_box_13.stateChanged.connect(self.check_box_13_changed)
         center_box_8_layout.addWidget(self.check_box_13, 0, 0)
-        main_widget_to_setting[self.check_box_13] = 0x080000
+        main_widget_to_param[self.check_box_13] = 0x080000
 
         self.check_box_24 = QCheckBox("Backer Portraits")
         self.check_box_24.setToolTip("Shuffle backer paintings.")
         self.check_box_24.stateChanged.connect(self.check_box_24_changed)
         center_box_8_layout.addWidget(self.check_box_24, 1, 0)
-        main_widget_to_setting[self.check_box_24] = 0x100000
+        main_widget_to_param[self.check_box_24] = 0x100000
 
         self.check_box_15 = QCheckBox("Dialogues")
         self.check_box_15.setToolTip("Randomize all conversation lines in the game. Characters\nwill still retain their actual voice (let's not get weird).")
-        self.check_box_15.stateChanged.connect(self.check_modified_file_label_changed)
+        self.check_box_15.stateChanged.connect(self.check_box_15_changed)
         center_box_9_layout.addWidget(self.check_box_15, 0, 0)
-        main_widget_to_setting[self.check_box_15] = 0x200000
+        main_widget_to_param[self.check_box_15] = 0x200000
 
         self.check_box_14 = QCheckBox("Background Music")
         self.check_box_14.setToolTip("Randomize the music tracks that play in different areas.")
         self.check_box_14.stateChanged.connect(self.check_box_14_changed)
         center_box_9_layout.addWidget(self.check_box_14, 1, 0)
-        main_widget_to_setting[self.check_box_14] = 0x400000
+        main_widget_to_param[self.check_box_14] = 0x400000
 
         self.check_box_21 = QCheckBox("Bloodless Candles")
         self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
         center_box_10_layout.addWidget(self.check_box_21, 0, 0)
-        main_widget_to_setting[self.check_box_21] = 0x800000
+        main_widget_to_param[self.check_box_21] = 0x800000
         
         #SpinButtons
         
@@ -1086,7 +1110,7 @@ class MainWindow(QWidget):
         self.spin_button_1.clicked.connect(self.spin_button_1_clicked)
         self.spin_button_1.setVisible(False)
         center_box_1_layout.addWidget(self.spin_button_1, 0, 1)
-        sub_widget_to_setting[self.spin_button_1] = 0x001
+        sub_widget_to_param[self.spin_button_1] = 0x001
         
         self.spin_button_2 = QPushButton()
         self.spin_button_2.setAccessibleName("spin_button_2")
@@ -1096,7 +1120,7 @@ class MainWindow(QWidget):
         self.spin_button_2.clicked.connect(self.spin_button_2_clicked)
         self.spin_button_2.setVisible(False)
         center_box_1_layout.addWidget(self.spin_button_2, 2, 1)
-        sub_widget_to_setting[self.spin_button_2] = 0x002
+        sub_widget_to_param[self.spin_button_2] = 0x002
         
         self.spin_button_3 = QPushButton()
         self.spin_button_3.setAccessibleName("spin_button_3")
@@ -1106,7 +1130,7 @@ class MainWindow(QWidget):
         self.spin_button_3.clicked.connect(self.spin_button_3_clicked)
         self.spin_button_3.setVisible(False)
         center_box_2_layout.addWidget(self.spin_button_3, 0, 1)
-        sub_widget_to_setting[self.spin_button_3] = 0x004
+        sub_widget_to_param[self.spin_button_3] = 0x004
         
         self.spin_button_4 = QPushButton()
         self.spin_button_4.setAccessibleName("spin_button_4")
@@ -1116,7 +1140,7 @@ class MainWindow(QWidget):
         self.spin_button_4.clicked.connect(self.spin_button_4_clicked)
         self.spin_button_4.setVisible(False)
         center_box_3_layout.addWidget(self.spin_button_4, 0, 1)
-        sub_widget_to_setting[self.spin_button_4] = 0x008
+        sub_widget_to_param[self.spin_button_4] = 0x008
         
         self.spin_button_5 = QPushButton()
         self.spin_button_5.setAccessibleName("spin_button_5")
@@ -1126,7 +1150,7 @@ class MainWindow(QWidget):
         self.spin_button_5.clicked.connect(self.spin_button_5_clicked)
         self.spin_button_5.setVisible(False)
         center_box_4_layout.addWidget(self.spin_button_5, 0, 1)
-        sub_widget_to_setting[self.spin_button_5] = 0x010
+        sub_widget_to_param[self.spin_button_5] = 0x010
         
         self.spin_button_6 = QPushButton()
         self.spin_button_6.setAccessibleName("spin_button_6")
@@ -1136,7 +1160,7 @@ class MainWindow(QWidget):
         self.spin_button_6.clicked.connect(self.spin_button_6_clicked)
         self.spin_button_6.setVisible(False)
         center_box_5_layout.addWidget(self.spin_button_6, 0, 1)
-        sub_widget_to_setting[self.spin_button_6] = 0x020
+        sub_widget_to_param[self.spin_button_6] = 0x020
         
         self.spin_button_8 = QPushButton()
         self.spin_button_8.setAccessibleName("spin_button_8")
@@ -1146,7 +1170,7 @@ class MainWindow(QWidget):
         self.spin_button_8.clicked.connect(self.spin_button_8_clicked)
         self.spin_button_8.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_8, 1, 1)
-        sub_widget_to_setting[self.spin_button_8] = 0x040
+        sub_widget_to_param[self.spin_button_8] = 0x040
         
         self.spin_button_9 = QPushButton()
         self.spin_button_9.setAccessibleName("spin_button_9")
@@ -1156,7 +1180,7 @@ class MainWindow(QWidget):
         self.spin_button_9.clicked.connect(self.spin_button_9_clicked)
         self.spin_button_9.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_9, 2, 1)
-        sub_widget_to_setting[self.spin_button_9] = 0x080
+        sub_widget_to_param[self.spin_button_9] = 0x080
         
         self.spin_button_10 = QPushButton()
         self.spin_button_10.setAccessibleName("spin_button_10")
@@ -1166,7 +1190,7 @@ class MainWindow(QWidget):
         self.spin_button_10.clicked.connect(self.spin_button_10_clicked)
         self.spin_button_10.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_10, 3, 1)
-        sub_widget_to_setting[self.spin_button_10] = 0x100
+        sub_widget_to_param[self.spin_button_10] = 0x100
         
         self.spin_button_11 = QPushButton()
         self.spin_button_11.setAccessibleName("spin_button_11")
@@ -1176,19 +1200,21 @@ class MainWindow(QWidget):
         self.spin_button_11.clicked.connect(self.spin_button_11_clicked)
         self.spin_button_11.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_11, 4, 1)
-        sub_widget_to_setting[self.spin_button_11] = 0x200
+        sub_widget_to_param[self.spin_button_11] = 0x200
         
         self.browse_map_button = QPushButton()
-        self.browse_map_button.setIcon(QPixmap("Data\\browse.png"))
+        self.browse_map_button.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.browse_map_button.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
-        self.browse_map_button.clicked.connect(self.pick_map_button_clicked)
+        self.browse_map_button.clicked.connect(self.browse_map_button_clicked)
         self.browse_map_button.setVisible(False)
         center_box_7_layout.addWidget(self.browse_map_button, 0, 1)
         
         self.outfit_config_button = QPushButton()
         self.outfit_config_button.setIcon(QPixmap("Data\\config.png"))
+        self.outfit_config_button.setToolTip("Configure which outfit colors can be chosen.")
+        self.outfit_config_button.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.outfit_config_button.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
-        self.outfit_config_button.clicked.connect(self.outfit_param_button_clicked)
+        self.outfit_config_button.clicked.connect(self.outfit_config_button_clicked)
         self.outfit_config_button.setVisible(False)
         center_box_8_layout.addWidget(self.outfit_config_button, 0, 1)
         
@@ -1201,7 +1227,7 @@ class MainWindow(QWidget):
         self.spin_button_12.clicked.connect(self.spin_button_12_clicked)
         self.spin_button_12.setVisible(False)
         center_box_9_layout.addWidget(self.spin_button_12, 0, 1)
-        sub_widget_to_setting[self.spin_button_12] = 0x400
+        sub_widget_to_param[self.spin_button_12] = 0x400
         
         self.spin_button_13 = QPushButton()
         self.spin_button_13.setAccessibleName("spin_button_13")
@@ -1211,7 +1237,7 @@ class MainWindow(QWidget):
         self.spin_button_13.clicked.connect(self.spin_button_13_clicked)
         self.spin_button_13.setVisible(False)
         center_box_10_layout.addWidget(self.spin_button_13, 0, 1)
-        sub_widget_to_setting[self.spin_button_13] = 0x800
+        sub_widget_to_param[self.spin_button_13] = 0x800
         
         #RadioButtons
         
@@ -1235,6 +1261,11 @@ class MainWindow(QWidget):
         self.radio_button_4.toggled.connect(self.radio_button_group_2_checked)
         center_box_17_layout.addWidget(self.radio_button_4, 0, 0)
         
+        self.radio_button_7 = QRadioButton("Archipelago")
+        self.radio_button_7.setToolTip("Set the randomizer for an Archipelago multiworld session.")
+        self.radio_button_7.toggled.connect(self.radio_button_group_2_checked)
+        center_box_17_layout.addWidget(self.radio_button_7, 0, 1)
+        
         self.radio_button_5 = QRadioButton("Custom NG+")
         self.radio_button_5.setToolTip("Play through your NG+ files with a chosen level\nvalue for all enemies.")
         self.radio_button_5.toggled.connect(self.radio_button_group_2_checked)
@@ -1243,7 +1274,7 @@ class MainWindow(QWidget):
         self.radio_button_6 = QRadioButton("Progressive Z")
         self.radio_button_6.setToolTip("Play through a more balanced version of Zangetsu\nmode where his stats scale with progression.")
         self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
-        center_box_17_layout.addWidget(self.radio_button_6, 0, 1)
+        center_box_17_layout.addWidget(self.radio_button_6, 1, 1)
         
         #Spin boxes
         
@@ -1322,7 +1353,7 @@ class MainWindow(QWidget):
         self.outfit_window_layout.addLayout(outfit_window_bottom)
         
         outfit_instruction_label = QLabel()
-        outfit_instruction_label.setText("Multi select by holding Ctrl, select none for vanilla, select multiple for a random choice. Outfits are named after their HSV component.")
+        outfit_instruction_label.setText("Select none for vanilla or select multiple for a random\nchoice. Outfits are named after their HSV component.")
         outfit_window_top.addWidget(outfit_instruction_label)
         
         miriam_outfit_box_layout = QVBoxLayout()
@@ -1331,7 +1362,7 @@ class MainWindow(QWidget):
         outfit_window_center.addWidget(miriam_outfit_box)
         
         self.miriam_outfit_list = QListWidget()
-        self.miriam_outfit_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.miriam_outfit_list.setSelectionMode(QListWidget.MultiSelection)
         miriam_outfit_box_layout.addWidget(self.miriam_outfit_list)
         for folder in os.listdir("Data\\Texture\\Miriam"):
             if os.path.isdir(f"Data\\Texture\\Miriam\\{folder}"):
@@ -1343,7 +1374,7 @@ class MainWindow(QWidget):
         outfit_window_center.addWidget(zangetsu_outfit_box)
         
         self.zangetsu_outfit_list = QListWidget()
-        self.zangetsu_outfit_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.zangetsu_outfit_list.setSelectionMode(QListWidget.MultiSelection)
         zangetsu_outfit_box_layout.addWidget(self.zangetsu_outfit_list)
         for folder in os.listdir("Data\\Texture\\Zangetsu"):
             if os.path.isdir(f"Data\\Texture\\Zangetsu\\{folder}"):
@@ -1357,19 +1388,19 @@ class MainWindow(QWidget):
         #Text field
         
         self.starting_items_field = QLineEdit(config.get("StartWith", "sStartItem"))
-        self.starting_items_field.setToolTip("Items to start with. Input their english names\nwith | as separator. If unsure refer to the files\nin Data\\Translation for item names.")
+        self.starting_items_field.setToolTip("Items to start with. Input their english names with\ncommas as separators. If unsure refer to the files\nin Data\Translation for item names.")
         self.starting_items_field.textChanged[str].connect(self.starting_items_field_changed)
         center_box_16_layout.addWidget(self.starting_items_field, 0, 0)
         
-        self.param_string_format = "{:0" + str(main_setting_length + sub_setting_length) + "x}"
+        self.param_string_format = "{:0" + str(main_param_length + sub_param_length) + "x}"
         self.param_string_field = QLineEdit(self.param_string_format.format(0).upper())
-        self.param_string_field.setMaxLength(main_setting_length + sub_setting_length)
+        self.param_string_field.setMaxLength(main_param_length + sub_param_length)
         self.param_string_field.setToolTip("Simplified string containing all the randomization settings.")
         self.param_string_field.textChanged[str].connect(self.param_string_field_changed)
         center_box_13_layout.addWidget(self.param_string_field, 0, 0)
         
         self.game_path_field = QLineEdit(config.get("Misc", "sGamePath"))
-        self.game_path_field.setToolTip("Path to your game's data (...\\BloodstainedRotN\\Content\\Paks).")
+        self.game_path_field.setToolTip("Path to your game's data (...\steamapps\common\Bloodstained Ritual of the Night).")
         self.game_path_field.textChanged[str].connect(self.game_path_field_changed)
         center_box_14_layout.addWidget(self.game_path_field, 0, 0)
         
@@ -1401,8 +1432,8 @@ class MainWindow(QWidget):
         self.check_box_12.setChecked(config.getboolean("MapRandomization", "bRoomLayout"))
         self.check_box_13.setChecked(config.getboolean("GraphicRandomization", "bOutfitColor"))
         self.check_box_24.setChecked(config.getboolean("GraphicRandomization", "bBackerPortraits"))
-        self.check_box_14.setChecked(config.getboolean("SoundRandomization", "bBackGroundMusic"))
         self.check_box_15.setChecked(config.getboolean("SoundRandomization", "bDialogues"))
+        self.check_box_14.setChecked(config.getboolean("SoundRandomization", "bBackGroundMusic"))
         self.check_box_21.setChecked(config.getboolean("ExtraRandomization", "bBloodlessCandles"))
         
         self.spin_button_1_set_index(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
@@ -1437,31 +1468,26 @@ class MainWindow(QWidget):
         setting_button.setShortcut(Qt.Key_S)
         setting_button.clicked.connect(self.setting_button_clicked)
         center_widget_layout.addWidget(setting_button, 9, 0, 1, 1)
-
-        pick_map_button = QPushButton("Pick Map")
-        pick_map_button.setToolTip("Manually pick a custom map to play on (overrides the random map selection).")
-        pick_map_button.clicked.connect(self.pick_map_button_clicked)
-        center_widget_layout.addWidget(pick_map_button, 9, 1, 1, 1)
         
         import_asset_button = QPushButton("Import Assets")
         import_asset_button.setToolTip("Reimport and convert all base game assets used in this mod.\nUseful if the game updates or if one asset gets corrupted on\naccident.")
         import_asset_button.clicked.connect(self.import_asset_button_clicked)
-        center_widget_layout.addWidget(import_asset_button, 9, 2, 1, 1)
+        center_widget_layout.addWidget(import_asset_button, 9, 1, 1, 1)
         
         credit_button = QPushButton("Credits")
         credit_button.setToolTip("The people involved with this mod.")
         credit_button.clicked.connect(self.credit_button_clicked)
-        center_widget_layout.addWidget(credit_button, 9, 3, 1, 1)
+        center_widget_layout.addWidget(credit_button, 9, 2, 1, 1)
 
         generate_button = QPushButton("Generate")
-        generate_button.setToolTip("Generate .pak file with current settings.")
+        generate_button.setToolTip("Generate the mod with the current settings.")
         generate_button.clicked.connect(self.generate_button_clicked)
-        center_widget_layout.addWidget(generate_button, 10, 0, 1, 4)
+        center_widget_layout.addWidget(generate_button, 9, 3, 1, 1)
         
         #Window
         
         self.setFixedSize(config.getfloat("Misc", "fWindowSize")*1800, config.getfloat("Misc", "fWindowSize")*1000)
-        self.setWindowTitle(script_name)
+        self.reset_selected_map_state()
         self.setWindowIcon(QIcon("Data\\icon.png"))
         
         #Background
@@ -1485,12 +1511,12 @@ class MainWindow(QWidget):
         checked = self.check_box_1.isChecked()
         config.set("ItemRandomization", "bOverworldPool", str(checked).lower())
         if self.check_box_1.isChecked():
-            self.add_main_setting(self.check_box_1)
+            self.add_main_param(self.check_box_1)
             self.check_box_1.setStyleSheet(f"color: {item_color}")
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.center_box_1.setStyleSheet(f"color: {item_color}")
         else:
-            self.remove_main_setting(self.check_box_1)
+            self.remove_main_param(self.check_box_1)
             self.check_box_1.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
             self.check_box_16.setChecked(False)
@@ -1503,13 +1529,13 @@ class MainWindow(QWidget):
         checked = self.check_box_16.isChecked()
         config.set("ItemRandomization", "bQuestPool", str(checked).lower())
         if self.check_box_16.isChecked():
-            self.add_main_setting(self.check_box_16)
+            self.add_main_param(self.check_box_16)
             self.check_box_16.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.center_box_1.setStyleSheet(f"color: {item_color}")
             self.check_box_1.setChecked(True)
         else:
-            self.remove_main_setting(self.check_box_16)
+            self.remove_main_param(self.check_box_16)
             self.check_box_16.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
             self.check_box_2.setChecked(False)
@@ -1520,14 +1546,14 @@ class MainWindow(QWidget):
         checked = self.check_box_2.isChecked()
         config.set("ItemRandomization", "bShopPool", str(checked).lower())
         if self.check_box_2.isChecked():
-            self.add_main_setting(self.check_box_2)
+            self.add_main_param(self.check_box_2)
             self.check_box_2.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
                 self.center_box_1.setStyleSheet(f"color: {item_color}")
             self.check_box_1.setChecked(True)
             self.check_box_16.setChecked(True)
         else:
-            self.remove_main_setting(self.check_box_2)
+            self.remove_main_param(self.check_box_2)
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
         self.spin_button_2.setVisible(checked)
@@ -1538,12 +1564,12 @@ class MainWindow(QWidget):
         checked = self.check_box_17.isChecked()
         config.set("ItemRandomization", "bQuestRequirements", str(checked).lower())
         if self.check_box_17.isChecked():
-            self.add_main_setting(self.check_box_17)
+            self.add_main_param(self.check_box_17)
             self.check_box_17.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
                 self.center_box_1.setStyleSheet(f"color: {item_color}")
         else:
-            self.remove_main_setting(self.check_box_17)
+            self.remove_main_param(self.check_box_17)
             self.check_box_17.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1553,12 +1579,12 @@ class MainWindow(QWidget):
         checked = self.check_box_18.isChecked()
         config.set("ItemRandomization", "bRemoveInfinites", str(checked).lower())
         if self.check_box_18.isChecked():
-            self.add_main_setting(self.check_box_18)
+            self.add_main_param(self.check_box_18)
             self.check_box_18.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
                 self.center_box_1.setStyleSheet(f"color: {item_color}")
         else:
-            self.remove_main_setting(self.check_box_18)
+            self.remove_main_param(self.check_box_18)
             self.check_box_18.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1568,12 +1594,12 @@ class MainWindow(QWidget):
         checked = self.check_box_3.isChecked()
         config.set("ShopRandomization", "bItemCostAndSellingPrice", str(checked).lower())
         if self.check_box_3.isChecked():
-            self.add_main_setting(self.check_box_3)
+            self.add_main_param(self.check_box_3)
             self.check_box_3.setStyleSheet(f"color: {shop_color}")
             if self.check_box_4.isChecked():
                 self.center_box_2.setStyleSheet(f"color: {shop_color}")
         else:
-            self.remove_main_setting(self.check_box_3)
+            self.remove_main_param(self.check_box_3)
             self.check_box_3.setStyleSheet("color: #ffffff")
             self.center_box_2.setStyleSheet("color: #ffffff")
             self.check_box_4.setChecked(False)
@@ -1585,13 +1611,13 @@ class MainWindow(QWidget):
         checked = self.check_box_4.isChecked()
         config.set("ShopRandomization", "bScaleSellingPriceWithCost", str(checked).lower())
         if self.check_box_4.isChecked():
-            self.add_main_setting(self.check_box_4)
+            self.add_main_param(self.check_box_4)
             self.check_box_4.setStyleSheet(f"color: {shop_color}")
             if self.check_box_3.isChecked():
                 self.center_box_2.setStyleSheet(f"color: {shop_color}")
             self.check_box_3.setChecked(True)
         else:
-            self.remove_main_setting(self.check_box_4)
+            self.remove_main_param(self.check_box_4)
             self.check_box_4.setStyleSheet("color: #ffffff")
             self.center_box_2.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1601,12 +1627,12 @@ class MainWindow(QWidget):
         checked = self.check_box_5.isChecked()
         config.set("LibraryRandomization", "bMapRequirements", str(checked).lower())
         if self.check_box_5.isChecked():
-            self.add_main_setting(self.check_box_5)
+            self.add_main_param(self.check_box_5)
             self.check_box_5.setStyleSheet(f"color: {library_color}")
             if self.check_box_6.isChecked():
                 self.center_box_3.setStyleSheet(f"color: {library_color}")
         else:
-            self.remove_main_setting(self.check_box_5)
+            self.remove_main_param(self.check_box_5)
             self.check_box_5.setStyleSheet("color: #ffffff")
             self.center_box_3.setStyleSheet("color: #ffffff")
         self.spin_button_4.setVisible(checked)
@@ -1617,12 +1643,12 @@ class MainWindow(QWidget):
         checked = self.check_box_6.isChecked()
         config.set("LibraryRandomization", "bTomeAppearance", str(checked).lower())
         if self.check_box_6.isChecked():
-            self.add_main_setting(self.check_box_6)
+            self.add_main_param(self.check_box_6)
             self.check_box_6.setStyleSheet(f"color: {library_color}")
             if self.check_box_5.isChecked():
                 self.center_box_3.setStyleSheet(f"color: {library_color}")
         else:
-            self.remove_main_setting(self.check_box_6)
+            self.remove_main_param(self.check_box_6)
             self.check_box_6.setStyleSheet("color: #ffffff")
             self.center_box_3.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1632,12 +1658,12 @@ class MainWindow(QWidget):
         checked = self.check_box_7.isChecked()
         config.set("ShardRandomization", "bShardPowerAndMagicCost", str(checked).lower())
         if self.check_box_7.isChecked():
-            self.add_main_setting(self.check_box_7)
+            self.add_main_param(self.check_box_7)
             self.check_box_7.setStyleSheet(f"color: {shard_color}")
             if self.check_box_8.isChecked():
                 self.center_box_4.setStyleSheet(f"color: {shard_color}")
         else:
-            self.remove_main_setting(self.check_box_7)
+            self.remove_main_param(self.check_box_7)
             self.check_box_7.setStyleSheet("color: #ffffff")
             self.center_box_4.setStyleSheet("color: #ffffff")
             self.check_box_8.setChecked(False)
@@ -1649,13 +1675,13 @@ class MainWindow(QWidget):
         checked = self.check_box_8.isChecked()
         config.set("ShardRandomization", "bScaleMagicCostWithPower", str(checked).lower())
         if self.check_box_8.isChecked():
-            self.add_main_setting(self.check_box_8)
+            self.add_main_param(self.check_box_8)
             self.check_box_8.setStyleSheet(f"color: {shard_color}")
             if self.check_box_7.isChecked():
                 self.center_box_4.setStyleSheet(f"color: {shard_color}")
             self.check_box_7.setChecked(True)
         else:
-            self.remove_main_setting(self.check_box_8)
+            self.remove_main_param(self.check_box_8)
             self.check_box_8.setStyleSheet("color: #ffffff")
             self.center_box_4.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1665,12 +1691,12 @@ class MainWindow(QWidget):
         checked = self.check_box_23.isChecked()
         config.set("EquipmentRandomization", "bGlobalGearStats", str(checked).lower())
         if self.check_box_23.isChecked():
-            self.add_main_setting(self.check_box_23)
+            self.add_main_param(self.check_box_23)
             self.check_box_23.setStyleSheet(f"color: {equip_color}")
             if self.check_box_9.isChecked():
                 self.center_box_5.setStyleSheet(f"color: {equip_color}")
         else:
-            self.remove_main_setting(self.check_box_23)
+            self.remove_main_param(self.check_box_23)
             self.check_box_23.setStyleSheet("color: #ffffff")
             self.center_box_5.setStyleSheet("color: #ffffff")
         self.spin_button_6.setVisible(checked)
@@ -1681,12 +1707,12 @@ class MainWindow(QWidget):
         checked = self.check_box_9.isChecked()
         config.set("EquipmentRandomization", "bCheatGearStats", str(checked).lower())
         if self.check_box_9.isChecked():
-            self.add_main_setting(self.check_box_9)
+            self.add_main_param(self.check_box_9)
             self.check_box_9.setStyleSheet(f"color: {equip_color}")
             if self.check_box_23.isChecked():
                 self.center_box_5.setStyleSheet(f"color: {equip_color}")
         else:
-            self.remove_main_setting(self.check_box_9)
+            self.remove_main_param(self.check_box_9)
             self.check_box_9.setStyleSheet("color: #ffffff")
             self.center_box_5.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1696,12 +1722,12 @@ class MainWindow(QWidget):
         checked = self.check_box_25.isChecked()
         config.set("EnemyRandomization", "bEnemyLocations", str(checked).lower())
         if self.check_box_25.isChecked():
-            self.add_main_setting(self.check_box_25)
+            self.add_main_param(self.check_box_25)
             self.check_box_25.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
                 self.center_box_6.setStyleSheet(f"color: {enemy_color}")
         else:
-            self.remove_main_setting(self.check_box_25)
+            self.remove_main_param(self.check_box_25)
             self.check_box_25.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1711,12 +1737,12 @@ class MainWindow(QWidget):
         checked = self.check_box_10.isChecked()
         config.set("EnemyRandomization", "bEnemyLevels", str(checked).lower())
         if self.check_box_10.isChecked():
-            self.add_main_setting(self.check_box_10)
+            self.add_main_param(self.check_box_10)
             self.check_box_10.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
                 self.center_box_6.setStyleSheet(f"color: {enemy_color}")
         else:
-            self.remove_main_setting(self.check_box_10)
+            self.remove_main_param(self.check_box_10)
             self.check_box_10.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_8.setVisible(checked)
@@ -1727,12 +1753,12 @@ class MainWindow(QWidget):
         checked = self.check_box_26.isChecked()
         config.set("EnemyRandomization", "bBossLevels", str(checked).lower())
         if self.check_box_26.isChecked():
-            self.add_main_setting(self.check_box_26)
+            self.add_main_param(self.check_box_26)
             self.check_box_26.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
                 self.center_box_6.setStyleSheet(f"color: {enemy_color}")
         else:
-            self.remove_main_setting(self.check_box_26)
+            self.remove_main_param(self.check_box_26)
             self.check_box_26.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_9.setVisible(checked)
@@ -1743,12 +1769,12 @@ class MainWindow(QWidget):
         checked = self.check_box_11.isChecked()
         config.set("EnemyRandomization", "bEnemyTolerances", str(checked).lower())
         if self.check_box_11.isChecked():
-            self.add_main_setting(self.check_box_11)
+            self.add_main_param(self.check_box_11)
             self.check_box_11.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_27.isChecked():
                 self.center_box_6.setStyleSheet(f"color: {enemy_color}")
         else:
-            self.remove_main_setting(self.check_box_11)
+            self.remove_main_param(self.check_box_11)
             self.check_box_11.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_10.setVisible(checked)
@@ -1759,12 +1785,12 @@ class MainWindow(QWidget):
         checked = self.check_box_27.isChecked()
         config.set("EnemyRandomization", "bBossTolerances", str(checked).lower())
         if self.check_box_27.isChecked():
-            self.add_main_setting(self.check_box_27)
+            self.add_main_param(self.check_box_27)
             self.check_box_27.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked():
                 self.center_box_6.setStyleSheet(f"color: {enemy_color}")
         else:
-            self.remove_main_setting(self.check_box_27)
+            self.remove_main_param(self.check_box_27)
             self.check_box_27.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_11.setVisible(checked)
@@ -1775,23 +1801,23 @@ class MainWindow(QWidget):
         checked = self.check_box_12.isChecked()
         config.set("MapRandomization", "bRoomLayout", str(checked).lower())
         if self.check_box_12.isChecked():
-            self.add_main_setting(self.check_box_12)
+            self.add_main_param(self.check_box_12)
             self.check_box_12.setStyleSheet(f"color: {map_color}")
             self.center_box_7.setStyleSheet(f"color: {map_color}")
-            if not self.selected_map:
-                self.add_to_list("UI", "icon_8bitCrown"    , [])
-                self.add_to_list("UI", "Map_Icon_Keyperson", [])
-                self.add_to_list("UI", "Map_Icon_RootBox"  , [])
-                self.add_to_list("UI", "Map_StartingPoint" , [])
+            self.add_to_modified_files("UI", "icon_8bitCrown"    , [])
+            self.add_to_modified_files("UI", "Map_Icon_Keyperson", [])
+            self.add_to_modified_files("UI", "Map_Icon_RootBox"  , [])
+            self.add_to_modified_files("UI", "Map_StartingPoint" , [])
         else:
-            self.remove_main_setting(self.check_box_12)
+            self.remove_main_param(self.check_box_12)
             self.check_box_12.setStyleSheet("color: #ffffff")
             self.center_box_7.setStyleSheet("color: #ffffff")
-            if not self.selected_map:
-                self.remove_from_list("UI", "icon_8bitCrown"    , [])
-                self.remove_from_list("UI", "Map_Icon_Keyperson", [])
-                self.remove_from_list("UI", "Map_Icon_RootBox"  , [])
-                self.remove_from_list("UI", "Map_StartingPoint" , [])
+            self.remove_from_modified_files("UI", "icon_8bitCrown"    , [])
+            self.remove_from_modified_files("UI", "Map_Icon_Keyperson", [])
+            self.remove_from_modified_files("UI", "Map_Icon_RootBox"  , [])
+            self.remove_from_modified_files("UI", "Map_StartingPoint" , [])
+        self.reset_selected_map_state()
+        self.browse_map_button.setVisible(checked)
         self.fix_background_glitch()
         self.matches_preset()
 
@@ -1799,30 +1825,15 @@ class MainWindow(QWidget):
         checked = self.check_box_13.isChecked()
         config.set("GraphicRandomization", "bOutfitColor", str(checked).lower())
         if self.check_box_13.isChecked():
-            self.add_main_setting(self.check_box_13)
+            self.add_main_param(self.check_box_13)
             self.check_box_13.setStyleSheet(f"color: {graphic_color}")
             if self.check_box_24.isChecked():
                 self.center_box_8.setStyleSheet(f"color: {graphic_color}")
-            self.add_to_list("UI"     , "Face_Miriam"      , [])
-            self.add_to_list("Texture", "T_Body01_01_Color", [])
-            self.add_to_list("Texture", "T_Pl01_Cloth_Bace", [])
-            self.add_to_list("UI"     , "Face_Zangetsu"      , [])
-            self.add_to_list("Texture", "T_N1011_body_color" , [])
-            self.add_to_list("Texture", "T_N1011_face_color" , [])
-            self.add_to_list("Texture", "T_N1011_equip_color", [])
-            self.add_to_list("Texture", "T_Tknife05_Base"    , [])
         else:
-            self.remove_main_setting(self.check_box_13)
+            self.remove_main_param(self.check_box_13)
             self.check_box_13.setStyleSheet("color: #ffffff")
             self.center_box_8.setStyleSheet("color: #ffffff")
-            self.remove_from_list("UI"     , "Face_Miriam"      , [])
-            self.remove_from_list("Texture", "T_Body01_01_Color", [])
-            self.remove_from_list("Texture", "T_Pl01_Cloth_Bace", [])
-            self.remove_from_list("UI"     , "Face_Zangetsu"      , [])
-            self.remove_from_list("Texture", "T_N1011_body_color" , [])
-            self.remove_from_list("Texture", "T_N1011_face_color" , [])
-            self.remove_from_list("Texture", "T_N1011_equip_color", [])
-            self.remove_from_list("Texture", "T_Tknife05_Base"    , [])
+        self.update_modified_files_for_outfit()
         self.outfit_config_button.setVisible(checked)
         self.fix_background_glitch()
         self.matches_preset()
@@ -1831,12 +1842,12 @@ class MainWindow(QWidget):
         checked = self.check_box_24.isChecked()
         config.set("GraphicRandomization", "bBackerPortraits", str(checked).lower())
         if self.check_box_24.isChecked():
-            self.add_main_setting(self.check_box_24)
+            self.add_main_param(self.check_box_24)
             self.check_box_24.setStyleSheet(f"color: {graphic_color}")
             if self.check_box_13.isChecked():
                 self.center_box_8.setStyleSheet(f"color: {graphic_color}")
         else:
-            self.remove_main_setting(self.check_box_24)
+            self.remove_main_param(self.check_box_24)
             self.check_box_24.setStyleSheet("color: #ffffff")
             self.center_box_8.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
@@ -1846,13 +1857,12 @@ class MainWindow(QWidget):
         checked = self.check_box_15.isChecked()
         config.set("SoundRandomization", "bDialogues", str(checked).lower())
         if checked:
-            self.add_main_setting(self.check_box_15)
+            self.add_main_param(self.check_box_15)
             self.check_box_15.setStyleSheet(f"color: {sound_color}")
             if self.check_box_14.isChecked():
                 self.center_box_9.setStyleSheet(f"color: {sound_color}")
         else:
-            config.set("SoundRandomization", "bDialogues", "false")
-            self.remove_main_setting(self.check_box_15)
+            self.remove_main_param(self.check_box_15)
             self.check_box_15.setStyleSheet("color: #ffffff")
             self.center_box_9.setStyleSheet("color: #ffffff")
         self.spin_button_12.setVisible(checked)
@@ -1863,15 +1873,13 @@ class MainWindow(QWidget):
         checked = self.check_box_14.isChecked()
         config.set("SoundRandomization", "bBackGroundMusic", str(checked).lower())
         if checked:
-            config.set("SoundRandomization", "bBackGroundMusic", "true")
-            self.add_main_setting(self.check_box_14)
+            self.add_main_param(self.check_box_14)
             self.check_box_14.setStyleSheet(f"color: {sound_color}")
             if self.check_box_15.isChecked():
                 self.center_box_9.setStyleSheet(f"color: {sound_color}")
         else:
-            config.set("SoundRandomization", "bBackGroundMusic", "false")
-            self.remove_main_setting(self.check_box_14)
-            self.check_box_15.setStyleSheet("color: #ffffff")
+            self.remove_main_param(self.check_box_14)
+            self.check_box_14.setStyleSheet("color: #ffffff")
             self.center_box_9.setStyleSheet("color: #ffffff")
         self.fix_background_glitch()
         self.matches_preset()
@@ -1880,11 +1888,11 @@ class MainWindow(QWidget):
         checked = self.check_box_21.isChecked()
         config.set("ExtraRandomization", "bBloodlessCandles", str(checked).lower())
         if checked:
-            self.add_main_setting(self.check_box_21)
+            self.add_main_param(self.check_box_21)
             self.check_box_21.setStyleSheet(f"color: {extra_color}")
             self.center_box_10.setStyleSheet(f"color: {extra_color}")
         else:
-            self.remove_main_setting(self.check_box_21)
+            self.remove_main_param(self.check_box_21)
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.center_box_10.setStyleSheet("color: #ffffff")
         self.spin_button_13.setVisible(checked)
@@ -1904,7 +1912,7 @@ class MainWindow(QWidget):
     def spin_button_1_set_index(self, index):
         self.spin_button_1.setText(str(index))
         config.set("ItemRandomization", "iOverworldPoolComplexity", str(index))
-        self.change_sub_setting(self.spin_button_1, index)
+        self.change_sub_param(self.spin_button_1, index)
         return True
 
     def spin_button_2_clicked(self):
@@ -1920,7 +1928,7 @@ class MainWindow(QWidget):
     def spin_button_2_set_index(self, index):
         self.spin_button_2.setText(str(index))
         config.set("ItemRandomization", "iShopPoolWeight", str(index))
-        self.change_sub_setting(self.spin_button_2, index)
+        self.change_sub_param(self.spin_button_2, index)
         return True
 
     def spin_button_3_clicked(self):
@@ -1936,7 +1944,7 @@ class MainWindow(QWidget):
     def spin_button_3_set_index(self, index):
         self.spin_button_3.setText(str(index))
         config.set("ShopRandomization", "iItemCostAndSellingPriceWeight", str(index))
-        self.change_sub_setting(self.spin_button_3, index)
+        self.change_sub_param(self.spin_button_3, index)
         return True
 
     def spin_button_4_clicked(self):
@@ -1952,7 +1960,7 @@ class MainWindow(QWidget):
     def spin_button_4_set_index(self, index):
         self.spin_button_4.setText(str(index))
         config.set("LibraryRandomization", "iMapRequirementsWeight", str(index))
-        self.change_sub_setting(self.spin_button_4, index)
+        self.change_sub_param(self.spin_button_4, index)
         return True
 
     def spin_button_5_clicked(self):
@@ -1968,7 +1976,7 @@ class MainWindow(QWidget):
     def spin_button_5_set_index(self, index):
         self.spin_button_5.setText(str(index))
         config.set("ShardRandomization", "iShardPowerAndMagicCostWeight", str(index))
-        self.change_sub_setting(self.spin_button_5, index)
+        self.change_sub_param(self.spin_button_5, index)
         return True
 
     def spin_button_6_clicked(self):
@@ -1984,7 +1992,7 @@ class MainWindow(QWidget):
     def spin_button_6_set_index(self, index):
         self.spin_button_6.setText(str(index))
         config.set("EquipmentRandomization", "iGlobalGearStatsWeight", str(index))
-        self.change_sub_setting(self.spin_button_6, index)
+        self.change_sub_param(self.spin_button_6, index)
         return True
 
     def spin_button_8_clicked(self):
@@ -2000,7 +2008,7 @@ class MainWindow(QWidget):
     def spin_button_8_set_index(self, index):
         self.spin_button_8.setText(str(index))
         config.set("EnemyRandomization", "iEnemyLevelsWeight", str(index))
-        self.change_sub_setting(self.spin_button_8, index)
+        self.change_sub_param(self.spin_button_8, index)
         return True
 
     def spin_button_9_clicked(self):
@@ -2016,7 +2024,7 @@ class MainWindow(QWidget):
     def spin_button_9_set_index(self, index):
         self.spin_button_9.setText(str(index))
         config.set("EnemyRandomization", "iBossLevelsWeight", str(index))
-        self.change_sub_setting(self.spin_button_9, index)
+        self.change_sub_param(self.spin_button_9, index)
         return True
 
     def spin_button_10_clicked(self):
@@ -2032,7 +2040,7 @@ class MainWindow(QWidget):
     def spin_button_10_set_index(self, index):
         self.spin_button_10.setText(str(index))
         config.set("EnemyRandomization", "iEnemyTolerancesWeight", str(index))
-        self.change_sub_setting(self.spin_button_10, index)
+        self.change_sub_param(self.spin_button_10, index)
         return True
 
     def spin_button_11_clicked(self):
@@ -2048,7 +2056,7 @@ class MainWindow(QWidget):
     def spin_button_11_set_index(self, index):
         self.spin_button_11.setText(str(index))
         config.set("EnemyRandomization", "iBossTolerancesWeight", str(index))
-        self.change_sub_setting(self.spin_button_11, index)
+        self.change_sub_param(self.spin_button_11, index)
         return True
 
     def spin_button_12_clicked(self):
@@ -2065,7 +2073,7 @@ class MainWindow(QWidget):
         if index <= len(self.language_sequence):
             self.spin_button_12.setText(self.language_sequence[index - 1])
             config.set("SoundRandomization", "iDialoguesLanguage", str(index))
-            self.change_sub_setting(self.spin_button_12, index)
+            self.change_sub_param(self.spin_button_12, index)
             return True
         return False
 
@@ -2082,7 +2090,7 @@ class MainWindow(QWidget):
     def spin_button_13_set_index(self, index):
         self.spin_button_13.setText(str(index))
         config.set("ExtraRandomization", "iBloodlessCandlesComplexity", str(index))
-        self.change_sub_setting(self.spin_button_13, index)
+        self.change_sub_param(self.spin_button_13, index)
         return True
     
     def radio_button_group_1_checked(self):
@@ -2116,60 +2124,57 @@ class MainWindow(QWidget):
         if current == "Custom":
             return
         main_num = preset_to_bytes[current]
-        sub_num = self.get_setting_bytes()[1]
-        self.set_setting_bytes(main_num, sub_num)
+        sub_num = self.get_param_bytes()[1]
+        self.set_param_bytes(main_num, sub_num)
 
     def matches_preset(self):
-        main_num = self.get_setting_bytes()[0]
+        main_num = self.get_param_bytes()[0]
         if main_num in bytes_to_preset:
             self.preset_drop_down.setCurrentText(bytes_to_preset[main_num])
             return
         self.preset_drop_down.setCurrentText("Custom")
-    
-    def starting_items_field_changed(self, text):
-        config.set("StartWith", "sStartItem", text)
-    
+
     def param_string_field_changed(self, text):
         #Check that input is valid hex
         try:
-            main_num, sub_num = self.get_setting_bytes()
+            main_num, sub_num = self.get_param_bytes()
         except ValueError:
             main_num, sub_num = (0, 0)
-        self.set_setting_bytes(main_num, sub_num)
-        #Apply bytes to settings
-        for widget in main_widget_to_setting:
-            if (main_num & main_widget_to_setting[widget] != 0) != widget.isChecked():
+        self.set_param_bytes(main_num, sub_num)
+        #Apply bytes to params
+        for widget in main_widget_to_param:
+            if (main_num & main_widget_to_param[widget] != 0) != widget.isChecked():
                 widget.setChecked(not widget.isChecked())
-        for widget in sub_widget_to_setting:
+        for widget in sub_widget_to_param:
             check = False
             index = getattr(self, f"{widget.accessibleName()}_get_index")()
             if not index:
                 continue
             for num in range(2):
-                if sub_num & sub_widget_to_setting[widget]*0x1000**num != 0:
+                if sub_num & sub_widget_to_param[widget]*0x1000**num != 0:
                     check = True
                     if index != shift_to_spin_index[num]:
                         check = getattr(self, f"{widget.accessibleName()}_set_index")(shift_to_spin_index[num])
             if not check and index != 2:
                 getattr(self, f"{widget.accessibleName()}_set_index")(2)
     
-    def add_main_setting(self, widget):
-        main_num, sub_num = self.get_setting_bytes()
-        extra_num = main_widget_to_setting[widget]
+    def add_main_param(self, widget):
+        main_num, sub_num = self.get_param_bytes()
+        extra_num = main_widget_to_param[widget]
         if main_num & extra_num == 0:
             main_num += extra_num
-        self.set_setting_bytes(main_num, sub_num)
+        self.set_param_bytes(main_num, sub_num)
     
-    def remove_main_setting(self, widget):
-        main_num, sub_num = self.get_setting_bytes()
-        extra_num = main_widget_to_setting[widget]
+    def remove_main_param(self, widget):
+        main_num, sub_num = self.get_param_bytes()
+        extra_num = main_widget_to_param[widget]
         if main_num & extra_num != 0:
             main_num -= extra_num
-        self.set_setting_bytes(main_num, sub_num)
+        self.set_param_bytes(main_num, sub_num)
     
-    def change_sub_setting(self, widget, index):
-        main_num, sub_num = self.get_setting_bytes()
-        extra_num = sub_widget_to_setting[widget]
+    def change_sub_param(self, widget, index):
+        main_num, sub_num = self.get_param_bytes()
+        extra_num = sub_widget_to_param[widget]
         for num in range(2):
             abs_num = extra_num*0x1000**num
             if num == spin_index_to_shift[index]:
@@ -2178,20 +2183,23 @@ class MainWindow(QWidget):
             else:
                 if sub_num & abs_num != 0:
                     sub_num -= abs_num
-        self.set_setting_bytes(main_num, sub_num)
+        self.set_param_bytes(main_num, sub_num)
     
-    def get_setting_bytes(self):
+    def get_param_bytes(self):
         total_num = int(self.param_string_field.text(), 16)
-        factor = 0x10**main_setting_length
+        factor = 0x10**main_param_length
         return (total_num % factor, total_num // factor)
     
-    def set_setting_bytes(self, main_num, sub_num):
-        factor = 0x10**main_setting_length
+    def set_param_bytes(self, main_num, sub_num):
+        factor = 0x10**main_param_length
         total_num = main_num + sub_num*factor
         self.param_string_field.setText(self.param_string_format.format(total_num).upper())
     
     def custom_level_field_changed(self):
         config.set("SpecialMode", "iCustomNGLevel", str(self.custom_level_field.value()))
+    
+    def starting_items_field_changed(self, text):
+        config.set("StartWith", "sStartItem", text)
     
     def game_path_field_changed(self, text):
         config.set("Misc", "sGamePath", text)
@@ -2211,7 +2219,7 @@ class MainWindow(QWidget):
         if not config.get("Misc", "sSeed"):
             return
         self.selected_test_seed = self.cast_seed(config.get("Misc", "sSeed"))
-        self.selected_test_map = self.selected_map
+        self.selected_test_map = config.get("MapRandomization", "sSelectedMap")
         
         #Start
         
@@ -2231,7 +2239,7 @@ class MainWindow(QWidget):
             if self.selected_test_map:
                 pass
             elif config.getboolean("MapRandomization", "bRoomLayout"):
-                self.selected_test_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
+                self.selected_test_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
             else:
                 self.selected_test_map = ""
             Manager.load_map(self.selected_test_map)
@@ -2270,9 +2278,9 @@ class MainWindow(QWidget):
     def seed_confirm_button_clicked(self):
         if not config.get("Misc", "sSeed"):
             return
-        self.selected_seed = self.cast_seed(config.get("Misc", "sSeed"))
         self.seed_box.close()
-    
+        self.pre_generate()
+
     def cast_seed(self, seed):
         #Cast seed to another object type if possible
         try:
@@ -2289,26 +2297,6 @@ class MainWindow(QWidget):
         subprocess.Popen(script_name + ".exe")
         sys.exit()
     
-    def add_to_list(self, filetype, file, checkboxes):
-        list   = modified_files[filetype]["Files"]
-        change = True
-        for checkbox in checkboxes:
-            if checkbox.isChecked():
-                change = False
-        if change and not file in list:
-            list.append(file)
-            self.label_change(filetype)
-    
-    def remove_from_list(self, filetype, file, checkboxes):
-        list   = modified_files[filetype]["Files"]
-        change = True
-        for checkbox in checkboxes:
-            if checkbox.isChecked():
-                change = False
-        if change and file in list:
-            list.remove(file)
-            self.label_change(filetype)
-    
     def label_change(self, filetype):
         files  = modified_files[filetype]["Files"]
         label  = modified_files[filetype]["Label"]
@@ -2318,6 +2306,26 @@ class MainWindow(QWidget):
             string += f"{file}\n"
         label.setText(string)
     
+    def add_to_modified_files(self, filetype, file, checkboxes):
+        list   = modified_files[filetype]["Files"]
+        change = True
+        for checkbox in checkboxes:
+            if checkbox.isChecked():
+                change = False
+        if change and not file in list:
+            list.append(file)
+            self.label_change(filetype)
+    
+    def remove_from_modified_files(self, filetype, file, checkboxes):
+        list   = modified_files[filetype]["Files"]
+        change = True
+        for checkbox in checkboxes:
+            if checkbox.isChecked():
+                change = False
+        if change and file in list:
+            list.remove(file)
+            self.label_change(filetype)
+
     def has_rando_options(self):
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             return True
@@ -2350,9 +2358,13 @@ class MainWindow(QWidget):
         if config.getboolean("EnemyRandomization", "bBossTolerances"):
             return True
         if config.getboolean("MapRandomization", "bRoomLayout"):
-            return True
+            if not config.get("MapRandomization", "sSelectedMap"):
+                return True
         if config.getboolean("GraphicRandomization", "bOutfitColor"):
-            return True
+            if config.get("OutfitConfig", "sMiriamList"):
+                return True
+            if config.get("OutfitConfig", "sZangetsuList"):
+                return True
         if config.getboolean("GraphicRandomization", "bBackerPortraits"):
             return True
         if config.getboolean("SoundRandomization", "bDialogues"):
@@ -2362,113 +2374,27 @@ class MainWindow(QWidget):
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
             return True
         return False
-    
-    def is_game_path_valid(self):
-        return os.path.isdir(config.get("Misc", "sGamePath")) and config.get("Misc", "sGamePath").split("\\")[-1] == "Paks"
 
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
-    
-    def generate_pak(self):
-        self.setEnabled(False)
-        QApplication.processEvents()
-        
-        self.progress_bar = QProgressDialog("Initializing...", None, 0, 7, self)
-        self.progress_bar.setWindowTitle("Status")
-        self.progress_bar.setWindowModality(Qt.WindowModal)
-        
-        self.worker = Generate(self.progress_bar, self.selected_seed, self.selected_map, self.starting_items)
-        self.worker.signaller.progress.connect(self.set_progress)
-        self.worker.signaller.finished.connect(self.generate_finished)
-        self.worker.signaller.error.connect(self.thread_failure)
-        self.worker.start()
-    
-    def generate_finished(self):
-        self.setEnabled(True)
-        box = QMessageBox(self)
-        box.setWindowTitle("Done")
-        text = "Pak file generated !"
-        box.setText(text)
-        box.exec()
-    
-    def update_finished(self):
-        sys.exit()
-
-    def import_assets(self, asset_list, finished):
-        self.setEnabled(False)
-        QApplication.processEvents()
-        
-        self.progress_bar = QProgressDialog("Importing assets...", None, 0, len(asset_list), self)
-        self.progress_bar.setWindowTitle("Status")
-        self.progress_bar.setWindowModality(Qt.WindowModal)
-        
-        self.worker = Import(asset_list)
-        self.worker.signaller.progress.connect(self.set_progress)
-        self.worker.signaller.finished.connect(finished)
-        self.worker.signaller.error.connect(self.thread_failure)
-        self.worker.start()
-    
-    def import_finished(self):
-        self.setEnabled(True)
-
-    def browse_game_path_button_clicked(self):
-        path = QFileDialog.getExistingDirectory(self, "Folder")
-        if path:
-            self.game_path_field.setText(path.replace("/", "\\"))
-    
-    def outfit_config_button_clicked(self):
-        miriam_selected_outfit_list   = config.get("OutfitConfig", "bMiriamList").split(",")
-        zangetsu_selected_outfit_list = config.get("OutfitConfig", "bZangetsuList").split(",")
-        for index in range(self.miriam_outfit_list.count()):
-            item = self.miriam_outfit_list.item(index)
-            item.setSelected(item.text() in miriam_selected_outfit_list)
-        for index in range(self.zangetsu_outfit_list.count()):
-            item = self.zangetsu_outfit_list.item(index)
-            item.setSelected(item.text() in zangetsu_selected_outfit_list)
-        self.outfit_window = QDialog(self)
-        self.outfit_window.setLayout(self.outfit_window_layout)
-        self.outfit_window.setWindowTitle("Outfit")
-        self.outfit_window.exec()
-
-    def setting_button_clicked(self):
-        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getfloat("Misc", "fWindowSize")))
-        self.setting_window = QDialog(self)
-        self.setting_window.setLayout(self.setting_window_layout)
-        self.setting_window.setWindowTitle("Settings")
-        self.setting_window.exec()
-    
-    def outfit_confirm_button_clicked(self):
-        miriam_selected_outfit_list   = []
-        zangetsu_selected_outfit_list = []
-        for item in self.miriam_outfit_list.selectedItems():
-            miriam_selected_outfit_list.append(item.text())
-        for index in range(self.zangetsu_outfit_list.count()):
-            zangetsu_selected_outfit_list.append(item.text())
-        config.set("OutfitConfig", "bMiriamList", ",".join(miriam_selected_outfit_list))
-        config.set("OutfitConfig", "bZangetsuList", ",".join(zangetsu_selected_outfit_list))
-        self.outfit_window.close()
-
-    def pick_map_button_clicked(self):
-        path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit//Custom", filter="*.json")[0]
-        if path:
-            self.selected_map = path.replace("/", "\\")
-            self.setWindowTitle(f"Randomizer ({self.selected_map})")
-            self.add_to_list("UI", "icon_8bitCrown"    , [self.check_box_12])
-            self.add_to_list("UI", "Map_Icon_Keyperson", [self.check_box_12])
-            self.add_to_list("UI", "Map_Icon_RootBox"  , [self.check_box_12])
-            self.add_to_list("UI", "Map_StartingPoint" , [self.check_box_12])
 
     def generate_button_clicked(self):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\\BloodstainedRotN\\Content\\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
+            return
+        
+        #Check AP incompatibility
+        
+        if config.getboolean("SpecialMode", "bArchipelago") and config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            self.notify_error("Bloodless randomizer is not compatible with Archipelago.")
             return
         
         #Check if starting items are valid
         
         self.starting_items = []
-        for item in config.get("StartWith", "sStartItem").split("|"):
+        for item in config.get("StartWith", "sStartItem").split(","):
             if not item:
                 continue
             simple_name = Utility.simplify_item_name(item)
@@ -2483,15 +2409,15 @@ class MainWindow(QWidget):
         
         #Prompt seed options
         
-        self.selected_seed = None
         if self.has_rando_options():
             self.seed_box = QDialog(self)
             self.seed_box.setLayout(self.seed_window_layout)
             self.seed_box.setWindowTitle("Seed")
             self.seed_box.exec()
-            if not self.selected_seed:
-                return
-        
+        else:
+            self.pre_generate()
+    
+    def pre_generate(self):
         #Check if every asset is already cached
         
         if os.path.isdir(Manager.asset_dir): 
@@ -2510,85 +2436,243 @@ class MainWindow(QWidget):
         
         self.import_assets(asset_list, self.generate_pak) if asset_list else self.generate_pak()
     
+    def generate_pak(self):
+        self.setEnabled(False)
+        QApplication.processEvents()
+        
+        self.progress_bar = QProgressDialog("Initializing...", None, 0, 7, self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
+        
+        self.selected_seed = self.cast_seed(config.get("Misc", "sSeed"))
+        self.selected_map = config.get("MapRandomization", "sSelectedMap") if config.getboolean("MapRandomization", "bRoomLayout") else None
+        self.worker = Generate(self.progress_bar, self.selected_seed, self.selected_map, self.starting_items)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(self.generate_finished)
+        self.worker.signaller.error.connect(self.thread_failure)
+        self.worker.start()
+    
+    def generate_finished(self):
+        self.progress_bar.close()
+        self.setEnabled(True)
+        box = QMessageBox(self)
+        box.setWindowTitle("Done")
+        box.setText("Pak file generated !")
+        box.exec()
+    
+    def update_finished(self):
+        sys.exit()
+
+    def browse_map_button_clicked(self):
+        if config.get("MapRandomization", "sSelectedMap"):
+            config.set("MapRandomization", "sSelectedMap", "")
+        else:
+            path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit\\Custom", filter="*.json")[0]
+            if path:
+                config.set("MapRandomization", "sSelectedMap", path.replace("/", "\\"))
+        self.reset_selected_map_state()
+    
+    def reset_selected_map_state(self):
+        selected_map = config.get("MapRandomization", "sSelectedMap")
+        if config.getboolean("MapRandomization", "bRoomLayout") and selected_map:
+            self.browse_map_button.setIcon(QPixmap("Data\\cancel.png"))
+            self.browse_map_button.setToolTip("Revert map selection back to random.")
+            self.setWindowTitle(f"{script_name} ({selected_map})")
+        else:
+            self.browse_map_button.setIcon(QPixmap("Data\\browse.png"))
+            self.browse_map_button.setToolTip("Manually browse a custom map to play on.")
+            self.setWindowTitle(script_name)
+    
+    def outfit_config_button_clicked(self):
+        miriam_selected_outfit_list   = config.get("OutfitConfig", "sMiriamList").split(",")
+        zangetsu_selected_outfit_list = config.get("OutfitConfig", "sZangetsuList").split(",")
+        for index in range(self.miriam_outfit_list.count()):
+            item = self.miriam_outfit_list.item(index)
+            item.setSelected(item.text() in miriam_selected_outfit_list)
+        for index in range(self.zangetsu_outfit_list.count()):
+            item = self.zangetsu_outfit_list.item(index)
+            item.setSelected(item.text() in zangetsu_selected_outfit_list)
+        max_size = max(self.miriam_outfit_list.count(), self.zangetsu_outfit_list.count())
+        self.outfit_window = QDialog(self)
+        self.outfit_window.setLayout(self.outfit_window_layout)
+        self.outfit_window.setWindowTitle("Outfit")
+        self.outfit_window.setFixedSize(0, config.getfloat("Misc", "fWindowSize")*min(140 + max_size*24, 500))
+        self.outfit_window.exec()
+    
+    def outfit_confirm_button_clicked(self):
+        miriam_selected_outfit_list   = []
+        zangetsu_selected_outfit_list = []
+        for item in self.miriam_outfit_list.selectedItems():
+            miriam_selected_outfit_list.append(item.text())
+        for item in self.zangetsu_outfit_list.selectedItems():
+            zangetsu_selected_outfit_list.append(item.text())
+        miriam_selected_outfit_list.sort()
+        zangetsu_selected_outfit_list.sort()
+        config.set("OutfitConfig", "sMiriamList", ",".join(miriam_selected_outfit_list))
+        config.set("OutfitConfig", "sZangetsuList", ",".join(zangetsu_selected_outfit_list))
+        self.update_modified_files_for_outfit()
+        self.outfit_window.close()
+    
+    def update_modified_files_for_outfit(self):
+        if config.getboolean("GraphicRandomization", "bOutfitColor") and config.get("OutfitConfig", "sMiriamList"):
+            self.add_to_modified_files("UI"     , "Face_Miriam"      , [])
+            self.add_to_modified_files("Texture", "T_Body01_01_Color", [])
+            self.add_to_modified_files("Texture", "T_Pl01_Cloth_Bace", [])
+        else:
+            self.remove_from_modified_files("UI"     , "Face_Miriam"      , [])
+            self.remove_from_modified_files("Texture", "T_Body01_01_Color", [])
+            self.remove_from_modified_files("Texture", "T_Pl01_Cloth_Bace", [])
+        if config.getboolean("GraphicRandomization", "bOutfitColor") and config.get("OutfitConfig", "sZangetsuList"):
+            self.add_to_modified_files("UI"     , "Face_Zangetsu"      , [])
+            self.add_to_modified_files("Texture", "T_N1011_body_color" , [])
+            self.add_to_modified_files("Texture", "T_N1011_face_color" , [])
+            self.add_to_modified_files("Texture", "T_N1011_equip_color", [])
+            self.add_to_modified_files("Texture", "T_Tknife05_Base"    , [])
+        else:
+            self.remove_from_modified_files("UI"     , "Face_Zangetsu"      , [])
+            self.remove_from_modified_files("Texture", "T_N1011_body_color" , [])
+            self.remove_from_modified_files("Texture", "T_N1011_face_color" , [])
+            self.remove_from_modified_files("Texture", "T_N1011_equip_color", [])
+            self.remove_from_modified_files("Texture", "T_Tknife05_Base"    , [])
+
+    def browse_game_path_button_clicked(self):
+        path = QFileDialog.getExistingDirectory(self, "Folder")
+        if path:
+            self.game_path_field.setText(path.replace("/", "\\"))
+    
+    def is_game_path_valid(self):
+        return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN.exe")
+
+    def setting_button_clicked(self):
+        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getfloat("Misc", "fWindowSize")))
+        self.setting_window = QDialog(self)
+        self.setting_window.setLayout(self.setting_window_layout)
+        self.setting_window.setWindowTitle("Settings")
+        self.setting_window.setFixedSize(0, 0)
+        self.setting_window.exec()
+
     def import_asset_button_clicked(self):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\\BloodstainedRotN\\Content\\Paks).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
             return
         
         self.import_assets(list(Manager.file_to_path), self.import_finished)
+
+    def import_assets(self, asset_list, finished):
+        self.setEnabled(False)
+        QApplication.processEvents()
+        
+        self.progress_bar = QProgressDialog("Importing assets...", None, 0, len(asset_list), self)
+        self.progress_bar.setWindowTitle("Status")
+        self.progress_bar.setWindowModality(Qt.WindowModal)
+        
+        self.worker = Import(asset_list)
+        self.worker.signaller.progress.connect(self.set_progress)
+        self.worker.signaller.finished.connect(finished)
+        self.worker.signaller.error.connect(self.thread_failure)
+        self.worker.start()
     
+    def import_finished(self):
+        self.setEnabled(True)
+
     def credit_button_clicked(self):
-        label_1_image = QLabel()
-        label_1_image.setPixmap(QPixmap("Data\\profile1.png"))
-        label_1_image.setScaledContents(True)
-        label_1_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_1_text = QLabel()
-        label_1_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
-        label_1_text.setOpenExternalLinks(True)
-        label_2_image = QLabel()
-        label_2_image.setPixmap(QPixmap("Data\\profile2.png"))
-        label_2_image.setScaledContents(True)
-        label_2_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_2_text = QLabel()
-        label_2_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
-        label_2_text.setOpenExternalLinks(True)
-        label_3_image = QLabel()
-        label_3_image.setPixmap(QPixmap("Data\\profile3.png"))
-        label_3_image.setScaledContents(True)
-        label_3_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_3_text = QLabel()
-        label_3_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
-        label_3_text.setOpenExternalLinks(True)
-        label_4_image = QLabel()
-        label_4_image.setPixmap(QPixmap("Data\\profile4.png"))
-        label_4_image.setScaledContents(True)
-        label_4_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_4_text = QLabel()
-        label_4_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
-        label_4_text.setOpenExternalLinks(True)
-        label_5_image = QLabel()
-        label_5_image.setPixmap(QPixmap("Data\\profile5.png"))
-        label_5_image.setScaledContents(True)
-        label_5_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_5_text = QLabel()
-        label_5_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#25c04e>Github</font></a>")
-        label_5_text.setOpenExternalLinks(True)
-        label_6_image = QLabel()
-        label_6_image.setPixmap(QPixmap("Data\\profile6.png"))
-        label_6_image.setScaledContents(True)
-        label_6_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_6_text = QLabel()
-        label_6_text.setText("<span style=\"font-weight: bold; color: #ffffff;\">Matyalatte</span><br/>Creator of UE4 DDS Tools<br/><a href=\"https://github.com/matyalatte/UE4-DDS-Tools\"><font face=Cambria color=#ffffff>Github</font></a>")
-        label_6_text.setOpenExternalLinks(True)
-        label_7_image = QLabel()
-        label_7_image.setPixmap(QPixmap("Data\\profile7.png"))
-        label_7_image.setScaledContents(True)
-        label_7_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        label_7_text = QLabel()
-        label_7_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
-        label_7_text.setOpenExternalLinks(True)
-        layout = QGridLayout()
-        layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
-        layout.addWidget(label_1_image, 0, 0, 1, 1)
-        layout.addWidget(label_1_text , 0, 1, 1, 1)
-        layout.addWidget(label_2_image, 1, 0, 1, 1)
-        layout.addWidget(label_2_text , 1, 1, 1, 1)
-        layout.addWidget(label_3_image, 2, 0, 1, 1)
-        layout.addWidget(label_3_text , 2, 1, 1, 1)
-        layout.addWidget(label_4_image, 3, 0, 1, 1)
-        layout.addWidget(label_4_text , 3, 1, 1, 1)
-        layout.addWidget(label_5_image, 5, 0, 1, 1)
-        layout.addWidget(label_5_text , 5, 1, 1, 1)
-        layout.addWidget(label_6_image, 6, 0, 1, 1)
-        layout.addWidget(label_6_text , 6, 1, 1, 1)
-        layout.addWidget(label_7_image, 7, 0, 1, 1)
-        layout.addWidget(label_7_text , 7, 1, 1, 1)
-        box = QDialog(self)
-        box.setLayout(layout)
-        box.setWindowTitle("Credits")
-        box.exec()
+        credit_1_layout = QHBoxLayout()
+        credit_1_label_image = QLabel()
+        credit_1_label_image.setPixmap(QPixmap("Data\\profile1.png"))
+        credit_1_label_image.setScaledContents(True)
+        credit_1_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_1_layout.addWidget(credit_1_label_image)
+        credit_1_label_text = QLabel()
+        credit_1_label_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
+        credit_1_label_text.setOpenExternalLinks(True)
+        credit_1_layout.addWidget(credit_1_label_text)
+        credit_2_layout = QHBoxLayout()
+        credit_2_label_image = QLabel()
+        credit_2_label_image.setPixmap(QPixmap("Data\\profile2.png"))
+        credit_2_label_image.setScaledContents(True)
+        credit_2_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_2_layout.addWidget(credit_2_label_image)
+        credit_2_label_text = QLabel()
+        credit_2_label_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
+        credit_2_label_text.setOpenExternalLinks(True)
+        credit_2_layout.addWidget(credit_2_label_text)
+        credit_3_layout = QHBoxLayout()
+        credit_3_label_image = QLabel()
+        credit_3_label_image.setPixmap(QPixmap("Data\\profile3.png"))
+        credit_3_label_image.setScaledContents(True)
+        credit_3_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_3_layout.addWidget(credit_3_label_image)
+        credit_3_label_text = QLabel()
+        credit_3_label_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
+        credit_3_label_text.setOpenExternalLinks(True)
+        credit_3_layout.addWidget(credit_3_label_text)
+        credit_4_layout = QHBoxLayout()
+        credit_4_label_image = QLabel()
+        credit_4_label_image.setPixmap(QPixmap("Data\\profile4.png"))
+        credit_4_label_image.setScaledContents(True)
+        credit_4_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_4_layout.addWidget(credit_4_label_image)
+        credit_4_label_text = QLabel()
+        credit_4_label_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
+        credit_4_label_text.setOpenExternalLinks(True)
+        credit_4_layout.addWidget(credit_4_label_text)
+        credit_5_layout = QHBoxLayout()
+        credit_5_label_image = QLabel()
+        credit_5_label_image.setPixmap(QPixmap("Data\\profile5.png"))
+        credit_5_label_image.setScaledContents(True)
+        credit_5_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_5_layout.addWidget(credit_5_label_image)
+        credit_5_label_text = QLabel()
+        credit_5_label_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#25c04e>Github</font></a>")
+        credit_5_label_text.setOpenExternalLinks(True)
+        credit_5_layout.addWidget(credit_5_label_text)
+        credit_8_layout = QHBoxLayout()
+        credit_8_label_image = QLabel()
+        credit_8_label_image.setPixmap(QPixmap("Data\\profile8.png"))
+        credit_8_label_image.setScaledContents(True)
+        credit_8_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_8_layout.addWidget(credit_8_label_image)
+        credit_8_label_text = QLabel()
+        credit_8_label_text.setText("<span style=\"font-weight: bold; color: #dd872e;\">Tourmi</span><br/>Archipelago integration<br/><a href=\"https://github.com/Tourmi/bloodstained-multiworld\"><font face=Cambria color=#dd872e>Github</font></a>")
+        credit_8_label_text.setOpenExternalLinks(True)
+        credit_8_layout.addWidget(credit_8_label_text)
+        credit_6_layout = QHBoxLayout()
+        credit_6_label_image = QLabel()
+        credit_6_label_image.setPixmap(QPixmap("Data\\profile6.png"))
+        credit_6_label_image.setScaledContents(True)
+        credit_6_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_6_layout.addWidget(credit_6_label_image)
+        credit_6_label_text = QLabel()
+        credit_6_label_text.setText("<span style=\"font-weight: bold; color: #ffffff;\">Matyalatte</span><br/>Creator of UE4 DDS Tools<br/><a href=\"https://github.com/matyalatte/UE4-DDS-Tools\"><font face=Cambria color=#ffffff>Github</font></a>")
+        credit_6_label_text.setOpenExternalLinks(True)
+        credit_6_layout.addWidget(credit_6_label_text)
+        credit_7_layout = QHBoxLayout()
+        credit_7_label_image = QLabel()
+        credit_7_label_image.setPixmap(QPixmap("Data\\profile7.png"))
+        credit_7_label_image.setScaledContents(True)
+        credit_7_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_7_layout.addWidget(credit_7_label_image)
+        credit_7_label_text = QLabel()
+        credit_7_label_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
+        credit_7_label_text.setOpenExternalLinks(True)
+        credit_7_layout.addWidget(credit_7_label_text)
+        credit_box_layout = QVBoxLayout()
+        credit_box_layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
+        credit_box_layout.addLayout(credit_1_layout)
+        credit_box_layout.addLayout(credit_2_layout)
+        credit_box_layout.addLayout(credit_3_layout)
+        credit_box_layout.addLayout(credit_4_layout)
+        credit_box_layout.addLayout(credit_5_layout)
+        credit_box_layout.addLayout(credit_6_layout)
+        credit_box_layout.addLayout(credit_8_layout)
+        credit_box_layout.addLayout(credit_7_layout)
+        credit_box = QDialog(self)
+        credit_box.setLayout(credit_box_layout)
+        credit_box.setWindowTitle("Credits")
+        credit_box.setFixedSize(0, 0)
+        credit_box.exec()
     
     def thread_failure(self):
         self.progress_bar.close()
@@ -2605,12 +2689,9 @@ class MainWindow(QWidget):
     def check_for_updates(self):
         if os.path.isfile("delete.me"):
             os.remove("delete.me")
-        if os.path.isfile("Tools\\UAssetAPI\\delete1.me"):
-            os.remove("Tools\\UAssetAPI\\delete1.me")
-        if os.path.isfile("Tools\\UAssetAPI\\delete2.me"):
-            os.remove("Tools\\UAssetAPI\\delete2.me")
-        if os.path.isfile("Tools\\UAssetAPI\\delete3.me"):
-            os.remove("Tools\\UAssetAPI\\delete3.me")
+        for index in range(3):
+            if os.path.isfile(f"Tools\\UAssetAPI\\delete{index + 1}.me"):
+                os.remove(f"Tools\\UAssetAPI\\delete{index + 1}.me")
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:
