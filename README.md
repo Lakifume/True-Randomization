@@ -17,5 +17,8 @@ Requirements:
 * latest version of Pyinstaller
 
 Steps:
+* download the latest release
+* download the commit from the branch that matches the version of the downloaded release
+* replace the executable in the release by its corresponding .py files
 * open cmd in the folder that contains the .py files
 * input "pyinstaller.exe --onefile --icon=Bloodstained.ico Randomizer.py"
