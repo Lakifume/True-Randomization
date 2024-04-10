@@ -844,9 +844,9 @@ def change_room_enemies(room):
         for export_index in range(len(game_data[filename].Exports)):
             #Check if the export is an enemy
             export_name = str(game_data[filename].Exports[export_index].ObjectName)
-            if int(str(game_data[filename].Exports[export_index].OuterIndex)) == 0:
+            if game_data[filename].Exports[export_index].OuterIndex.Index == 0:
                 continue
-            class_index = int(str(game_data[filename].Exports[export_index].ClassIndex))
+            class_index = game_data[filename].Exports[export_index].ClassIndex.Index
             if class_index >= 0:
                 continue
             old_class_name = str(game_data[filename].Imports[abs(class_index) - 1].ObjectName)

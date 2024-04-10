@@ -10,10 +10,12 @@ public class DetachedObjectPropertyData : PropertyData<int>
 
     public List<int> UsedExports = default;
     public override FString PropertyType => _currentPropertyType;
-    public DetachedObjectPropertyData(FName name, List<int> usedExports) : base(name)
+    public DetachedObjectPropertyData(FName name, List<int> usedExports) : this(name)
     {
         UsedExports = usedExports;
     }
+
+    public DetachedObjectPropertyData(FName name) : base(name) { }
 
     public DetachedObjectPropertyData() { }
 }

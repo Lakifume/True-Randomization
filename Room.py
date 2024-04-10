@@ -660,7 +660,7 @@ def update_room_containers(room):
         return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for export_index in range(len(game_data[filename].Exports)):
-        old_class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName)
+        old_class_name = str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName)
         #Check if it is a golden chest
         if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[export_index].Data[4].Name) == "IsAutoMaterial":
             old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
@@ -938,7 +938,7 @@ def fix_bathin_left_entrance():
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
         room = door_string_to_door[door].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(room + "_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -967,7 +967,7 @@ def fix_bathin_left_entrance():
     if adjacent_room:
         room = "m13ARC_005"
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(f"{Manager.asset_dir}\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", UE4Version.VER_UE4_22)
+        new_file = UAsset(f"{Manager.asset_dir}\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(f"{room}_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -1004,7 +1004,7 @@ def add_global_room_pickup(room, drop_id):
 
 def add_game_room(room):
     area_path = "ACT" + room[1:3] + "_" + room[3:6]
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", UE4Version.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
     new_file.SetNameReference(index, FString(f"{room}_RV"))
     index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
@@ -1106,7 +1106,7 @@ def remove_level_actor(filename, export_index):
     #Remove actor at index
     if Manager.file_to_type[filename] != Manager.FileType.Level:
         raise TypeError("Input is not a level file")
-    class_name = str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName)
+    class_name = str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName)
     #If the actor makes use of a c_cat class removing it will crash the game
     if class_name in c_cat_actors or filename in ["m20JRN_002_Gimmick", "m20JRN_002_Enemy"]:
         for data in game_data[filename].Exports[export_index].Data:
@@ -1126,13 +1126,13 @@ def remove_level_actor(filename, export_index):
     else:
         game_data[filename].Exports[export_index].OuterIndex = FPackageIndex(0)
         level_export = Utility.get_export_by_name(filename, "PersistentLevel")
-        level_export.IndexData.Remove(export_index + 1)
+        level_export.Actors.Remove(FPackageIndex.FromRawIndex(export_index + 1))
         level_export.CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))
 
 def remove_level_class(filename, class_name):
     #Remove all actors of class in a level
     for export_index in range(len(game_data[filename].Exports)):
-        if str(game_data[filename].Imports[abs(int(str(game_data[filename].Exports[export_index].ClassIndex))) - 1].ObjectName) == class_name:
+        if str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName) == class_name:
             remove_level_actor(filename, export_index)
 
 def convert_flag_to_door(room_name, door_flag, room_width):
