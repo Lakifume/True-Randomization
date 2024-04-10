@@ -12,7 +12,7 @@ import colorsys
 
 from enum import Enum
 from collections import OrderedDict
-s
+
 sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
 clr.AddReference("UAssetSnippet")
 clr.AddReference("UAssetAPI")
