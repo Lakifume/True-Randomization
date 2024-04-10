@@ -52,7 +52,7 @@ def unreal_to_python_data(struct, unreal_type=None):
         case "NameProperty":
             return str(struct.Value)
         case "SoftObjectProperty":
-            return str(struct.Value)
+            return str(struct.Value.AssetPath.AssetName)
         case "StrProperty":
             return str(struct.Value) if struct.Value else ""
         case "StructProperty":

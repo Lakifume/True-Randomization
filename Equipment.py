@@ -241,21 +241,19 @@ def add_armor_reference(armor_id):
     chroma_skin_mat           = constant["ArmorReference"][armor_id]["ChromaSkinMat"]          + "." + constant["ArmorReference"][armor_id]["ChromaSkinMat"].split("/")[-1]
     dialogue_default_skin_mat = constant["ArmorReference"][armor_id]["DialogueDefaultSkinMat"] + "." + constant["ArmorReference"][armor_id]["DialogueDefaultSkinMat"].split("/")[-1]
     dialogue_chroma_skin_mat  = constant["ArmorReference"][armor_id]["DialogueChromaSkinMat"]  + "." + constant["ArmorReference"][armor_id]["DialogueChromaSkinMat"].split("/")[-1]
-    new_file.Imports[18].ObjectName            = FName.FromString(new_file, constant["ArmorReference"][armor_id]["Mesh"])
-    new_file.Imports[27].ObjectName            = FName.FromString(new_file, constant["ArmorReference"][armor_id]["Mesh"].split("/")[-1])
-    new_file.Exports[1].Data[0].Value[0].Value = FSoftObjectPath(None, FName.FromString(new_file, default_body_mat), None)
+    new_file.Imports[18].ObjectName                                = FName.FromString(new_file, constant["ArmorReference"][armor_id]["Mesh"])
+    new_file.Imports[27].ObjectName                                = FName.FromString(new_file, constant["ArmorReference"][armor_id]["Mesh"].split("/")[-1])
+    new_file.Exports[1].Data[0].Value[0].Value = FSoftObjectPath(None, FName.FromString(new_file, chroma_body_mat), None)
     new_file.Exports[1].Data[1].Value[0].Value = FSoftObjectPath(None, FName.FromString(new_file, default_body_mat), None)
     new_file.Exports[1].Data[2].Value          = FSoftObjectPath(None, FName.FromString(new_file, chroma_skin_mat), None)
-    new_list = []
-    sub_struct = SoftObjectPropertyData()
+    sub_struct                                                     = SoftObjectPropertyData()
     sub_struct.Value                           = FSoftObjectPath(None, FName.FromString(new_file, default_skin_mat), None)
-    new_list = [sub_struct]
-    new_file.Exports[1].Data[3].Value          = new_list
+    new_file.Exports[1].Data[3].Value                              = [sub_struct]
     new_file.Exports[1].Data[4].Value          = FSoftObjectPath(None, FName.FromString(new_file, dialogue_chroma_skin_mat), None)
     new_file.Exports[1].Data[5].Value          = FSoftObjectPath(None, FName.FromString(new_file, dialogue_default_skin_mat), None)
-    new_file.Exports[1].Data[7].Value          = False
-    new_file.Exports[1].Data[8].Value          = 1
-    new_file.Exports[1].Data[9].Value          = 0
+    new_file.Exports[1].Data[7].Value                              = False
+    new_file.Exports[1].Data[8].Value                              = 1
+    new_file.Exports[1].Data[9].Value                              = 0
     new_file.Write("\\".join([Manager.mod_dir, Manager.file_to_path["BDBP_BodyValkyrie"], f"BDBP_{armor_id}.uasset"]))
 
 def has_negative_stat(equipment):

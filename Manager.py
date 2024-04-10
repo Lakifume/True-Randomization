@@ -88,7 +88,6 @@ def load_game_data():
         if file_to_type[file] in load_types:
             extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
             game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\" + file.split("(")[0] + extension, EngineVersion.VER_UE4_22)
-
     
 def load_constant():
     for file in os.listdir("Data\\Constant"):
@@ -738,7 +737,7 @@ def set_bigtoss_mode():
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMax"] = float(random.randint(-180, 180))
 
 def write_log(filename, log):
-    with open(f"SpoilerLog\\{filename}.json", "w", encoding="utf8") as file_writer:
+    with open(f"Spoiler\\{filename}.json", "w", encoding="utf8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def write_files():

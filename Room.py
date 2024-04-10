@@ -262,6 +262,7 @@ def init():
         "GDN_013_0_0_LEFT",
         "SAN_009_0_1_LEFT",
         "SAN_009_1_1_RIGHT",
+        "SAN_019_0_3_LEFT",
         "SAN_021_0_1_LEFT",
         "SAN_021_1_1_RIGHT",
         "KNG_010_1_1_RIGHT",
@@ -1126,7 +1127,7 @@ def remove_level_actor(filename, export_index):
     else:
         game_data[filename].Exports[export_index].OuterIndex = FPackageIndex(0)
         level_export = Utility.get_export_by_name(filename, "PersistentLevel")
-        level_export.Actors.Remove(FPackageIndex.FromRawIndex(export_index + 1))
+        level_export.Actors.Remove(FPackageIndex(export_index + 1))
         level_export.CreateBeforeSerializationDependencies.Remove(FPackageIndex(export_index + 1))
 
 def remove_level_class(filename, class_name):

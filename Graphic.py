@@ -282,14 +282,13 @@ def set_material_hsv(filename, parameter, new_hsv):
                         rgb.append(sub_data.Value[1].Value[0].Value.R)
                         rgb.append(sub_data.Value[1].Value[0].Value.G)
                         rgb.append(sub_data.Value[1].Value[0].Value.B)
+                        alpha = sub_data.Value[1].Value[0].Value.A
                         hsv = colorsys.rgb_to_hsv(rgb[0], rgb[1], rgb[2])
                         new_hue = hsv[0] if new_hsv[0] < 0 else new_hsv[0]/360
                         new_sat = hsv[1] if new_hsv[1] < 0 else new_hsv[1]/100
                         new_val = hsv[2] if new_hsv[2] < 0 else new_hsv[2]/100
                         rgb = colorsys.hsv_to_rgb(new_hue, new_sat, new_val)
-                        sub_data.Value[1].Value[0].Value.R = rgb[0]
-                        sub_data.Value[1].Value[0].Value.G = rgb[1]
-                        sub_data.Value[1].Value[0].Value.B = rgb[2]
+                        sub_data.Value[1].Value[0].Value = LinearColor(rgb[0], rgb[1], rgb[2], alpha)
 
 def import_mesh(filename):
     #Import a mesh file at the right location by reading it in the file
@@ -314,7 +313,7 @@ def import_texture(filename):
     
     root = os.getcwd()
     os.chdir("Tools\\UE4 DDS Tools")
-    os.system(f"cmd /c python\python.exe src\main.py \"{absolute_asset_dir}\\{filename}.uasset\" \"{absolute_texture_dir}\\{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
+    os.system(f"cmd /c python\\python.exe src\\main.py \"{absolute_asset_dir}\\{filename}.uasset\" \"{absolute_texture_dir}\\{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
     os.chdir(root)
     
     #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here

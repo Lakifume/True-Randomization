@@ -204,9 +204,9 @@ class Generate(QThread):
         
         #Logs
         
-        if os.path.isdir("SpoilerLog"):
-            shutil.rmtree("SpoilerLog")
-        os.makedirs("SpoilerLog")
+        if os.path.isdir("Spoiler"):
+            shutil.rmtree("Spoiler")
+        os.makedirs("Spoiler")
         
         #Open files
         
@@ -223,7 +223,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Processing data...")
         
         Manager.table_complex_to_simple()
-        #Manager.debug_output_datatables()
+        Manager.debug_output_datatables()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -620,7 +620,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Packing files...")
         
         with open("Tools\\UnrealPak\\filelist.txt", "w") as file_writer:
-            file_writer.write("\"Mod\*.*\" \"..\..\..\*.*\" \n")
+            file_writer.write("\"Mod\\*.*\" \"..\\..\\..\\*.*\" \n")
         
         root = os.getcwd()
         os.chdir("Tools\\UnrealPak")
@@ -1261,11 +1261,6 @@ class MainWindow(QWidget):
         self.radio_button_4.toggled.connect(self.radio_button_group_2_checked)
         center_box_17_layout.addWidget(self.radio_button_4, 0, 0)
         
-        self.radio_button_7 = QRadioButton("Archipelago")
-        self.radio_button_7.setToolTip("Set the randomizer for an Archipelago multiworld session.")
-        self.radio_button_7.toggled.connect(self.radio_button_group_2_checked)
-        center_box_17_layout.addWidget(self.radio_button_7, 0, 1)
-        
         self.radio_button_5 = QRadioButton("Custom NG+")
         self.radio_button_5.setToolTip("Play through your NG+ files with a chosen level\nvalue for all enemies.")
         self.radio_button_5.toggled.connect(self.radio_button_group_2_checked)
@@ -1274,7 +1269,7 @@ class MainWindow(QWidget):
         self.radio_button_6 = QRadioButton("Progressive Z")
         self.radio_button_6.setToolTip("Play through a more balanced version of Zangetsu\nmode where his stats scale with progression.")
         self.radio_button_6.toggled.connect(self.radio_button_group_2_checked)
-        center_box_17_layout.addWidget(self.radio_button_6, 1, 1)
+        center_box_17_layout.addWidget(self.radio_button_6, 0, 1)
         
         #Spin boxes
         
@@ -1388,7 +1383,7 @@ class MainWindow(QWidget):
         #Text field
         
         self.starting_items_field = QLineEdit(config.get("StartWith", "sStartItem"))
-        self.starting_items_field.setToolTip("Items to start with. Input their english names with\ncommas as separators. If unsure refer to the files\nin Data\Translation for item names.")
+        self.starting_items_field.setToolTip("Items to start with. Input their english names with\ncommas as separators. If unsure refer to the files\nin Data\\Translation for item names.")
         self.starting_items_field.textChanged[str].connect(self.starting_items_field_changed)
         center_box_16_layout.addWidget(self.starting_items_field, 0, 0)
         
@@ -1400,7 +1395,7 @@ class MainWindow(QWidget):
         center_box_13_layout.addWidget(self.param_string_field, 0, 0)
         
         self.game_path_field = QLineEdit(config.get("Misc", "sGamePath"))
-        self.game_path_field.setToolTip("Path to your game's data (...\steamapps\common\Bloodstained Ritual of the Night).")
+        self.game_path_field.setToolTip("Path to your game's data (...\\steamapps\\common\\Bloodstained Ritual of the Night).")
         self.game_path_field.textChanged[str].connect(self.game_path_field_changed)
         center_box_14_layout.addWidget(self.game_path_field, 0, 0)
         
@@ -1474,15 +1469,20 @@ class MainWindow(QWidget):
         import_asset_button.clicked.connect(self.import_asset_button_clicked)
         center_widget_layout.addWidget(import_asset_button, 9, 1, 1, 1)
         
+        archipelago_button = QPushButton("Archipelago")
+        archipelago_button.setToolTip("The people involved with this mod.")
+        #archipelago_button.clicked.connect(self.archipelago_button_clicked)
+        center_widget_layout.addWidget(archipelago_button, 9, 2, 1, 1)
+        
         credit_button = QPushButton("Credits")
         credit_button.setToolTip("The people involved with this mod.")
         credit_button.clicked.connect(self.credit_button_clicked)
-        center_widget_layout.addWidget(credit_button, 9, 2, 1, 1)
+        center_widget_layout.addWidget(credit_button, 9, 3, 1, 1)
 
         generate_button = QPushButton("Generate")
         generate_button.setToolTip("Generate the mod with the current settings.")
         generate_button.clicked.connect(self.generate_button_clicked)
-        center_widget_layout.addWidget(generate_button, 9, 3, 1, 1)
+        center_widget_layout.addWidget(generate_button, 10, 0, 1, 4)
         
         #Window
         
@@ -2382,13 +2382,7 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
-            return
-        
-        #Check AP incompatibility
-        
-        if config.getboolean("SpecialMode", "bArchipelago") and config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            self.notify_error("Bloodless randomizer is not compatible with Archipelago.")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\\steamapps\\common\\Bloodstained Ritual of the Night).")
             return
         
         #Check if starting items are valid
@@ -2555,7 +2549,7 @@ class MainWindow(QWidget):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\steamapps\common\Bloodstained Ritual of the Night).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(...\\steamapps\\common\\Bloodstained Ritual of the Night).")
             return
         
         self.import_assets(list(Manager.file_to_path), self.import_finished)
@@ -2628,16 +2622,6 @@ class MainWindow(QWidget):
         credit_5_label_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#25c04e>Github</font></a>")
         credit_5_label_text.setOpenExternalLinks(True)
         credit_5_layout.addWidget(credit_5_label_text)
-        credit_8_layout = QHBoxLayout()
-        credit_8_label_image = QLabel()
-        credit_8_label_image.setPixmap(QPixmap("Data\\profile8.png"))
-        credit_8_label_image.setScaledContents(True)
-        credit_8_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
-        credit_8_layout.addWidget(credit_8_label_image)
-        credit_8_label_text = QLabel()
-        credit_8_label_text.setText("<span style=\"font-weight: bold; color: #dd872e;\">Tourmi</span><br/>Archipelago integration<br/><a href=\"https://github.com/Tourmi/bloodstained-multiworld\"><font face=Cambria color=#dd872e>Github</font></a>")
-        credit_8_label_text.setOpenExternalLinks(True)
-        credit_8_layout.addWidget(credit_8_label_text)
         credit_6_layout = QHBoxLayout()
         credit_6_label_image = QLabel()
         credit_6_label_image.setPixmap(QPixmap("Data\\profile6.png"))
@@ -2658,15 +2642,25 @@ class MainWindow(QWidget):
         credit_7_label_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
         credit_7_label_text.setOpenExternalLinks(True)
         credit_7_layout.addWidget(credit_7_label_text)
+        credit_8_layout = QHBoxLayout()
+        credit_8_label_image = QLabel()
+        credit_8_label_image.setPixmap(QPixmap("Data\\profile8.png"))
+        credit_8_label_image.setScaledContents(True)
+        credit_8_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_8_layout.addWidget(credit_8_label_image)
+        credit_8_label_text = QLabel()
+        credit_8_label_text.setText("<span style=\"font-weight: bold; color: #dd872e;\">Tourmi</span><br/>True Randomization Contributor<br/><a href=\"https://github.com/Tourmi\"><font face=Cambria color=#dd872e>Github</font></a>")
+        credit_8_label_text.setOpenExternalLinks(True)
+        credit_8_layout.addWidget(credit_8_label_text)
         credit_box_layout = QVBoxLayout()
         credit_box_layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
         credit_box_layout.addLayout(credit_1_layout)
-        credit_box_layout.addLayout(credit_2_layout)
-        credit_box_layout.addLayout(credit_3_layout)
+        credit_box_layout.addLayout(credit_8_layout)
         credit_box_layout.addLayout(credit_4_layout)
         credit_box_layout.addLayout(credit_5_layout)
         credit_box_layout.addLayout(credit_6_layout)
-        credit_box_layout.addLayout(credit_8_layout)
+        credit_box_layout.addLayout(credit_2_layout)
+        credit_box_layout.addLayout(credit_3_layout)
         credit_box_layout.addLayout(credit_7_layout)
         credit_box = QDialog(self)
         credit_box.setLayout(credit_box_layout)
