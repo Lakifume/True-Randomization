@@ -87,7 +87,8 @@ def load_game_data():
     for file in file_to_type:
         if file_to_type[file] in load_types:
             extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
-            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\" + file.split("(")[0] + extension, UE4Version.VER_UE4_22)
+            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\" + file.split("(")[0] + extension, EngineVersion.VER_UE4_22)
+
     
 def load_constant():
     for file in os.listdir("Data\\Constant"):
@@ -773,7 +774,7 @@ def remove_unchanged_files():
 def search_and_replace_string(filename, class_name, data_name, old_value, new_value):
     #Search for a specific piece of data to change in a blueprint file and swap it
     for export in game_data[filename].Exports:
-        if class_name == str(game_data[filename].Imports[abs(int(str(export.ClassIndex))) - 1].ObjectName):
+        if class_name == str(game_data[filename].Imports[abs(export.ClassIndex.Index) - 1].ObjectName):
             for data in export.Data:
                 if str(data.Name) == data_name and str(data.Value) == old_value:
                     data.Value = FName.FromString(game_data[filename], new_value)

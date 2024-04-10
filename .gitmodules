@@ -1,0 +1,3 @@
+[submodule "submodules/UAssetAPI"]
+	path = submodules/UAssetAPI
+	url = git@github.com:atenfyr/UAssetAPI.git

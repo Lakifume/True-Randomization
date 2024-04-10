@@ -82,7 +82,7 @@ def python_to_unreal_data(value, struct, uasset, unreal_type=None):
         case "NameProperty":
             struct.Value = FName.FromString(uasset, value)
         case "SoftObjectProperty":
-            struct.Value = FName.FromString(uasset, value)
+            struct.Value = FSoftObjectPath(None, FName.FromString(uasset, value), None)
         case "StrProperty":
             struct.Value = FString(value) if value else None
         case "StructProperty":
@@ -144,7 +144,7 @@ def copy_asset_import(import_name, source_asset, target_asset):
     for old_import in game_data[source_asset].Imports:
         if import_name in str(old_import.ObjectName) and count != package_index:
             import_indexes.append(count)
-            package_index = abs(int(str(old_import.OuterIndex.Index))) - 1
+            package_index = abs(old_import.OuterIndex.Index) - 1
         count += 1
     #Add the import
     new_import_index = len(game_data[target_asset].Imports)
@@ -154,7 +154,8 @@ def copy_asset_import(import_name, source_asset, target_asset):
             FName.FromString(game_data[target_asset], str(old_import.ClassPackage)),
             FName.FromString(game_data[target_asset], str(old_import.ClassName)),
             FPackageIndex(-(new_import_index + 1 + len(import_indexes))),
-            FName.FromString(game_data[target_asset], str(old_import.ObjectName))
+            FName.FromString(game_data[target_asset], str(old_import.ObjectName)),
+            True
         )
         game_data[target_asset].Imports.Add(new_import)
     old_import = game_data[source_asset].Imports[package_index]
@@ -162,7 +163,8 @@ def copy_asset_import(import_name, source_asset, target_asset):
         FName.FromString(game_data[target_asset], str(old_import.ClassPackage)),
         FName.FromString(game_data[target_asset], str(old_import.ClassName)),
         FPackageIndex(0),
-        FName.FromString(game_data[target_asset], str(old_import.ObjectName))
+        FName.FromString(game_data[target_asset], str(old_import.ObjectName)),
+        True
     )
     game_data[target_asset].Imports.Add(new_import)
     return FPackageIndex(-(new_import_index + 1))
