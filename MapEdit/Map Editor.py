@@ -320,7 +320,9 @@ class RoomItem(QGraphicsRectItem):
         #Place room
         for room_1 in self.scene().selectedItems():
             room_1.snap_to_grid()
-            #Change a backer room's area id based on what it is connected to
+        #Change a backer room's area id based on what it is connected to
+        if len(self.scene().selectedItems()) < 2:
+            room_1 = self.scene().selectedItems()[0]
             if "m88BKR" in room_1.room_data.name:
                 for room_2 in self.main_window.room_list:
                     if "m88BKR" in room_2.room_data.name:
@@ -329,6 +331,8 @@ class RoomItem(QGraphicsRectItem):
                         room_1.room_data.area = room_2.room_data.area
                         room_1.reset_brush()
                         self.main_window.music_drop_down.setCurrentIndex(music_id.index(room_2.room_data.music))
+                        self.main_window.play_drop_down.setCurrentIndex(play_id.index(room_2.room_data.play))
+                        break
         if event.button() == Qt.LeftButton:
             self.main_window.set_unsaved()
     
@@ -406,7 +410,7 @@ class MainWindow(QMainWindow):
         
     def initUI(self):
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: 18px}"
-        + "QMainWindow{background-image: url(Data/background.png); background-position: center}"
+        + "QMainWindow{border-image: url(Data/background.png)}"
         + "QGraphicsView{border: 0px; selection-background-color: #320288ff}"
         + "QGraphicsView::item:selected{background-color: #320288ff}"
         + "QMenuBar{background-color: #21222e}"
@@ -922,7 +926,7 @@ class MainWindow(QMainWindow):
             box.setWindowTitle("Error")
             box.setIcon(QMessageBox.Critical)
             try:
-                log_path = os.path.abspath(os.path.join("", os.pardir)) + "\\SpoilerLog\\KeyLocation.json"
+                log_path = os.path.abspath(os.path.join("", os.pardir)) + "\\Spoiler\\KeyLocation.json"
                 with open(log_path, "r", encoding="utf8") as file_reader:
                     self.log = json.load(file_reader)
                 if not self.log["Map"] and name.split("\\")[-1] != "PB_DT_RoomMaster":
@@ -1193,6 +1197,8 @@ class MainWindow(QMainWindow):
         with open(DEFAULT_MAP, "r") as file_reader:
             copy_from = json.load(file_reader)
         for room in self.room_list:
+            if "m88BKR" in room.room_data.name:
+                continue
             if room.room_data.name in copy_from["MapData"]:
                 room.room_data.music = copy_from["MapData"][room.room_data.name]["BgmID"]
                 room.room_data.play  = copy_from["MapData"][room.room_data.name]["BgmType"]
