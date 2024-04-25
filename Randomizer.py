@@ -49,7 +49,7 @@ spin_index_to_shift = {1: 0, 2: 2, 3: 1}
 shift_to_spin_index = {value: key for key, value in spin_index_to_shift.items()}
     
 map_num = len(glob.glob("MapEdit\\Custom\\*.json"))
-window_sizes = [0.8, 0.9, 1.0]
+window_sizes = [720, 900, 1080]
 
 preset_to_bytes = {
     "Empty": 0x000000,
@@ -223,7 +223,7 @@ class Generate(QThread):
         self.progress_bar.setLabelText("Processing data...")
         
         Manager.table_complex_to_simple()
-        Manager.debug_output_datatables()
+        #Manager.debug_output_datatables()
         current += 1
         self.signaller.progress.emit(current)
         
@@ -684,7 +684,7 @@ class Update(QThread):
     def process(self):
         current = 0
         zip_name = "True Randomization.zip"
-        exe_name = script_name + ".exe"
+        exe_name = f"{script_name}.exe"
         self.signaller.progress.emit(current)
         
         #Download
@@ -775,7 +775,7 @@ class Import(QThread):
 
 #GUI
 
-class MainWindow(QWidget):
+class MainWindow(QGraphicsView):
     def __init__(self):
         super().__init__()
         self.setEnabled(False)
@@ -785,11 +785,13 @@ class MainWindow(QWidget):
     def init(self):
         
         self.first_time = False
-        if not config.getfloat("Misc", "fWindowSize") in window_sizes:
-            config.set("Misc", "fWindowSize", str(window_sizes[-1]))
+        if not config.getint("Misc", "iWindowSize") in window_sizes:
+            config.set("Misc", "iWindowSize", str(window_sizes[-1]))
             self.first_time = True
+        self.size_multiplier = config.getint("Misc", "iWindowSize")/1080
         
-        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}"
+        self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(self.size_multiplier*18)) + "px}"
+        + "QGraphicsView{border-image: url(MapEdit/Data/background.png)}"
         + "QComboBox{background-color: #21222e; selection-background-color: #320288ff}"
         + "QComboBox QAbstractItemView{border: 1px solid #21222e}"
         + "QScrollBar::add-page{background-color: #1b1c26}"
@@ -803,12 +805,12 @@ class MainWindow(QWidget):
         + "QLineEdit{background-color: #21222e; selection-background-color: #320288ff}"
         + "QListWidget{background-color: #21222e; border: 1px solid #21222e}"
         + "QListWidget::item:selected:!active{background-color: #320288ff; color: #ffffff}"
-        + "QToolTip{border: 1px solid white; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(config.getfloat("Misc", "fWindowSize")*18)) + "px}")
+        + "QToolTip{border: 1px solid white; background-color: #21222e; color: #ffffff; font-family: Cambria; font-size: " + str(int(self.size_multiplier*18)) + "px}")
         
         #Main layout
         
         main_window_layout = QHBoxLayout()
-        main_window_layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
+        main_window_layout.setSpacing(self.size_multiplier*10)
         self.setLayout(main_window_layout)
 
         #Left Label
@@ -817,13 +819,13 @@ class MainWindow(QWidget):
         artwork_label.setStyleSheet("border: 1px solid white")
         artwork_label.setPixmap(QPixmap("Data\\artwork.png"))
         artwork_label.setScaledContents(True)
-        artwork_label.setFixedSize(config.getfloat("Misc", "fWindowSize")*550, config.getfloat("Misc", "fWindowSize")*978)
+        artwork_label.setFixedSize(self.size_multiplier*550, self.size_multiplier*978)
         main_window_layout.addWidget(artwork_label)
         
         #Center widget
         
         center_widget_layout = QGridLayout()
-        center_widget_layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
+        center_widget_layout.setSpacing(self.size_multiplier*10)
         main_window_layout.addLayout(center_widget_layout)
         
         #Groupboxes
@@ -911,7 +913,7 @@ class MainWindow(QWidget):
         #Right label
         
         modified_file_label = QGroupBox()
-        modified_file_label.setFixedSize(config.getfloat("Misc", "fWindowSize")*550, config.getfloat("Misc", "fWindowSize")*978)
+        modified_file_label.setFixedSize(self.size_multiplier*550, self.size_multiplier*978)
         main_window_layout.addWidget(modified_file_label)
         
         modified_file_label_layout = QVBoxLayout()
@@ -1106,7 +1108,7 @@ class MainWindow(QWidget):
         self.spin_button_1.setAccessibleName("spin_button_1")
         self.spin_button_1.setToolTip("Logic complexity. Higher values usually follow a\nprogression chain.")
         self.spin_button_1.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_1.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_1.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_1.clicked.connect(self.spin_button_1_clicked)
         self.spin_button_1.setVisible(False)
         center_box_1_layout.addWidget(self.spin_button_1, 0, 1)
@@ -1116,7 +1118,7 @@ class MainWindow(QWidget):
         self.spin_button_2.setAccessibleName("spin_button_2")
         self.spin_button_2.setToolTip("Weight of shop items locked behind events.")
         self.spin_button_2.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_2.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_2.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_2.clicked.connect(self.spin_button_2_clicked)
         self.spin_button_2.setVisible(False)
         center_box_1_layout.addWidget(self.spin_button_2, 2, 1)
@@ -1126,7 +1128,7 @@ class MainWindow(QWidget):
         self.spin_button_3.setAccessibleName("spin_button_3")
         self.spin_button_3.setToolTip("Price weight. The higher the value the more extreme\nthe price differences.")
         self.spin_button_3.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_3.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_3.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_3.clicked.connect(self.spin_button_3_clicked)
         self.spin_button_3.setVisible(False)
         center_box_2_layout.addWidget(self.spin_button_3, 0, 1)
@@ -1136,7 +1138,7 @@ class MainWindow(QWidget):
         self.spin_button_4.setAccessibleName("spin_button_4")
         self.spin_button_4.setToolTip("Requirement weight. 2 is linear, 1 and 3 favor early and\nlate map completion respectively.")
         self.spin_button_4.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_4.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_4.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_4.clicked.connect(self.spin_button_4_clicked)
         self.spin_button_4.setVisible(False)
         center_box_3_layout.addWidget(self.spin_button_4, 0, 1)
@@ -1146,7 +1148,7 @@ class MainWindow(QWidget):
         self.spin_button_5.setAccessibleName("spin_button_5")
         self.spin_button_5.setToolTip("Power weight. The higher the value the more extreme\nthe power differences.")
         self.spin_button_5.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_5.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_5.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_5.clicked.connect(self.spin_button_5_clicked)
         self.spin_button_5.setVisible(False)
         center_box_4_layout.addWidget(self.spin_button_5, 0, 1)
@@ -1156,7 +1158,7 @@ class MainWindow(QWidget):
         self.spin_button_6.setAccessibleName("spin_button_6")
         self.spin_button_6.setToolTip("Stat weight. The higher the value the more extreme\nthe stat differences.")
         self.spin_button_6.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_6.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_6.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_6.clicked.connect(self.spin_button_6_clicked)
         self.spin_button_6.setVisible(False)
         center_box_5_layout.addWidget(self.spin_button_6, 0, 1)
@@ -1166,7 +1168,7 @@ class MainWindow(QWidget):
         self.spin_button_8.setAccessibleName("spin_button_8")
         self.spin_button_8.setToolTip("Level weight. The higher the value the more extreme\nthe level differences.")
         self.spin_button_8.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_8.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_8.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_8.clicked.connect(self.spin_button_8_clicked)
         self.spin_button_8.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_8, 1, 1)
@@ -1176,7 +1178,7 @@ class MainWindow(QWidget):
         self.spin_button_9.setAccessibleName("spin_button_9")
         self.spin_button_9.setToolTip("Level weight. The higher the value the more extreme\nthe level differences.")
         self.spin_button_9.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_9.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_9.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_9.clicked.connect(self.spin_button_9_clicked)
         self.spin_button_9.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_9, 2, 1)
@@ -1186,7 +1188,7 @@ class MainWindow(QWidget):
         self.spin_button_10.setAccessibleName("spin_button_10")
         self.spin_button_10.setToolTip("Tolerance weight. The higher the value the more extreme\nthe tolerance differences.")
         self.spin_button_10.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_10.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_10.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_10.clicked.connect(self.spin_button_10_clicked)
         self.spin_button_10.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_10, 3, 1)
@@ -1196,7 +1198,7 @@ class MainWindow(QWidget):
         self.spin_button_11.setAccessibleName("spin_button_11")
         self.spin_button_11.setToolTip("Tolerance weight. The higher the value the more extreme\nthe tolerance differences.")
         self.spin_button_11.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_11.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_11.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_11.clicked.connect(self.spin_button_11_clicked)
         self.spin_button_11.setVisible(False)
         center_box_6_layout.addWidget(self.spin_button_11, 4, 1)
@@ -1204,7 +1206,7 @@ class MainWindow(QWidget):
         
         self.browse_map_button = QPushButton()
         self.browse_map_button.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.browse_map_button.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.browse_map_button.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.browse_map_button.clicked.connect(self.browse_map_button_clicked)
         self.browse_map_button.setVisible(False)
         center_box_7_layout.addWidget(self.browse_map_button, 0, 1)
@@ -1213,7 +1215,7 @@ class MainWindow(QWidget):
         self.outfit_config_button.setIcon(QPixmap("Data\\config.png"))
         self.outfit_config_button.setToolTip("Configure which outfit colors can be chosen.")
         self.outfit_config_button.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.outfit_config_button.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.outfit_config_button.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.outfit_config_button.clicked.connect(self.outfit_config_button_clicked)
         self.outfit_config_button.setVisible(False)
         center_box_8_layout.addWidget(self.outfit_config_button, 0, 1)
@@ -1223,7 +1225,7 @@ class MainWindow(QWidget):
         self.spin_button_12.setAccessibleName("spin_button_12")
         self.spin_button_12.setToolTip("Voice language")
         self.spin_button_12.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_12.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_12.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_12.clicked.connect(self.spin_button_12_clicked)
         self.spin_button_12.setVisible(False)
         center_box_9_layout.addWidget(self.spin_button_12, 0, 1)
@@ -1233,7 +1235,7 @@ class MainWindow(QWidget):
         self.spin_button_13.setAccessibleName("spin_button_13")
         self.spin_button_13.setToolTip("Logic complexity. Higher values usually follow a\nprogression chain.")
         self.spin_button_13.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
-        self.spin_button_13.setFixedSize(config.getfloat("Misc", "fWindowSize")*28, config.getfloat("Misc", "fWindowSize")*24)
+        self.spin_button_13.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
         self.spin_button_13.clicked.connect(self.spin_button_13_clicked)
         self.spin_button_13.setVisible(False)
         center_box_10_layout.addWidget(self.spin_button_13, 0, 1)
@@ -1452,7 +1454,7 @@ class MainWindow(QWidget):
         self.radio_button_5.setChecked(config.getboolean("SpecialMode", "bCustomNG"))
         self.radio_button_6.setChecked(config.getboolean("SpecialMode", "bProgressiveZ"))
         
-        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getfloat("Misc", "fWindowSize")))
+        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getint("Misc", "iWindowSize")))
         
         self.matches_preset()
 
@@ -1469,8 +1471,8 @@ class MainWindow(QWidget):
         import_asset_button.clicked.connect(self.import_asset_button_clicked)
         center_widget_layout.addWidget(import_asset_button, 9, 1, 1, 1)
         
-        archipelago_button = QPushButton("Archipelago")
-        archipelago_button.setToolTip("The people involved with this mod.")
+        archipelago_button = QPushButton("Coming Soon")
+        archipelago_button.setToolTip("™")
         #archipelago_button.clicked.connect(self.archipelago_button_clicked)
         center_widget_layout.addWidget(archipelago_button, 9, 2, 1, 1)
         
@@ -1486,17 +1488,10 @@ class MainWindow(QWidget):
         
         #Window
         
-        self.setFixedSize(config.getfloat("Misc", "fWindowSize")*1800, config.getfloat("Misc", "fWindowSize")*1000)
+        self.setFixedSize(self.size_multiplier*1800, self.size_multiplier*1000)
         self.reset_selected_map_state()
         self.setWindowIcon(QIcon("Data\\icon.png"))
-        
-        #Background
-        
-        background = QPixmap("MapEdit\\Data\\background.png")
-        self.palette = QPalette()
-        self.palette.setBrush(QPalette.Window, background)
         self.show()
-        self.setPalette(self.palette)
         
         #Position
         
@@ -1522,7 +1517,6 @@ class MainWindow(QWidget):
             self.check_box_16.setChecked(False)
             self.check_box_2.setChecked(False)
         self.spin_button_1.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_16_changed(self):
@@ -1539,7 +1533,6 @@ class MainWindow(QWidget):
             self.check_box_16.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
             self.check_box_2.setChecked(False)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_2_changed(self):
@@ -1557,7 +1550,6 @@ class MainWindow(QWidget):
             self.check_box_2.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
         self.spin_button_2.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_17_changed(self):
@@ -1572,7 +1564,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_17)
             self.check_box_17.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_18_changed(self):
@@ -1587,7 +1578,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_18)
             self.check_box_18.setStyleSheet("color: #ffffff")
             self.center_box_1.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_3_changed(self):
@@ -1604,7 +1594,6 @@ class MainWindow(QWidget):
             self.center_box_2.setStyleSheet("color: #ffffff")
             self.check_box_4.setChecked(False)
         self.spin_button_3.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_4_changed(self):
@@ -1620,7 +1609,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_4)
             self.check_box_4.setStyleSheet("color: #ffffff")
             self.center_box_2.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_5_changed(self):
@@ -1636,7 +1624,6 @@ class MainWindow(QWidget):
             self.check_box_5.setStyleSheet("color: #ffffff")
             self.center_box_3.setStyleSheet("color: #ffffff")
         self.spin_button_4.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_6_changed(self):
@@ -1651,7 +1638,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_6)
             self.check_box_6.setStyleSheet("color: #ffffff")
             self.center_box_3.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_7_changed(self):
@@ -1668,7 +1654,6 @@ class MainWindow(QWidget):
             self.center_box_4.setStyleSheet("color: #ffffff")
             self.check_box_8.setChecked(False)
         self.spin_button_5.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_8_changed(self):
@@ -1684,7 +1669,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_8)
             self.check_box_8.setStyleSheet("color: #ffffff")
             self.center_box_4.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_23_changed(self):
@@ -1700,7 +1684,6 @@ class MainWindow(QWidget):
             self.check_box_23.setStyleSheet("color: #ffffff")
             self.center_box_5.setStyleSheet("color: #ffffff")
         self.spin_button_6.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_9_changed(self):
@@ -1715,7 +1698,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_9)
             self.check_box_9.setStyleSheet("color: #ffffff")
             self.center_box_5.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_25_changed(self):
@@ -1730,7 +1712,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_25)
             self.check_box_25.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_10_changed(self):
@@ -1746,7 +1727,6 @@ class MainWindow(QWidget):
             self.check_box_10.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_8.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_26_changed(self):
@@ -1762,7 +1742,6 @@ class MainWindow(QWidget):
             self.check_box_26.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_9.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_11_changed(self):
@@ -1778,7 +1757,6 @@ class MainWindow(QWidget):
             self.check_box_11.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_10.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_27_changed(self):
@@ -1794,7 +1772,6 @@ class MainWindow(QWidget):
             self.check_box_27.setStyleSheet("color: #ffffff")
             self.center_box_6.setStyleSheet("color: #ffffff")
         self.spin_button_11.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_12_changed(self):
@@ -1818,7 +1795,6 @@ class MainWindow(QWidget):
             self.remove_from_modified_files("UI", "Map_StartingPoint" , [])
         self.reset_selected_map_state()
         self.browse_map_button.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_13_changed(self):
@@ -1835,7 +1811,6 @@ class MainWindow(QWidget):
             self.center_box_8.setStyleSheet("color: #ffffff")
         self.update_modified_files_for_outfit()
         self.outfit_config_button.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_24_changed(self):
@@ -1850,7 +1825,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_24)
             self.check_box_24.setStyleSheet("color: #ffffff")
             self.center_box_8.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_15_changed(self):
@@ -1866,7 +1840,6 @@ class MainWindow(QWidget):
             self.check_box_15.setStyleSheet("color: #ffffff")
             self.center_box_9.setStyleSheet("color: #ffffff")
         self.spin_button_12.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_14_changed(self):
@@ -1881,7 +1854,6 @@ class MainWindow(QWidget):
             self.remove_main_param(self.check_box_14)
             self.check_box_14.setStyleSheet("color: #ffffff")
             self.center_box_9.setStyleSheet("color: #ffffff")
-        self.fix_background_glitch()
         self.matches_preset()
 
     def check_box_21_changed(self):
@@ -1896,7 +1868,6 @@ class MainWindow(QWidget):
             self.check_box_21.setStyleSheet("color: #ffffff")
             self.center_box_10.setStyleSheet("color: #ffffff")
         self.spin_button_13.setVisible(checked)
-        self.fix_background_glitch()
         self.matches_preset()
 
     def spin_button_1_clicked(self):
@@ -2109,15 +2080,6 @@ class MainWindow(QWidget):
         config.set("SpecialMode", "bCustomNG",     str(checked_2).lower())
         config.set("SpecialMode", "bProgressiveZ", str(checked_3).lower())
         self.custom_level_field.setVisible(checked_2)
-        self.fix_background_glitch()
-    
-    def fix_background_glitch(self):
-        try:
-            self.center_box_14.setStyleSheet("")
-            QApplication.processEvents()
-            self.setPalette(self.palette)
-        except TypeError:
-            return
     
     def preset_drop_down_changed(self, index):
         current = self.preset_drop_down.itemText(index)
@@ -2289,12 +2251,12 @@ class MainWindow(QWidget):
             return seed
     
     def setting_apply_button_clicked(self):
-        if config.getfloat("Misc", "fWindowSize") == window_sizes[self.window_size_drop_down.currentIndex()]:
+        if config.getint("Misc", "iWindowSize") == window_sizes[self.window_size_drop_down.currentIndex()]:
             self.setting_window.close()
             return
-        config.set("Misc", "fWindowSize", str(window_sizes[self.window_size_drop_down.currentIndex()]))
+        config.set("Misc", "iWindowSize", str(window_sizes[self.window_size_drop_down.currentIndex()]))
         write_config()
-        subprocess.Popen(script_name + ".exe")
+        subprocess.Popen(f"{script_name}.exe")
         sys.exit()
     
     def label_change(self, filetype):
@@ -2490,7 +2452,7 @@ class MainWindow(QWidget):
         self.outfit_window = QDialog(self)
         self.outfit_window.setLayout(self.outfit_window_layout)
         self.outfit_window.setWindowTitle("Outfit")
-        self.outfit_window.setFixedSize(0, config.getfloat("Misc", "fWindowSize")*min(140 + max_size*24, 500))
+        self.outfit_window.setFixedSize(0, self.size_multiplier*min(140 + max_size*24, 500))
         self.outfit_window.exec()
     
     def outfit_confirm_button_clicked(self):
@@ -2538,7 +2500,7 @@ class MainWindow(QWidget):
         return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN.exe")
 
     def setting_button_clicked(self):
-        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getfloat("Misc", "fWindowSize")))
+        self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getint("Misc", "iWindowSize")))
         self.setting_window = QDialog(self)
         self.setting_window.setLayout(self.setting_window_layout)
         self.setting_window.setWindowTitle("Settings")
@@ -2576,7 +2538,7 @@ class MainWindow(QWidget):
         credit_1_label_image = QLabel()
         credit_1_label_image.setPixmap(QPixmap("Data\\profile1.png"))
         credit_1_label_image.setScaledContents(True)
-        credit_1_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_1_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_1_layout.addWidget(credit_1_label_image)
         credit_1_label_text = QLabel()
         credit_1_label_text.setText("<span style=\"font-weight: bold; color: #67aeff;\">Lakifume</span><br/>Author of True Randomization<br/><a href=\"https://github.com/Lakifume\"><font face=Cambria color=#67aeff>Github</font></a>")
@@ -2586,7 +2548,7 @@ class MainWindow(QWidget):
         credit_2_label_image = QLabel()
         credit_2_label_image.setPixmap(QPixmap("Data\\profile2.png"))
         credit_2_label_image.setScaledContents(True)
-        credit_2_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_2_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_2_layout.addWidget(credit_2_label_image)
         credit_2_label_text = QLabel()
         credit_2_label_text.setText("<span style=\"font-weight: bold; color: #e91e63;\">FatihG_</span><br/>Founder of Bloodstained Modding<br/><a href=\"http://discord.gg/b9XBH4f\"><font face=Cambria color=#e91e63>Discord</font></a>")
@@ -2596,7 +2558,7 @@ class MainWindow(QWidget):
         credit_3_label_image = QLabel()
         credit_3_label_image.setPixmap(QPixmap("Data\\profile3.png"))
         credit_3_label_image.setScaledContents(True)
-        credit_3_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_3_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_3_layout.addWidget(credit_3_label_image)
         credit_3_label_text = QLabel()
         credit_3_label_text.setText("<span style=\"font-weight: bold; color: #e6b31a;\">Joneirik</span><br/>Datatable researcher<br/><a href=\"http://wiki.omf2097.com/doku.php?id=joneirik:bs:start\"><font face=Cambria color=#e6b31a>Wiki</font></a>")
@@ -2606,7 +2568,7 @@ class MainWindow(QWidget):
         credit_4_label_image = QLabel()
         credit_4_label_image.setPixmap(QPixmap("Data\\profile4.png"))
         credit_4_label_image.setScaledContents(True)
-        credit_4_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_4_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_4_layout.addWidget(credit_4_label_image)
         credit_4_label_text = QLabel()
         credit_4_label_text.setText("<span style=\"font-weight: bold; color: #db1ee9;\">Atenfyr</span><br/>Creator of UAssetAPI<br/><a href=\"https://github.com/atenfyr/UAssetAPI\"><font face=Cambria color=#db1ee9>Github</font></a>")
@@ -2616,7 +2578,7 @@ class MainWindow(QWidget):
         credit_5_label_image = QLabel()
         credit_5_label_image.setPixmap(QPixmap("Data\\profile5.png"))
         credit_5_label_image.setScaledContents(True)
-        credit_5_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_5_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_5_layout.addWidget(credit_5_label_image)
         credit_5_label_text = QLabel()
         credit_5_label_text.setText("<span style=\"font-weight: bold; color: #25c04e;\">Giwayume</span><br/>Creator of Bloodstained Level Editor<br/><a href=\"https://github.com/Giwayume/BloodstainedLevelEditor\"><font face=Cambria color=#25c04e>Github</font></a>")
@@ -2626,7 +2588,7 @@ class MainWindow(QWidget):
         credit_6_label_image = QLabel()
         credit_6_label_image.setPixmap(QPixmap("Data\\profile6.png"))
         credit_6_label_image.setScaledContents(True)
-        credit_6_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_6_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_6_layout.addWidget(credit_6_label_image)
         credit_6_label_text = QLabel()
         credit_6_label_text.setText("<span style=\"font-weight: bold; color: #ffffff;\">Matyalatte</span><br/>Creator of UE4 DDS Tools<br/><a href=\"https://github.com/matyalatte/UE4-DDS-Tools\"><font face=Cambria color=#ffffff>Github</font></a>")
@@ -2636,7 +2598,7 @@ class MainWindow(QWidget):
         credit_7_label_image = QLabel()
         credit_7_label_image.setPixmap(QPixmap("Data\\profile7.png"))
         credit_7_label_image.setScaledContents(True)
-        credit_7_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_7_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_7_layout.addWidget(credit_7_label_image)
         credit_7_label_text = QLabel()
         credit_7_label_text.setText("<span style=\"font-weight: bold; color: #7b9aff;\">Chrisaegrimm</span><br/>Testing and suffering<br/><a href=\"https://www.twitch.tv/chrisaegrimm\"><font face=Cambria color=#7b9aff>Twitch</font></a>")
@@ -2646,14 +2608,14 @@ class MainWindow(QWidget):
         credit_8_label_image = QLabel()
         credit_8_label_image.setPixmap(QPixmap("Data\\profile8.png"))
         credit_8_label_image.setScaledContents(True)
-        credit_8_label_image.setFixedSize(config.getfloat("Misc", "fWindowSize")*60, config.getfloat("Misc", "fWindowSize")*60)
+        credit_8_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_8_layout.addWidget(credit_8_label_image)
         credit_8_label_text = QLabel()
         credit_8_label_text.setText("<span style=\"font-weight: bold; color: #dd872e;\">Tourmi</span><br/>True Randomization Contributor<br/><a href=\"https://github.com/Tourmi\"><font face=Cambria color=#dd872e>Github</font></a>")
         credit_8_label_text.setOpenExternalLinks(True)
         credit_8_layout.addWidget(credit_8_label_text)
         credit_box_layout = QVBoxLayout()
-        credit_box_layout.setSpacing(config.getfloat("Misc", "fWindowSize")*10)
+        credit_box_layout.setSpacing(self.size_multiplier*10)
         credit_box_layout.addLayout(credit_1_layout)
         credit_box_layout.addLayout(credit_8_layout)
         credit_box_layout.addLayout(credit_4_layout)

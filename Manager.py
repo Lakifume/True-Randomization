@@ -732,6 +732,8 @@ def set_bigtoss_mode():
                 continue
             if entry.split("_")[-1] == "BRV" or datatable["PB_DT_DamageMaster"][entry]["GroupId"].split("_")[-1] == "BRV":
                 continue
+            if entry == "N2008_BackStep":
+                continue
             datatable["PB_DT_DamageMaster"][entry]["KnockBackDistance"] += 20.0
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMin"] = float(random.randint(-180, 180))
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMax"] = float(random.randint(-180, 180))
