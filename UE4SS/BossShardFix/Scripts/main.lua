@@ -1,13 +1,25 @@
 local gameInstance = FindFirstOf("PBGameInstance")
 
+function CanExecuteCommand()
+    local player = gameInstance:GetPlayerCharacter(0)
+    local interfaceHUD = FindFirstOf("PBInterfaceHUD")
+    if not IsInList({1, 6, 9}, gameInstance:GetGameModeType()) then return false end
+    if not player:IsValid() then return false end
+    if player:GetHitPoint() <= 0 then return false end
+    if not interfaceHUD:IsValid() then return false end
+    if not interfaceHUD:GetGaugeWidget():GetIsVisible() then return false end
+    if gameInstance.LoadingManagerInstance:IsLoadingScreenVisible() then return false end
+    return true
+end
+
 NotifyOnNewObject("/Script/ProjectBlood.TutorialWidgetBase", function(ConstructedObject)
-	if GetClassName(ConstructedObject) == "TutorialShardWindow_C" then
-		local shardWindowClosePreHook, shardWindowClosePostHook
-		shardWindowClosePreHook, shardWindowClosePostHook = RegisterHook("/Game/Core/UI/Tutorialv2/TutorialShardWindow.TutorialShardWindow_C:OnCloseWindow", function()
-			CheckBossSoftlock()
-			UnregisterHook("/Script/ProjectBlood.PBLoadingManager:ShowLoadingScreen", shardWindowClosePreHook, shardWindowClosePostHook)
-		end)
-	end
+    if GetClassName(ConstructedObject) == "TutorialShardWindow_C" then
+        local shardWindowClosePreHook, shardWindowClosePostHook
+        shardWindowClosePreHook, shardWindowClosePostHook = RegisterHook("/Game/Core/UI/Tutorialv2/TutorialShardWindow.TutorialShardWindow_C:OnCloseWindow", function()
+            CheckBossSoftlock()
+            UnregisterHook("/Game/Core/UI/Tutorialv2/TutorialShardWindow.TutorialShardWindow_C:OnCloseWindow", shardWindowClosePreHook, shardWindowClosePostHook)
+        end)
+    end
 end)
 
 function CheckBossSoftlock()
@@ -18,13 +30,17 @@ function CheckBossSoftlock()
             ExecuteInGameThread(function() currentBoss:EndBossBattle() end)
         end
         if bossName == "N2001" then
-            ExecuteWithDelay(2000, function() gameInstance.pRoomManager:Warp(FName("m09TRN_003"), true, true, FName("None"), {}) end)
+            ExecuteWithDelay(2000, function() gameInstance.pRoomManager:Warp(FName("m09TRN_003"), false, false, FName("None"), {}) end)
         end
     end
 end
 
+RegisterKeyBind(Key.F2, function()
+    if CanExecuteCommand() then CheckBossSoftlock() end
+end)
+
 function GetClassName(object)
-	return SplitString(object:GetFullName(), " ")[1]
+    return SplitString(object:GetFullName(), " ")[1]
 end
 
 function IsInList(list, item)
@@ -35,9 +51,9 @@ function IsInList(list, item)
 end
 
 function SplitString(inString, separator)
-	local list = {}
-	for subString in string.gmatch(inString, "([^"..separator.."]+)") do
-		table.insert(list, subString)
-	end
-	return list
+    local list = {}
+    for subString in string.gmatch(inString, "([^"..separator.."]+)") do
+        table.insert(list, subString)
+    end
+    return list
 end
