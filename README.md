@@ -9,7 +9,7 @@ Discord: https://discord.gg/nUbFA7MEeU
 ## How to build from source
 
 Requirements:
-* latest version of Python
+* latest version of Python 3.10
 * latest version of Python.psutil
 * latest version of Python.pythonnet
 * latest version of Python.requests
