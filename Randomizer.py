@@ -2403,11 +2403,11 @@ class MainWindow(QGraphicsView):
                 self.dlc_failure()
                 return dlc_list
             with open(f"{steam_path}\\config\\loginusers.vdf", "r", encoding="utf8") as file_reader:
-                user_config = vdf.parse(file_reader)["users"]
+                user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
             #Determine the Steam friend code based on their user ID
             steam_user = None
             for user in user_config:
-                if user_config[user]["MostRecent"] == "1":
+                if user_config[user]["mostrecent"] == "1":
                     steam_user = int(user) - 76561197960265728
                     break
             local_config_path = f"{steam_path}\\userdata\\{steam_user}\\config\\localconfig.vdf"
@@ -2415,7 +2415,7 @@ class MainWindow(QGraphicsView):
                 self.dlc_failure()
                 return dlc_list
             with open(local_config_path, "r", encoding="utf8") as file_reader:
-                dlc_config = vdf.parse(file_reader)["UserLocalConfigStore"]["apptickets"]
+                dlc_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["userlocalconfigstore"]["apptickets"]
             #Check for DLC IDs in the config
             if "1041460" in dlc_config:
                 dlc_list.append(DLCType.IGA)
@@ -2447,13 +2447,19 @@ class MainWindow(QGraphicsView):
         self.dlc_failure()
         return dlc_list
     
+    def lowercase_vdf_dict(self, vdf_dict):
+        new_dict = {}
+        for key, value in vdf_dict.items():
+            new_dict[key.lower()] = self.lowercase_vdf_dict(value) if type(value) is dict else value
+        return new_dict
+    
     def dlc_failure(self):
         box = QMessageBox(self)
         box.setWindowTitle("Warning")
         box.setIcon(QMessageBox.Warning)
         box.setText("Failed to retrieve DLC information from user installation. Proceeding without DLC.")
         box.exec()
-
+    
     def generate_button_clicked(self):
         #Check if path is valid
         
