@@ -40,8 +40,6 @@ def init():
     original_datatable = {}
     global datatable_entry_index
     datatable_entry_index = {}
-    global datatable_entry_name
-    datatable_entry_name = {}
     global string_entry_exceptions
     string_entry_exceptions = [
         "ITEM_EXPLAIN_RolledOmelette",
@@ -178,7 +176,6 @@ def table_complex_to_simple():
                         datatable[file][str(entry.Name)][str(data.Name)] = Utility.unreal_to_python_data(data)
                 original_datatable[file] = copy.deepcopy(datatable[file])
                 datatable_entry_index[file] = {}
-                datatable_entry_name[file] = {}
             elif file_to_type[file] == FileType.StringTable:
                 stringtable[file] = {}
                 for entry in game_data[file].Exports[0].Table:
@@ -204,9 +201,6 @@ def table_simple_to_complex():
                         struct = game_data[file].Exports[0].Table.Data[entry_count].Value[data_count]
                         Utility.python_to_unreal_data(datatable[file][entry][data], struct, game_data[file])
                         data_count += 1
-                    #Change the name of the entry if necessary
-                    if entry in datatable_entry_name[file]:
-                        game_data[file].Exports[0].Table.Data[entry_count].Name = FName.FromString(game_data[file], datatable_entry_name[file][entry])
                     entry_count += 1
             elif file_to_type[file] == FileType.StringTable:
                 game_data[file].Exports[0].Table.Clear()
@@ -635,16 +629,16 @@ def apply_default_tweaks():
         constant["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
     #Make DLC armors inherit the stats of their higher level counterpart to reflect the simplified tier system
     datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit1"])
-    datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit2"])
+    datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit3"])
     datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit5"])
     datatable["PB_DT_ArmorMaster"]["MagicalGirlBody"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody1"])
-    datatable["PB_DT_ArmorMaster"]["MagicalGirlBody2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody2"])
+    datatable["PB_DT_ArmorMaster"]["MagicalGirlBody2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody3"])
     datatable["PB_DT_ArmorMaster"]["MagicalGirlBody4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody5"])
     datatable["PB_DT_ArmorMaster"]["ShantaeOutfit1"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit2"])
     datatable["PB_DT_ArmorMaster"]["ShantaeOutfit3"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit4"])
     datatable["PB_DT_ArmorMaster"]["ShantaeOutfit5"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit6"])
     datatable["PB_DT_ArmorMaster"]["FestivalKimono"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono1"])
-    datatable["PB_DT_ArmorMaster"]["FestivalKimono2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono2"])
+    datatable["PB_DT_ArmorMaster"]["FestivalKimono2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono3"])
     datatable["PB_DT_ArmorMaster"]["FestivalKimono4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono5"])
     #With this mod vanilla rando is pointless and obselete so remove its widget
     #Also prevent going online with this mod active
