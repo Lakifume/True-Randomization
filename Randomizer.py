@@ -110,6 +110,7 @@ modified_files = {
             "PB_DT_ItemMaster",
             "PB_DT_QuestMaster",
             "PB_DT_RoomMaster",
+            "PB_DT_SetBonus",
             "PB_DT_ShardMaster",
             "PB_DT_SoundMaster",
             "PB_DT_SpecialEffectDefinitionMaster",
