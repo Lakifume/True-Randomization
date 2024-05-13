@@ -82,7 +82,7 @@ def set_default_shard_power():
 
 def randomize_shard_power(scale):
     for entry in constant["ShardBase"]:
-        if entry in skip_list + ["SummonBuell", "LigaDoin"]:
+        if entry in skip_list + ["SummonBuell", "SummonBuChan", "LigaDoin"]:
             continue
         original_cost      = int(datatable["PB_DT_ShardMaster"][entry]["useMP"])
         original_doin_cost = int(datatable["PB_DT_ShardMaster"]["LigaDoin"]["useMP"])

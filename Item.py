@@ -515,7 +515,7 @@ def init():
     global enemy_to_room
     enemy_to_room = {}
     global enemy_skip_list
-    enemy_skip_list = []
+    enemy_skip_list = ["N2013"]
     #Pool
     global chest_type
     chest_type = []
@@ -608,12 +608,117 @@ def set_hard_mode():
     global difficulty
     difficulty = "Hard"
 
-def remove_iga_dlc():
-    enemy_skip_list.append("N2013")
-    while "NeverSatisfied" in constant["ShardDrop"]["ItemPool"]:
-        constant["ShardDrop"]["ItemPool"].remove("NeverSatisfied")
-    while "SwordWhip" in constant["ItemDrop"]["Weapon"]["ItemPool"]:
-        constant["ItemDrop"]["Weapon"]["ItemPool"].remove("SwordWhip")
+def add_iga_dlc():
+    enemy_skip_list.remove("N2013")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("SwordWhip")
+    constant["ShardDrop"]["ItemPool"].append("NeverSatisfied")
+    constant["QuestRequirement"]["Memento"]["ItemPool"].append("SwordWhip")
+
+def del_iga_dlc():
+    datatable["PB_DT_ItemMaster"]["SwordWhip"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["NeverSatisfied"]["ItemType"] = "ECarriedCatalog::None"
+
+def add_shantae_dlc():
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("ShantaeVest")
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("ShantaeTiara")
+    constant["ItemDrop"]["Headgear"]["ItemPool"].append("ShantaeBandana")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("ShantaeOutfit1")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("ShantaeOutfit3")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("ShantaeOutfit5")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateGun1")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateGun3")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateGun5")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateSword1")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateSword3")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("PirateSword5")
+    constant["ShardDrop"]["ItemPool"].append("Fireball")
+
+def del_shantae_dlc():
+    datatable["PB_DT_ItemMaster"]["ShantaeVest"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["ShantaeTiara"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["ShantaeBandana"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["ShantaeOutfit1"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["ShantaeOutfit3"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["ShantaeOutfit5"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateGun1"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateGun3"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateGun5"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateSword1"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateSword3"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["PirateSword5"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Fireball"]["ItemType"] = "ECarriedCatalog::None"
+
+def add_succubus_dlc():
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("VampiricWings")
+    constant["ItemDrop"]["Headgear"]["ItemPool"].append("AlluringHorns")
+    constant["ItemDrop"]["Scarf"]["ItemPool"].append("VampiricChoker")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("VampiricSkinsuit")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("VampiricSkinsuit2")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("VampiricSkinsuit4")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Scythe")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Scythe2")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Scythe4")
+    constant["ShardDrop"]["ItemPool"].append("Dreamsteal")
+
+def del_succubus_dlc():
+    datatable["PB_DT_ItemMaster"]["VampiricWings"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["AlluringHorns"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["VampiricChoker"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["VampiricSkinsuit"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["VampiricSkinsuit2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["VampiricSkinsuit4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Scythe"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Scythe2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Scythe4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Dreamsteal"]["ItemType"] = "ECarriedCatalog::None"
+
+def add_magicgirl_dlc():
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("MagicalGirlAccessory")
+    constant["ItemDrop"]["Headgear"]["ItemPool"].append("MagicalGirlHead")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("MagicalGirlBody")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("MagicalGirlBody2")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("MagicalGirlBody4")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("MagicalScepter")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("MagicalScepter2")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("MagicalScepter4")
+    constant["ShardDrop"]["ItemPool"].append("SummonBuChan")
+    constant["ShardDrop"]["ItemPool"].append("FamiliaBuChan")
+
+def del_magicgirl_dlc():
+    datatable["PB_DT_ItemMaster"]["MagicalGirlAccessory"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalGirlHead"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalGirlBody"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalGirlBody2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalGirlBody4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalScepter"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalScepter2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["MagicalScepter4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["SummonBuChan"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["FamiliaBuChan"]["ItemType"] = "ECarriedCatalog::None"
+
+def add_japanese_dlc():
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("FestivalMask")
+    constant["ItemDrop"]["Accessory"]["ItemPool"].append("Sarashi")
+    constant["ItemDrop"]["Headgear"]["ItemPool"].append("Kanzashi")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("FestivalKimono")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("FestivalKimono2")
+    constant["ItemDrop"]["Armor"]["ItemPool"].append("FestivalKimono4")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Wagasa")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Wagasa2")
+    constant["ItemDrop"]["Weapon"]["ItemPool"].append("Wagasa4")
+    constant["ShardDrop"]["ItemPool"].append("SakuraRain")
+
+def del_japanese_dlc():
+    datatable["PB_DT_ItemMaster"]["FestivalMask"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Sarashi"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Kanzashi"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["FestivalKimono"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["FestivalKimono2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["FestivalKimono4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Wagasa"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Wagasa2"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["Wagasa4"]["ItemType"] = "ECarriedCatalog::None"
+    datatable["PB_DT_ItemMaster"]["SakuraRain"]["ItemType"] = "ECarriedCatalog::None"
 
 def fill_enemy_to_room():
     #Gather a list of rooms per enemy
@@ -652,13 +757,13 @@ def remove_infinite_items():
         constant["QuestRequirement"]["Memento"]["ItemPool"].remove("Recyclehat")
 
 def add_starting_item(item):
-    entry = "Start_" + item
+    entry = f"Start_{item}"
     #Determine quantity based on item type
     quantity = None
     for string in ["Item", "Enemy"]:
-        for data in constant[string + "Drop"]:
-            if item in constant[string + "Drop"][data]["ItemPool"]:
-                quantity = constant[string + "Drop"][data]["ItemHighQuantity"]
+        for data in constant[f"{string}Drop"]:
+            if item in constant[f"{string}Drop"][data]["ItemPool"]:
+                quantity = constant[f"{string}Drop"][data]["ItemHighQuantity"]
     if not quantity:
         quantity = 7 if item == "Shortcut" else 1
     datatable["PB_DT_DropRateMaster"][entry] = copy.deepcopy(datatable["PB_DT_DropRateMaster"]["Tresurebox_SAN000_01"])

@@ -59,6 +59,14 @@ def init():
         "WhipsOfLightDarkness",
         "TrustMusket"
     ]
+    global dlc_weapons
+    dlc_weapons = [
+        "Scythe",
+        "MagicalScepter",
+        "PirateSword",
+        "PirateGun",
+        "Wagasa"
+    ]
     global stat_to_property
     stat_to_property = {
         "MeleeAttack":  "Attack",
@@ -84,16 +92,18 @@ def init():
     }
     global weapon_type_to_max_value
     weapon_type_to_max_value = {
-        "Boots":         45,
-        "Knife":         50,
-        "Rapir":         52,
-        "ShortSword":    58,
-        "Club":          58,
-        "LargeSword":    84,
-        "JapaneseSword": 52,
-        "Spear":         58,
-        "Whip":          52,
-        "Gun":           32
+        "Boots":           45,
+        "Knife":           50,
+        "Rapir":           52,
+        "ShortSword":      58,
+        "Club":            58,
+        "LargeSword":      84,
+        "JapaneseSword":   52,
+        "Spear":           58,
+        "Whip":            52,
+        "Gun":             32,
+        "Scythe":          55,
+        "MagicalGirlWand": 26
     }
     global equipment_type_to_max_value
     equipment_type_to_max_value = {
@@ -179,16 +189,18 @@ def randomize_weapon_power():
         max_value = weapon_type_to_max_value[datatable["PB_DT_WeaponMaster"][entry]["WeaponType"].split("::")[1]]
         min_value = round(max_value*min_value_multiplier)
         reduction = get_weapon_reduction(entry)
-        #Make 8 bit weapons retain their tier system
-        if entry in bit_weapons:
-            bweapon_power = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry + "3"]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_weight)/3
-            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power)
-        elif entry[:-1] in bit_weapons and entry[-1] == "2":
-            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power*2)
-        elif entry[:-1] in bit_weapons and entry[-1] == "3":
-            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(bweapon_power*3)
-        else:
+        weapon_tier = get_weapon_tier(entry)
+        if weapon_tier == 0:
             datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_weight)
+        #Make progressive weapons retain their tier system
+        if weapon_tier == 1:
+            high_tier_name = (entry[:-1] if entry[-1].isnumeric() else entry) + str(3 if entry in bit_weapons else 5 if "Pirate" in entry else 4)
+            weapon_power = Utility.random_weighted(datatable["PB_DT_WeaponMaster"][high_tier_name]["MeleeAttack"], int(min_value*low_bound_multiplier*reduction), int(max_value*high_bound_multiplier*reduction), 1, global_stat_weight)/3
+            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(weapon_power)
+        if weapon_tier == 2:
+            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(weapon_power*2)
+        if weapon_tier == 3:
+            datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"] = int(weapon_power*3)
         #Update magic attack for weapons with elemental attributes
         if datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] != 0:
             datatable["PB_DT_WeaponMaster"][entry]["MagicAttack"] = datatable["PB_DT_WeaponMaster"][entry]["MeleeAttack"]
@@ -251,9 +263,9 @@ def add_armor_reference(armor_id):
     new_file.Exports[1].Data[3].Value          = [sub_struct]
     new_file.Exports[1].Data[4].Value          = FSoftObjectPath(None, FName.FromString(new_file, dialogue_chroma_skin_mat), None)
     new_file.Exports[1].Data[5].Value          = FSoftObjectPath(None, FName.FromString(new_file, dialogue_default_skin_mat), None)
-    new_file.Exports[1].Data[7].Value          = False
-    new_file.Exports[1].Data[8].Value          = 1
-    new_file.Exports[1].Data[9].Value          = 0
+    new_file.Exports[1].Data[9].Value          = False
+    new_file.Exports[1].Data[10].Value         = 1
+    new_file.Exports[1].Data[11].Value         = 0
     new_file.Write("\\".join([Manager.mod_dir, Manager.file_to_path["BDBP_BodyValkyrie"], f"BDBP_{armor_id}.uasset"]))
 
 def has_negative_stat(equipment):
@@ -262,9 +274,18 @@ def has_negative_stat(equipment):
             return True
     return False
 
+def get_weapon_tier(weapon):
+    if weapon in bit_weapons + dlc_weapons:
+        return 1
+    if weapon[:-1] in bit_weapons:
+        return int(weapon[-1])
+    if weapon[:-1] in dlc_weapons:
+        return (int(weapon[-1]) + (0 if "Pirate" in weapon else 1))//2 + 1
+    return 0
+
 def get_weapon_reduction(weapon):
     #Apply reductions to weapons with special properties to not make them super broken
-    if "ShieldWeapon" in weapon:
+    if "ShieldWeapon" in weapon or "Wagasa" in weapon:
         return 0.9
     if weapon == "Juwuse":
         return 0.85

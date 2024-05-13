@@ -26,9 +26,23 @@ import zipfile
 import requests
 import subprocess
 import configparser
+import traceback
 import psutil
+import vdf
+
+from enum import Enum
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+steam_id = "Steam"
+gog_id = "GOG Games"
 
 item_color    = "#ff8080"
 shop_color    = "#ffff80"
@@ -155,45 +169,52 @@ def write_and_exit():
     write_config()
     sys.exit()
 
+#Enums
+
+class DLCType(Enum):
+    IGA       = 0
+    Shantae   = 1
+    Succubus  = 2
+    MagicGirl = 3
+    Japanese  = 4
+
 #Threads
 
 class Signaller(QObject):
     progress = Signal(int)
     finished = Signal()
-    error    = Signal()
+    error    = Signal(str)
 
 class Generate(QThread):
-    def __init__(self, progress_bar, selected_seed, selected_map, starting_items):
+    def __init__(self, progress_bar, selected_seed, selected_map, starting_items, owned_dlc):
         QThread.__init__(self)
         self.signaller = Signaller()
         self.progress_bar = progress_bar
         self.selected_seed = selected_seed
         self.selected_map = selected_map
         self.starting_items = starting_items
+        self.owned_dlc = owned_dlc
     
     def run(self):
         try:
             self.process()
         except Exception:
-            self.signaller.error.emit()
-            raise
+            self.signaller.error.emit(traceback.format_exc())
 
     def process(self):
         current = 0
         self.signaller.progress.emit(current)
         
-        #Check IGA DLC
+        #Check DLCs
         
-        has_iga_dlc = os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\pakchunk2-WindowsNoEditor.pak")
-        if not has_iga_dlc:
+        if not DLCType.IGA in self.owned_dlc:
             for file in list(Manager.file_to_path):
                 if "DLC_0002" in Manager.file_to_path[file]:
                     del Manager.file_to_path[file]
                     del Manager.file_to_type[file]
         
-        #Initialize directories
+        #Mod directory
         
-        #Mod
         if os.path.isdir(Manager.mod_dir):
             shutil.rmtree(Manager.mod_dir)
         for directory in list(Manager.file_to_path.values()):
@@ -202,7 +223,7 @@ class Generate(QThread):
         if not os.path.isdir(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync"):
             os.makedirs(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync")
         
-        #Logs
+        #Log directory
         
         if os.path.isdir("Spoiler"):
             shutil.rmtree("Spoiler")
@@ -263,12 +284,8 @@ class Generate(QThread):
         #Map
         
         random.seed(self.selected_seed)
-        if self.selected_map:
-            pass
-        elif config.getboolean("MapRandomization", "bRoomLayout"):
-            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
-        else:
-            self.selected_map = ""
+        if not self.selected_map and config.getboolean("MapRandomization", "bRoomLayout"):
+            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
         Manager.load_map(self.selected_map)
         Room.get_map_info()
         Room.update_any_map()
@@ -298,8 +315,30 @@ class Generate(QThread):
         if not config.getboolean("GameDifficulty", "bNormal"):
             Item.set_hard_mode()
         
-        if not has_iga_dlc:
-            Item.remove_iga_dlc()
+        if not DLCType.IGA in self.owned_dlc:
+            Item.del_iga_dlc()
+        elif not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_iga_dlc()
+        
+        if not DLCType.Shantae in self.owned_dlc:
+            Item.del_shantae_dlc()
+        elif not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_shantae_dlc()
+        
+        if not DLCType.Succubus in self.owned_dlc:
+            Item.del_succubus_dlc()
+        elif not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_succubus_dlc()
+        
+        if not DLCType.MagicGirl in self.owned_dlc:
+            Item.del_magicgirl_dlc()
+        elif not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_magicgirl_dlc()
+        
+        if not DLCType.Japanese in self.owned_dlc:
+            Item.del_japanese_dlc()
+        elif not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_japanese_dlc()
         
         if config.getboolean("EnemyRandomization", "bEnemyLocations"):
             random.seed(self.selected_seed)
@@ -678,8 +717,7 @@ class Update(QThread):
         try:
             self.process()
         except Exception:
-            self.signaller.error.emit()
-            raise
+            self.signaller.error.emit(traceback.format_exc())
 
     def process(self):
         current = 0
@@ -748,8 +786,7 @@ class Import(QThread):
         try:
             self.process()
         except Exception:
-            self.signaller.error.emit()
-            raise
+            self.signaller.error.emit(traceback.format_exc())
 
     def process(self):
         current = 0
@@ -778,6 +815,7 @@ class Import(QThread):
 class MainWindow(QGraphicsView):
     def __init__(self):
         super().__init__()
+        sys.excepthook = self.exception_hook
         self.setEnabled(False)
         self.init()
         self.check_for_updates()
@@ -1319,6 +1357,8 @@ class MainWindow(QGraphicsView):
         self.seed_window_layout = QVBoxLayout()
         seed_window_top = QHBoxLayout()
         self.seed_window_layout.addLayout(seed_window_top)
+        seed_window_center = QHBoxLayout()
+        self.seed_window_layout.addLayout(seed_window_center)
         seed_window_bottom = QHBoxLayout()
         self.seed_window_layout.addLayout(seed_window_bottom)
         
@@ -1329,15 +1369,20 @@ class MainWindow(QGraphicsView):
         
         seed_new_button = QPushButton("New Seed")
         seed_new_button.clicked.connect(self.seed_new_button_clicked)
-        seed_window_bottom.addWidget(seed_new_button)
+        seed_window_center.addWidget(seed_new_button)
         
         seed_test_button = QPushButton("Test Seed")
         seed_test_button.clicked.connect(self.seed_test_button_clicked)
-        seed_window_bottom.addWidget(seed_test_button)
+        seed_window_center.addWidget(seed_test_button)
         
         seed_confirm_button = QPushButton("Confirm")
         seed_confirm_button.clicked.connect(self.seed_confirm_button_clicked)
-        seed_window_bottom.addWidget(seed_confirm_button)
+        seed_window_center.addWidget(seed_confirm_button)
+
+        self.dlc_check_box = QCheckBox("Ignore DLC")
+        self.dlc_check_box.setToolTip("Make it so that any DLC that may be installed in\nyour game will be ignored by the randomization.")
+        self.dlc_check_box.stateChanged.connect(self.dlc_check_box_changed)
+        seed_window_bottom.addWidget(self.dlc_check_box)
         
         #Outfit config
         
@@ -1454,6 +1499,8 @@ class MainWindow(QGraphicsView):
         self.radio_button_5.setChecked(config.getboolean("SpecialMode", "bCustomNG"))
         self.radio_button_6.setChecked(config.getboolean("SpecialMode", "bProgressiveZ"))
         
+        self.dlc_check_box.setChecked(config.getboolean("Misc", "bIgnoreDLC"))
+        
         self.window_size_drop_down.setCurrentIndex(window_sizes.index(config.getint("Misc", "iWindowSize")))
         
         self.matches_preset()
@@ -1490,7 +1537,7 @@ class MainWindow(QGraphicsView):
         
         self.setFixedSize(self.size_multiplier*1800, self.size_multiplier*1000)
         self.reset_selected_map_state()
-        self.setWindowIcon(QIcon("Data\\icon.png"))
+        self.setWindowIcon(QIcon(resource_path("Bloodstained.ico")))
         self.show()
         
         #Position
@@ -1505,7 +1552,7 @@ class MainWindow(QGraphicsView):
     def check_box_1_changed(self):
         checked = self.check_box_1.isChecked()
         config.set("ItemRandomization", "bOverworldPool", str(checked).lower())
-        if self.check_box_1.isChecked():
+        if checked:
             self.add_main_param(self.check_box_1)
             self.check_box_1.setStyleSheet(f"color: {item_color}")
             if self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
@@ -1522,7 +1569,7 @@ class MainWindow(QGraphicsView):
     def check_box_16_changed(self):
         checked = self.check_box_16.isChecked()
         config.set("ItemRandomization", "bQuestPool", str(checked).lower())
-        if self.check_box_16.isChecked():
+        if checked:
             self.add_main_param(self.check_box_16)
             self.check_box_16.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
@@ -1538,7 +1585,7 @@ class MainWindow(QGraphicsView):
     def check_box_2_changed(self):
         checked = self.check_box_2.isChecked()
         config.set("ItemRandomization", "bShopPool", str(checked).lower())
-        if self.check_box_2.isChecked():
+        if checked:
             self.add_main_param(self.check_box_2)
             self.check_box_2.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked() and self.check_box_18.isChecked():
@@ -1555,7 +1602,7 @@ class MainWindow(QGraphicsView):
     def check_box_17_changed(self):
         checked = self.check_box_17.isChecked()
         config.set("ItemRandomization", "bQuestRequirements", str(checked).lower())
-        if self.check_box_17.isChecked():
+        if checked:
             self.add_main_param(self.check_box_17)
             self.check_box_17.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_18.isChecked():
@@ -1569,7 +1616,7 @@ class MainWindow(QGraphicsView):
     def check_box_18_changed(self):
         checked = self.check_box_18.isChecked()
         config.set("ItemRandomization", "bRemoveInfinites", str(checked).lower())
-        if self.check_box_18.isChecked():
+        if checked:
             self.add_main_param(self.check_box_18)
             self.check_box_18.setStyleSheet(f"color: {item_color}")
             if self.check_box_1.isChecked() and self.check_box_2.isChecked() and self.check_box_16.isChecked() and self.check_box_17.isChecked():
@@ -1583,7 +1630,7 @@ class MainWindow(QGraphicsView):
     def check_box_3_changed(self):
         checked = self.check_box_3.isChecked()
         config.set("ShopRandomization", "bItemCostAndSellingPrice", str(checked).lower())
-        if self.check_box_3.isChecked():
+        if checked:
             self.add_main_param(self.check_box_3)
             self.check_box_3.setStyleSheet(f"color: {shop_color}")
             if self.check_box_4.isChecked():
@@ -1599,7 +1646,7 @@ class MainWindow(QGraphicsView):
     def check_box_4_changed(self):
         checked = self.check_box_4.isChecked()
         config.set("ShopRandomization", "bScaleSellingPriceWithCost", str(checked).lower())
-        if self.check_box_4.isChecked():
+        if checked:
             self.add_main_param(self.check_box_4)
             self.check_box_4.setStyleSheet(f"color: {shop_color}")
             if self.check_box_3.isChecked():
@@ -1614,7 +1661,7 @@ class MainWindow(QGraphicsView):
     def check_box_5_changed(self):
         checked = self.check_box_5.isChecked()
         config.set("LibraryRandomization", "bMapRequirements", str(checked).lower())
-        if self.check_box_5.isChecked():
+        if checked:
             self.add_main_param(self.check_box_5)
             self.check_box_5.setStyleSheet(f"color: {library_color}")
             if self.check_box_6.isChecked():
@@ -1629,7 +1676,7 @@ class MainWindow(QGraphicsView):
     def check_box_6_changed(self):
         checked = self.check_box_6.isChecked()
         config.set("LibraryRandomization", "bTomeAppearance", str(checked).lower())
-        if self.check_box_6.isChecked():
+        if checked:
             self.add_main_param(self.check_box_6)
             self.check_box_6.setStyleSheet(f"color: {library_color}")
             if self.check_box_5.isChecked():
@@ -1643,7 +1690,7 @@ class MainWindow(QGraphicsView):
     def check_box_7_changed(self):
         checked = self.check_box_7.isChecked()
         config.set("ShardRandomization", "bShardPowerAndMagicCost", str(checked).lower())
-        if self.check_box_7.isChecked():
+        if checked:
             self.add_main_param(self.check_box_7)
             self.check_box_7.setStyleSheet(f"color: {shard_color}")
             if self.check_box_8.isChecked():
@@ -1659,7 +1706,7 @@ class MainWindow(QGraphicsView):
     def check_box_8_changed(self):
         checked = self.check_box_8.isChecked()
         config.set("ShardRandomization", "bScaleMagicCostWithPower", str(checked).lower())
-        if self.check_box_8.isChecked():
+        if checked:
             self.add_main_param(self.check_box_8)
             self.check_box_8.setStyleSheet(f"color: {shard_color}")
             if self.check_box_7.isChecked():
@@ -1674,7 +1721,7 @@ class MainWindow(QGraphicsView):
     def check_box_23_changed(self):
         checked = self.check_box_23.isChecked()
         config.set("EquipmentRandomization", "bGlobalGearStats", str(checked).lower())
-        if self.check_box_23.isChecked():
+        if checked:
             self.add_main_param(self.check_box_23)
             self.check_box_23.setStyleSheet(f"color: {equip_color}")
             if self.check_box_9.isChecked():
@@ -1689,7 +1736,7 @@ class MainWindow(QGraphicsView):
     def check_box_9_changed(self):
         checked = self.check_box_9.isChecked()
         config.set("EquipmentRandomization", "bCheatGearStats", str(checked).lower())
-        if self.check_box_9.isChecked():
+        if checked:
             self.add_main_param(self.check_box_9)
             self.check_box_9.setStyleSheet(f"color: {equip_color}")
             if self.check_box_23.isChecked():
@@ -1703,7 +1750,7 @@ class MainWindow(QGraphicsView):
     def check_box_25_changed(self):
         checked = self.check_box_25.isChecked()
         config.set("EnemyRandomization", "bEnemyLocations", str(checked).lower())
-        if self.check_box_25.isChecked():
+        if checked:
             self.add_main_param(self.check_box_25)
             self.check_box_25.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
@@ -1717,7 +1764,7 @@ class MainWindow(QGraphicsView):
     def check_box_10_changed(self):
         checked = self.check_box_10.isChecked()
         config.set("EnemyRandomization", "bEnemyLevels", str(checked).lower())
-        if self.check_box_10.isChecked():
+        if checked:
             self.add_main_param(self.check_box_10)
             self.check_box_10.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
@@ -1732,7 +1779,7 @@ class MainWindow(QGraphicsView):
     def check_box_26_changed(self):
         checked = self.check_box_26.isChecked()
         config.set("EnemyRandomization", "bBossLevels", str(checked).lower())
-        if self.check_box_26.isChecked():
+        if checked:
             self.add_main_param(self.check_box_26)
             self.check_box_26.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_11.isChecked() and self.check_box_27.isChecked():
@@ -1747,7 +1794,7 @@ class MainWindow(QGraphicsView):
     def check_box_11_changed(self):
         checked = self.check_box_11.isChecked()
         config.set("EnemyRandomization", "bEnemyTolerances", str(checked).lower())
-        if self.check_box_11.isChecked():
+        if checked:
             self.add_main_param(self.check_box_11)
             self.check_box_11.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_27.isChecked():
@@ -1762,7 +1809,7 @@ class MainWindow(QGraphicsView):
     def check_box_27_changed(self):
         checked = self.check_box_27.isChecked()
         config.set("EnemyRandomization", "bBossTolerances", str(checked).lower())
-        if self.check_box_27.isChecked():
+        if checked:
             self.add_main_param(self.check_box_27)
             self.check_box_27.setStyleSheet(f"color: {enemy_color}")
             if self.check_box_25.isChecked() and self.check_box_10.isChecked() and self.check_box_26.isChecked() and self.check_box_11.isChecked():
@@ -1777,7 +1824,7 @@ class MainWindow(QGraphicsView):
     def check_box_12_changed(self):
         checked = self.check_box_12.isChecked()
         config.set("MapRandomization", "bRoomLayout", str(checked).lower())
-        if self.check_box_12.isChecked():
+        if checked:
             self.add_main_param(self.check_box_12)
             self.check_box_12.setStyleSheet(f"color: {map_color}")
             self.center_box_7.setStyleSheet(f"color: {map_color}")
@@ -1800,7 +1847,7 @@ class MainWindow(QGraphicsView):
     def check_box_13_changed(self):
         checked = self.check_box_13.isChecked()
         config.set("GraphicRandomization", "bOutfitColor", str(checked).lower())
-        if self.check_box_13.isChecked():
+        if checked:
             self.add_main_param(self.check_box_13)
             self.check_box_13.setStyleSheet(f"color: {graphic_color}")
             if self.check_box_24.isChecked():
@@ -1816,7 +1863,7 @@ class MainWindow(QGraphicsView):
     def check_box_24_changed(self):
         checked = self.check_box_24.isChecked()
         config.set("GraphicRandomization", "bBackerPortraits", str(checked).lower())
-        if self.check_box_24.isChecked():
+        if checked:
             self.add_main_param(self.check_box_24)
             self.check_box_24.setStyleSheet(f"color: {graphic_color}")
             if self.check_box_13.isChecked():
@@ -2180,68 +2227,67 @@ class MainWindow(QGraphicsView):
         
         if not config.get("Misc", "sSeed"):
             return
-        self.selected_test_seed = self.cast_seed(config.get("Misc", "sSeed"))
-        self.selected_test_map = config.get("MapRandomization", "sSelectedMap")
+        self.selected_seed = self.cast_seed(config.get("Misc", "sSeed"))
+        self.selected_map = config.get("MapRandomization", "sSelectedMap") if config.getboolean("MapRandomization", "bRoomLayout") else ""
         
         #Start
         
-        try:
-            Manager.init()
-            Manager.load_constant()
-            
-            Item.init()
-            Enemy.init()
-            Room.init()
-            Bloodless.init()
-            
-            Item.set_logic_complexity(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
-            Bloodless.set_logic_complexity(config.getint("ExtraRandomization", "iBloodlessCandlesComplexity"))
-            
-            random.seed(self.selected_test_seed)
-            if self.selected_test_map:
-                pass
-            elif config.getboolean("MapRandomization", "bRoomLayout"):
-                self.selected_test_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else None
-            else:
-                self.selected_test_map = ""
-            Manager.load_map(self.selected_test_map)
-            Room.get_map_info()
-            
-            if not config.getboolean("GameDifficulty", "bNormal"):
-                Item.set_hard_mode()
-            
-            if config.getboolean("EnemyRandomization", "bEnemyLocations"):
-                random.seed(self.selected_test_seed)
-                Enemy.randomize_enemy_locations()
-            
-            Item.fill_enemy_to_room()
-            
-            if config.getboolean("ItemRandomization", "bOverworldPool"):
-                random.seed(self.selected_test_seed)
-                Item.key_logic()
-            
-            if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-                random.seed(self.selected_test_seed)
-                Bloodless.randomize_bloodless_candles()
-            
-            box = QMessageBox(self)
-            box.setWindowTitle("Test")
-            if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-                box.setText(Bloodless.create_log_string(self.selected_test_seed, self.selected_test_map))
-            elif config.getboolean("ItemRandomization", "bOverworldPool"):
-                box.setText(Item.create_log_string(self.selected_test_seed, self.selected_test_map, Enemy.enemy_replacement_invert))
-            else:
-                box.setText("No keys to randomize")
-            box.exec()
-        except Exception:
-            self.notify_error("An error has occured.\nCheck the command window for more detail.")
-            raise
+        Manager.init()
+        Manager.load_constant()
+        
+        Item.init()
+        Enemy.init()
+        Room.init()
+        Bloodless.init()
+        
+        Item.set_logic_complexity(config.getint("ItemRandomization", "iOverworldPoolComplexity"))
+        Bloodless.set_logic_complexity(config.getint("ExtraRandomization", "iBloodlessCandlesComplexity"))
+        
+        random.seed(self.selected_seed)
+        if not self.selected_map and config.getboolean("MapRandomization", "bRoomLayout"):
+            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
+        Manager.load_map(self.selected_map)
+        Room.get_map_info()
+        
+        if not config.getboolean("GameDifficulty", "bNormal"):
+            Item.set_hard_mode()
+        
+        if DLCType.IGA in self.owned_dlc and not config.getboolean("Misc", "bIgnoreDLC"):
+            Item.add_iga_dlc()
+        
+        if config.getboolean("EnemyRandomization", "bEnemyLocations"):
+            random.seed(self.selected_seed)
+            Enemy.randomize_enemy_locations()
+        
+        Item.fill_enemy_to_room()
+        
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            random.seed(self.selected_seed)
+            Item.key_logic()
+        
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            random.seed(self.selected_seed)
+            Bloodless.randomize_bloodless_candles()
+        
+        box = QMessageBox(self)
+        box.setWindowTitle("Test")
+        if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
+            box.setText(Bloodless.create_log_string(self.selected_seed, self.selected_map))
+        elif config.getboolean("ItemRandomization", "bOverworldPool"):
+            box.setText(Item.create_log_string(self.selected_seed, self.selected_map, Enemy.enemy_replacement_invert))
+        else:
+            box.setText("No keys to randomize")
+        box.exec()
     
     def seed_confirm_button_clicked(self):
         if not config.get("Misc", "sSeed"):
             return
         self.seed_box.close()
         self.pre_generate()
+    
+    def dlc_check_box_changed(self):
+        checked = self.dlc_check_box.isChecked()
+        config.set("Misc", "bIgnoreDLC", str(checked).lower())
 
     def cast_seed(self, seed):
         #Cast seed to another object type if possible
@@ -2339,6 +2385,69 @@ class MainWindow(QGraphicsView):
 
     def set_progress(self, progress):
         self.progress_bar.setValue(progress)
+    
+    def get_dlc_info(self):
+        #Shantae is on by default
+        dlc_list = [DLCType.Shantae]
+        #Steam
+        if steam_id in config.get("Misc", "sGamePath"):
+            #Look through the Steam config files
+            steam_path = config.get("Misc", "sGamePath").split(steam_id)[0] + steam_id
+            user_config_path = f"{steam_path}\\config\\loginusers.vdf"
+            if not os.path.isfile(user_config_path):
+                self.dlc_failure()
+                return dlc_list
+            with open(f"{steam_path}\\config\\loginusers.vdf", "r", encoding="utf8") as file_reader:
+                user_config = vdf.parse(file_reader)["users"]
+            #Determine the Steam friend code based on their user ID
+            steam_user = None
+            for user in user_config:
+                if user_config[user]["MostRecent"] == "1":
+                    steam_user = int(user) - 76561197960265728
+                    break
+            local_config_path = f"{steam_path}\\userdata\\{steam_user}\\config\\localconfig.vdf"
+            if not os.path.isfile(local_config_path):
+                self.dlc_failure()
+                return dlc_list
+            with open(local_config_path, "r", encoding="utf8") as file_reader:
+                dlc_config = vdf.parse(file_reader)["UserLocalConfigStore"]["apptickets"]
+            #Check for DLC IDs in the config
+            if "1041460" in dlc_config:
+                dlc_list.append(DLCType.IGA)
+            if "2380800" in dlc_config:
+                dlc_list.append(DLCType.Succubus)
+            if "2380801" in dlc_config:
+                dlc_list.append(DLCType.MagicGirl)
+            if "2380802" in dlc_config:
+                dlc_list.append(DLCType.Japanese)
+            return dlc_list
+        #GOG
+        if gog_id in config.get("Misc", "sGamePath"):
+            #List the DLC IDs in the game path
+            dlc_id_list = []
+            for file in glob.glob(config.get("Misc", "sGamePath") + "\\*.hashdb"):
+                file_name = os.path.split(os.path.splitext(file)[0])[-1]
+                dlc_id_list.append(file_name.split("-")[-1])
+            #Check for DLC IDs in the list
+            if "2089941670" in dlc_id_list:
+                dlc_list.append(DLCType.IGA)
+            if "2021103941" in dlc_id_list:
+                dlc_list.append(DLCType.Succubus)
+            if "1841144430" in dlc_id_list:
+                dlc_list.append(DLCType.MagicGirl)
+            if "1255553972" in dlc_id_list:
+                dlc_list.append(DLCType.Japanese)
+            return dlc_list
+        #Installation is unknown
+        self.dlc_failure()
+        return dlc_list
+    
+    def dlc_failure(self):
+        box = QMessageBox(self)
+        box.setWindowTitle("Warning")
+        box.setIcon(QMessageBox.Warning)
+        box.setText("Failed to retrieve DLC information from user installation. Proceeding without DLC.")
+        box.exec()
 
     def generate_button_clicked(self):
         #Check if path is valid
@@ -2362,6 +2471,10 @@ class MainWindow(QGraphicsView):
                 self.starting_items.append(item_name.replace("Skilled", ""))
             self.starting_items.append(item_name)
         self.starting_items = list(dict.fromkeys(self.starting_items))
+        
+        #Check DLC
+        
+        self.owned_dlc = self.get_dlc_info()
         
         #Prompt seed options
         
@@ -2401,8 +2514,8 @@ class MainWindow(QGraphicsView):
         self.progress_bar.setWindowModality(Qt.WindowModal)
         
         self.selected_seed = self.cast_seed(config.get("Misc", "sSeed"))
-        self.selected_map = config.get("MapRandomization", "sSelectedMap") if config.getboolean("MapRandomization", "bRoomLayout") else None
-        self.worker = Generate(self.progress_bar, self.selected_seed, self.selected_map, self.starting_items)
+        self.selected_map = config.get("MapRandomization", "sSelectedMap") if config.getboolean("MapRandomization", "bRoomLayout") else ""
+        self.worker = Generate(self.progress_bar, self.selected_seed, self.selected_map, self.starting_items, self.owned_dlc)
         self.worker.signaller.progress.connect(self.set_progress)
         self.worker.signaller.finished.connect(self.generate_finished)
         self.worker.signaller.error.connect(self.thread_failure)
@@ -2630,9 +2743,10 @@ class MainWindow(QGraphicsView):
         credit_box.setFixedSize(0, 0)
         credit_box.exec()
     
-    def thread_failure(self):
+    def thread_failure(self, detail):
         self.progress_bar.close()
         self.setEnabled(True)
+        print(detail)
         self.notify_error("An error has occured.\nCheck the command window for more detail.")
     
     def notify_error(self, message):
@@ -2686,6 +2800,12 @@ class MainWindow(QGraphicsView):
         if self.first_time:
             self.setting_button_clicked()
         self.setEnabled(True)
+    
+    def exception_hook(self, exc_type, exc_value, exc_traceback):
+        traceback_format = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        traceback_string = "".join(traceback_format)
+        print(traceback_string)
+        self.notify_error("An error has occured.\nCheck the command window for more detail.")
 
 def main():
     app = QApplication(sys.argv)
