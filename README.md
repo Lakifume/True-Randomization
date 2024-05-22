@@ -13,6 +13,7 @@ Requirements:
 * latest version of Python.psutil
 * latest version of Python.pythonnet
 * latest version of Python.requests
+* latest version of Python.vdf
 * latest version of PySide6
 * latest version of Pyinstaller
 
@@ -21,4 +22,4 @@ Steps:
 * download the commit from the branch that matches the version of the downloaded release
 * replace the executable in the release by its corresponding .py files
 * open cmd in the folder that contains the .py files
-* input "pyinstaller.exe --onefile --icon=Bloodstained.ico Randomizer.py"
+* input `pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py`

@@ -303,14 +303,16 @@ def apply_default_tweaks():
     #Make up for the increased expertise range
     for entry in datatable["PB_DT_ArtsCommandMaster"]:
         datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"] = int(datatable["PB_DT_ArtsCommandMaster"][entry]["Expertise"]*2.5)
-    #Lock 8 bit weapons behind recipes so that they aren't always easily accessible
-    for entry in datatable["PB_DT_CraftMaster"]:
-        if entry in Equipment.bit_weapons:
-            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe018"
-        elif entry[:-1] in Equipment.bit_weapons and entry[-1] == "2":
-            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe019"
-        elif entry[:-1] in Equipment.bit_weapons and entry[-1] == "3":
-            datatable["PB_DT_CraftMaster"][entry]["OpenKeyRecipeID"] = "ArmsRecipe020"
+    #Loop through 8 bit weapons
+    for weapon in Equipment.bit_weapons:
+        #Lock 8 bit weapons behind recipes so that they aren't always easily accessible
+        datatable["PB_DT_CraftMaster"][weapon]["OpenKeyRecipeID"]       = "ArmsRecipe018"
+        datatable["PB_DT_CraftMaster"][f"{weapon}2"]["OpenKeyRecipeID"] = "ArmsRecipe019"
+        datatable["PB_DT_CraftMaster"][f"{weapon}3"]["OpenKeyRecipeID"] = "ArmsRecipe020"
+        #Update icon pointer of 8 bit weapons for the new icons
+        #The icon texture was edited so that all new icons are evenly shifted from the original ones
+        datatable["PB_DT_ItemMaster"][f"{weapon}2"]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][f"{weapon}2"]["IconPath"]) + 205)
+        datatable["PB_DT_ItemMaster"][f"{weapon}3"]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][f"{weapon}3"]["IconPath"]) + 338)
     #Remove the minimal damage addition on attacks
     for entry in datatable["PB_DT_DamageMaster"]:
         datatable["PB_DT_DamageMaster"][entry]["FixedDamage"] = 0.0
@@ -340,12 +342,6 @@ def apply_default_tweaks():
             datatable["PB_DT_ItemMaster"][entry]["max"]       = 1
             datatable["PB_DT_ItemMaster"][entry]["buyPrice"]  = 0
             datatable["PB_DT_ItemMaster"][entry]["sellPrice"] = 0
-        #Update icon pointer of 8 bit weapons for the new icons
-        #The icon texture was edited so that all new icons are evenly shifted from the original ones
-        if entry[:-1] in Equipment.bit_weapons and entry[-1] == "2":
-            datatable["PB_DT_ItemMaster"][entry]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][entry]["IconPath"]) + 204)
-        elif entry[:-1] in Equipment.bit_weapons and entry[-1] == "3":
-            datatable["PB_DT_ItemMaster"][entry]["IconPath"] = str(int(datatable["PB_DT_ItemMaster"][entry]["IconPath"]) + 338)
     #Loop through all shards
     for entry in datatable["PB_DT_ShardMaster"]:
         #Make all shard colors match their type
@@ -465,34 +461,34 @@ def apply_default_tweaks():
     #Remove the boss door duplicate in the room before Craftwork
     Room.remove_level_class("m05SAN_011_BG", "PBBossDoor_BP_C")
     #Fix that one Water Leaper in desert that falls through the floor by shifting its position upwards
-    game_data["m12SND_025_Enemy"].Exports[4].Data[4].Value[0].Value = FVector(-260, -700, 600)
+    game_data["m12SND_025_Enemy"].Exports[4].Data[5].Value[0].Value = FVector(-260, -700, 600)
     #Fix some of the giant cannon stacks clipping over each other
-    game_data["m10BIG_008_Enemy"].Exports[17].Data[4].Value[0].Value     = FVector(2220, 0, 3505)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(2220, 0, 3865)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[1].Data[4].Value[0].Value = FVector(2220, 0, 4225)
-    game_data["m10BIG_008_Enemy"].Exports[18].Data[4].Value[0].Value     = FVector( 300, 0, 1345)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[2].Data[4].Value[0].Value = FVector( 300, 0, 1705)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[3].Data[4].Value[0].Value = FVector( 300, 0, 2065)
-    game_data["m10BIG_008_Enemy"].Exports[19].Data[4].Value[0].Value     = FVector(2220, 0,  505)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[4].Data[4].Value[0].Value = FVector(2220, 0,  865)
-    game_data["m10BIG_008_Enemy_Hard"].Exports[5].Data[4].Value[0].Value = FVector(2220, 0, 1225)
-    game_data["m10BIG_013_Enemy"].Exports[5].Data[4].Value[0].Value      = FVector(1020, 0, 1585)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[0].Data[4].Value[0].Value = FVector(1020, 0, 1945)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[1].Data[4].Value[0].Value = FVector(1020, 0, 2305)
-    game_data["m10BIG_013_Enemy"].Exports[6].Data[4].Value[0].Value      = FVector(2040, 0, 2005)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[2].Data[4].Value[0].Value = FVector(2040, 0, 2365)
-    game_data["m10BIG_013_Enemy"].Exports[7].Data[4].Value[0].Value      = FVector( 300, 0, 1105)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[3].Data[4].Value[0].Value = FVector( 300, 0, 1465)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[4].Data[4].Value[0].Value = FVector( 360, 0, 2065)
-    game_data["m10BIG_013_Enemy_Hard"].Exports[5].Data[4].Value[0].Value = FVector( 360, 0, 2425)
+    game_data["m10BIG_008_Enemy"].Exports[17].Data[5].Value[0].Value     = FVector(2220, 0, 3505)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[0].Data[5].Value[0].Value = FVector(2220, 0, 3865)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[1].Data[5].Value[0].Value = FVector(2220, 0, 4225)
+    game_data["m10BIG_008_Enemy"].Exports[18].Data[5].Value[0].Value     = FVector( 300, 0, 1345)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[2].Data[5].Value[0].Value = FVector( 300, 0, 1705)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[3].Data[5].Value[0].Value = FVector( 300, 0, 2065)
+    game_data["m10BIG_008_Enemy"].Exports[19].Data[5].Value[0].Value     = FVector(2220, 0,  505)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[4].Data[5].Value[0].Value = FVector(2220, 0,  865)
+    game_data["m10BIG_008_Enemy_Hard"].Exports[5].Data[5].Value[0].Value = FVector(2220, 0, 1225)
+    game_data["m10BIG_013_Enemy"].Exports[5].Data[5].Value[0].Value      = FVector(1020, 0, 1585)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[0].Data[5].Value[0].Value = FVector(1020, 0, 1945)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[1].Data[5].Value[0].Value = FVector(1020, 0, 2305)
+    game_data["m10BIG_013_Enemy"].Exports[6].Data[5].Value[0].Value      = FVector(2040, 0, 2005)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[2].Data[5].Value[0].Value = FVector(2040, 0, 2365)
+    game_data["m10BIG_013_Enemy"].Exports[7].Data[5].Value[0].Value      = FVector( 300, 0, 1105)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[3].Data[5].Value[0].Value = FVector( 300, 0, 1465)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[4].Data[5].Value[0].Value = FVector( 360, 0, 2065)
+    game_data["m10BIG_013_Enemy_Hard"].Exports[5].Data[5].Value[0].Value = FVector( 360, 0, 2425)
     #Remove the iron maidens that were added by the devs in an update in the tall entrance shaft
     Room.remove_level_class("m03ENT_000_Gimmick", "BP_IronMaiden_C")
     #Add magic doors instead to truly prevent tanking through
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
     #Neutralize the golden chest interaction box transforms to prevent issues when copying
-    game_data["m08TWR_019_Gimmick"].Exports[1020].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1020].Data[4])
-    game_data["m08TWR_019_Gimmick"].Exports[1020].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1020].Data[4])
+    game_data["m08TWR_019_Gimmick"].Exports[1022].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1022].Data[5])
+    game_data["m08TWR_019_Gimmick"].Exports[1022].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1022].Data[5])
     #Change Dark Matter so that consuming it puts the player in OHKO mode until the next death
     datatable["PB_DT_SpecialEffectMaster"]["DarkMatter"]["LifeTime"] = -1
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatter"]["Type"]                     = "EPBSpecialEffect::None"
@@ -631,6 +627,19 @@ def apply_default_tweaks():
     datatable["PB_DT_SpecialEffectMaster"]["TimeTonic"]["LifeTime"] = 15.0
     for num in range(2):
         constant["ItemDrop"]["Potion"]["ItemPool"].append("TimeTonic")
+    #Make DLC armors inherit the stats of their higher level counterpart to reflect the simplified tier system
+    datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit1"])
+    datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit3"])
+    datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["VampiricSkinsuit5"])
+    datatable["PB_DT_ArmorMaster"]["MagicalGirlBody"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody1"])
+    datatable["PB_DT_ArmorMaster"]["MagicalGirlBody2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody3"])
+    datatable["PB_DT_ArmorMaster"]["MagicalGirlBody4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["MagicalGirlBody5"])
+    datatable["PB_DT_ArmorMaster"]["ShantaeOutfit1"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit2"])
+    datatable["PB_DT_ArmorMaster"]["ShantaeOutfit3"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit4"])
+    datatable["PB_DT_ArmorMaster"]["ShantaeOutfit5"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["ShantaeOutfit6"])
+    datatable["PB_DT_ArmorMaster"]["FestivalKimono"]  = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono1"])
+    datatable["PB_DT_ArmorMaster"]["FestivalKimono2"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono3"])
+    datatable["PB_DT_ArmorMaster"]["FestivalKimono4"] = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["FestivalKimono5"])
     #With this mod vanilla rando is pointless and obselete so remove its widget
     #Also prevent going online with this mod active
     remove_unwanted_modes()
@@ -652,7 +661,7 @@ def remove_fire_shard_requirement():
 def update_item_descriptions():
     #Add magical stats to descriptions
     for entry in datatable["PB_DT_ArmorMaster"]:
-        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
+        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"] != 0:
             append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
@@ -660,14 +669,14 @@ def update_item_descriptions():
             append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
     #Add restoration amount to descriptions
     for entry in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
-        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
+        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
             continue
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeHP":
             append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeMP":
             append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
     for entry in datatable["PB_DT_AmmunitionMaster"]:
-        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
+        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
             continue
         append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
     #Add Shovel Armor's attack stat to its description
@@ -731,6 +740,8 @@ def set_bigtoss_mode():
             if "FAMILIA" in entry or "FAMILIA" in datatable["PB_DT_DamageMaster"][entry]["GroupId"]:
                 continue
             if entry.split("_")[-1] == "BRV" or datatable["PB_DT_DamageMaster"][entry]["GroupId"].split("_")[-1] == "BRV":
+                continue
+            if entry == "N2008_BackStep":
                 continue
             datatable["PB_DT_DamageMaster"][entry]["KnockBackDistance"] += 20.0
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMin"] = float(random.randint(-180, 180))

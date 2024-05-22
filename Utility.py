@@ -51,6 +51,8 @@ def unreal_to_python_data(struct, unreal_type=None):
             return str(struct.Value)
         case "NameProperty":
             return str(struct.Value)
+        case "ObjectProperty":
+            return struct.Value.Index
         case "SoftObjectProperty":
             return str(struct.Value.AssetPath.AssetName)
         case "StrProperty":
@@ -81,6 +83,8 @@ def python_to_unreal_data(value, struct, uasset, unreal_type=None):
             struct.Value = FName.FromString(uasset, value)
         case "NameProperty":
             struct.Value = FName.FromString(uasset, value)
+        case "ObjectProperty":
+            struct.Value = FPackageIndex(value)
         case "SoftObjectProperty":
             struct.Value = FSoftObjectPath(None, FName.FromString(uasset, value), None)
         case "StrProperty":
