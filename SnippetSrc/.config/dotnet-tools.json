@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "pythonnetstubgenerator.tool": {
+      "version": "1.2.1",
+      "commands": [
+        "GeneratePythonNetStubs"
+      ]
+    }
+  }
+}

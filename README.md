@@ -9,17 +9,16 @@ Discord: https://discord.gg/nUbFA7MEeU
 ## How to build from source
 
 Requirements:
-* latest version of Python
-* latest version of Python.psutil
-* latest version of Python.pythonnet
-* latest version of Python.requests
-* latest version of Python.vdf
-* latest version of PySide6
-* latest version of Pyinstaller
+* Python 3.12 or higher
+* pip 23.2.1 or higher
+* Optional: dotnet 8
 
 Steps:
+* clone the repo
+* run `python.exe -m pip install -r requirements.txt`
 * download the latest release
-* download the commit from the branch that matches the version of the downloaded release
-* replace the executable in the release by its corresponding .py files
-* open cmd in the folder that contains the .py files
-* input `pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py`
+* checkout the commit that matches the version of the downloaded release
+* Unzip the contents of the release to the `dist/` folder (create it if missing)
+  * The `dist/` folder should at the very least contain the `Tools/`, `MapEdit/`, and `Data/` folders from the release
+* run `pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py`
+* optional: view the [UAssetSnippet project](SnippetSrc/README.md) to setup UAssetAPI and UAssetSnippet code snippets
