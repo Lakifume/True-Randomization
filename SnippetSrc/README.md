@@ -24,7 +24,7 @@ To makes changes to UAssetSnippet and test them, follow these steps:
 * open a terminal in `SnippetSrc/`
   * run `dotnet restore`
   * run `dotnet build`
-* copy the `UAssetSnippet.dll` from `./SnippetSrc/bin/Debug/netstandard2.0/` to the `/dist/Tools/UAssetAPI/` folder
+* copy the `UAssetSnippet.dll` from `./SnippetSrc/bin/Debug/netstandard2.0/` to the `./dist/Tools/UAssetAPI/` folder
 * run the `Randomizer.exe`
 
 Avoid making changes to the UAssetAPI project unless testing things out.
