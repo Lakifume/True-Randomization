@@ -285,8 +285,10 @@ def get_weapon_tier(weapon):
 
 def get_weapon_reduction(weapon):
     #Apply reductions to weapons with special properties to not make them super broken
-    if "ShieldWeapon" in weapon or "Wagasa" in weapon:
+    if "ShieldWeapon" in weapon:
         return 0.9
+    if "Wagasa" in weapon:
+        return 0.4
     if weapon == "Juwuse":
         return 0.85
     if weapon in ["KillerBoots", "Decapitator"]:

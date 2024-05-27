@@ -41,9 +41,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-steam_id = "Steam"
-gog_id = "GOG Games"
-
 item_color    = "#ff8080"
 shop_color    = "#ffff80"
 library_color = "#bf80ff"
@@ -227,8 +224,10 @@ class Generate(QThread):
         #Log directory
         
         if os.path.isdir("Spoiler"):
-            shutil.rmtree("Spoiler")
-        os.makedirs("Spoiler")
+            for file in os.listdir("Spoiler"):
+                os.remove(f"Spoiler\\{file}")
+        else:
+            os.makedirs("Spoiler")
         
         #Open files
         
@@ -2395,9 +2394,15 @@ class MainWindow(QGraphicsView):
         #Shantae is on by default
         dlc_list = [DLCType.Shantae]
         #Steam
-        if steam_id in config.get("Misc", "sGamePath"):
-            #Look through the Steam config files
-            steam_path = config.get("Misc", "sGamePath").split(steam_id)[0] + steam_id
+        if "steamapps" in config.get("Misc", "sGamePath"):
+            steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
+            #Override the Steam path if the game path is on another drive
+            library_config_path = f"{steam_path}\\libraryfolder.vdf"
+            if os.path.isfile(library_config_path):
+                with open(library_config_path, "r", encoding="utf8") as file_reader:
+                    steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
+                    steam_path = os.path.split(steam_exe_path)[0]
+            #Get user config
             user_config_path = f"{steam_path}\\config\\loginusers.vdf"
             if not os.path.isfile(user_config_path):
                 self.dlc_failure()
@@ -2427,7 +2432,7 @@ class MainWindow(QGraphicsView):
                 dlc_list.append(DLCType.Japanese)
             return dlc_list
         #GOG
-        if gog_id in config.get("Misc", "sGamePath"):
+        if "GOG Games" in config.get("Misc", "sGamePath"):
             #List the DLC IDs in the game path
             dlc_id_list = []
             for file in glob.glob(config.get("Misc", "sGamePath") + "\\*.hashdb"):
