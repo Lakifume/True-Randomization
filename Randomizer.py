@@ -991,7 +991,6 @@ class MainWindow(QGraphicsView):
         modified_file_label_right.addWidget(modified_files["Blueprint"]["Label"])
         
         discord_label = QLabel()
-        discord_label.setStyleSheet("border: 2px solid transparent")
         discord_label.setText("<a href=\"https://discord.gg/nUbFA7MEeU\"><font face=Cambria color=#0080ff>Discord</font></a>")
         discord_label.setAlignment(Qt.AlignRight)
         discord_label.setOpenExternalLinks(True)
@@ -1337,24 +1336,29 @@ class MainWindow(QGraphicsView):
         self.preset_drop_down.currentIndexChanged.connect(self.preset_drop_down_changed)
         center_box_12_layout.addWidget(self.preset_drop_down, 0, 0)
         
-        #Interface Settings
+        #Settings
         
         self.setting_window_layout = QVBoxLayout()
         
-        window_size_box_layout = QVBoxLayout()
-        window_size_box = QGroupBox("Window Size")
-        window_size_box.setLayout(window_size_box_layout)
-        self.setting_window_layout.addWidget(window_size_box)
+        window_size_layout = QHBoxLayout()
+        self.setting_window_layout.addLayout(window_size_layout)
+        
+        archi_name_label = QLabel("Window Size")
+        window_size_layout.addWidget(archi_name_label)
         
         self.window_size_drop_down = QComboBox()
         self.window_size_drop_down.addItem("720p")
         self.window_size_drop_down.addItem("900p")
         self.window_size_drop_down.addItem("1080p and above")
-        window_size_box_layout.addWidget(self.window_size_drop_down)
+        window_size_layout.addWidget(self.window_size_drop_down)
+        
+        setting_apply_layout = QHBoxLayout()
+        self.setting_window_layout.addLayout(setting_apply_layout)
         
         setting_apply_button = QPushButton("Apply")
         setting_apply_button.clicked.connect(self.setting_apply_button_clicked)
-        self.setting_window_layout.addWidget(setting_apply_button)
+        setting_apply_layout.addStretch(1)
+        setting_apply_layout.addWidget(setting_apply_button)
         
         #Seed
         
@@ -1430,6 +1434,54 @@ class MainWindow(QGraphicsView):
         outfit_confirm_button.clicked.connect(self.outfit_confirm_button_clicked)
         outfit_window_bottom.addStretch(1)
         outfit_window_bottom.addWidget(outfit_confirm_button)
+        
+        #Archipelago
+        
+        self.archi_window_layout = QVBoxLayout()
+
+        self.archi_check_box = QCheckBox("Enable Archipelago")
+        self.archi_window_layout.addWidget(self.archi_check_box)
+        
+        archi_name_layout = QHBoxLayout()
+        self.archi_window_layout.addLayout(archi_name_layout)
+        
+        archi_name_label = QLabel("Archipelago Name")
+        archi_name_layout.addWidget(archi_name_label)
+        
+        self.archi_name_field = QLineEdit()
+        archi_name_layout.addWidget(self.archi_name_field)
+        progression_layout = QHBoxLayout()
+        self.archi_window_layout.addLayout(progression_layout)
+        
+        progression_label = QLabel("Progression Balancing")
+        progression_layout.addWidget(progression_label)
+        
+        self.progression_field = QSpinBox()
+        self.progression_field.setRange(0, 99)
+        progression_layout.addWidget(self.progression_field)
+        
+        accessibility_layout = QHBoxLayout()
+        self.archi_window_layout.addLayout(accessibility_layout)
+        
+        accessibility_label = QLabel("Accessibility")
+        accessibility_layout.addWidget(accessibility_label)
+        
+        self.accessibility_drop_down = QComboBox()
+        self.accessibility_drop_down.addItem("Locations")
+        self.accessibility_drop_down.addItem("Items")
+        self.accessibility_drop_down.addItem("Minimal")
+        accessibility_layout.addWidget(self.accessibility_drop_down)
+
+        self.death_link_check_box = QCheckBox("Death Link")
+        self.archi_window_layout.addWidget(self.death_link_check_box)
+        
+        archi_apply_layout = QHBoxLayout()
+        self.archi_window_layout.addLayout(archi_apply_layout)
+        
+        archi_apply_button = QPushButton("Apply")
+        archi_apply_button.clicked.connect(self.archi_apply_button_clicked)
+        archi_apply_layout.addStretch(1)
+        archi_apply_layout.addWidget(archi_apply_button)
         
         #Text field
         
@@ -2415,6 +2467,7 @@ class MainWindow(QGraphicsView):
                 if user_config[user]["mostrecent"] == "1":
                     steam_user = int(user) - 76561197960265728
                     break
+            #Get local config
             local_config_path = f"{steam_path}\\userdata\\{steam_user}\\config\\localconfig.vdf"
             if not os.path.isfile(local_config_path):
                 self.dlc_failure()
@@ -2661,6 +2714,26 @@ class MainWindow(QGraphicsView):
     
     def import_finished(self):
         self.setEnabled(True)
+
+    def archipelago_button_clicked(self):
+        self.archi_check_box.setChecked(config.getboolean("Archipelago", "bEnable"))
+        self.archi_name_field.setText(config.get("Archipelago", "sName"))
+        self.progression_field.setValue(config.getint("Archipelago", "iProgression"))
+        self.accessibility_drop_down.setCurrentIndex(config.getint("Archipelago", "iAccessibility"))
+        self.death_link_check_box.setChecked(config.getboolean("Archipelago", "bDeathLink"))
+        self.archi_window = QDialog(self)
+        self.archi_window.setLayout(self.archi_window_layout)
+        self.archi_window.setWindowTitle("Archipelago")
+        self.archi_window.setFixedSize(self.size_multiplier*400, 0)
+        self.archi_window.exec()
+
+    def archi_apply_button_clicked(self):
+        config.set("Archipelago", "bEnable", str(self.archi_check_box.isChecked()).lower())
+        config.set("Archipelago", "sName", self.archi_name_field.text())
+        config.set("Archipelago", "iProgression", str(self.progression_field.value()))
+        config.set("Archipelago", "iAccessibility", str(self.accessibility_drop_down.currentIndex()))
+        config.set("Archipelago", "bDeathLink", str(self.death_link_check_box.isChecked()).lower())
+        self.archi_window.close()
 
     def credit_button_clicked(self):
         credit_1_layout = QHBoxLayout()
