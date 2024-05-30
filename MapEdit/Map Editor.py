@@ -9,11 +9,19 @@ import math
 import copy
 import colorsys
 import decimal
+import traceback
 
 from enum import Enum
 from collections import OrderedDict
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 DEFAULT_MAP = "Data\\PB_DT_RoomMaster.json"
 DEFAULT_MAP_SURFACE = 1553
@@ -403,6 +411,7 @@ class GraphicsView(QGraphicsView):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
+        sys.excepthook = self.exception_hook
         self.initUI()
         self.unsaved      = False
         self.restrictions = False
@@ -720,7 +729,7 @@ class MainWindow(QMainWindow):
         
         self.view.setLayout(vbox)
         self.setMinimumSize(1200, 700)
-        self.setWindowIcon(QIcon("Data\\icon.png"))
+        self.setWindowIcon(QIcon(resource_path("Map.ico")))
         self.showMaximized()
     
     def eventFilter(self, object, event):
@@ -1142,13 +1151,17 @@ class MainWindow(QMainWindow):
             self.map_limit.setVisible(False)
     
     def room_search_list_change(self, item):
+        if item is None:
+            return
         for room in self.room_list:
             room.set_theme(RoomTheme.Dark)
         self.room_list[self.room_search_list.currentRow()].set_theme(RoomTheme.Default)
     
     def area_order_list_change(self, item):
+        if item is None:
+            return
         for room in self.room_list:
-            if room.room_data.area == "EAreaID::" + item.text():
+            if room.room_data.area == f"EAreaID::{item.text()}":
                 room.set_theme(RoomTheme.Default)
             else:
                 room.set_theme(RoomTheme.Dark)
@@ -1170,6 +1183,8 @@ class MainWindow(QMainWindow):
             self.completion_2 += 1
     
     def key_drop_down_change(self, index):
+        if index < 0:
+            return
         for room in self.room_list:
             if room.room_data.name in self.log["Key"][self.key_drop_down.itemText(index)]:
                 room.set_theme(RoomTheme.Default)
@@ -1808,6 +1823,16 @@ class MainWindow(QMainWindow):
                 with open("Data\\ExtraRoom\\" + file, "r", encoding="utf8") as file_reader:
                     extra_room = json.load(file_reader)
                 self.json_file["MapData"][name] = extra_room
+    
+    def exception_hook(self, exc_type, exc_value, exc_traceback):
+        box = QMessageBox(self)
+        box.setWindowTitle("Error")
+        box.setIcon(QMessageBox.Critical)
+        box.setText("An error has occured")
+        traceback_format = traceback.format_exception(exc_type, exc_value, exc_traceback)
+        traceback_string = "".join(traceback_format)
+        box.setInformativeText(traceback_string)
+        box.exec()
 
 def main():
     app = QApplication(sys.argv)
