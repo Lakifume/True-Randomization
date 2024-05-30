@@ -59,6 +59,8 @@ def load_file_info():
     mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
     global asset_dir
     asset_dir = "Game"
+    global lipsync_dir
+    lipsync_dir = "Core\\UI\\Dialog\\Data\\LipSync"
     global file_to_path
     file_to_path = {}
     global file_to_type
@@ -66,6 +68,8 @@ def load_file_info():
     #Path info
     with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
         file_to_path.update(json.load(file_reader))
+    with open("Data\\LipSync.txt", "r", encoding="utf8") as file_reader:
+        file_to_path.update({file.strip(): lipsync_dir for file in file_reader.readlines()})
     #Type info
     for file in file_to_path:
         if "DataTable" in file_to_path[file]:
@@ -775,6 +779,9 @@ def remove_unchanged_files():
     #Since uasset objects cannot be compared successfully we need to compare the files after they've been written
     #That way unchanged files get removed from the pak
     for file in file_to_path:
+        #Skip lipsync files
+        if file_to_path[file] == lipsync_dir:
+            continue
         remove = True
         for sub_file in os.listdir(f"{mod_dir}\\{file_to_path[file]}"):
             name, extension = os.path.splitext(sub_file)

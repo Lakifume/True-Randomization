@@ -29,6 +29,7 @@ import configparser
 import traceback
 import psutil
 import vdf
+import textwrap
 
 from enum import Enum
 
@@ -206,7 +207,7 @@ class Generate(QThread):
         #Check DLCs
         
         if not DLCType.IGA in self.owned_dlc:
-            for file in list(Manager.file_to_path):
+            for file in Manager.file_to_path:
                 if "DLC_0002" in Manager.file_to_path[file]:
                     del Manager.file_to_path[file]
                     del Manager.file_to_type[file]
@@ -218,8 +219,6 @@ class Generate(QThread):
         for directory in list(Manager.file_to_path.values()):
             if not os.path.isdir(f"{Manager.mod_dir}\\{directory}"):
                 os.makedirs(f"{Manager.mod_dir}\\{directory}")
-        if not os.path.isdir(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync"):
-            os.makedirs(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync")
         
         #Log directory
         
@@ -797,16 +796,18 @@ class Import(QThread):
         if os.path.isdir(Manager.asset_dir) and self.asset_list == list(Manager.file_to_path):
             shutil.rmtree(Manager.asset_dir)
         
-        for asset in self.asset_list:
-            output_path = os.path.abspath("")
-            
-            root = os.getcwd()
-            os.chdir("Tools\\UModel")
-            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\" -out=\"" + output_path + "\" -save \"" + Manager.asset_dir + "\\" + Manager.file_to_path[asset] + "\\" + asset.split("(")[0] + "\"")
-            os.chdir(root)
-            
-            current += 1
+        #There's a limit of around 8000 characters per command, split the list of packages into multiple batches of maximum 7500 characters
+        packages = " ".join([f"-pkg=\"{Manager.asset_dir}\\{Manager.file_to_path[asset]}\\{asset}\"" for asset in self.asset_list])
+        batches = textwrap.wrap(packages, 7500)
+        output_path = os.path.abspath("")
+        
+        root = os.getcwd()
+        os.chdir("Tools\\UModel")
+        for batch in batches:
+            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + f"\\BloodstainedRotN\\Content\\Paks\" -out=\"{output_path}\" -save {batch}")
+            current += batch.count(" ") + 1
             self.signaller.progress.emit(current)
+        os.chdir(root)
         
         self.signaller.finished.emit()
 
@@ -818,7 +819,8 @@ class MainWindow(QGraphicsView):
         sys.excepthook = self.exception_hook
         self.setEnabled(False)
         self.init()
-        self.check_for_updates()
+        if not self.check_for_updates():
+            self.check_for_resolution()
 
     def init(self):
         
@@ -2854,20 +2856,17 @@ class MainWindow(QGraphicsView):
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:
-            self.check_for_resolution()
-            return
+            return False
         try:
             tag = api["tag_name"]
         except KeyError:
-            self.check_for_resolution()
-            return
+            return False
         if tag != config.get("Misc", "sVersion"):
             choice = QMessageBox.question(self, "Auto Updater", "New version found:\n\n" + api["body"] + "\n\nUpdate ?", QMessageBox.Yes | QMessageBox.No)
             if choice == QMessageBox.Yes:
                 if "Map Editor.exe" in (program.name() for program in psutil.process_iter()):
                     self.notify_error("MapEditor.exe is running, cannot overwrite.")
-                    self.check_for_resolution()
-                    return
+                    return False
                 
                 self.progress_bar = QProgressDialog("Downloading...", None, 0, api["assets"][0]["size"], self)
                 self.progress_bar.setWindowTitle("Status")
@@ -2880,10 +2879,8 @@ class MainWindow(QGraphicsView):
                 self.worker.signaller.finished.connect(self.update_finished)
                 self.worker.signaller.error.connect(self.thread_failure)
                 self.worker.start()
-            else:
-                self.check_for_resolution()
-        else:
-            self.check_for_resolution()
+                return True
+        return False
     
     def check_for_resolution(self):
         if self.first_time:

@@ -219,23 +219,24 @@ def update_lip_movement():
         update_lip_pointer(event, event_replacement[event])
 
 def update_lip_pointer(old_event, new_event):
+    internal_path = Manager.lipsync_dir.replace("\\", "/")
     #Simply swap the file's name in the name map and save as the new name
     old_event = f"{voice_language}_{old_event}_LIP"
     new_event = f"{voice_language}_{new_event}_LIP"
     
-    if f"{new_event}.uasset" in os.listdir("Data\\LipSync"):
-        new_event_data = UAsset(f"Data\\LipSync\\{new_event}.uasset", EngineVersion.VER_UE4_22)
+    if f"{new_event}.uasset" in os.listdir(f"{Manager.asset_dir}\\{Manager.lipsync_dir}"):
+        new_event_data = UAsset(f"{Manager.asset_dir}\\{Manager.lipsync_dir}\\{new_event}.uasset", EngineVersion.VER_UE4_22)
         index = new_event_data.SearchNameReference(FString(new_event))
         new_event_data.SetNameReference(index, FString(old_event))
-        index = new_event_data.SearchNameReference(FString(f"/Game/Core/UI/Dialog/Data/LipSync/{new_event}"))
-        new_event_data.SetNameReference(index, FString(f"/Game/Core/UI/Dialog/Data/LipSync/{old_event}"))
-        new_event_data.Write(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync\\{old_event}.uasset")
-    elif f"{old_event}.uasset" in os.listdir("Data\\LipSync"):
-        old_event_data = UAsset(f"Data\\LipSync\\{old_event}.uasset", EngineVersion.VER_UE4_22)
+        index = new_event_data.SearchNameReference(FString(f"/Game/{internal_path}/{new_event}"))
+        new_event_data.SetNameReference(index, FString(f"/Game/{internal_path}/{old_event}"))
+        new_event_data.Write(f"{Manager.mod_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset")
+    elif f"{old_event}.uasset" in os.listdir(f"{Manager.asset_dir}\\{Manager.lipsync_dir}"):
+        old_event_data = UAsset(f"{Manager.asset_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset", EngineVersion.VER_UE4_22)
         for export in old_event_data.Exports:
             if str(export.ObjectName) == old_event:
                 export.Data.Clear()
-        old_event_data.Write(f"{Manager.mod_dir}\\Core\\UI\\Dialog\\Data\\LipSync\\{old_event}.uasset")
+        old_event_data.Write(f"{Manager.mod_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset")
 
 def add_music_file(filename):
     #Check if the filename is valid

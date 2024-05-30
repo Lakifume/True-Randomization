@@ -14,7 +14,7 @@ import Utility
 class ReqCurve(Enum):
     Concave = 0
     Linear  = 1
-    Domed   = 2
+    Convex  = 2
 
 def init():
     global tome_to_properties
@@ -33,7 +33,7 @@ def randomize_library_requirements():
                 completion = round(Utility.squircle(num/20, 1.5)*100)
             case ReqCurve.Linear:
                 completion = round(num*5)
-            case ReqCurve.Domed:
+            case ReqCurve.Convex:
                 completion = round(Utility.invert_squircle(num/20, 1.5)*100)
         property_list.append((completion, num % 2 == 0))
     property_list.append((99, True))
