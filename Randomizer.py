@@ -207,7 +207,7 @@ class Generate(QThread):
         #Check DLCs
         
         if not DLCType.IGA in self.owned_dlc:
-            for file in Manager.file_to_path:
+            for file in list(Manager.file_to_path):
                 if "DLC_0002" in Manager.file_to_path[file]:
                     del Manager.file_to_path[file]
                     del Manager.file_to_type[file]
