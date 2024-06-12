@@ -521,7 +521,6 @@ class Generate(QThread):
         
         #Write the spoiler logs
         if config.getboolean("ExtraRandomization", "bBloodlessCandles"):
-            Manager.set_default_entry_name("BLOODLESS")
             Manager.write_log("KeyLocation", Bloodless.create_log(self.selected_seed, self.selected_map))
         elif config.getboolean("ItemRandomization", "bOverworldPool"):
             Manager.write_log("KeyLocation", Item.create_log(self.selected_seed, self.selected_map))
@@ -1318,13 +1317,11 @@ class MainWindow(QGraphicsView):
         
         #Spin boxes
         
-        config.set("SpecialMode", "iCustomNGLevel", str(min(max(config.getint("SpecialMode", "iCustomNGLevel"), 1), 99)))
-        
         self.custom_level_field = QSpinBox()
         self.custom_level_field.setToolTip("Level of all enemies.")
-        self.custom_level_field.setRange(1, 99)
-        self.custom_level_field.setValue(config.getint("SpecialMode", "iCustomNGLevel"))
         self.custom_level_field.valueChanged.connect(self.custom_level_field_changed)
+        self.custom_level_field.setValue(config.getint("SpecialMode", "iCustomNGLevel"))
+        self.custom_level_field.setRange(1, 99)
         self.custom_level_field.setVisible(False)
         center_box_17_layout.addWidget(self.custom_level_field, 1, 1)
         

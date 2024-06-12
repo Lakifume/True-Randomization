@@ -181,13 +181,12 @@ def invert_squircle(value, exponent):
 
 def random_weighted(value, minimum, maximum, step, exponent, adaptive = True):
     full_range = maximum - minimum
-    if random.randint(0, 1) > 0:
+    if random.random() < 0.5:
         distance = maximum - value
         if adaptive:
             exponent = (exponent-1)*(0.5*4**(distance/full_range))+1
         return round(round((value + squircle(random.random(), exponent)*distance)/step)*step, 3)
-    else:
-        distance = value - minimum
-        if adaptive:
-            exponent = (exponent-1)*(0.5*4**(distance/full_range))+1
-        return round(round((value - squircle(random.random(), exponent)*distance)/step)*step, 3)
+    distance = value - minimum
+    if adaptive:
+        exponent = (exponent-1)*(0.5*4**(distance/full_range))+1
+    return round(round((value - squircle(random.random(), exponent)*distance)/step)*step, 3)

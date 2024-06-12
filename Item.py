@@ -1308,7 +1308,7 @@ def patch_start_chest_entry():
     datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = constant["ItemDrop"]["Weapon"]["ItemQuantity"]
     datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = constant["ItemDrop"]["Weapon"]["ItemRate"]
     #Give extra bullets if the starting weapon is a gun
-    if datatable["PB_DT_WeaponMaster"][start_weapon]["WeaponType"] == "EWeaponType::Gun":
+    if datatable["PB_DT_WeaponMaster"][start_weapon]["WeaponType"] in ["EWeaponType::Gun", "EWeaponType::MagicalGirlWand"]:
         datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(constant["ItemDrop"]["Bullet"]["ItemPool"], constant["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
         datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = constant["ItemDrop"]["Bullet"]["ItemHighQuantity"]
         datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = constant["ItemDrop"]["Bullet"]["ItemRate"]
