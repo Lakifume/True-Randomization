@@ -146,7 +146,7 @@ def reset_zangetsu_black_belt():
 
 def randomize_equipment_stats():
     for entry in datatable["PB_DT_ArmorMaster"]:
-        #Only randomize equipment that are in ItemMaster
+        #Only randomize equipment that is in ItemMaster
         if not entry in datatable["PB_DT_ItemMaster"]:
             continue
         #Some equipments have extreme stats that need to be evenly multiplied

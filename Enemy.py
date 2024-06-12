@@ -823,8 +823,8 @@ def update_enemy_locations():
 def change_room_enemies(room):
     enemy_countdown = {}
     #Loop through all difficulties
-    for difficulty in ["", "Normal", "Hard"]:
-        filename = f"{room}_Enemy_{difficulty}"
+    for difficulty in ["", "_Normal", "_Hard"]:
+        filename = f"{room}_Enemy{difficulty}"
         if not filename in game_data:
             continue
         #Loop through all exports
