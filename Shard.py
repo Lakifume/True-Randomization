@@ -1,18 +1,7 @@
 from System import *
-import Manager
-import Item
-import Shop
-import Library
-import Equipment
-import Enemy
-import Room
-import Graphic
-import Sound
-import Bloodless
 import Utility
 
 def init():
-    #DeclareVariables
     global average_power
     average_power = 50
     global average_cost

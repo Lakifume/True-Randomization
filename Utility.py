@@ -1,15 +1,4 @@
 from System import *
-import Manager
-import Item
-import Shop
-import Library
-import Shard
-import Equipment
-import Enemy
-import Room
-import Graphic
-import Sound
-import Bloodless
 
 def init():
     global weight_exponents
@@ -33,7 +22,7 @@ def get_export_by_name(filename, export_name):
     for export in game_data[filename].Exports:
         if str(export.ObjectName) == export_name:
             return export
-    raise Exception("Export not found")
+    raise Exception(f"Export not found: {filename}::{export_name}")
 
 def unreal_to_python_data(struct, unreal_type=None):
     unreal_type = unreal_type if unreal_type else str(struct.PropertyType)

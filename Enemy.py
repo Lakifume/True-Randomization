@@ -1,18 +1,10 @@
 from System import *
 import Manager
 import Item
-import Shop
-import Library
-import Shard
-import Equipment
 import Room
-import Graphic
-import Sound
-import Bloodless
 import Utility
 
 def init():
-    #Declare variables
     global main_resistances
     main_resistances = [
         "ZAN",
@@ -419,8 +411,8 @@ def convert_area_to_progress():
     for num in range(start_index +1, len(constant["MapOrder"])):
         constant["BloodlessModeMapOrder"].append(constant["MapOrder"][num])
     #Convert area list to difficulty scale
-    for suffix in ["", "Original", "BloodlessMode", "BloodlessModeOriginal"]:
-        entry = suffix + "MapOrder"
+    for prefix in ["", "Original", "BloodlessMode", "BloodlessModeOriginal"]:
+        entry = f"{prefix}MapOrder"
         area_to_progress[entry] = {}
         for num in range(len(constant[entry])):
             area_to_progress[entry][constant[entry][num]] = num + 1.0
@@ -544,8 +536,8 @@ def update_brv_damage(difficulty):
         boss_attack_add  = 0.0
         boss_damage_rate = 1.0
     else:
-        boss_attack_add  = datatable["PB_DT_CoordinateParameter"][difficulty + "BossAttackAdd"]["Value"]
-        boss_damage_rate = datatable["PB_DT_CoordinateParameter"][difficulty + "BossDamageRate"]["Value"]
+        boss_attack_add  = datatable["PB_DT_CoordinateParameter"][f"{difficulty}BossAttackAdd"]["Value"]
+        boss_damage_rate = datatable["PB_DT_CoordinateParameter"][f"{difficulty}BossDamageRate"]["Value"]
     for brv_entry in datatable["PB_DT_BRVAttackDamage"]:
         #Getting enemy strength as if level 45
         target_level = 45
@@ -632,36 +624,36 @@ def rebalance_enemies_to_map():
     for enemy in datatable["PB_DT_CharacterParameterMaster"]:
         if not is_enemy(enemy) or enemy in static_enemies or is_final_boss(enemy):
             continue
-        for suffix in ["", "BloodlessMode"]:
-            current_level = datatable["PB_DT_CharacterParameterMaster"][enemy][suffix + "DefaultEnemyLevel"]
+        for prefix in ["", "BloodlessMode"]:
+            current_level = datatable["PB_DT_CharacterParameterMaster"][enemy][f"{prefix}DefaultEnemyLevel"]
             if is_main_enemy(enemy):
                 current_area = constant["EnemyInfo"][enemy]["AreaID"]
                 #8 Bit Nightmare
                 if current_area == "m51EBT":
-                    if area_to_progress[suffix + "MapOrder"]["m06KNG"] - area_to_progress[suffix + "OriginalMapOrder"]["m06KNG"] < -2:
+                    if area_to_progress[f"{prefix}MapOrder"]["m06KNG"] - area_to_progress[f"{prefix}OriginalMapOrder"]["m06KNG"] < -2:
                         current_level -= 10
-                    if area_to_progress[suffix + "MapOrder"]["m06KNG"] - area_to_progress[suffix + "OriginalMapOrder"]["m06KNG"] < -5:
+                    if area_to_progress[f"{prefix}MapOrder"]["m06KNG"] - area_to_progress[f"{prefix}OriginalMapOrder"]["m06KNG"] < -5:
                         current_level -= 10
                 #Kingdom 2 Crowns
                 elif current_area == "m19K2C":
-                    if area_to_progress[suffix + "MapOrder"]["m09TRN"] - area_to_progress[suffix + "OriginalMapOrder"]["m09TRN"] > 1:
+                    if area_to_progress[f"{prefix}MapOrder"]["m09TRN"] - area_to_progress[f"{prefix}OriginalMapOrder"]["m09TRN"] > 1:
                         current_level += 10
-                    if area_to_progress[suffix + "MapOrder"]["m09TRN"] - area_to_progress[suffix + "OriginalMapOrder"]["m09TRN"] > 4:
+                    if area_to_progress[f"{prefix}MapOrder"]["m09TRN"] - area_to_progress[f"{prefix}OriginalMapOrder"]["m09TRN"] > 4:
                         current_level += 10
                 #Journey
                 elif current_area == "m20JRN":
-                    new_area_progress = max(area_to_progress[suffix + "MapOrder"]["m06KNG"]        , area_to_progress[suffix + "MapOrder"]["m10BIG"]        , area_to_progress[suffix + "MapOrder"]["m12SND"])
-                    old_area_progress = max(area_to_progress[suffix + "OriginalMapOrder"]["m06KNG"], area_to_progress[suffix + "OriginalMapOrder"]["m10BIG"], area_to_progress[suffix + "OriginalMapOrder"]["m12SND"])
+                    new_area_progress = max(area_to_progress[f"{prefix}MapOrder"]["m06KNG"]        , area_to_progress[f"{prefix}MapOrder"]["m10BIG"]        , area_to_progress[f"{prefix}MapOrder"]["m12SND"])
+                    old_area_progress = max(area_to_progress[f"{prefix}OriginalMapOrder"]["m06KNG"], area_to_progress[f"{prefix}OriginalMapOrder"]["m10BIG"], area_to_progress[f"{prefix}OriginalMapOrder"]["m12SND"])
                     if new_area_progress - old_area_progress < -4:
                         current_level -= 10
                     if new_area_progress - old_area_progress < -9:
                         current_level -= 10
                 #Other
-                elif current_area in area_to_progress[suffix + "OriginalMapOrder"]:
-                    current_level = round(current_level + (area_to_progress[suffix + "MapOrder"][current_area] - area_to_progress[suffix + "OriginalMapOrder"][current_area])*(40/17))
+                elif current_area in area_to_progress[f"{prefix}OriginalMapOrder"]:
+                    current_level = round(current_level + (area_to_progress[f"{prefix}MapOrder"][current_area] - area_to_progress[f"{prefix}OriginalMapOrder"][current_area])*(40/17))
                     current_level = min(max(current_level, 1), 50)
             #Patch
-            patch_enemy_level(current_level, enemy, suffix)
+            patch_enemy_level(current_level, enemy, prefix)
 
 def set_custom_enemy_level(value):
     #If custom NG+ is chosen ignore random levels and assign a set value to all enemies
@@ -681,13 +673,13 @@ def randomize_boss_levels():
             randomize_level_for(entry, boss_level_weight)
 
 def randomize_level_for(entry, weight):
-    for suffix in ["", "BloodlessMode"]:
+    for prefix in ["", "BloodlessMode"]:
         #Some bosses have a cap for either being too boring or having a time limit
         max_level = 50 if entry in capped_enemies else 99
         #The final boss should be an average of 50 for both
-        default_level = 50 if is_final_boss(entry) else datatable["PB_DT_CharacterParameterMaster"][entry][suffix + "DefaultEnemyLevel"]
+        default_level = 50 if is_final_boss(entry) else datatable["PB_DT_CharacterParameterMaster"][entry][f"{prefix}DefaultEnemyLevel"]
         #Patch level
-        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, weight), entry, suffix)
+        patch_enemy_level(Utility.random_weighted(default_level, 1, max_level, 1, weight), entry, prefix)
 
 def randomize_enemy_tolerances():
     for entry in datatable["PB_DT_CharacterParameterMaster"]:
@@ -795,22 +787,18 @@ def randomize_enemy_locations():
             continue
         for door in constant["RoomRequirement"][room]:
             for check in list(constant["RoomRequirement"][room][door]):
-                enemy_profile = Item.split_enemy_profile(check)
+                enemy_id, difficulty = Item.split_enemy_profile(check)
                 #Gusions in cages don't change
-                if room in ["m07LIB_001", "m13ARC_001"] and enemy_profile[0] == "N3035":
+                if room in ["m07LIB_001", "m13ARC_001"] and enemy_id == "N3035":
                     continue
-                #Check enemy
-                if enemy_profile[0] in enemy_replacement:
-                    if enemy_replacement[enemy_profile[0]] == enemy_profile[0]:
+                #Check and replace enemy
+                if enemy_id in enemy_replacement:
+                    if enemy_replacement[enemy_id] == enemy_id:
                         continue
-                    #Replace enemy
-                    if enemy_profile[1]:
-                        suffix = "_" + enemy_profile[1]
-                    else:
-                        suffix = enemy_profile[1]
                     #Scythe Mite and 8 Bit Zombie spawners seem to fail spawning anything in rooms of resistricted sizes
-                    if not (datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] < 2 and enemy_replacement[enemy_profile[0]] in ["N3082", "N3121"]):
-                        constant["RoomRequirement"][room][door][enemy_replacement[enemy_profile[0]] + suffix] = constant["RoomRequirement"][room][door][check]
+                    if not (datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] < 2 and enemy_replacement[enemy_id] in ["N3082", "N3121"]):
+                        suffix = f"_{difficulty}" if difficulty else ""
+                        constant["RoomRequirement"][room][door][enemy_replacement[enemy_id] + suffix] = constant["RoomRequirement"][room][door][check]
                     del constant["RoomRequirement"][room][door][check]
     #Remove the Gusions from library and labs if they were scaled up
     if enemy_replacement_invert["N3035"] in large_enemies:
@@ -820,8 +808,7 @@ def randomize_enemy_locations():
 def remove_enemy_info(room, enemy_id):
     for door in constant["RoomRequirement"][room]:
         for check in list(constant["RoomRequirement"][room][door]):
-            enemy_profile = Item.split_enemy_profile(check)
-            if enemy_profile[0] == enemy_id:
+            if Item.split_enemy_profile(check)[0] == enemy_id:
                 del constant["RoomRequirement"][room][door][check]
 
 def update_enemy_locations():
@@ -836,8 +823,8 @@ def update_enemy_locations():
 def change_room_enemies(room):
     enemy_countdown = {}
     #Loop through all difficulties
-    for difficulty in ["", "_Normal", "_Hard"]:
-        filename = room + "_Enemy" + difficulty
+    for difficulty in ["", "Normal", "Hard"]:
+        filename = f"{room}_Enemy_{difficulty}"
         if not filename in game_data:
             continue
         #Loop through all exports

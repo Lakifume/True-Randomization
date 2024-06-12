@@ -1,14 +1,9 @@
 from System import *
 import Item
-import Shop
-import Library
-import Shard
 import Equipment
 import Enemy
 import Room
 import Graphic
-import Sound
-import Bloodless
 import Utility
 
 class FileType(Enum):
@@ -91,7 +86,7 @@ def load_game_data():
     for file in file_to_type:
         if file_to_type[file] in load_types:
             extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
-            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\" + file.split("(")[0] + extension, EngineVersion.VER_UE4_22)
+            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\{file}{extension}", EngineVersion.VER_UE4_22)
     
 def load_constant():
     for file in os.listdir("Data\\Constant"):
@@ -369,9 +364,10 @@ def apply_default_tweaks():
     for data in game_data["PBExtraModeInfo_BP"].Exports[1].Data[14].Value:
         data.Value.Value = 66
     #Rename the second Zangetsu boss so that he isn't confused with the first
-    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = translation["Enemy"]["N1011_STRONG"]
-    stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = translation["Enemy"]["N1011_STRONG"] + " Medal"
-    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_Medal013"]   = "Proof that you have triumphed over " + translation["Enemy"]["N1011_STRONG"] + "."
+    zangetsu_name = translation["Enemy"]["N1011_STRONG"]
+    stringtable["PBMasterStringTable"]["ENEMY_NAME_N1011_STRONG"] = zangetsu_name
+    stringtable["PBMasterStringTable"]["ITEM_NAME_Medal013"]      = f"{zangetsu_name} Medal"
+    stringtable["PBMasterStringTable"]["ITEM_EXPLAIN_Medal013"]   = f"Proof that you have triumphed over {zangetsu_name}."
     #Update Jinrai cost description
     stringtable["PBMasterStringTable"]["ARTS_TXT_017_00"] += str(datatable["PB_DT_ArtsCommandMaster"]["JSword_GodSpeed1"]["CostMP"])
     #Slightly change Igniculus' descriptions to match other familiar's
@@ -671,24 +667,27 @@ def remove_fire_shard_requirement():
 def update_item_descriptions():
     #Add magical stats to descriptions
     for entry in datatable["PB_DT_ArmorMaster"]:
-        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
+        if not entry in datatable["PB_DT_ItemMaster"]:
             continue
+        descr_key = datatable["PB_DT_ItemMaster"][entry]["DescriptionStrKey"]
         if datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"] != 0:
-            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
+            append_string_entry("PBMasterStringTable", descr_key, "<span color=\"#ff8000\">mATK " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicAttack"]) + "</>")
         if datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"] != 0:
-            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
+            append_string_entry("PBMasterStringTable", descr_key, "<span color=\"#ff00ff\">mDEF " + str(datatable["PB_DT_ArmorMaster"][entry]["MagicDefense"]) + "</>")
     #Add restoration amount to descriptions
     for entry in datatable["PB_DT_SpecialEffectDefinitionMaster"]:
-        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
+        if not entry in datatable["PB_DT_ItemMaster"]:
             continue
+        descr_key = datatable["PB_DT_ItemMaster"][entry]["DescriptionStrKey"]
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeHP":
-            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+            append_string_entry("PBMasterStringTable", descr_key, "<span color=\"#00ff00\">HP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
         if datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Type"] == "EPBSpecialEffect::ChangeMP":
-            append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
+            append_string_entry("PBMasterStringTable", descr_key, "<span color=\"#00bfff\">MP " + str(int(datatable["PB_DT_SpecialEffectDefinitionMaster"][entry]["Parameter01"])) + "</>")
     for entry in datatable["PB_DT_AmmunitionMaster"]:
-        if not f"ITEM_EXPLAIN_{entry}" in stringtable["PBMasterStringTable"]:
+        if not entry in datatable["PB_DT_ItemMaster"]:
             continue
-        append_string_entry("PBMasterStringTable", f"ITEM_EXPLAIN_{entry}", "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
+        descr_key = datatable["PB_DT_ItemMaster"][entry]["DescriptionStrKey"]
+        append_string_entry("PBMasterStringTable", descr_key, "<span color=\"#ff0000\">ATK " + str(datatable["PB_DT_AmmunitionMaster"][entry]["MeleeAttack"]) + "</>")
     #Add Shovel Armor's attack stat to its description
     append_string_entry("PBMasterStringTable", "ITEM_EXPLAIN_Shovelarmorsarmor", "<span color=\"#ff0000\">wATK " + str(int(datatable["PB_DT_CoordinateParameter"]["ShovelArmorWeaponAtk"]["Value"])) + "</>")
 
@@ -765,7 +764,7 @@ def write_files():
     #Dump all uasset objects to files
     for file in game_data:
         extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
-        game_data[file].Write(mod_dir + "\\" + file_to_path[file] + "\\" + file.split("(")[0] + extension)
+        game_data[file].Write(f"{mod_dir}\\{file_to_path[file]}\\{file}{extension}")
 
 def debug_output_datatables():
     if os.path.isdir("Debug"):

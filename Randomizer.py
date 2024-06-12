@@ -1,5 +1,6 @@
 import Manager
 import Item
+import Classic
 import Shop
 import Library
 import Shard
@@ -18,8 +19,6 @@ from PySide6.QtWidgets import*
 import os
 import sys
 import shutil
-import copy
-import json
 import glob
 import random
 import zipfile
@@ -372,7 +371,7 @@ class Generate(QThread):
         
         if config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.selected_seed)
-            Item.randomize_classic_mode_drops()
+            Classic.randomize_candle_drops()
         
         if config.getboolean("ItemRandomization", "bOverworldPool") or config.getboolean("EnemyRandomization", "bEnemyLocations") or self.selected_map:
             Manager.remove_fire_shard_requirement()

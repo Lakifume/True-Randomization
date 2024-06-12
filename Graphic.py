@@ -1,15 +1,6 @@
 from System import *
 import Manager
-import Item
-import Shop
-import Library
-import Shard
-import Equipment
 import Enemy
-import Room
-import Sound
-import Bloodless
-import Utility
 
 def init():
     global portrait_replacement

@@ -1,14 +1,6 @@
 from System import *
 import Manager
 import Item
-import Shop
-import Library
-import Shard
-import Equipment
-import Enemy
-import Graphic
-import Sound
-import Bloodless
 import Utility
 
 class Direction(Enum):

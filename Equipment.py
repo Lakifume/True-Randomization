@@ -1,14 +1,5 @@
 from System import *
 import Manager
-import Item
-import Shop
-import Library
-import Shard
-import Enemy
-import Room
-import Graphic
-import Sound
-import Bloodless
 import Utility
 
 def init():
@@ -155,8 +146,8 @@ def reset_zangetsu_black_belt():
 
 def randomize_equipment_stats():
     for entry in datatable["PB_DT_ArmorMaster"]:
-        #Only randomize equipment that has a description entry
-        if not "ITEM_EXPLAIN_" + entry in stringtable["PBMasterStringTable"]:
+        #Only randomize equipment that are in ItemMaster
+        if not entry in datatable["PB_DT_ItemMaster"]:
             continue
         #Some equipments have extreme stats that need to be evenly multiplied
         if has_negative_stat(entry):
@@ -170,13 +161,13 @@ def randomize_equipment_stats():
                 if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
                     continue
                 datatable["PB_DT_ArmorMaster"][entry][stat] = round(datatable["PB_DT_ArmorMaster"][entry][stat]*multiplier)
+            continue
         #The rest can be semi-random
-        else:
-            for stat in stat_to_property:
-                if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
-                    continue
-                max_value = 20 if entry == "SkullNecklace" else equipment_type_to_max_value[datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
-                datatable["PB_DT_ArmorMaster"][entry][stat] = Utility.random_weighted(datatable["PB_DT_ArmorMaster"][entry][stat], 1, int(max_value*1.2), 1, global_stat_weight)
+        for stat in stat_to_property:
+            if datatable["PB_DT_ArmorMaster"][entry][stat] == 0:
+                continue
+            max_value = 20 if entry == "SkullNecklace" else equipment_type_to_max_value[datatable["PB_DT_ArmorMaster"][entry]["SlotType"].split("::")[1]][stat_to_property[stat]]
+            datatable["PB_DT_ArmorMaster"][entry][stat] = Utility.random_weighted(datatable["PB_DT_ArmorMaster"][entry][stat], 1, int(max_value*1.2), 1, global_stat_weight)
     #Shovel Armor's attack
     max_value = weapon_type_to_max_value["LargeSword"]
     min_value = round(max_value*min_value_multiplier)

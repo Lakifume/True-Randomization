@@ -1,14 +1,4 @@
 from System import *
-import Manager
-import Item
-import Library
-import Shard
-import Equipment
-import Enemy
-import Room
-import Graphic
-import Sound
-import Bloodless
 import Utility
 
 def init():
