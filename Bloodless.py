@@ -1,5 +1,4 @@
 from System import *
-import Manager
 import Item
 import Room
 import Utility
@@ -136,7 +135,7 @@ def satisfies_requirement(requirement):
             break
     return check
 
-def candle_logic():
+def process_key_logic():
     #Simplified version of the function from Item
     move_through_rooms()
     while True:
@@ -170,8 +169,8 @@ def move_through_rooms():
         for door in copy.deepcopy(current_available_doors):
             current_available_doors.remove(door)
             room = Item.get_door_room(door)
-            if room in constant["BloodlessRoomRequirement"]:
-                for check, requirement in constant["BloodlessRoomRequirement"][room][door].items():
+            if room in constant["BloodlessRequirement"]:
+                for check, requirement in constant["BloodlessRequirement"][room][door].items():
                     #Don't automatically unlock certain checks
                     if check in special_check_to_requirement:
                         if not check in special_check_to_door:
@@ -191,7 +190,7 @@ def move_through_rooms():
         for special_check in special_check_to_requirement:
             if special_check in special_check_to_door and special_check_to_requirement[special_check]():
                 for door in special_check_to_door[special_check]:
-                    analyse_check(special_check, constant["BloodlessRoomRequirement"][Item.get_door_room(door)][door][special_check])
+                    analyse_check(special_check, constant["BloodlessRequirement"][Item.get_door_room(door)][door][special_check])
                 del special_check_to_door[special_check]
         #Stop if no more doors are found
         if not current_available_doors:
@@ -318,7 +317,7 @@ def final_boss_available():
     return "N1013_Bael" in all_available_bosses
 
 def randomize_bloodless_candles():
-    candle_logic()
+    process_key_logic()
     #Key abilities
     for item in key_ability_to_location:
         ability_to_location[item] = key_ability_to_location[item]
@@ -338,7 +337,7 @@ def update_shard_candles():
         data_name = "UnlockAbilityType"
         old_value = f"EPBBloodlessAbilityType::{candle_to_ability[ability_to_location[item]]}"
         new_value = f"EPBBloodlessAbilityType::{item}"
-        Manager.search_and_replace_string(file_name, class_name, data_name, old_value, new_value)
+        Utility.search_and_replace_string(file_name, class_name, data_name, old_value, new_value)
 
 def increase_starting_stats():
     #Give Bloodless 4 of each stat to start with

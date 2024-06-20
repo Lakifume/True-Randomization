@@ -833,10 +833,7 @@ def change_room_enemies(room):
             export_name = str(game_data[filename].Exports[export_index].ObjectName)
             if game_data[filename].Exports[export_index].OuterIndex.Index == 0:
                 continue
-            class_index = game_data[filename].Exports[export_index].ClassIndex.Index
-            if class_index >= 0:
-                continue
-            old_class_name = str(game_data[filename].Imports[abs(class_index) - 1].ObjectName)
+            old_class_name = Utility.get_export_class(game_data[filename], game_data[filename].Exports[export_index])
             if not old_class_name in constant["ActorPointer"]:
                 continue
             old_enemy_id = constant["ActorPointer"][old_class_name]["Name"]
@@ -857,7 +854,7 @@ def change_room_enemies(room):
                 if str(data.Name) == "SpawnIsN3099":
                     old_enemy_id = "N3090"
                 if str(data.Name) == "RootComponent":
-                    root_index = int(str(data.Value)) - 1
+                    root_index = data.Value.Index - 1
                     for root_data in game_data[filename].Exports[root_index].Data:
                         if str(root_data.Name) == "RelativeLocation":
                             location = root_data.Value[0].Value

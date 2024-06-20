@@ -157,6 +157,7 @@ def set_material_hsv(filename, parameter, new_hsv):
     #Here we use hsv as a base as it is easier to work with
     if Manager.file_to_type[filename] != Manager.FileType.Material:
         raise TypeError("Input is not a material file")
+    export = game_data[filename].Exports[0]
     #Some color properties are not parsed by UAssetAPI and end up in extra data
     #Hex edit in that case
     if filename in material_to_offset:
@@ -164,7 +165,7 @@ def set_material_hsv(filename, parameter, new_hsv):
             #Check if given offset is valid
             string = ""
             for num in range(12):
-                string += "{:02x}".format(game_data[filename].Exports[0].Extras[offset + num]).upper()
+                string += "{:02x}".format(export.Extras[offset + num]).upper()
             if string != "0000000000000002FFFFFFFF":
                 raise Exception("Material offset invalid")
             #Get rgb
@@ -172,7 +173,7 @@ def set_material_hsv(filename, parameter, new_hsv):
             for num in range(3):
                 list = []
                 for index in range(4):
-                    list.insert(0, "{:02x}".format(game_data[filename].Exports[0].Extras[offset + 12 + num*4 + index]).upper())
+                    list.insert(0, "{:02x}".format(export.Extras[offset + 12 + num*4 + index]).upper())
                 string = ""
                 for index in list:
                     string += index
@@ -190,10 +191,10 @@ def set_material_hsv(filename, parameter, new_hsv):
                 for index in range(0, len(string), 2):
                     list.insert(0, string[index] + string[index + 1])
                 for index in range(4):
-                    game_data[filename].Exports[0].Extras[offset + 12 + num*4 + index] = int(list[index], 16)
+                    export.Extras[offset + 12 + num*4 + index] = int(list[index], 16)
     #Otherwise change color through the exports
     else:
-        for data in game_data[filename].Exports[0].Data:
+        for data in export.Data:
             if str(data.Name) == "VectorParameterValues":
                 for sub_data in data.Value:
                     if str(sub_data.Value[0].Value[0].Value) == parameter:

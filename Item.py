@@ -12,6 +12,8 @@ class CheckType(Enum):
 
 def init():
     #Logic
+    global game_difficulty
+    game_difficulty = "Normal"
     global used_chests
     used_chests = [
         "PotionMaterial",
@@ -470,8 +472,6 @@ def init():
     key_shard_to_location = {}
     global all_keys
     all_keys = key_items + list(key_shards)
-    global game_difficulty
-    game_difficulty = "Normal"
     global previous_available_chests
     previous_available_chests = []
     global previous_available_enemies
@@ -772,7 +772,7 @@ def check_requirement(requirement):
         return satisfies_requirement(macro_to_requirements[requirement])
     return requirement in key_order
 
-def key_logic():
+def process_key_logic():
     #Logic that adapts to any map layout
     move_through_rooms()
     while True:
@@ -793,6 +793,7 @@ def key_logic():
             chosen_requirement = random.choice(requirement_list)
             #Choose requirement and key item
             if type(chosen_requirement) is list:
+                random.shuffle(chosen_requirement)
                 for item in chosen_requirement:
                     if satisfies_requirement([item]):
                         continue
@@ -1076,7 +1077,7 @@ def final_boss_available():
     return "N1013_Bael" in all_available_enemies
 
 def randomize_overworld_keys():
-    key_logic()
+    process_key_logic()
     #Key items
     for item in key_items:
         patch_key_item_entry(item, key_item_to_location[item])
@@ -1498,102 +1499,103 @@ def update_shard_candles():
     #Instead those are read directly from the level files so they need to be updated to reflect the new shard drops
     for shard in ["Shortcut", "Deepsinker", "FamiliaSilverKnight", "Aquastream", "FamiliaIgniculus"]:
         for room in enemy_to_room[shard]:
-            Manager.search_and_replace_string(f"{room}_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][f"{shard}_Shard"]["ShardId"])
+            Utility.search_and_replace_string(f"{room}_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][f"{shard}_Shard"]["ShardId"])
 
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
     if item_id in datatable["PB_DT_ItemMaster"]:
         raise Exception("Item already exists.")
     #Edit ItemMaster
-    icon_path                                                              = (icon_coord[1]//128)*32 + icon_coord[0]//128
-    datatable["PB_DT_ItemMaster"][item_id]                                 = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
-    datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                     = str(icon_path)
-    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                   = f"ITEM_NAME_{item_id}"
-    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]            = f"ITEM_EXPLAIN_{item_id}"
-    datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                     = price
-    datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                    = price//10 if price > 10 else 1
-    datatable["PB_DT_ItemMaster"][item_id]["Producted"]                    = "None"
-    #Edit string entries                                                   
-    stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]             = name
-    stringtable["PBMasterStringTable"][f"ITEM_EXPLAIN_{item_id}"]          = description
-    #Edit case by case properties                                          
-    if item_type == "Accessory":                                                
-        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"
-        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
-        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
-        datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyAccesory"])
-        datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
-        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
-        if craftable:
-            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
-            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
-    if item_type == "Armor":                                                  
-        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
-        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
-        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
-        datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyBody"])
-        datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
-        datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
-        if craftable:
-            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
-            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
-    if item_type == "Bullet":                                                 
-        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
-        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
-        datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
-        datatable["PB_DT_AmmunitionMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_AmmunitionMaster"]["Softpoint"])
-        datatable["PB_DT_AmmunitionMaster"][item_id]["BulletID"]           = item_id
-        if craftable:
-            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Softpoint"])
-            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        if not item_id in datatable["PB_DT_BulletMaster"]:                 
-            datatable["PB_DT_BulletMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_BulletMaster"]["Softpoint"])
-            datatable["PB_DT_BulletMaster"][item_id]["DamageId"]           = item_id
-        if not item_id in datatable["PB_DT_CollisionMaster"]:              
-            datatable["PB_DT_CollisionMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint"])
-            datatable["PB_DT_CollisionMaster"][item_id + "_EX"]            = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint_EX"])
-        if not item_id in datatable["PB_DT_DamageMaster"]:                 
-            datatable["PB_DT_DamageMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint"])
-            datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
-            datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
-        Manager.datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]   = index
-    if item_type == "Potion":                                                 
-        datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
-        datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
-        datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
-        datatable["PB_DT_ConsumableMaster"][item_id]["SpecialEffectId"]    = item_id
-        datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]          = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["Potion"])
-        datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]["DefId"] = item_id
-        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]               = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["Potion"])
-        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["GroupId"]    = item_id
-        datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["DefId"]      = item_id
-        datatable["PB_DT_SpecialEffectMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["Potion"])
-        datatable["PB_DT_SpecialEffectMaster"][item_id]["Id"]              = item_id
-        datatable["PB_DT_SpecialEffectMaster"][item_id]["GroupId"]         = item_id
-        if craftable:
-            datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
-            datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
-        Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]   = index
+    icon_path                                                                  = (icon_coord[1]//128)*32 + icon_coord[0]//128
+    datatable["PB_DT_ItemMaster"][item_id]                                     = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
+    datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                         = str(icon_path)
+    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                       = f"ITEM_NAME_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]                = f"ITEM_EXPLAIN_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                         = price
+    datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                        = price//10 if price > 10 else 1
+    datatable["PB_DT_ItemMaster"][item_id]["Producted"]                        = "None"
+    #Edit string entries                                                       
+    stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]                 = name
+    stringtable["PBMasterStringTable"][f"ITEM_EXPLAIN_{item_id}"]              = description
+    #Edit case by case properties
+    match item_type:
+        case "Accessory":
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Accessory1"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
+            datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+            datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyAccesory"])
+            datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
+            datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
+            if craftable:
+                datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
+                datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+            Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
+        case "Armor":                                                  
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
+            datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+            datatable["PB_DT_ArmorMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ArmorMaster"]["EmptyBody"])
+            datatable["PB_DT_ArmorMaster"][item_id]["AttachPoint"]             = "EWeaponAttachPoint::None"
+            datatable["PB_DT_ArmorMaster"][item_id]["Category"]                = item_subtype
+            if craftable:
+                datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
+                datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+            Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
+        case "Bullet":                                                 
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
+            datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
+            datatable["PB_DT_AmmunitionMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_AmmunitionMaster"]["Softpoint"])
+            datatable["PB_DT_AmmunitionMaster"][item_id]["BulletID"]           = item_id
+            if craftable:
+                datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Softpoint"])
+                datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+            if not item_id in datatable["PB_DT_BulletMaster"]:                 
+                datatable["PB_DT_BulletMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_BulletMaster"]["Softpoint"])
+                datatable["PB_DT_BulletMaster"][item_id]["DamageId"]           = item_id
+            if not item_id in datatable["PB_DT_CollisionMaster"]:              
+                datatable["PB_DT_CollisionMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint"])
+                datatable["PB_DT_CollisionMaster"][item_id + "_EX"]            = copy.deepcopy(datatable["PB_DT_CollisionMaster"]["Softpoint_EX"])
+            if not item_id in datatable["PB_DT_DamageMaster"]:                 
+                datatable["PB_DT_DamageMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint"])
+                datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
+                datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
+            Manager.datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]   = index
+        case "Potion":                                                 
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
+            datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
+            datatable["PB_DT_ConsumableMaster"][item_id]["SpecialEffectId"]    = item_id
+            datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]          = copy.deepcopy(datatable["PB_DT_SpecialEffectDefinitionMaster"]["Potion"])
+            datatable["PB_DT_SpecialEffectDefinitionMaster"][item_id]["DefId"] = item_id
+            datatable["PB_DT_SpecialEffectGroupMaster"][item_id]               = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["Potion"])
+            datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["GroupId"]    = item_id
+            datatable["PB_DT_SpecialEffectGroupMaster"][item_id]["DefId"]      = item_id
+            datatable["PB_DT_SpecialEffectMaster"][item_id]                    = copy.deepcopy(datatable["PB_DT_SpecialEffectMaster"]["Potion"])
+            datatable["PB_DT_SpecialEffectMaster"][item_id]["Id"]              = item_id
+            datatable["PB_DT_SpecialEffectMaster"][item_id]["GroupId"]         = item_id
+            if craftable:
+                datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
+                datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
+            Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]   = index
 
 def pick_and_remove(item_array, remove, item_type):
     #Function for picking and remove an item at random
     item = random.choice(item_array)
     if remove:
-        if len(item_array) == 1:
-            while item_type in chest_type:
-                chest_type.remove(item_type)
-            while item_type in blue_chest_type:
-                blue_chest_type.remove(item_type)
-            while item_type in green_chest_type:
-                green_chest_type.remove(item_type)
-            while item_type in enemy_type:
-                enemy_type.remove(item_type)
-            while item_type in quest_type:
-                quest_type.remove(item_type)
         while item in item_array:
             item_array.remove(item)
+    if not item_array:
+        while item_type in chest_type:
+            chest_type.remove(item_type)
+        while item_type in blue_chest_type:
+            blue_chest_type.remove(item_type)
+        while item_type in green_chest_type:
+            green_chest_type.remove(item_type)
+        while item_type in enemy_type:
+            enemy_type.remove(item_type)
+        while item_type in quest_type:
+            quest_type.remove(item_type)
     return item
 
 def invert_ratio():

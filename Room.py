@@ -653,7 +653,7 @@ def update_room_containers(room):
         return
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for export_index in range(len(game_data[filename].Exports)):
-        old_class_name = str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName)
+        old_class_name = Utility.get_export_class(game_data[filename], game_data[filename].Exports[export_index])
         #Check if it is a golden chest
         if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[export_index].Data[4].Name) == "IsAutoMaterial":
             old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
@@ -675,7 +675,7 @@ def update_room_containers(room):
                 if str(data.Name) == "OptionalGimmickID":
                     gimmick_id = str(data.Value)
                 if str(data.Name) == "RootComponent":
-                    root_index = int(str(data.Value)) - 1
+                    root_index = data.Value.Index - 1
                     for root_data in game_data[filename].Exports[root_index].Data:
                         if str(root_data.Name) == "RelativeLocation":
                             location = root_data.Value[0].Value
@@ -1024,7 +1024,7 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
         if str(data.Name) == "ActorLabel":
             data.Value = FString(Utility.remove_inst_number(actor_name))
         if str(data.Name) == "RootComponent":
-            root_index = int(str(data.Value)) - 1
+            root_index = data.Value.Index - 1
             game_data[filename].Exports[root_index].Data.Clear()
             if location.X != 0 or location.Y != 0 or location.Z != 0:
                 struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
@@ -1073,8 +1073,8 @@ def add_level_actor(filename, actor_class, location, rotation, scale, properties
 def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_location, warp_2_rotation):
     warp_1_index = len(game_data[filename].Exports)
     add_level_actor(filename, "ToriiWarp_BP_C", warp_1_location, warp_1_rotation, FVector(1, 1, 1), {})
-    warp_2_index = int(str(game_data[filename].Exports[warp_1_index].Data[12].Value)) - 1
-    root_index = int(str(game_data[filename].Exports[warp_2_index].Data[14].Value)) - 1
+    warp_2_index = game_data[filename].Exports[warp_1_index].Data[12].Value.Index - 1
+    root_index = game_data[filename].Exports[warp_2_index].Data[14].Value.Index - 1
     game_data[filename].Exports[root_index].Data.Clear()
     if warp_2_location.X != 0 or warp_2_location.Y != 0 or warp_2_location.Z != 0:
         struct = StructPropertyData(FName.FromString(game_data[filename], "RelativeLocation"), FName.FromString(game_data[filename], "Vector"))
@@ -1088,8 +1088,8 @@ def add_extra_mode_warp(filename, warp_1_location, warp_1_rotation, warp_2_locat
         sub_struct.Value = warp_2_rotation
         struct.Value.Add(sub_struct)
         game_data[filename].Exports[root_index].Data.Add(struct)
-    warp_1_event_index = int(str(game_data[filename].Exports[warp_1_index].Data[3].Value)) - 1
-    warp_2_event_index = int(str(game_data[filename].Exports[warp_2_index].Data[3].Value)) - 1
+    warp_1_event_index = game_data[filename].Exports[warp_1_index].Data[3].Value.Index - 1
+    warp_2_event_index = game_data[filename].Exports[warp_2_index].Data[3].Value.Index - 1
     game_data[filename].Exports[warp_1_event_index].Data[2].Value = game_data[filename].Exports[warp_1_index].ObjectName
     game_data[filename].Exports[warp_1_event_index].Data[3].Value = game_data[filename].Exports[warp_2_index].ObjectName
     game_data[filename].Exports[warp_2_event_index].Data[2].Value = game_data[filename].Exports[warp_2_index].ObjectName
@@ -1099,14 +1099,14 @@ def remove_level_actor(filename, export_index):
     #Remove actor at index
     if Manager.file_to_type[filename] != Manager.FileType.Level:
         raise TypeError("Input is not a level file")
-    class_name = str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName)
+    class_name = Utility.get_export_class(game_data[filename], game_data[filename].Exports[export_index])
     #If the actor makes use of a c_cat class removing it will crash the game
     if class_name in c_cat_actors or filename in ["m20JRN_002_Gimmick", "m20JRN_002_Enemy"]:
         for data in game_data[filename].Exports[export_index].Data:
             if str(data.Name) in ["DropItemID", "ItemID"] and "TreasureBox" in class_name:
                 data.Value = FName.FromString(game_data[filename], "AAAA_Shard")
             if str(data.Name) == "RootComponent":
-                root_index = int(str(data.Value)) - 1
+                root_index = data.Value.Index - 1
         for data in game_data[filename].Exports[root_index].Data:
             #Scale giant dulla spawner to 0 to remove it
             if class_name == "N3126_Generator_C":
@@ -1125,7 +1125,7 @@ def remove_level_actor(filename, export_index):
 def remove_level_class(filename, class_name):
     #Remove all actors of class in a level
     for export_index in range(len(game_data[filename].Exports)):
-        if str(game_data[filename].Imports[abs(game_data[filename].Exports[export_index].ClassIndex.Index) - 1].ObjectName) == class_name:
+        if Utility.get_export_class(game_data[filename], game_data[filename].Exports[export_index]) == class_name:
             remove_level_actor(filename, export_index)
 
 def convert_flag_to_door(room_name, door_flag, room_width):
