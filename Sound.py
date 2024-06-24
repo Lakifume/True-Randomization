@@ -81,6 +81,13 @@ def init():
         "BGM_m19K2C",
         "BGM_m20JRN"
     ]
+    global bit_music
+    bit_music = [
+        "BGM_8bit_stage04",
+        "BGM_8bit_stage01",
+        "BGM_8bit_stage02",
+        "BGM_8bit_stage05"
+    ]
     global event_replacement
     event_replacement = {}
     global music_replacement
@@ -192,10 +199,17 @@ def randomize_dialogues():
             pass
 
 def randomize_music():
+    #Shuffle standard tracks
     new_list = copy.deepcopy(music_list)
     random.shuffle(new_list)
     new_dict = dict(zip(music_list, new_list))
     music_replacement.update(new_dict)
+    #Shuffle 8 bit tracks
+    new_list = copy.deepcopy(bit_music)
+    random.shuffle(new_list)
+    new_dict = dict(zip(bit_music, new_list))
+    music_replacement.update(new_dict)
+    #Swap pointers in sound master
     for music_id in music_replacement:
         if not music_id in datatable["PB_DT_SoundMaster"]:
             continue

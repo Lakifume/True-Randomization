@@ -684,7 +684,7 @@ class Generate(QThread):
         
         if os.path.isdir("Tools\\UE4 DDS Tools\\src\\__pycache__"):
             shutil.rmtree("Tools\\UE4 DDS Tools\\src\\__pycache__")
-        #shutil.rmtree("Tools\\UnrealPak\\Mod")
+        shutil.rmtree("Tools\\UnrealPak\\Mod")
         os.remove("Tools\\UnrealPak\\filelist.txt")
         
         #Move

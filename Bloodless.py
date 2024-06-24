@@ -272,7 +272,7 @@ def get_check_type(check):
     return CheckType.Door
 
 def place_next_key(chosen_item):
-    if should_place_key_in(current_available_candles):
+    if random.random() < logic_complexity:
         try:
             chosen_candle = pick_key_candle(current_available_candles)
         except IndexError:
@@ -280,7 +280,7 @@ def place_next_key(chosen_item):
                 chosen_candle = pick_key_candle(previous_available_candles)
             except IndexError:
                 chosen_candle = pick_key_candle(all_available_candles)
-    elif should_place_key_in(previous_available_candles):
+    elif random.random() < logic_complexity:
         try:
             chosen_candle = pick_key_candle(previous_available_candles)
         except IndexError:
@@ -293,9 +293,6 @@ def place_next_key(chosen_item):
     reset_available_checks()
     check_lifted_obstacles()
     move_through_rooms()
-
-def should_place_key_in(list):
-    return random.random() < (1 - 1/(1+len(list)))*logic_complexity
 
 def pick_key_candle(available_candle):
     possible_candle = []

@@ -39,8 +39,19 @@ def init():
     key_items.extend(constant["Classic2Pool"]["KeyItem"])
     key_items.extend(constant["Classic2Pool"]["AbilityShard"])
     key_items.extend(constant["Classic2Pool"]["PassiveShard"])
-    global non_key_types
-    non_key_types = ["AttackShard", "Consumable", "ShopItem"]
+    global overworld_types
+    overworld_types = [
+        "AttackShard",
+        "AttackShard",
+        "Consumable",
+        "Consumable",
+        "Consumable",
+        "Consumable",
+        "Consumable",
+        "ShopItem",
+        "ShopItem",
+        "ShopItem"
+    ]
     global current_available_checks
     current_available_checks = []
     global previous_available_checks
@@ -49,9 +60,24 @@ def init():
     all_available_checks = []
     global check_to_requirement
     check_to_requirement = {}
+    global check_to_chest_class
+    check_to_chest_class = {}
+    global chest_to_level
+    chest_to_level = {
+        "BP_PBC2_ItemChest_HPRestore_C":          "Classic2_Region9_Dungeon5_Design",
+        "BP_PBC2_ItemChest_HPUpgrade_4_C":        "Classic2_Region8_Map10b_Design",
+        "BP_PBC2_ItemChest_KeyItem_DevilsRing_C": "Classic2_Region7_Map19_Design",
+        "BP_PBC2_ItemChest_KeyItem_FancyBag_C":   "Classic2_Region4_Map10a_Design",
+        "BP_PBC2_ItemChest_KeyItem_Omurice_C":    "Classic2_Region3_Map06a_Design",
+        "BP_PBC2_ItemChest_MPUpgrade_7_C":        "Classic2_Region5_Dungeon3_Sand_Design",
+        "BP_PBC2ItemChest_PlunderersRing_C":      "Classic2_Region1_Town01_Design",
+        "BP_PBC2ItemChest_Waystone_C":            "Classic2_Region4_Town03_Design"
+    }
     global linked_checks
     linked_checks = {
+        "Region5_Map13_Alt_Design_19":         "Region5_Map13_Design_9",
         "Region5_Map13_Alt_Design_33":         "Region5_Map13_Design_23",
+        "Region5_Dungeon3_Water_Design_165":   "Region5_Dungeon3_Sand_Design_56",
         "Region5_Dungeon3_Water_Design_210":   "Region5_Dungeon3_Sand_Design_86",
         "Region5_Dungeon3_Water_EnemyDay_153": "Region5_Dungeon3_Sand_EnemyDay_142"
     }
@@ -66,7 +92,7 @@ def init():
     global shop_capacity
     shop_capacity = 10
     global valid_shops
-    valid_shops = ["GK1", "GK2", "GK3", "GK5", "T1", "T2", "T3", "T4", "T5", "H1", "H2", "H3", "H4", "H5", "FM1", "FM2", "FM3"]
+    valid_shops = ["GK1", "GK2", "GK3", "GK5", "T1", "T2", "T3", "T4", "T5", "H1", "H2", "H3", "H4", "H5", "FM1", "FM2", "FM3", "IGA"]
     global item_to_shop_id
     item_to_shop_id = {
         "HEALTHRESTORE":  "HEALTH_RESTORE",
@@ -90,14 +116,16 @@ def init():
         "iga merchant",
         "special merchant",
         "merchant dialogue",
+        "secret stock",
         "liber logaeth",
         "conversion dialogue",
         "town dialogue"
     ]
     global area_to_id
     area_to_id = {
-        "Town01": "C2_areaname_town01a",
-        "Map13":  "C2_areaname_map13_sand"
+        "Town01":       "C2_areaname_town01a",
+        "Map13":        "C2_areaname_map13_sand",
+        "DungeonFinal": "C2_areaname_finaldungeon_revealed"
     }
 
 def set_logic_complexity(complexity):
@@ -251,6 +279,8 @@ def randomize_item_pool():
     for check in linked_checks:
         location_to_item[check] = location_to_item[linked_checks[check]]
     #Apply the changes in the assets
+    available_chest_classes = list(chest_to_level)
+    modified_chest_blueprints = []
     for check, item in location_to_item.items():
         split_check = check.split("_")
         export_index = int(split_check.pop()) - 1
@@ -260,55 +290,80 @@ def randomize_item_pool():
         class_name = Utility.get_export_class(uasset, export)
         if not class_name:
             continue
-        match class_name:
-            #For a boss trigger remove its drop and place a chest in the boss room
-            case "BP_PBC2_BossBattleTrigger_C":
-                for data in export.Data:
-                    if str(data.Name) == "m_shardAbility":
-                        data.Value = FName.FromString(uasset, "EPBC2AbilityShard::NONE")
-                    if str(data.Name) == "m_shardPassive":
-                        data.Value = FName.FromString(uasset, "EPBC2PassiveShard::NONE")
-                    if str(data.Name) == "m_freezePlayerMovementOnDefeat":
-                        data.Value = False
-                x_pos, y_pos, z_pos = boss_chest_location[check]
-                location = FVector(x_pos, y_pos, z_pos)
-                actor_index = len(uasset.Exports)
-                Room.add_level_actor(file_name, "BP_PBC2_ItemChest_Base_C", location, FRotator(0, 0, 0), FVector(1, 1, 1), {})
-                export = uasset.Exports[actor_index]
-                neutralize_chest_export(uasset, export)
-                if "Dungeon3" in check:
-                    export.Data.Add(create_bool_struct(uasset, "m_isInDungeon3", True))
+        #For a regular chest change the class to its parent and override its content
+        if "ItemChest" in class_name:
+            neutralize_chest_export(uasset, export)
+            export.Data.Add(create_item_struct(uasset, item))
+            if check == "Region5_Dungeon3_Water_Design_210":
                 export.Data.Add(create_bool_struct(uasset, "m_shouldFall", False))
-                export.Data.Add(create_item_struct(uasset, item))
-            #For a hunter drop edit its chest blueprint directly
-            case "BP_PBC2_HunterBattleTrigger_C":
-                for data in export.Data:
-                    if str(data.Name) == "m_pSpawnChestClass":
-                        class_name = Utility.get_object_class(uasset, data)
-                        break
-                class_split = class_name.split("_")
-                class_split.pop()
-                file_name = "_".join(class_split)
-                uasset = game_data[file_name]
-                export = uasset.Exports[1]
-                export.Data.Remove(export.Data[1])
-                export.Data.Add(create_item_struct(uasset, item))
-            #For a regular chest change the class to its parent and override its content
-            case _:
-                neutralize_chest_export(uasset, export)
-                export.Data.Add(create_item_struct(uasset, item))
-                if check == "Region5_Dungeon3_Water_Design_210":
-                    export.Data.Add(create_bool_struct(uasset, "m_shouldFall", False))
-                    uasset.Exports[export.Data[5].Value.Index - 1].Data[0].Value[0].Value = FVector(10200, 0, 2232)
+                uasset.Exports[export.Data[5].Value.Index - 1].Data[0].Value[0].Value = FVector(10200, 0, 2232)
+        #For a wall drop edit its chest blueprint directly
+        if "Breakable" in class_name:
+            for data in export.Data:
+                if str(data.Name) == "m_pPrimaryItemClass":
+                    sub_class = Utility.get_object_class(uasset, data)
+                    item_class_struct = data
+                    break
+            if check in linked_checks:
+                sub_class = check_to_chest_class[linked_checks[check]]
+            if not "ItemChest" in sub_class or sub_class in modified_chest_blueprints:
+                if not check in linked_checks:
+                    sub_class = available_chest_classes[0]
+                    available_chest_classes.remove(sub_class)
+                if sub_class in chest_to_level:
+                    source_asset = game_data[chest_to_level[sub_class]]
+                    item_class_struct.Value = Utility.copy_asset_import(sub_class, source_asset, uasset)
+            modified_chest_blueprints.append(sub_class)
+            check_to_chest_class[check] = sub_class
+            class_split = sub_class.split("_")
+            class_split.pop()
+            file_name = "_".join(class_split)
+            uasset = game_data[file_name]
+            export = uasset.Exports[1]
+            export.Data.Clear()
+            export.Data.Add(create_item_struct(uasset, item))
+        #For a hunter drop edit its chest blueprint directly
+        if "HunterBattleTrigger" in class_name:
+            for data in export.Data:
+                if str(data.Name) == "m_pSpawnChestClass":
+                    sub_class = Utility.get_object_class(uasset, data)
+                    break
+            class_split = sub_class.split("_")
+            class_split.pop()
+            file_name = "_".join(class_split)
+            uasset = game_data[file_name]
+            export = uasset.Exports[1]
+            export.Data.Remove(export.Data[1])
+            export.Data.Add(create_item_struct(uasset, item))
+        #For a boss trigger remove its drop and place a chest in the boss room
+        if "BossBattleTrigger" in class_name:
+            for data in export.Data:
+                if str(data.Name) == "m_shardAbility":
+                    data.Value = FName.FromString(uasset, "EPBC2AbilityShard::NONE")
+                if str(data.Name) == "m_shardPassive":
+                    data.Value = FName.FromString(uasset, "EPBC2PassiveShard::NONE")
+                if str(data.Name) == "m_freezePlayerMovementOnDefeat":
+                    data.Value = False
+            x_pos, y_pos, z_pos = boss_chest_location[check]
+            location = FVector(x_pos, y_pos, z_pos)
+            actor_index = len(uasset.Exports)
+            Room.add_level_actor(file_name, "BP_PBC2_ItemChest_Base_C", location, FRotator(0, 0, 0), FVector(1, 1, 1), {})
+            export = uasset.Exports[actor_index]
+            neutralize_chest_export(uasset, export)
+            if "Dungeon3" in check:
+                export.Data.Add(create_bool_struct(uasset, "m_isInDungeon3", True))
+            export.Data.Add(create_bool_struct(uasset, "m_shouldFall", False))
+            export.Data.Add(create_item_struct(uasset, item))
 
 def pick_next_item():
-    item_type = random.choice(non_key_types)
+    item_type = random.choice(overworld_types)
     item_pool = constant["Classic2Pool"][item_type]
     chosen_item = random.choice(item_pool)
     if item_type != "Consumable":
         item_pool.remove(chosen_item)
     if not item_pool:
-        non_key_types.remove(item_type)
+        while item_type in overworld_types:
+            overworld_types.remove(item_type)
     return chosen_item
 
 def create_item_struct(uasset, chosen_item):
@@ -352,12 +407,16 @@ def randomize_shop_pool():
         datatable["DT_PBC2_ShopData"][item]["COSTS_KEY_ITEM"] =           "EPBC2KeyItem::NONE"
     #Place the remaining unique items
     shop_quantity = {shop: 0 for shop in valid_shops}
-    for type in non_key_types + ["ShopOnly"]:
-        if type == "Consumable":
-            continue
+    shop_types = list(dict.fromkeys(overworld_types))
+    shop_types.remove("Consumable")
+    shop_types.append("ShopOnly")
+    for type in shop_types:
         for item in constant["Classic2Pool"][type]:
             item_shop_id = get_item_shop_id(item)
             chosen_shop = random.choice(valid_shops)
+            #Don't give the IGA merchant holy water or he'll be unreachable
+            while item == "UNHOLYFIRE" and chosen_shop == "IGA":
+                chosen_shop = random.choice(valid_shops)
             datatable["DT_PBC2_ShopData"][item_shop_id][chosen_shop] = True
             shop_quantity[chosen_shop] += 1
             #Shop menus can't carry more than 10 items
@@ -367,19 +426,36 @@ def randomize_shop_pool():
     datatable["DT_PBC2_ShopData"]["ATK_UP_5"]["REQUIRE_KEY_ITEM_TO_SEE"] = "EPBC2KeyItem::OMURICE"
     datatable["DT_PBC2_ShopData"]["ATK_UP_5"]["COSTS_KEY_ITEM"] =          "EPBC2KeyItem::OMURICE"
     #End with extra consumables
-    valid_items = []
-    for item in constant["Classic2Pool"]["Consumable"]:
-        if not get_item_shop_id(item) in shop_skip:
-            valid_items.append(item)
     for shop in valid_shops:
+        valid_items = []
+        for item in constant["Classic2Pool"]["Consumable"]:
+            item_shop_id = get_item_shop_id(item)
+            if not item_shop_id in shop_skip:
+                valid_items.append(item_shop_id)
+        #Determine consumable amount by shop type
         shop_type = "".join([char for char in shop if not char.isdigit()])
-        minimum = 0 if shop_type == "GK" else 3 if shop_type == "T" else 2 if shop_type == "FM" else 0
-        maximum = 2 if shop_type == "GK" else 6 if shop_type == "T" else 3 if shop_type == "FM" else 0
+        match shop_type:
+            case "GK":
+                minimum = 0
+                maximum = 2
+            case "T":
+                minimum = 3
+                maximum = 6
+            case "FM":
+                minimum = 2
+                maximum = 3
+            case "IGA":
+                minimum = 3
+                maximum = 3
+            case _:
+                minimum = 0
+                maximum = 0
         minimum = min(minimum, shop_capacity - shop_quantity[shop])
         maximum = min(maximum, shop_capacity - shop_quantity[shop])
         item_quantity = random.randint(minimum, maximum)
         for num in range(item_quantity):
-            chosen_item = get_item_shop_id(random.choice(valid_items))
+            chosen_item = random.choice(valid_items)
+            valid_items.remove(chosen_item)
             datatable["DT_PBC2_ShopData"][chosen_item][shop] = True
             shop_quantity[shop] += 1
 
@@ -473,8 +549,11 @@ def create_log():
     log = {}
     for item, location in key_item_to_location.items():
         area_name = location.split("_")[1]
-        area_id = area_to_id[area_name] if area_name in area_to_id else f"C2_areaname_{area_name.lower()}"
-        if "dungeon" in area_id:
-            area_id = f"{area_id[:-1]}0{area_id[-1:]}"
+        if area_name in area_to_id:
+            area_id = area_to_id[area_name]
+        else:
+            area_id = f"C2_areaname_{area_name.lower()}"
+            if "dungeon" in area_id:
+                area_id = f"{area_id[:-1]}0{area_id[-1:]}"
         log[item] = datatable["DT_PBC2_DialogData"][area_id]["English"]
     return log
