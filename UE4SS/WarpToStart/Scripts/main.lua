@@ -1,14 +1,17 @@
 local gameInstance = FindFirstOf("PBGameInstance")
 
 function CanExecuteCommand()
-    local player = GetGameInstance():GetPlayerCharacter(0)
-    local interfaceHUD = FindFirstOf("PBInterfaceHUD")
     if not IsInList({1, 6, 9}, GetGameInstance():GetGameModeType()) then return false end
-    if not player:IsValid() then return false end
-    if player:GetHitPoint() <= 0 then return false end
-    if not interfaceHUD:IsValid() then return false end
-    if not interfaceHUD:GetGaugeWidget():GetIsVisible() then return false end
+    if not GetGameInstance().LoadingManagerInstance:IsValid() then return false end
     if GetGameInstance().LoadingManagerInstance:IsLoadingScreenVisible() then return false end
+    local player = GetGameInstance():GetPlayerCharacter(0)
+    if not player:IsValid() then return false end
+    if player.Killed then return false end
+    if player.CurrentryWarpingByWarpRoom then return false end
+    local interfaceHUD = GetGameInstance():GetLocalPlayerController().MyHUD
+    if not interfaceHUD:IsValid() then return false end
+    if not interfaceHUD:GetGaugeWidget():IsValid() then return false end
+    if not interfaceHUD:GetGaugeWidget():GetIsVisible() then return false end
     return true
 end
 
