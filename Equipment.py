@@ -94,7 +94,7 @@ def init():
         "Whip":            52,
         "Gun":             32,
         "Scythe":          55,
-        "MagicalGirlWand": 26
+        "MagicalGirlWand": 32
     }
     global equipment_type_to_max_value
     equipment_type_to_max_value = {

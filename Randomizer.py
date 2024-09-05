@@ -138,7 +138,6 @@ modified_files = {
     },
     "UI": {
         "Files": [
-            "WindowMinimap02",
             "icon",
             "ui_icon_pickup_dagger",
             "ui_icon_pickup_timeShard",
@@ -588,17 +587,6 @@ class Generate(QThread):
         
         Manager.write_files()
         
-        #Edit the minimap outline to give an easy visual cue to tell if someone is using the mod or not and what difficulty they're on
-        #This is especially useful on twitch as this difference is even visible from stream previews
-        if config.getboolean("GameDifficulty", "bNormal"):
-            shutil.copyfile("Data\\Texture\\Difficulty\\Normal\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
-        elif config.getboolean("GameDifficulty", "bHard"):
-            shutil.copyfile("Data\\Texture\\Difficulty\\Hard\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
-        elif config.getboolean("GameDifficulty", "bNightmare"):
-            shutil.copyfile("Data\\Texture\\Difficulty\\Nightmare\\WindowMinimap02.dds", "Data\\Texture\\WindowMinimap02.dds")
-        Graphic.import_texture("WindowMinimap02")
-        os.remove("Data\\Texture\\WindowMinimap02.dds")
-        
         #Edit the file that contains all the icons in the game to give 8 bit weapons unique icons per rank
         #Otherwise it is almost impossible to tell which tier the weapon you're looking at actually is
         Graphic.import_texture("icon")
@@ -702,6 +690,9 @@ class Generate(QThread):
                     shutil.copyfile(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}")
                 if os.path.isdir(f"Tools\\UE4SS\\{item}"):
                     shutil.copytree(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}", dirs_exist_ok=True)
+        for directory in os.listdir(f"{exe_directory}\\Mods"):
+            if not directory in ["CrowdControl", "shared"]:
+                shutil.rmtree(f"{exe_directory}\\Mods\\{directory}")
         for directory in os.listdir("Data\\UE4SS"):
             shutil.copytree(f"Data\\UE4SS\\{directory}", f"{exe_directory}\\Mods\\{directory}", dirs_exist_ok=True)
             if not os.path.isfile(f"{exe_directory}\\Mods\\{directory}\\enabled.txt"): 
