@@ -548,10 +548,6 @@ class MainWindow(QMainWindow):
         guidelines.triggered.connect(self.guidelines)
         help_bar.addAction(guidelines)
         
-        boss_res = QAction("Boss restrictions", self)
-        boss_res.triggered.connect(self.boss_res)
-        help_bar.addAction(boss_res)
-        
         self.context_menu = QMenu(self)
         
         context_action_1 = self.context_menu.addAction(QIcon("Data\\Icon\\reverse_icon.png")  , "Entrances")
@@ -1035,17 +1031,6 @@ class MainWindow(QMainWindow):
         + "• room m03ENT_1200 has a transition that does not work properly when connected to a different room, so the randomizer script will ignore this room when connecting the map"
         + "\n"
         + "• the in-game minimap has a limitation as to how far it can display rooms, you can preview this limitation by pressing the space bar")
-        box.exec()
-    
-    def boss_res(self):
-        label = QLabel()
-        label.setPixmap(QPixmap("Data\\boss_req.png"))
-        layout = QVBoxLayout()
-        layout.addWidget(label)
-        box = QDialog(self)
-        box.setLayout(layout)
-        box.setWindowTitle("Boss restrictions")
-        box.setFixedSize(0, 0)
         box.exec()
     
     def reverse_action(self):
