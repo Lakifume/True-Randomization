@@ -2508,7 +2508,7 @@ class MainWindow(QGraphicsView):
                 dlc_list.append(DLCType.MagicGirl)
             if "1255553972" in dlc_id_list:
                 dlc_list.append(DLCType.Japanese)
-            if "1229761293" in dlc_config:
+            if "1229761293" in dlc_id_list:
                 dlc_list.append(DLCType.Classic2)
             return dlc_list
         #Installation is unknown
