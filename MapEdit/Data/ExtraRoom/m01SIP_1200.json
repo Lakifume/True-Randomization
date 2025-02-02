@@ -1,0 +1,17 @@
+{
+  "AreaID": "EAreaID::m01SIP",
+  "OutOfMap": false,
+  "RoomType": "ERoomType::Load",
+  "RoomPath": "ERoomPath::Both",
+  "AreaWidthSize": 1,
+  "AreaHeightSize": 1,
+  "OffsetX": 25.2,
+  "OffsetZ": -14.4,
+  "DoorFlag": [
+    1,
+    5
+  ],
+  "NoTraverse": [],
+  "BgmID": "BGM_m01SIP",
+  "BgmType": "ERoomBgmType::PlayMute"
+}

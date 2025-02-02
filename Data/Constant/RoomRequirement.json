@@ -1,0 +1,6746 @@
+{
+  "m01SIP_000": {
+    "SIP_000_START": {
+      "SIP_000_1_0_RIGHT_BOTTOM": [],
+      "Treasurebox_SIP000_Tutorial": []
+    },
+    "SIP_000_1_0_RIGHT_BOTTOM": {
+      "Treasurebox_SIP000_Tutorial": []
+    }
+  },
+  "m01SIP_001": {
+    "SIP_001_0_0_TOP": {
+      "SIP_001_0_0_LEFT_BOTTOM": [],
+      "SIP_001_2_0_TOP": [],
+      "N3003": []
+    },
+    "SIP_001_0_0_LEFT_BOTTOM": {
+      "SIP_001_0_0_TOP": ["Height"],
+      "SIP_001_2_0_TOP": [],
+      "N3003": []
+    },
+    "SIP_001_2_0_TOP": {
+      "SIP_001_0_0_TOP": ["Height"],
+      "SIP_001_0_0_LEFT_BOTTOM": [],
+      "N3003": []
+    }
+  },
+  "m01SIP_002": {
+    "SIP_002_0_0_BOTTOM": {
+      "SIP_002_0_0_RIGHT": [],
+      "Treasurebox_SIP002_1": []
+    },
+    "SIP_002_0_0_RIGHT": {
+      "SIP_002_0_0_BOTTOM": [],
+      "Treasurebox_SIP002_1": []
+    }
+  },
+  "m01SIP_003": {
+    "SIP_003_0_0_LEFT": {
+      "SIP_003_2_0_BOTTOM": [],
+      "SIP_003_0_1_LEFT": [],
+      "Treasurebox_SIP003_1": [],
+      "Treasurebox_PureMiriam_Hair": ["Flight"],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    },
+    "SIP_003_2_0_BOTTOM": {
+      "SIP_003_0_0_LEFT": [],
+      "SIP_003_0_1_LEFT": [],
+      "Treasurebox_SIP003_1": [],
+      "Treasurebox_PureMiriam_Hair": ["Flight"],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    },
+    "SIP_003_0_1_LEFT": {
+      "SIP_003_0_0_LEFT": [],
+      "SIP_003_2_0_BOTTOM": [],
+      "Treasurebox_SIP003_1": [],
+      "Treasurebox_PureMiriam_Hair": ["Flight"],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    }
+  },
+  "m01SIP_004": {
+    "SIP_004_1_0_RIGHT": {
+      "Treasurebox_SIP004_1": [],
+      "Wall_SIP004_1": [],
+      "N3006": [],
+      "N3007": []
+    }
+  },
+  "m01SIP_005": {
+    "SIP_005_2_0_TOP": {
+      "SIP_005_3_0_BOTTOM": [],
+      "SIP_005_3_0_RIGHT": [],
+      "Treasurebox_SIP005_1": [],
+      "Treasurebox_SIP005_2": [],
+      "N3003": []
+    },
+    "SIP_005_3_0_BOTTOM": {
+      "SIP_005_2_0_TOP": [],
+      "SIP_005_3_0_RIGHT": [],
+      "Treasurebox_SIP005_1": [],
+      "Treasurebox_SIP005_2": [],
+      "N3003": []
+    },
+    "SIP_005_3_0_RIGHT": {
+      "SIP_005_2_0_TOP": [],
+      "SIP_005_3_0_BOTTOM": [],
+      "Treasurebox_SIP005_1": [],
+      "Treasurebox_SIP005_2": [],
+      "N3003": []
+    }
+  },
+  "m01SIP_006": {
+    "SIP_006_0_0_LEFT_BOTTOM": {
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": [],
+      "Treasurebox_SIP006_1": [],
+      "N3006": []
+    },
+    "SIP_006_0_0_RIGHT_BOTTOM": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": [],
+      "Treasurebox_SIP006_1": [],
+      "N3006": []
+    },
+    "SIP_006_0_2_LEFT": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": [],
+      "Treasurebox_SIP006_1": [],
+      "N3006": []
+    },
+    "SIP_006_0_2_RIGHT": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_TOP": [],
+      "Treasurebox_SIP006_1": [],
+      "N3006": []
+    },
+    "SIP_006_0_2_TOP": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": [],
+      "Treasurebox_SIP006_1": [],
+      "N3006": []
+    }
+  },
+  "m01SIP_007": {
+    "SIP_007_0_0_RIGHT_BOTTOM": {
+      "Treasurebox_SIP007_1": [],
+      "Treasurebox_SIP007_2": []
+    }
+  },
+  "m01SIP_008": {
+    "SIP_008_0_0_LEFT": {
+      "SIP_008_4_0_RIGHT": [],
+      "N3003": [],
+      "N3005": []
+    },
+    "SIP_008_4_0_RIGHT": {
+      "SIP_008_0_0_LEFT": [],
+      "N3003": [],
+      "N3005": []
+    }
+  },
+  "m01SIP_009": {
+    "SIP_009_0_0_RIGHT": {
+      "SIP_009_0_2_RIGHT": [],
+      "Treasurebox_SIP009_1": [],
+      "Wall_SIP009_1": [],
+      "N3003": [],
+      "N3029_Hard": []
+    },
+    "SIP_009_0_2_RIGHT": {
+      "SIP_009_0_0_RIGHT": [],
+      "Treasurebox_SIP009_1": [],
+      "Wall_SIP009_1": [],
+      "N3003": [],
+      "N3029_Hard": []
+    }
+  },
+  "m01SIP_010": {
+    "SIP_010_0_0_RIGHT": {
+      "SIP_010_0_2_LEFT": [],
+      "N3006": [],
+      "N3004_Hard": []
+    },
+    "SIP_010_0_2_LEFT": {
+      "SIP_010_0_0_RIGHT": [],
+      "N3006": [],
+      "N3004_Hard": []
+    }
+  },
+  "m01SIP_011": {
+    "SIP_011_0_0_LEFT": {
+      "SIP_011_3_0_RIGHT": [],
+      "Treasurebox_SIP011_1": [],
+      "Treasurebox_SIP011_2": [],
+      "Treasurebox_SIP011_3": [],
+      "Treasurebox_SIP011_4": [],
+      "N3003": [],
+      "N3005": [],
+      "N3006": [],
+      "N3004_Hard": [],
+      "N3029_Hard": []
+    },
+    "SIP_011_3_0_RIGHT": {
+      "SIP_011_0_0_LEFT": [],
+      "Treasurebox_SIP011_1": [],
+      "Treasurebox_SIP011_2": [],
+      "Treasurebox_SIP011_3": [],
+      "Treasurebox_SIP011_4": [],
+      "N3003": [],
+      "N3005": [],
+      "N3006": [],
+      "N3004_Hard": [],
+      "N3029_Hard": []
+    }
+  },
+  "m01SIP_012": {
+    "SIP_012_0_0_LEFT": {
+      "SIP_012_0_0_RIGHT": [],
+      "SIP_012_0_1_RIGHT": [],
+      "Treasurebox_SIP012_1": []
+    },
+    "SIP_012_0_0_RIGHT": {
+      "SIP_012_0_0_LEFT": [],
+      "SIP_012_0_1_RIGHT": [],
+      "Treasurebox_SIP012_1": []
+    },
+    "SIP_012_0_1_RIGHT": {
+      "SIP_012_0_0_LEFT": [],
+      "SIP_012_0_0_RIGHT": [],
+      "Treasurebox_SIP012_1": []
+    }
+  },
+  "m01SIP_013": {
+    "SIP_013_0_0_LEFT": {
+      "SIP_013_0_0_RIGHT": [],
+      "Treasurebox_SIP013_1": []
+    },
+    "SIP_013_0_0_RIGHT": {
+      "SIP_013_0_0_LEFT": [],
+      "Treasurebox_SIP013_1": []
+    }
+  },
+  "m01SIP_014": {
+    "SIP_014_1_0_RIGHT": {
+      "SIP_014_0_1_LEFT": [],
+      "Treasurebox_SIP014_1": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Wall_SIP014_1": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3006": [],
+      "N3015": []
+    },
+    "SIP_014_0_1_LEFT": {
+      "SIP_014_1_0_RIGHT": [],
+      "Treasurebox_SIP014_1": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Wall_SIP014_1": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3006": [],
+      "N3015": []
+    }
+  },
+  "m01SIP_015": {
+    "SIP_015_0_0_LEFT": {
+      "SIP_015_0_2_RIGHT": [],
+      "Treasurebox_SIP015_1": [],
+      "N3005": [],
+      "N3013": [],
+      "N3004_Hard": []
+    },
+    "SIP_015_0_2_RIGHT": {
+      "SIP_015_0_0_LEFT": [],
+      "Treasurebox_SIP015_1": [],
+      "N3005": [],
+      "N3013": [],
+      "N3004_Hard": []
+    }
+  },
+  "m01SIP_016": {
+    "SIP_016_0_0_LEFT": {
+      "SIP_016_0_2_LEFT": [],
+      "Treasurebox_SIP016_1": [],
+      "Wall_SIP016_1": [],
+      "N3006": []
+    },
+    "SIP_016_0_2_LEFT": {
+      "SIP_016_0_0_LEFT": [],
+      "Treasurebox_SIP016_1": [],
+      "Wall_SIP016_1": [],
+      "N3006": []
+    }
+  },
+  "m01SIP_017": {
+    "SIP_017_0_0_LEFT": {
+      "SIP_017_1_0_TOP": [],
+      "SIP_017_3_0_RIGHT": [],
+      "Treasurebox_SIP017_1": [],
+      "N3006": [],
+      "N3015": [],
+      "N3051_Hard": []
+    },
+    "SIP_017_1_0_TOP": {
+      "SIP_017_0_0_LEFT": [],
+      "SIP_017_3_0_RIGHT": [],
+      "Treasurebox_SIP017_1": [],
+      "N3006": [],
+      "N3015": [],
+      "N3051_Hard": []
+    },
+    "SIP_017_3_0_RIGHT": {
+      "SIP_017_0_0_LEFT": [],
+      "SIP_017_1_0_TOP": [],
+      "Treasurebox_SIP017_1": [],
+      "N3006": [],
+      "N3015": [],
+      "N3051_Hard": []
+    }
+  },
+  "m01SIP_018": {
+    "SIP_018_0_0_BOTTOM": {
+      "SIP_018_0_0_TOP": [],
+      "Treasurebox_SIP018_1": [],
+      "N3090_Hard": []
+    },
+    "SIP_018_0_0_TOP": {
+      "SIP_018_0_0_BOTTOM": [],
+      "Treasurebox_SIP018_1": [],
+      "N3090_Hard": []
+    }
+  },
+  "m01SIP_019": {
+    "SIP_019_1_0_BOTTOM": {
+      "SIP_019_2_0_RIGHT": [],
+      "SIP_019_2_1_RIGHT": ["Height", "Accelerator"],
+      "Treasurebox_SIP019_1": [],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    },
+    "SIP_019_2_0_RIGHT": {
+      "SIP_019_1_0_BOTTOM": [],
+      "SIP_019_2_1_RIGHT": ["Height", "Accelerator"],
+      "Treasurebox_SIP019_1": [],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    },
+    "SIP_019_2_1_RIGHT": {
+      "SIP_019_1_0_BOTTOM": [],
+      "SIP_019_2_0_RIGHT": [],
+      "Treasurebox_SIP019_1": [],
+      "N3006": [],
+      "N3007": [],
+      "N3015": []
+    }
+  },
+  "m01SIP_020": {
+    "SIP_020_0_0_LEFT": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_BOTTOM": [],
+      "SIP_020_0_0_RIGHT": [],
+      "Treasurebox_SIP020_1": []
+    },
+    "SIP_020_0_0_BOTTOM": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_LEFT": [],
+      "SIP_020_0_0_RIGHT": [],
+      "Treasurebox_SIP020_1": []
+    },
+    "SIP_020_0_0_RIGHT": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_LEFT": [],
+      "SIP_020_0_0_BOTTOM": [],
+      "Treasurebox_SIP020_1": []
+    }
+  },
+  "m01SIP_021": {
+    "SIP_021_1_0_RIGHT": {
+      "SIP_021_1_0_TOP": [],
+      "Treasurebox_SIP021_2": [],
+      "N3051_Hard": []
+    },
+    "SIP_021_1_0_TOP": {
+      "SIP_021_1_0_RIGHT": [],
+      "Treasurebox_SIP021_2": [],
+      "N3051_Hard": []
+    }
+  },
+  "m01SIP_022": {
+    "SIP_022_0_0_LEFT": {
+	  "TO_VIL_000_START": [],
+      "N1001": []
+    }
+  },
+  "m01SIP_023": {
+    "SIP_023_0_0_LEFT_BOTTOM": {
+      "SIP_023_1_0_BOTTOM": [],
+      "SIP_023_1_0_RIGHT": [],
+      "N3100": []
+    },
+    "SIP_023_1_0_BOTTOM": {
+      "SIP_023_0_0_LEFT_BOTTOM": [],
+      "SIP_023_1_0_RIGHT": [],
+      "N3100": []
+    },
+    "SIP_023_1_0_RIGHT": {
+      "SIP_023_0_0_LEFT_BOTTOM": [],
+      "SIP_023_1_0_BOTTOM": [],
+      "N3100": []
+    }
+  },
+  "m01SIP_024": {
+    "SIP_024_0_0_RIGHT_BOTTOM": {
+      "Treasurebox_SIP024_1": [],
+      "Treasurebox_SIP024_2": []
+    }
+  },
+  "m01SIP_025": {
+    "SIP_025_0_0_LEFT_BOTTOM": {
+      "Treasurebox_SIP025_1": [],
+      "Treasurebox_SIP025_2": []
+    }
+  },
+  "m01SIP_026": {
+    "SIP_026_0_0_LEFT": {
+      "Treasurebox_SIP026_1": []
+    }
+  },
+  "m02VIL_000": {
+    "VIL_000_START": {
+      "VIL_000_0_0_LEFT": [],
+      "VIL_000_1_0_RIGHT": []
+    },
+    "VIL_000_0_0_LEFT": {
+      "VIL_000_1_0_RIGHT": []
+    },
+    "VIL_000_1_0_RIGHT": {
+      "VIL_000_0_0_LEFT": []
+    }
+  },
+  "m02VIL_001": {
+    "VIL_001_0_0_LEFT": {
+      "VIL_001_2_0_RIGHT": [],
+      "Treasurebox_VIL001_1": [],
+      "N3003": [],
+      "N3007_Hard": [],
+      "N3051": [],
+      "N3004": []
+    },
+    "VIL_001_2_0_RIGHT": {
+      "VIL_001_0_0_LEFT": [],
+      "Treasurebox_VIL001_1": [],
+      "N3003": [],
+      "N3007_Hard": [],
+      "N3051": [],
+      "N3004": []
+    }
+  },
+  "m02VIL_002": {
+    "VIL_002_0_0_LEFT": {
+      "VIL_002_1_0_RIGHT": []
+    },
+    "VIL_002_1_0_RIGHT": {
+      "VIL_002_0_0_LEFT": []
+    }
+  },
+  "m02VIL_003": {
+    "VIL_003_0_0_LEFT_BOTTOM": {
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": [],
+      "VIL_003_0_1_RIGHT": [],
+      "Qu07_Last": [],
+      "Treasurebox_VIL003_1": []
+    },
+    "VIL_003_0_0_RIGHT_BOTTOM": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": [],
+      "VIL_003_0_1_RIGHT": [],
+      "Qu07_Last": [],
+      "Treasurebox_VIL003_1": []
+    },
+    "VIL_003_0_1_LEFT": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_RIGHT": [],
+      "Qu07_Last": [],
+      "Treasurebox_VIL003_1": []
+    },
+    "VIL_003_0_1_RIGHT": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": [],
+      "Qu07_Last": [],
+      "Treasurebox_VIL003_1": []
+    }
+  },
+  "m02VIL_004": {
+    "VIL_004_1_0_RIGHT_BOTTOM": {}
+  },
+  "m02VIL_005": {
+    "VIL_005_0_0_RIGHT": {
+      "VIL_005_0_0_LEFT_BOTTOM": [],
+      "PotionMaterial": [],
+      "Treasurebox_VIL005_1": []
+    },
+    "VIL_005_0_0_LEFT_BOTTOM": {
+      "VIL_005_0_0_RIGHT": [],
+      "PotionMaterial": [],
+      "Treasurebox_VIL005_1": []
+    }
+  },
+  "m02VIL_006": {
+    "VIL_006_0_0_LEFT": {
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": [],
+      "VIL_006_0_1_LEFT": [],
+      "Treasurebox_VIL006_1": [],
+      "Treasurebox_VIL006_2": [],
+      "Treasurebox_VIL006_3": [],
+      "Treasurebox_VIL006_4": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3007": [],
+      "N3004": [],
+      "N3029": []
+    },
+    "VIL_006_3_0_BOTTOM": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": [],
+      "VIL_006_0_1_LEFT": [],
+      "Treasurebox_VIL006_1": [],
+      "Treasurebox_VIL006_2": [],
+      "Treasurebox_VIL006_3": [],
+      "Treasurebox_VIL006_4": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3007": [],
+      "N3004": [],
+      "N3029": []
+    },
+    "VIL_006_4_0_RIGHT_BOTTOM": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_0_1_LEFT": [],
+      "Treasurebox_VIL006_1": [],
+      "Treasurebox_VIL006_2": [],
+      "Treasurebox_VIL006_3": [],
+      "Treasurebox_VIL006_4": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3007": [],
+      "N3004": [],
+      "N3029": []
+    },
+    "VIL_006_0_1_LEFT": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": [],
+      "Treasurebox_VIL006_1": [],
+      "Treasurebox_VIL006_2": [],
+      "Treasurebox_VIL006_3": [],
+      "Treasurebox_VIL006_4": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3003": [],
+      "N3007": [],
+      "N3004": [],
+      "N3029": []
+    }
+  },
+  "m02VIL_007": {
+    "VIL_007_0_0_LEFT_BOTTOM": {
+      "VIL_007_0_0_RIGHT_BOTTOM": [],
+      "Treasurebox_VIL007_1": []
+    },
+    "VIL_007_0_0_RIGHT_BOTTOM": {
+      "VIL_007_0_0_LEFT_BOTTOM": [],
+      "Treasurebox_VIL007_1": []
+    }
+  },
+  "m02VIL_008": {
+    "VIL_008_0_0_LEFT_BOTTOM": {
+      "VIL_008_3_0_RIGHT": [],
+      "VIL_008_3_0_BOTTOM_RIGHT": [],
+      "Treasurebox_VIL008_1": [],
+      "Treasurebox_VIL008_2": []
+    },
+    "VIL_008_3_0_RIGHT": {
+      "VIL_008_0_0_LEFT_BOTTOM": [],
+      "VIL_008_3_0_BOTTOM_RIGHT": [],
+      "Treasurebox_VIL008_1": [],
+      "Treasurebox_VIL008_2": []
+    },
+    "VIL_008_3_0_BOTTOM_RIGHT": {
+      "VIL_008_0_0_LEFT_BOTTOM": [],
+      "VIL_008_3_0_RIGHT": [],
+      "Treasurebox_VIL008_1": [],
+      "Treasurebox_VIL008_2": []
+    }
+  },
+  "m02VIL_009": {
+    "VIL_009_0_0_RIGHT": {
+      "VIL_009_0_0_TOP": [],
+      "VIL_009_0_0_LEFT_BOTTOM": []
+    },
+    "VIL_009_0_0_TOP": {
+      "VIL_009_0_0_RIGHT": [],
+      "VIL_009_0_0_LEFT_BOTTOM": []
+    },
+    "VIL_009_0_0_LEFT_BOTTOM": {
+      "VIL_009_0_0_RIGHT": [],
+      "VIL_009_0_0_TOP": []
+    }
+  },
+  "m02VIL_010": {
+    "VIL_010_0_0_RIGHT_BOTTOM": {
+      "Treasurebox_VIL010_1": []
+    }
+  },
+  "m02VIL_011": {
+    "VIL_011_0_0_LEFT": {
+      "VIL_011_5_0_RIGHT": [],
+      "VIL_011_5_0_TOP_RIGHT": [],
+      "N3051": [],
+      "N3029_Hard": []
+    },
+    "VIL_011_5_0_RIGHT": {
+      "VIL_011_0_0_LEFT": [],
+      "VIL_011_5_0_TOP_RIGHT": [],
+      "N3051": [],
+      "N3029_Hard": []
+    },
+    "VIL_011_5_0_TOP_RIGHT": {
+      "VIL_011_0_0_LEFT": [],
+      "VIL_011_5_0_RIGHT": [],
+      "N3051": [],
+      "N3029_Hard": []
+    }
+  },
+  "m02VIL_012": {
+    "VIL_012_0_0_RIGHT": {
+      "VIL_012_0_1_LEFT": [],
+      "N3029": []
+    },
+    "VIL_012_0_1_LEFT": {
+      "VIL_012_0_0_RIGHT": [],
+      "N3029": []
+    }
+  },
+  "m03ENT_000": {
+    "ENT_000_0_0_LEFT": {
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": ["Flight"],
+      "ENT_000_1_9_RIGHT": ["Flight"],
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+    },
+    "ENT_000_1_0_RIGHT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_0_9_LEFT": ["Flight"],
+      "ENT_000_1_9_RIGHT": ["Flight"],
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+    },
+    "ENT_000_0_9_LEFT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_1_9_RIGHT": [],
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+    },
+    "ENT_000_1_9_RIGHT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": [],
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+    },
+    "ENT_000_0_15_LEFT": {
+      "ENT_000_0_0_LEFT": ["BreastplateofAguilar"],
+      "ENT_000_1_0_RIGHT": ["BreastplateofAguilar"],
+      "ENT_000_0_9_LEFT": ["BreastplateofAguilar"],
+      "ENT_000_1_9_RIGHT": ["BreastplateofAguilar"],
+      "ENT_000_1_15_RIGHT": ["Flight", ["Doublejump", "Accelerator"]]
+    },
+    "ENT_000_1_15_RIGHT": {
+      "ENT_000_0_0_LEFT": ["BreastplateofAguilar"],
+      "ENT_000_1_0_RIGHT": ["BreastplateofAguilar"],
+      "ENT_000_0_9_LEFT": ["BreastplateofAguilar"],
+      "ENT_000_1_9_RIGHT": ["BreastplateofAguilar"],
+      "ENT_000_0_15_LEFT": ["Flight", ["Doublejump", "Accelerator"]]
+    }
+  },
+  "m03ENT_001": {
+    "ENT_001_0_0_LEFT": {
+      "ENT_001_4_0_RIGHT": [],
+      "N3003": [],
+      "N3029": [],
+      "N3105_Hard": []
+    },
+    "ENT_001_4_0_RIGHT": {
+      "ENT_001_0_0_LEFT": [],
+      "N3003": [],
+      "N3029": [],
+      "N3105_Hard": []
+    }
+  },
+  "m03ENT_002": {
+    "ENT_002_0_0_LEFT": {
+      "ENT_002_1_0_RIGHT": [],
+      "ENT_002_0_3_LEFT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT002_1": [],
+      "Treasurebox_ENT002_2": [],
+      "Treasurebox_ENT002_3": ["Flight", "Reflectionray"],
+      "Wall_ENT002_1": ["Flight", "Reflectionray"],
+      "N3007": [],
+      "N3004": [],
+      "N3080": []
+    },
+    "ENT_002_1_0_RIGHT": {
+      "ENT_002_0_0_LEFT": [],
+      "ENT_002_0_3_LEFT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT002_1": [],
+      "Treasurebox_ENT002_2": [],
+      "Treasurebox_ENT002_3": ["Flight", "Reflectionray"],
+      "Wall_ENT002_1": ["Flight", "Reflectionray"],
+      "N3007": [],
+      "N3004": [],
+      "N3080": []
+    },
+    "ENT_002_0_3_LEFT": {
+      "ENT_002_0_0_LEFT": [],
+      "ENT_002_1_0_RIGHT": [],
+      "Treasurebox_ENT002_1": [],
+      "Treasurebox_ENT002_2": [],
+      "Treasurebox_ENT002_3": ["Height"],
+      "Wall_ENT002_1": ["Height"],
+      "N3007": [],
+      "N3004": [],
+      "N3080": []
+    }
+  },
+  "m03ENT_003": {
+    "ENT_003_0_0_LEFT": {
+      "ENT_003_3_0_RIGHT": [],
+      "N3003": [],
+      "N3013": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105_Hard": []
+    },
+    "ENT_003_3_0_RIGHT": {
+      "ENT_003_0_0_LEFT": [],
+      "N3003": [],
+      "N3013": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105_Hard": []
+    }
+  },
+  "m03ENT_004": {
+    "ENT_004_0_0_LEFT": {
+      "ENT_004_1_0_BOTTOM": ["Bloodsteel"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": ["Height"],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    },
+    "ENT_004_1_0_BOTTOM": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": ["Height"],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    },
+    "ENT_004_2_0_RIGHT": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["Bloodsteel"],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": ["Height"],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    },
+    "ENT_004_0_1_TOP": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["Bloodsteel"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": ["Height"],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    },
+    "ENT_004_2_1_RIGHT": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["Bloodsteel"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_TOP": ["Height"],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    },
+    "ENT_004_2_1_TOP": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["Bloodsteel"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "Treasurebox_ENT004_1": [],
+      "N3004": []
+    }
+  },
+  "m03ENT_005": {
+    "ENT_005_0_0_BOTTOM": {
+      "ENT_005_2_0_BOTTOM": [],
+      "Treasurebox_ENT005_1": [],
+      "Treasurebox_ENT005_2": [],
+      "N3013": [],
+      "N3105": []
+    },
+    "ENT_005_2_0_BOTTOM": {
+      "ENT_005_0_0_BOTTOM": [],
+      "Treasurebox_ENT005_1": [],
+      "Treasurebox_ENT005_2": [],
+      "N3013": [],
+      "N3105": []
+    }
+  },
+  "m03ENT_006": {
+    "ENT_006_0_0_LEFT": {
+      "ENT_006_0_0_RIGHT": []
+    },
+    "ENT_006_0_0_RIGHT": {
+      "ENT_006_0_0_LEFT": []
+    }
+  },
+  "m03ENT_007": {
+    "ENT_007_0_0_LEFT": {
+      "ENT_007_1_0_RIGHT": ["Dimensionshift"],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "ENT_007_0_3_LEFT": ["Flight", "Reflectionray"],
+      "ENT_007_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT007_1": ["Dimensionshift"],
+      "Treasurebox_ENT007_2": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ENT007_3": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3013": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": ["Flight", "Reflectionray"]
+    },
+    "ENT_007_1_0_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "ENT_007_0_3_LEFT": ["Flight", "Reflectionray"],
+      "ENT_007_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT007_1": [],
+      "Treasurebox_ENT007_2": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ENT007_3": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3013": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": ["Flight", "Reflectionray"]
+    },
+    "ENT_007_1_1_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": ["Dimensionshift"],
+      "ENT_007_1_2_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "ENT_007_0_3_LEFT": ["Flight", "Reflectionray"],
+      "ENT_007_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT007_1": ["Dimensionshift"],
+      "Treasurebox_ENT007_2": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ENT007_3": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3013": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": ["Flight", "Reflectionray"]
+    },
+    "ENT_007_1_2_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": ["Dimensionshift"],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_0_3_LEFT": ["Flight", "Reflectionray"],
+      "ENT_007_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_ENT007_1": ["Dimensionshift"],
+      "Treasurebox_ENT007_2": [],
+      "Treasurebox_ENT007_3": [],
+      "N3013": [],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": ["Flight", "Reflectionray"]
+    },
+    "ENT_007_0_3_LEFT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": ["Dimensionshift"],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": [],
+      "ENT_007_1_3_RIGHT": [],
+      "Treasurebox_ENT007_1": ["Dimensionshift"],
+      "Treasurebox_ENT007_2": [],
+      "Treasurebox_ENT007_3": [],
+      "N3013": [],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": []
+    },
+    "ENT_007_1_3_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": ["Dimensionshift"],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": [],
+      "ENT_007_0_3_LEFT": [],
+      "Treasurebox_ENT007_1": ["Dimensionshift"],
+      "Treasurebox_ENT007_2": [],
+      "Treasurebox_ENT007_3": [],
+      "N3013": [],
+      "N3004": [],
+      "N3029": [],
+      "N3073": [],
+      "N3105": []
+    }
+  },
+  "m03ENT_008": {
+    "ENT_008_0_0_LEFT": {
+      "ENT_008_1_0_RIGHT": [],
+      "N3105_Hard": [],
+      "N3080": []
+    },
+    "ENT_008_1_0_RIGHT": {
+      "ENT_008_0_0_LEFT": [],
+      "N3105_Hard": [],
+      "N3080": []
+    }
+  },
+  "m03ENT_009": {
+    "ENT_009_0_0_LEFT": {
+      "Treasurebox_ENT009_1": []
+    }
+  },
+  "m03ENT_011": {
+    "ENT_011_0_0_LEFT": {
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_0_1_LEFT": [],
+      "ENT_011_1_1_RIGHT": [],
+      "Treasurebox_ENT011_1": [],
+      "N3073": [],
+      "N3105": [],
+      "N3011": []
+    },
+    "ENT_011_1_0_RIGHT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_0_1_LEFT": [],
+      "ENT_011_1_1_RIGHT": [],
+      "Treasurebox_ENT011_1": [],
+      "N3073": [],
+      "N3105": [],
+      "N3011": []
+    },
+    "ENT_011_0_1_LEFT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_1_1_RIGHT": [],
+      "Treasurebox_ENT011_1": [],
+      "N3073": [],
+      "N3105": [],
+      "N3011": []
+    },
+    "ENT_011_1_1_RIGHT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_0_1_LEFT": [],
+      "Treasurebox_ENT011_1": [],
+      "N3073": [],
+      "N3105": [],
+      "N3011": []
+    }
+  },
+  "m03ENT_012": {
+    "ENT_012_0_0_RIGHT": {
+      "Wall_ENT012_1": [],
+      "N3105": []
+    }
+  },
+  "m03ENT_013": {
+    "ENT_013_0_0_LEFT": {
+      "ENT_013_1_0_RIGHT": [],
+      "N1011": []
+    },
+    "ENT_013_1_0_RIGHT": {
+      "ENT_013_0_0_LEFT": [],
+      "N1011": []
+    }
+  },
+  "m03ENT_014": {
+    "ENT_014_0_0_LEFT": {
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": ["Height", "Demoniccapture"],
+      "Treasurebox_ENT014_1": [],
+      "Treasurebox_ENT014_2": [],
+      "Treasurebox_ENT014_3": [],
+      "N3013": [],
+      "N3090_Hard": []
+    },
+    "ENT_014_1_0_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": ["Height", "Demoniccapture"],
+      "Treasurebox_ENT014_1": [],
+      "Treasurebox_ENT014_2": [],
+      "Treasurebox_ENT014_3": [],
+      "N3013": [],
+      "N3090_Hard": []
+    },
+    "ENT_014_0_1_LEFT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": ["Height", "Demoniccapture"],
+      "Treasurebox_ENT014_1": [],
+      "Treasurebox_ENT014_2": [],
+      "Treasurebox_ENT014_3": [],
+      "N3013": [],
+      "N3090_Hard": []
+    },
+    "ENT_014_1_1_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_2_RIGHT": ["Height", "Demoniccapture"],
+      "Treasurebox_ENT014_1": [],
+      "Treasurebox_ENT014_2": [],
+      "Treasurebox_ENT014_3": [],
+      "N3013": [],
+      "N3090_Hard": []
+    },
+    "ENT_014_1_2_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "Treasurebox_ENT014_1": [],
+      "Treasurebox_ENT014_2": [],
+      "Treasurebox_ENT014_3": [],
+      "N3013": [],
+      "N3090_Hard": []
+    }
+  },
+  "m03ENT_015": {
+    "ENT_015_0_0_LEFT": {}
+  },
+  "m03ENT_016": {
+    "ENT_016_0_0_LEFT": {
+      "ENT_016_2_0_RIGHT": [],
+      "N3073_Hard": [],
+      "N3105": [],
+      "N3080": [],
+      "N3011_Hard": []
+    },
+    "ENT_016_2_0_RIGHT": {
+      "ENT_016_0_0_LEFT": [],
+      "N3073_Hard": [],
+      "N3105": [],
+      "N3080": [],
+      "N3011_Hard": []
+    }
+  },
+  "m03ENT_017": {
+    "ENT_017_0_0_LEFT": {
+      "ENT_017_4_0_RIGHT": [],
+      "N3029": [],
+      "N3105": [],
+      "N3116": []
+    },
+    "ENT_017_4_0_RIGHT": {
+      "ENT_017_0_0_LEFT": [],
+      "N3029": [],
+      "N3105": [],
+      "N3116": []
+    }
+  },
+  "m03ENT_018": {
+    "ENT_018_0_0_LEFT": {
+      "ENT_018_0_0_BOTTOM": [],
+      "ENT_018_0_2_LEFT": [],
+      "Treasurebox_ENT018_1": [],
+      "Treasurebox_ENT018_2": [],
+      "N3004": [],
+      "N3055_Hard": []
+    },
+    "ENT_018_0_0_BOTTOM": {
+      "ENT_018_0_0_LEFT": [],
+      "ENT_018_0_2_LEFT": [],
+      "Treasurebox_ENT018_1": [],
+      "Treasurebox_ENT018_2": [],
+      "N3004": [],
+      "N3055_Hard": []
+    },
+    "ENT_018_0_2_LEFT": {
+      "ENT_018_0_0_LEFT": [],
+      "ENT_018_0_0_BOTTOM": [],
+      "Treasurebox_ENT018_1": [],
+      "Treasurebox_ENT018_2": [],
+      "N3004": [],
+      "N3055_Hard": []
+    }
+  },
+  "m03ENT_019": {
+    "ENT_019_0_0_LEFT": {
+      "ENT_019_0_3_TOP": []
+    },
+    "ENT_019_0_3_TOP": {
+      "ENT_019_0_0_LEFT": []
+    }
+  },
+  "m03ENT_020": {
+    "ENT_020_0_0_TOP": {
+      "Treasurebox_ENT020_1": [],
+      "Treasurebox_ENT020_2": []
+    }
+  },
+  "m03ENT_021": {
+    "ENT_021_0_0_RIGHT": {
+      "Treasurebox_ENT021_1": [],
+      "Shortcut": []
+    }
+  },
+  "m03ENT_022": {
+    "ENT_022_0_0_RIGHT": {
+      "Treasurebox_ENT022_1": []
+    }
+  },
+  "m03ENT_023": {
+    "ENT_023_0_0_RIGHT": {
+      "ENT_023_0_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3087": []
+    },
+    "ENT_023_0_1_RIGHT": {
+      "ENT_023_0_0_RIGHT": [],
+      "N3087": []
+    }
+  },
+  "m03ENT_024": {
+    "ENT_024_0_0_LEFT": {
+      "Treasurebox_ENT024_1": [],
+      "Treasurebox_ENT024_2": [],
+      "Treasurebox_ENT024_3": [],
+      "N3111": [],
+      "N3052": [],
+      "N3110": []
+    }
+  },
+  "m04GDN_000": {
+    "GDN_000_0_0_LEFT": {
+      "GDN_000_0_0_TOP": ["Flight"],
+      "GDN_000_2_0_RIGHT": [],
+      "N3066": [],
+      "N3065": [],
+      "N3011": []
+    },
+    "GDN_000_0_0_TOP": {
+      "GDN_000_0_0_LEFT": [],
+      "GDN_000_2_0_RIGHT": [],
+      "N3066": [],
+      "N3065": [],
+      "N3011": []
+    },
+    "GDN_000_2_0_RIGHT": {
+      "GDN_000_0_0_LEFT": [],
+      "GDN_000_0_0_TOP": ["Flight"],
+      "N3066": [],
+      "N3065": [],
+      "N3011": []
+    }
+  },
+  "m04GDN_001": {
+    "GDN_001_0_0_LEFT": {
+      "GDN_001_1_0_RIGHT": [],
+	  "TO_BIG_000_START": ["Swordsman"]
+    },
+    "GDN_001_1_0_RIGHT": {
+      "GDN_001_0_0_LEFT": [],
+	  "TO_BIG_000_START": ["Swordsman"]
+    },
+    "GDN_001_BIG_EXIT": {
+      "GDN_001_0_0_LEFT": [],
+      "GDN_001_1_0_RIGHT": []
+    }
+  },
+  "m04GDN_002": {
+    "GDN_002_0_0_BOTTOM": {
+      "GDN_002_0_1_LEFT": ["HighJump", "Invert"],
+      "GDN_002_0_1_RIGHT": ["HighJump", "Invert"],
+      "Treasurebox_GDN002_1": ["HighJump", "Invert"],
+      "N3029_Hard": ["HighJump", "Invert"],
+      "N3066": ["HighJump", "Invert"]
+    },
+    "GDN_002_0_1_LEFT": {
+      "GDN_002_0_0_BOTTOM": [],
+      "GDN_002_0_1_RIGHT": [],
+      "Treasurebox_GDN002_1": [],
+      "N3029_Hard": [],
+      "N3066": []
+    },
+    "GDN_002_0_1_RIGHT": {
+      "GDN_002_0_0_BOTTOM": [],
+      "GDN_002_0_1_LEFT": [],
+      "Treasurebox_GDN002_1": [],
+      "N3029_Hard": [],
+      "N3066": []
+    }
+  },
+  "m04GDN_003": {
+    "GDN_003_0_0_LEFT": {
+      "GDN_003_1_0_RIGHT": [],
+      "N3105": [],
+      "N3066": [],
+      "N3011": [],
+      "N3053_Hard": []
+    },
+    "GDN_003_1_0_RIGHT": {
+      "GDN_003_0_0_LEFT": [],
+      "N3105": [],
+      "N3066": [],
+      "N3011": [],
+      "N3053_Hard": []
+    }
+  },
+  "m04GDN_004": {
+    "GDN_004_1_0_RIGHT": {
+      "Treasurebox_GDN004_1": [],
+      "N3105": [],
+      "N3066": [],
+      "N3065": [],
+      "N3011": []
+    }
+  },
+  "m04GDN_005": {
+    "GDN_005_0_0_LEFT": {
+      "GDN_005_0_0_BOTTOM": []
+    },
+    "GDN_005_0_0_BOTTOM": {
+      "GDN_005_0_0_LEFT": []
+    }
+  },
+  "m04GDN_006": {
+    "GDN_006_0_0_LEFT": {
+      "GDN_006_5_0_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": [],
+      "Treasurebox_GDN006_1": ["Dimensionshift", "Demoniccapture"],
+      "Treasurebox_GDN006_2": [],
+      "Treasurebox_GDN006_3": ["Height"],
+      "Treasurebox_GDN006_4": ["Flight", "Demoniccapture"],
+      "Treasurebox_GDN006_5": ["Flight", "Demoniccapture"],
+      "Wall_GDN006_1": ["Height"],
+      "N3105": [],
+      "N3042": [],
+      "N3065": [],
+      "N3011_Hard": []
+    },
+    "GDN_006_5_0_RIGHT": {
+      "GDN_006_0_0_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_0_1_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_5_1_RIGHT": [],
+      "GDN_006_0_2_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_0_2_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_1": ["Dimensionshift", ["Flight", "Demoniccapture"], ["Reflectionray", "Demoniccapture"]],
+      "Treasurebox_GDN006_2": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_3": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_4": [],
+      "Treasurebox_GDN006_5": [],
+      "Wall_GDN006_1": ["Flight", "Reflectionray"],
+      "N3105": ["Flight", "Reflectionray"],
+      "N3042": ["Flight", "Reflectionray"],
+      "N3065": ["Flight", "Reflectionray"],
+      "N3011_Hard": ["Flight", "Reflectionray"]
+    },
+    "GDN_006_0_1_LEFT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_5_1_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": [],
+      "Treasurebox_GDN006_1": ["Dimensionshift", "Demoniccapture"],
+      "Treasurebox_GDN006_2": [],
+      "Treasurebox_GDN006_3": ["Height"],
+      "Treasurebox_GDN006_4": ["Flight", "Demoniccapture"],
+      "Treasurebox_GDN006_5": ["Flight", "Demoniccapture"],
+      "Wall_GDN006_1": ["Height"],
+      "N3105": [],
+      "N3042": [],
+      "N3065": [],
+      "N3011_Hard": []
+    },
+    "GDN_006_5_1_RIGHT": {
+      "GDN_006_0_0_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_5_0_RIGHT": [],
+      "GDN_006_0_1_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_0_2_LEFT": ["Flight", "Reflectionray"],
+      "GDN_006_0_2_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_1": ["Dimensionshift", ["Flight", "Demoniccapture"], ["Reflectionray", "Demoniccapture"]],
+      "Treasurebox_GDN006_2": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_3": ["Flight", "Reflectionray"],
+      "Treasurebox_GDN006_4": [],
+      "Treasurebox_GDN006_5": [],
+      "Wall_GDN006_1": ["Flight", "Reflectionray"],
+      "N3105": ["Flight", "Reflectionray"],
+      "N3042": ["Flight", "Reflectionray"],
+      "N3065": ["Flight", "Reflectionray"],
+      "N3011_Hard": ["Flight", "Reflectionray"]
+    },
+    "GDN_006_0_2_LEFT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_2_TOP": [],
+      "Treasurebox_GDN006_1": ["Dimensionshift", "Demoniccapture"],
+      "Treasurebox_GDN006_2": [],
+      "Treasurebox_GDN006_3": ["Height"],
+      "Treasurebox_GDN006_4": ["Flight", "Demoniccapture"],
+      "Treasurebox_GDN006_5": ["Flight", "Demoniccapture"],
+      "Wall_GDN006_1": ["Height"],
+      "N3105": [],
+      "N3042": [],
+      "N3065": [],
+      "N3011_Hard": []
+    },
+    "GDN_006_0_2_TOP": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["Flight", "Demoniccapture"],
+      "GDN_006_0_2_LEFT": [],
+      "Treasurebox_GDN006_1": ["Dimensionshift", "Demoniccapture"],
+      "Treasurebox_GDN006_2": [],
+      "Treasurebox_GDN006_3": ["Height"],
+      "Treasurebox_GDN006_4": ["Flight", "Demoniccapture"],
+      "Treasurebox_GDN006_5": ["Flight", "Demoniccapture"],
+      "Wall_GDN006_1": ["Height"],
+      "N3105": [],
+      "N3042": [],
+      "N3065": [],
+      "N3011_Hard": []
+    }
+  },
+  "m04GDN_007": {
+    "GDN_007_0_0_LEFT": {
+      "GDN_007_0_0_RIGHT": [],
+      "Treasurebox_GDN007_1": []
+    },
+    "GDN_007_0_0_RIGHT": {
+      "GDN_007_0_0_LEFT": [],
+      "Treasurebox_GDN007_1": []
+    }
+  },
+  "m04GDN_008": {
+    "GDN_008_0_0_RIGHT": {
+      "GDN_008_0_1_LEFT": [],
+      "GDN_008_0_1_RIGHT": [],
+      "N3066": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_008_0_1_LEFT": {
+      "GDN_008_0_0_RIGHT": [],
+      "GDN_008_0_1_RIGHT": [],
+      "N3066": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_008_0_1_RIGHT": {
+      "GDN_008_0_0_RIGHT": [],
+      "GDN_008_0_1_LEFT": [],
+      "N3066": [],
+      "N3091": [],
+      "N3001_Hard": []
+    }
+  },
+  "m04GDN_009": {
+    "GDN_009_0_0_LEFT": {
+      "GDN_009_2_0_RIGHT": [],
+      "GDN_009_0_1_LEFT": ["Flight"],
+      "Treasurebox_GDN009_1": ["Flight"],
+      "Treasurebox_GDN009_2": ["Flight"],
+      "N3091": ["Flight"]
+    },
+    "GDN_009_2_0_RIGHT": {
+      "GDN_009_0_0_LEFT": [],
+      "GDN_009_0_1_LEFT": ["Flight"],
+      "Treasurebox_GDN009_1": ["Flight"],
+      "Treasurebox_GDN009_2": ["Flight"],
+      "N3091": ["Flight"]
+    },
+    "GDN_009_0_1_LEFT": {
+      "GDN_009_0_0_LEFT": [],
+      "GDN_009_2_0_RIGHT": [],
+      "Treasurebox_GDN009_1": [],
+      "Treasurebox_GDN009_2": [],
+      "N3091": []
+    }
+  },
+  "m04GDN_010": {
+    "GDN_010_0_0_LEFT": {
+      "GDN_010_0_1_RIGHT": [],
+      "Treasurebox_GDN010_1": [],
+      "N3042": [],
+      "N3065": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_010_0_1_RIGHT": {
+      "GDN_010_0_0_LEFT": [],
+      "Treasurebox_GDN010_1": [],
+      "N3042": [],
+      "N3065": [],
+      "N3091": [],
+      "N3001_Hard": []
+    }
+  },
+  "m04GDN_011": {
+    "GDN_011_0_0_LEFT": {
+      "GDN_011_0_0_RIGHT": []
+    },
+    "GDN_011_0_0_RIGHT": {
+      "GDN_011_0_0_LEFT": []
+    }
+  },
+  "m04GDN_012": {
+    "GDN_012_0_0_RIGHT": {
+      "Treasurebox_GDN012_1": [],
+      "Treasurebox_GDN012_2": []
+    }
+  },
+  "m04GDN_013": {
+    "GDN_013_0_0_LEFT": {
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_0_1_LEFT": [],
+      "GDN_013_2_1_RIGHT": [],
+      "Treasurebox_GDN013_1": ["Invert", "Dimensionshift"],
+      "Treasurebox_GDN013_2": [],
+      "Treasurebox_GDN013_3": [],
+      "Treasurebox_GDN013_4": ["Height"],
+      "N3034": [],
+      "N3075": [],
+      "N3104": [],
+      "N3053": [],
+      "N3084": [],
+      "N3087": []
+    },
+    "GDN_013_2_0_BOTTOM": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_0_1_LEFT": [],
+      "GDN_013_2_1_RIGHT": [],
+      "Treasurebox_GDN013_1": ["Invert", "Dimensionshift"],
+      "Treasurebox_GDN013_2": [],
+      "Treasurebox_GDN013_3": [],
+      "Treasurebox_GDN013_4": ["Height"],
+      "N3034": [],
+      "N3075": [],
+      "N3104": [],
+      "N3053": [],
+      "N3084": [],
+      "N3087": []
+    },
+    "GDN_013_0_1_LEFT": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_2_1_RIGHT": [],
+      "Treasurebox_GDN013_1": ["Invert", "Dimensionshift"],
+      "Treasurebox_GDN013_2": [],
+      "Treasurebox_GDN013_3": [],
+      "Treasurebox_GDN013_4": ["Height"],
+      "N3034": [],
+      "N3075": [],
+      "N3104": [],
+      "N3053": [],
+      "N3084": [],
+      "N3087": []
+    },
+    "GDN_013_2_1_RIGHT": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_0_1_LEFT": [],
+      "Treasurebox_GDN013_1": ["Invert", "Dimensionshift"],
+      "Treasurebox_GDN013_2": [],
+      "Treasurebox_GDN013_3": [],
+      "Treasurebox_GDN013_4": ["Height"],
+      "N3034": [],
+      "N3075": [],
+      "N3104": [],
+      "N3053": [],
+      "N3084": [],
+      "N3087": []
+    }
+  },
+  "m04GDN_014": {
+    "GDN_014_0_0_LEFT": {
+      "GDN_014_0_0_RIGHT": [],
+      "Treasurebox_GDN014_1": []
+    },
+    "GDN_014_0_0_RIGHT": {
+      "GDN_014_0_0_LEFT": [],
+      "Treasurebox_GDN014_1": []
+    }
+  },
+  "m04GDN_015": {
+    "GDN_015_0_0_LEFT": {
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_LEFT": [],
+      "GDN_015_0_1_RIGHT": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_015_0_0_RIGHT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_1_LEFT": [],
+      "GDN_015_0_1_RIGHT": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_015_0_1_LEFT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_RIGHT": [],
+      "N3091": [],
+      "N3001_Hard": []
+    },
+    "GDN_015_0_1_RIGHT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_LEFT": [],
+      "N3091": [],
+      "N3001_Hard": []
+    }
+  },
+  "m04GDN_016": {
+    "GDN_016_0_0_LEFT": {
+      "GDN_016_0_0_RIGHT": [],
+      "N3075": []
+    },
+    "GDN_016_0_0_RIGHT": {
+      "GDN_016_0_0_LEFT": [],
+      "N3075": []
+    }
+  },
+  "m04GDN_017": {
+    "GDN_017_0_0_RIGHT": {
+      "GDN_017_0_1_TOP": [],
+      "N3042": [],
+      "N3001_Hard": []
+    },
+    "GDN_017_0_1_TOP": {
+      "GDN_017_0_0_RIGHT": [],
+      "N3042": [],
+      "N3001_Hard": []
+    }
+  },
+  "m88BKR_001": {
+    "BKR_001_0_0_RIGHT": {
+      "N3107": ["Keyofbacker2"]
+    }
+  },
+  "m05SAN_000": {
+    "SAN_000_0_0_LEFT": {
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_0_4_LEFT": [],
+      "SAN_000_1_4_RIGHT": [],
+      "Wall_SAN000_1": [],
+      "N3073": [],
+      "N3100": [],
+      "N3079": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3087": [],
+      "Shortcut": []
+    },
+    "SAN_000_1_0_RIGHT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_0_4_LEFT": [],
+      "SAN_000_1_4_RIGHT": [],
+      "Wall_SAN000_1": [],
+      "N3073": [],
+      "N3100": [],
+      "N3079": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3087": [],
+      "Shortcut": []
+    },
+    "SAN_000_0_4_LEFT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_1_4_RIGHT": [],
+      "Wall_SAN000_1": [],
+      "N3073": [],
+      "N3100": [],
+      "N3079": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3087": [],
+      "Shortcut": []
+    },
+    "SAN_000_1_4_RIGHT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_0_4_LEFT": [],
+      "Wall_SAN000_1": [],
+      "N3073": [],
+      "N3100": [],
+      "N3079": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3087": [],
+      "Shortcut": []
+    }
+  },
+  "m05SAN_001": {
+    "SAN_001_0_0_LEFT": {
+      "SAN_001_1_0_RIGHT": [],
+      "N3042_Hard": [],
+      "N3104": []
+    },
+    "SAN_001_1_0_RIGHT": {
+      "SAN_001_0_0_LEFT": [],
+      "N3042_Hard": [],
+      "N3104": []
+    }
+  },
+  "m05SAN_002": {
+    "SAN_002_0_0_LEFT": {
+      "SAN_002_1_0_RIGHT": [],
+      "N3079": []
+    },
+    "SAN_002_1_0_RIGHT": {
+      "SAN_002_0_0_LEFT": [],
+      "N3079": []
+    }
+  },
+  "m05SAN_003": {
+    "SAN_003_0_0_LEFT": {
+      "SAN_003_1_1_RIGHT": [],
+      "SAN_003_1_5_RIGHT": ["Height"],
+      "SAN_003_0_8_LEFT": ["Dimensionshift"],
+      "Treasurebox_SAN003_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN003_2": ["Dimensionshift"],
+      "Treasurebox_SAN003_3": ["Dimensionshift"],
+      "Treasurebox_SAN003_4": ["Height"],
+      "Treasurebox_SAN003_5": ["Dimensionshift"],
+      "Treasurebox_SAN003_6": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_7": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_8": ["Dimensionshift", "Reflectionray"],
+      "N3034": ["Height"],
+      "N3079": [],
+      "N3001": [],
+      "N3090_Hard": ["Height"],
+      "N3087": ["Dimensionshift"],
+      "N3085": ["Height"]
+    },
+    "SAN_003_1_1_RIGHT": {
+      "SAN_003_0_0_LEFT": [],
+      "SAN_003_1_5_RIGHT": ["Height"],
+      "SAN_003_0_8_LEFT": ["Dimensionshift"],
+      "Treasurebox_SAN003_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN003_2": ["Dimensionshift"],
+      "Treasurebox_SAN003_3": ["Dimensionshift"],
+      "Treasurebox_SAN003_4": ["Height"],
+      "Treasurebox_SAN003_5": ["Dimensionshift"],
+      "Treasurebox_SAN003_6": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_7": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_8": ["Dimensionshift", "Reflectionray"],
+      "N3034": ["Height"],
+      "N3079": [],
+      "N3001": [],
+      "N3090_Hard": ["Height"],
+      "N3087": ["Dimensionshift"],
+      "N3085": ["Height"]
+    },
+    "SAN_003_1_5_RIGHT": {
+      "SAN_003_0_0_LEFT": [],
+      "SAN_003_1_1_RIGHT": [],
+      "SAN_003_0_8_LEFT": ["Dimensionshift"],
+      "Treasurebox_SAN003_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN003_2": ["Dimensionshift"],
+      "Treasurebox_SAN003_3": ["Dimensionshift"],
+      "Treasurebox_SAN003_4": [],
+      "Treasurebox_SAN003_5": ["Dimensionshift"],
+      "Treasurebox_SAN003_6": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_7": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN003_8": ["Dimensionshift", "Reflectionray"],
+      "N3034": [],
+      "N3079": [],
+      "N3001": [],
+      "N3090_Hard": [],
+      "N3087": ["Dimensionshift"],
+      "N3085": []
+    },
+    "SAN_003_0_8_LEFT": {
+      "SAN_003_0_0_LEFT": ["Dimensionshift"],
+      "SAN_003_1_1_RIGHT": ["Dimensionshift"],
+      "SAN_003_1_5_RIGHT": ["Dimensionshift"],
+      "Treasurebox_SAN003_1": ["Dimensionshift"],
+      "Treasurebox_SAN003_2": ["Height"],
+      "Treasurebox_SAN003_3": ["Height"],
+      "Treasurebox_SAN003_4": ["Dimensionshift"],
+      "Treasurebox_SAN003_5": ["Height"],
+      "Treasurebox_SAN003_6": ["Dimensionshift"],
+      "Treasurebox_SAN003_7": ["Dimensionshift"],
+      "Treasurebox_SAN003_8": ["Dimensionshift"],
+      "N3034": ["Dimensionshift"],
+      "N3079": ["Dimensionshift"],
+      "N3001": ["Dimensionshift"],
+      "N3090_Hard": ["Dimensionshift"],
+      "N3087": [],
+      "N3085": ["Dimensionshift"]
+    }
+  },
+  "m05SAN_004": {
+    "SAN_004_0_0_LEFT": {
+      "SAN_004_1_0_RIGHT": [],
+      "N3116": []
+    },
+    "SAN_004_1_0_RIGHT": {
+      "SAN_004_0_0_LEFT": [],
+      "N3116": []
+    }
+  },
+  "m05SAN_005": {
+    "SAN_005_0_0_LEFT": {
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_0_1_LEFT": [],
+      "SAN_005_1_1_RIGHT": [],
+      "Treasurebox_SAN005_1": [],
+      "Treasurebox_SAN005_2": [],
+      "Wall_SAN005_1": [],
+      "N3104": [],
+      "N3055": []
+    },
+    "SAN_005_1_0_RIGHT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_0_1_LEFT": [],
+      "SAN_005_1_1_RIGHT": [],
+      "Treasurebox_SAN005_1": [],
+      "Treasurebox_SAN005_2": [],
+      "Wall_SAN005_1": [],
+      "N3104": [],
+      "N3055": []
+    },
+    "SAN_005_0_1_LEFT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_1_1_RIGHT": [],
+      "Treasurebox_SAN005_1": [],
+      "Treasurebox_SAN005_2": [],
+      "Wall_SAN005_1": [],
+      "N3104": [],
+      "N3055": []
+    },
+    "SAN_005_1_1_RIGHT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_0_1_LEFT": [],
+      "Treasurebox_SAN005_1": [],
+      "Treasurebox_SAN005_2": [],
+      "Wall_SAN005_1": [],
+      "N3104": [],
+      "N3055": []
+    }
+  },
+  "m05SAN_006": {
+    "SAN_006_0_0_RIGHT": {}
+  },
+  "m05SAN_008": {
+    "SAN_008_0_0_LEFT": {
+      "SAN_008_1_0_RIGHT": [],
+      "N3073_Hard": [],
+      "N3053": [],
+      "N3079": [],
+      "N3055": []
+    },
+    "SAN_008_1_0_RIGHT": {
+      "SAN_008_0_0_LEFT": [],
+      "N3073_Hard": [],
+      "N3053": [],
+      "N3079": [],
+      "N3055": []
+    }
+  },
+  "m05SAN_009": {
+    "SAN_009_0_0_LEFT": {
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": [],
+      "SAN_009_1_4_TOP": ["Dimensionshift"],
+      "Treasurebox_SAN009_1": ["Dimensionshift"],
+      "Treasurebox_SAN009_2": [],
+      "N3053": [],
+      "N3055": [],
+      "N3052": []
+    },
+    "SAN_009_1_0_RIGHT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": [],
+      "SAN_009_1_4_TOP": ["Dimensionshift"],
+      "Treasurebox_SAN009_1": ["Dimensionshift"],
+      "Treasurebox_SAN009_2": [],
+      "N3053": [],
+      "N3055": [],
+      "N3052": []
+    },
+    "SAN_009_0_1_LEFT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_1_1_RIGHT": [],
+      "SAN_009_1_4_TOP": ["Dimensionshift"],
+      "Treasurebox_SAN009_1": ["Dimensionshift"],
+      "Treasurebox_SAN009_2": [],
+      "N3053": [],
+      "N3055": [],
+      "N3052": []
+    },
+    "SAN_009_1_1_RIGHT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_4_TOP": ["Dimensionshift"],
+      "Treasurebox_SAN009_1": ["Dimensionshift"],
+      "Treasurebox_SAN009_2": [],
+      "N3053": [],
+      "N3055": [],
+      "N3052": []
+    },
+    "SAN_009_1_4_TOP": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": [],
+      "Treasurebox_SAN009_1": [],
+      "Treasurebox_SAN009_2": [],
+      "N3053": [],
+      "N3055": [],
+      "N3052": []
+    }
+  },
+  "m05SAN_010": {
+    "SAN_010_0_0_RIGHT": {
+      "SAN_010_0_1_RIGHT": [],
+      "N3100": []
+    },
+    "SAN_010_0_1_RIGHT": {
+      "SAN_010_0_0_RIGHT": [],
+      "N3100": []
+    }
+  },
+  "m05SAN_011": {
+    "SAN_011_0_0_LEFT": {
+      "SAN_011_1_0_RIGHT_BOTTOM": []
+    },
+    "SAN_011_1_0_RIGHT_BOTTOM": {
+      "SAN_011_0_0_LEFT": []
+    }
+  },
+  "m05SAN_012": {
+    "SAN_012_0_0_LEFT_BOTTOM": {
+      "SAN_012_1_0_RIGHT_BOTTOM": [],
+      "SAN_012_1_1_RIGHT": ["Height"],
+      "N1003": []
+    },
+    "SAN_012_1_0_RIGHT_BOTTOM": {
+      "SAN_012_0_0_LEFT_BOTTOM": [],
+      "SAN_012_1_1_RIGHT": ["Height"],
+      "N1003": []
+    },
+    "SAN_012_1_1_RIGHT": {
+      "SAN_012_0_0_LEFT_BOTTOM": [],
+      "SAN_012_1_0_RIGHT_BOTTOM": [],
+      "N1003": []
+    }
+  },
+  "m05SAN_013": {
+    "SAN_013_0_0_LEFT_BOTTOM": {
+      "Treasurebox_SAN013_1": [],
+      "Treasurebox_SAN013_2": []
+    }
+  },
+  "m05SAN_014": {
+    "SAN_014_0_0_LEFT": {
+      "Treasurebox_SAN014_1": [],
+      "FamiliaSilverKnight": []
+    }
+  },
+  "m05SAN_015": {
+    "SAN_015_0_0_LEFT": {
+      "SAN_015_1_0_RIGHT": [],
+      "Treasurebox_SAN015_2": ["Height"],
+      "Treasurebox_SAN015_3": ["Height"],
+      "N3012": [],
+      "N3085": [],
+      "FamiliaSilverKnight": ["Height"]
+    },
+    "SAN_015_1_0_RIGHT": {
+      "SAN_015_0_0_LEFT": [],
+      "Treasurebox_SAN015_2": ["Height"],
+      "Treasurebox_SAN015_3": ["Height"],
+      "N3012": [],
+      "N3085": [],
+      "FamiliaSilverKnight": ["Height"]
+    }
+  },
+  "m05SAN_016": {
+    "SAN_016_0_0_LEFT": {
+      "SAN_016_1_0_RIGHT": [],
+      "SAN_016_1_3_RIGHT": ["Height"],
+      "Treasurebox_SAN016_1": ["Height"],
+      "Treasurebox_SAN016_2": ["Height"],
+      "Treasurebox_SAN016_3": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_4": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_5": ["Height"],
+      "N3090": ["Height"],
+      "N3102": ["Height"],
+      "N3009": [],
+      "N3085": ["Height"]
+    },
+    "SAN_016_1_0_RIGHT": {
+      "SAN_016_0_0_LEFT": [],
+      "SAN_016_1_3_RIGHT": ["Height"],
+      "Treasurebox_SAN016_1": ["Height"],
+      "Treasurebox_SAN016_2": ["Height"],
+      "Treasurebox_SAN016_3": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_4": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_5": ["Height"],
+      "N3090": ["Height"],
+      "N3102": ["Height"],
+      "N3009": [],
+      "N3085": ["Height"]
+    },
+    "SAN_016_1_3_RIGHT": {
+      "SAN_016_0_0_LEFT": [],
+      "SAN_016_1_0_RIGHT": [],
+      "Treasurebox_SAN016_1": [],
+      "Treasurebox_SAN016_2": [],
+      "Treasurebox_SAN016_3": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_4": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN016_5": ["Height"],
+      "N3090": [],
+      "N3102": [],
+      "N3009": [],
+      "N3085": []
+    }
+  },
+  "m05SAN_017": {
+    "SAN_017_0_0_LEFT": {
+      "SAN_017_1_0_RIGHT": ["Dimensionshift"],
+      "Treasurebox_SAN017_1": ["Dimensionshift"],
+      "N3087": ["Dimensionshift"],
+      "N3085_Hard": []
+    },
+    "SAN_017_1_0_RIGHT": {
+      "SAN_017_0_0_LEFT": [],
+      "Treasurebox_SAN017_1": [],
+      "N3087": [],
+      "N3085_Hard": []
+    }
+  },
+  "m05SAN_018": {
+    "SAN_018_0_0_LEFT": {
+      "SAN_018_1_0_RIGHT": [],
+      "N3077": []
+    },
+    "SAN_018_1_0_RIGHT": {
+      "SAN_018_0_0_LEFT": [],
+      "N3077": []
+    }
+  },
+  "m05SAN_019": {
+    "SAN_019_0_0_LEFT": {
+      "SAN_019_1_0_BOTTOM": ["Dimensionshift", "Reflectionray"],
+      "SAN_019_1_0_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "SAN_019_1_1_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "SAN_019_0_3_LEFT": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN019_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN019_2": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_SAN019_3": ["Dimensionshift", "Reflectionray"],
+      "Wall_SAN019_1": ["Dimensionshift", "Reflectionray"],
+      "N3090_Normal": ["Dimensionshift", "Reflectionray"],
+      "N3099_Hard": ["Dimensionshift", "Reflectionray"],
+      "N3102": ["Dimensionshift", "Reflectionray"],
+      "N3009": ["Dimensionshift", "Reflectionray"],
+      "N3012": ["Dimensionshift", "Reflectionray"]
+    },
+    "SAN_019_1_0_BOTTOM": {
+      "SAN_019_0_0_LEFT": ["Height"],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_1_1_RIGHT": ["Height"],
+      "SAN_019_0_3_LEFT": ["Height"],
+      "Treasurebox_SAN019_1": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_2": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_3": [],
+      "Wall_SAN019_1": ["Height"],
+      "N3090_Normal": ["Height"],
+      "N3099_Hard": ["Height"],
+      "N3102": ["Height"],
+      "N3009": [],
+      "N3012": ["Height"]
+    },
+    "SAN_019_1_0_RIGHT": {
+      "SAN_019_0_0_LEFT": ["Height"],
+      "SAN_019_1_0_BOTTOM": ["Height"],
+      "SAN_019_1_1_RIGHT": ["Height"],
+      "SAN_019_0_3_LEFT": ["Height"],
+      "Treasurebox_SAN019_1": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_2": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_3": [],
+      "Wall_SAN019_1": ["Height"],
+      "N3090_Normal": ["Height"],
+      "N3099_Hard": ["Height"],
+      "N3102": ["Height"],
+      "N3009": [],
+      "N3012": ["Height"]
+    },
+    "SAN_019_1_1_RIGHT": {
+      "SAN_019_0_0_LEFT": ["Height"],
+      "SAN_019_1_0_BOTTOM": ["Height"],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_0_3_LEFT": ["Height"],
+      "Treasurebox_SAN019_1": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_2": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_3": [],
+      "Wall_SAN019_1": [],
+      "N3090_Normal": ["Height"],
+      "N3099_Hard": ["Height"],
+      "N3102": ["Height"],
+      "N3009": [],
+      "N3012": ["Height"]
+    },
+    "SAN_019_0_3_LEFT": {
+      "SAN_019_0_0_LEFT": [],
+      "SAN_019_1_0_BOTTOM": [],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_1_1_RIGHT": [],
+      "Treasurebox_SAN019_1": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_2": ["Flight", "Reflectionray"],
+      "Treasurebox_SAN019_3": [],
+      "Wall_SAN019_1": [],
+      "N3090_Normal": [],
+      "N3099_Hard": [],
+      "N3102": [],
+      "N3009": [],
+      "N3012": []
+    }
+  },
+  "m05SAN_020": {
+    "SAN_020_0_0_LEFT": {
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_0_1_LEFT": [],
+      "SAN_020_1_1_RIGHT": [],
+      "Treasurebox_SAN020_1": ["Height"],
+      "N3034": [],
+      "N3053": ["Height"],
+      "N3090_Hard": [],
+      "N3111": ["Height"],
+      "N3085": [],
+      "N3077": []
+    },
+    "SAN_020_1_0_RIGHT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_0_1_LEFT": [],
+      "SAN_020_1_1_RIGHT": [],
+      "Treasurebox_SAN020_1": ["Height"],
+      "N3034": [],
+      "N3053": ["Height"],
+      "N3090_Hard": [],
+      "N3111": ["Height"],
+      "N3085": [],
+      "N3077": []
+    },
+    "SAN_020_0_1_LEFT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_1_1_RIGHT": [],
+      "Treasurebox_SAN020_1": [],
+      "N3034": [],
+      "N3053": [],
+      "N3090_Hard": [],
+      "N3111": [],
+      "N3085": [],
+      "N3077": []
+    },
+    "SAN_020_1_1_RIGHT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_0_1_LEFT": [],
+      "Treasurebox_SAN020_1": [],
+      "N3034": [],
+      "N3053": [],
+      "N3090_Hard": [],
+      "N3111": [],
+      "N3085": [],
+      "N3077": []
+    }
+  },
+  "m05SAN_021": {
+    "SAN_021_0_0_LEFT": {
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["Flight"],
+      "Treasurebox_SAN021_1": ["Flight"],
+      "Treasurebox_SAN021_2": ["Flight"],
+      "Treasurebox_SAN021_3": ["Flight"],
+      "Treasurebox_SAN021_4": [],
+      "Treasurebox_SAN021_5": ["Flight"],
+      "N3009": [],
+      "N3012": [],
+      "N3056": ["Flight"],
+      "FamiliaSilverKnight": ["Flight"]
+    },
+    "SAN_021_1_0_RIGHT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["Flight"],
+      "Treasurebox_SAN021_1": ["Flight"],
+      "Treasurebox_SAN021_2": ["Flight"],
+      "Treasurebox_SAN021_3": ["Flight"],
+      "Treasurebox_SAN021_4": [],
+      "Treasurebox_SAN021_5": ["Flight"],
+      "N3009": [],
+      "N3012": [],
+      "N3056": ["Flight"],
+      "FamiliaSilverKnight": ["Flight"]
+    },
+    "SAN_021_0_1_LEFT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["Flight"],
+      "Treasurebox_SAN021_1": ["Flight"],
+      "Treasurebox_SAN021_2": ["Flight"],
+      "Treasurebox_SAN021_3": ["Flight"],
+      "Treasurebox_SAN021_4": [],
+      "Treasurebox_SAN021_5": ["Flight"],
+      "N3009": [],
+      "N3012": [],
+      "N3056": ["Flight"],
+      "FamiliaSilverKnight": ["Flight"]
+    },
+    "SAN_021_1_1_RIGHT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_5_RIGHT": ["Flight"],
+      "Treasurebox_SAN021_1": ["Flight"],
+      "Treasurebox_SAN021_2": ["Flight"],
+      "Treasurebox_SAN021_3": ["Flight"],
+      "Treasurebox_SAN021_4": [],
+      "Treasurebox_SAN021_5": ["Flight"],
+      "N3009": [],
+      "N3012": [],
+      "N3056": ["Flight"],
+      "FamiliaSilverKnight": ["Flight"]
+    },
+    "SAN_021_1_5_RIGHT": {
+      "SAN_021_0_0_LEFT": ["Dimensionshift"],
+      "SAN_021_1_0_RIGHT": ["Dimensionshift"],
+      "SAN_021_0_1_LEFT": ["Dimensionshift"],
+      "SAN_021_1_1_RIGHT": ["Dimensionshift"],
+      "Treasurebox_SAN021_1": ["Dimensionshift"],
+      "Treasurebox_SAN021_2": ["Dimensionshift"],
+      "Treasurebox_SAN021_3": ["Height"],
+      "Treasurebox_SAN021_4": ["Dimensionshift"],
+      "Treasurebox_SAN021_5": ["Flight", "Reflectionray"],
+      "N3009": ["Dimensionshift"],
+      "N3012": ["Dimensionshift"],
+      "N3056": ["Height"],
+      "FamiliaSilverKnight": ["Dimensionshift"]
+    }
+  },
+  "m05SAN_022": {
+    "SAN_022_0_0_LEFT": {
+      "SAN_022_1_0_RIGHT": []
+    },
+    "SAN_022_1_0_RIGHT": {
+      "SAN_022_0_0_LEFT": []
+    }
+  },
+  "m05SAN_023": {
+    "SAN_023_0_0_LEFT": {
+      "SAN_023_1_0_RIGHT": [],
+      "N1002": []
+    },
+    "SAN_023_1_0_RIGHT": {
+      "SAN_023_0_0_LEFT": [],
+      "N1002": []
+    }
+  },
+  "m05SAN_024": {
+    "SAN_024_0_0_LEFT": {
+      "SAN_024_1_0_RIGHT": [],
+      "Treasurebox_SAN024_1": []
+    },
+    "SAN_024_1_0_RIGHT": {
+      "SAN_024_0_0_LEFT": [],
+      "Treasurebox_SAN024_1": []
+    }
+  },
+  "m06KNG_000": {
+    "KNG_000_0_0_LEFT": {
+      "KNG_000_1_0_RIGHT": [],
+      "KNG_000_0_1_LEFT": [],
+      "Wall_KNG000_1": [],
+      "N3077_Hard": [],
+      "N3093": [],
+      "N3110": []
+    },
+    "KNG_000_1_0_RIGHT": {
+      "KNG_000_0_0_LEFT": [],
+      "KNG_000_0_1_LEFT": [],
+      "Wall_KNG000_1": [],
+      "N3077_Hard": [],
+      "N3093": [],
+      "N3110": []
+    },
+    "KNG_000_0_1_LEFT": {
+      "KNG_000_0_0_LEFT": [],
+      "KNG_000_1_0_RIGHT": [],
+      "Wall_KNG000_1": [],
+      "N3077_Hard": [],
+      "N3093": [],
+      "N3110": []
+    }
+  },
+  "m06KNG_001": {
+    "KNG_001_0_0_RIGHT": {
+      "KNG_001_0_1_RIGHT": [],
+      "N3093": []
+    },
+    "KNG_001_0_1_RIGHT": {
+      "KNG_001_0_0_RIGHT": [],
+      "N3093": []
+    }
+  },
+  "m06KNG_002": {
+    "KNG_002_1_0_BOTTOM": {
+      "KNG_002_0_1_LEFT": ["Height"],
+      "Treasurebox_KNG002_1": [],
+      "Treasurebox_KNG002_2": ["Height"],
+      "N3052": [],
+      "N3037": [],
+      "N3093_Hard": ["Height"]
+    },
+    "KNG_002_0_1_LEFT": {
+      "KNG_002_1_0_BOTTOM": [],
+      "Treasurebox_KNG002_1": [],
+      "Treasurebox_KNG002_2": [],
+      "N3052": [],
+      "N3037": [],
+      "N3093_Hard": []
+    }
+  },
+  "m06KNG_003": {
+    "KNG_003_0_0_LEFT": {
+      "KNG_003_0_1_LEFT": [],
+      "KNG_003_0_1_TOP": ["Height"],
+      "Treasurebox_KNG003_1": [],
+      "N3110": []
+    },
+    "KNG_003_0_1_LEFT": {
+      "KNG_003_0_0_LEFT": [],
+      "KNG_003_0_1_TOP": ["Height"],
+      "Treasurebox_KNG003_1": [],
+      "N3110": []
+    },
+    "KNG_003_0_1_TOP": {
+      "KNG_003_0_0_LEFT": [],
+      "KNG_003_0_1_LEFT": [],
+      "Treasurebox_KNG003_1": [],
+      "N3110": []
+    }
+  },
+  "m06KNG_004": {
+    "KNG_004_0_0_LEFT": {
+      "KNG_004_1_0_RIGHT": [],
+      "N3052": [],
+      "N3037": []
+    },
+    "KNG_004_1_0_RIGHT": {
+      "KNG_004_0_0_LEFT": [],
+      "N3052": [],
+      "N3037": []
+    }
+  },
+  "m06KNG_005": {
+    "KNG_005_0_0_LEFT": {
+      "KNG_005_0_0_RIGHT": [],
+      "N3110": []
+    },
+    "KNG_005_0_0_RIGHT": {
+      "KNG_005_0_0_LEFT": [],
+      "N3110": []
+    }
+  },
+  "m06KNG_006": {
+    "KNG_006_0_0_RIGHT": {
+      "KNG_006_0_1_LEFT": ["Height"],
+      "Treasurebox_KNG006_1": [],
+      "N3093_Hard": ["Height"],
+      "N3056": []
+    },
+    "KNG_006_0_1_LEFT": {
+      "KNG_006_0_0_RIGHT": [],
+      "Treasurebox_KNG006_1": [],
+      "N3093_Hard": [],
+      "N3056": []
+    }
+  },
+  "m06KNG_007": {
+    "KNG_007_0_0_LEFT": {
+      "KNG_007_0_1_RIGHT": ["Height"],
+      "Wall_KNG007_1": [],
+      "N3093": ["Height"]
+    },
+    "KNG_007_0_1_RIGHT": {
+      "KNG_007_0_0_LEFT": [],
+      "Wall_KNG007_1": [],
+      "N3093": []
+    }
+  },
+  "m06KNG_008": {
+    "KNG_008_0_0_RIGHT": {
+      "KNG_008_0_2_LEFT": ["Height"],
+      "KNG_008_0_2_RIGHT": ["Height"],
+      "N3093": ["Height"]
+    },
+    "KNG_008_0_2_LEFT": {
+      "KNG_008_0_0_RIGHT": [],
+      "KNG_008_0_2_RIGHT": ["Height", "Accelerator"],
+      "N3093": []
+    },
+    "KNG_008_0_2_RIGHT": {
+      "KNG_008_0_0_RIGHT": [],
+      "KNG_008_0_2_LEFT": [],
+      "N3093": []
+    }
+  },
+  "m06KNG_009": {
+    "KNG_009_0_0_LEFT": {
+      "KNG_009_1_0_TOP": [],
+      "N3052": [],
+      "N3037": []
+    },
+    "KNG_009_1_0_TOP": {
+      "KNG_009_0_0_LEFT": [],
+      "N3052": [],
+      "N3037": []
+    }
+  },
+  "m06KNG_010": {
+    "KNG_010_1_0_BOTTOM": {
+      "KNG_010_0_1_LEFT": ["Height"],
+      "KNG_010_1_1_RIGHT": [],
+      "KNG_010_1_1_TOP": [],
+      "Treasurebox_KNG010_1": [],
+      "N3052_Hard": [],
+      "N3037": [],
+      "N3093": [],
+      "N3110": []
+    },
+    "KNG_010_0_1_LEFT": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_1_1_RIGHT": [],
+      "KNG_010_1_1_TOP": [],
+      "Treasurebox_KNG010_1": [],
+      "N3052_Hard": [],
+      "N3037": [],
+      "N3093": [],
+      "N3110": []
+    },
+    "KNG_010_1_1_RIGHT": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_0_1_LEFT": ["Height"],
+      "KNG_010_1_1_TOP": [],
+      "Treasurebox_KNG010_1": [],
+      "N3052_Hard": [],
+      "N3037": [],
+      "N3093": [],
+      "N3110": []
+    },
+    "KNG_010_1_1_TOP": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_0_1_LEFT": ["Height"],
+      "KNG_010_1_1_RIGHT": [],
+      "Treasurebox_KNG010_1": [],
+      "N3052_Hard": [],
+      "N3037": [],
+      "N3093": [],
+      "N3110": []
+    }
+  },
+  "m06KNG_011": {
+    "KNG_011_0_1_LEFT": {
+      "Treasurebox_KNG011_1": [],
+      "N3093": [],
+      "N3110": []
+    }
+  },
+  "m06KNG_012": {
+    "KNG_012_0_1_RIGHT": {
+      "Treasurebox_KNG012_1": ["Flight"],
+      "Treasurebox_KNG012_2": [],
+      "N3093_Hard": [],
+      "N3056": []
+    }
+  },
+  "m06KNG_013": {
+    "KNG_013_0_0_LEFT": {
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": [],
+      "KNG_013_0_1_RIGHT": ["Height"],
+      "N3093": []
+    },
+    "KNG_013_0_0_BOTTOM": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": [],
+      "KNG_013_0_1_RIGHT": ["Height"],
+      "N3093": []
+    },
+    "KNG_013_0_0_RIGHT": {
+      "KNG_013_0_0_LEFT": ["Dimensionshift"],
+      "KNG_013_0_0_BOTTOM": ["Dimensionshift"],
+      "KNG_013_0_1_LEFT": ["Dimensionshift"],
+      "KNG_013_0_1_RIGHT": ["Dimensionshift"],
+      "N3093": ["Dimensionshift"]
+    },
+    "KNG_013_0_1_LEFT": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_RIGHT": ["Height"],
+      "N3093": []
+    },
+    "KNG_013_0_1_RIGHT": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": [],
+      "N3093": []
+    }
+  },
+  "m06KNG_014": {
+    "KNG_014_0_0_LEFT": {
+      "KNG_014_1_0_RIGHT": [],
+      "N3110": [],
+      "N3056_Hard": []
+    },
+    "KNG_014_1_0_RIGHT": {
+      "KNG_014_0_0_LEFT": [],
+      "N3110": [],
+      "N3056_Hard": []
+    }
+  },
+  "m06KNG_015": {
+    "KNG_015_0_0_LEFT": {
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": ["Height"],
+      "KNG_015_0_1_RIGHT": ["Height"],
+      "KNG_015_0_2_LEFT": ["Height"],
+      "KNG_015_0_2_TOP": ["Height"],
+      "N3093": ["Height"]
+    },
+    "KNG_015_0_0_RIGHT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_1_LEFT": ["Height"],
+      "KNG_015_0_1_RIGHT": ["Height"],
+      "KNG_015_0_2_LEFT": ["Height"],
+      "KNG_015_0_2_TOP": ["Height"],
+      "N3093": ["Height"]
+    },
+    "KNG_015_0_1_LEFT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": ["Height"],
+      "KNG_015_0_2_TOP": ["Height"],
+      "N3093": []
+    },
+    "KNG_015_0_1_RIGHT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_2_LEFT": ["Height"],
+      "KNG_015_0_2_TOP": ["Height"],
+      "N3093": []
+    },
+    "KNG_015_0_2_LEFT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_TOP": ["Height"],
+      "N3093": []
+    },
+    "KNG_015_0_2_TOP": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": [],
+      "N3093": []
+    }
+  },
+  "m06KNG_016": {
+    "KNG_016_0_0_RIGHT": {
+      "Treasurebox_KNG016_1": []
+    }
+  },
+  "m06KNG_017": {
+    "KNG_017_0_0_LEFT": {
+      "KNG_017_1_0_BOTTOM": [],
+      "Treasurebox_KNG017_1": [],
+      "Treasurebox_KNG017_2": [],
+      "Treasurebox_KNG017_3": [],
+      "Treasurebox_KNG017_4": [],
+      "Treasurebox_KNG017_5": [],
+      "N3052": [],
+      "N3077": []
+    },
+    "KNG_017_1_0_BOTTOM": {
+      "KNG_017_0_0_LEFT": [],
+      "Treasurebox_KNG017_1": [],
+      "Treasurebox_KNG017_2": [],
+      "Treasurebox_KNG017_3": [],
+      "Treasurebox_KNG017_4": [],
+      "Treasurebox_KNG017_5": [],
+      "N3052": [],
+      "N3077": []
+    }
+  },
+  "m06KNG_018": {
+    "KNG_018_0_0_LEFT": {
+      "KNG_018_1_2_RIGHT": ["Height"],
+      "Treasurebox_KNG018_2": ["Height"],
+      "Treasurebox_KNG018_3": [],
+      "Treasurebox_KNG018_4": ["Flight", ["Doublejump", "Accelerator"]]
+    },
+    "KNG_018_1_2_RIGHT": {
+      "KNG_018_0_0_LEFT": [],
+      "Treasurebox_KNG018_2": ["Height"],
+      "Treasurebox_KNG018_3": [],
+      "Treasurebox_KNG018_4": ["Flight", ["Doublejump", "Accelerator"]]
+    }
+  },
+  "m06KNG_019": {
+    "KNG_019_0_0_LEFT": {
+      "KNG_019_0_0_RIGHT_BOTTOM": []
+    },
+    "KNG_019_0_0_RIGHT_BOTTOM": {
+      "KNG_019_0_0_LEFT": []
+    }
+  },
+  "m06KNG_020": {
+    "KNG_020_0_0_LEFT_BOTTOM": {
+      "N1012": [],
+      "N2013": []
+    }
+  },
+  "m06KNG_021": {
+    "KNG_021_0_0_RIGHT": {
+	  "TO_EBT_000_START": [],
+      "Treasurebox_KNG021_1": ["Doublejump", "Dimensionshift"]
+    }
+  },
+  "m06KNG_022": {
+    "KNG_022_0_0_RIGHT": {
+      "Treasurebox_KNG022_1": []
+    }
+  },
+  "m88BKR_002": {
+    "BKR_002_0_0_LEFT": {
+      "N3058": ["Keyofbacker3"],
+      "N3108": ["Keyofbacker3"]
+    }
+  },
+  "m07LIB_000": {
+    "LIB_000_0_0_LEFT": {
+      "LIB_000_0_2_RIGHT": [],
+      "N3033": [],
+      "N3012_Hard": []
+    },
+    "LIB_000_0_2_RIGHT": {
+      "LIB_000_0_0_LEFT": [],
+      "N3033": [],
+      "N3012_Hard": []
+    },
+    "LIB_000_0_2_TOP": {
+      "LIB_000_0_0_LEFT": [],
+      "LIB_000_0_2_RIGHT": [],
+      "N3033": [],
+      "N3012_Hard": []
+    }
+  },
+  "m07LIB_001": {
+    "LIB_001_0_0_LEFT": {
+      "LIB_001_1_0_RIGHT": [],
+      "LIB_001_0_1_LEFT": [],
+      "Treasurebox_LIB001_1": [],
+      "N3100": [],
+      "N3035": []
+    },
+    "LIB_001_1_0_RIGHT": {
+      "LIB_001_0_0_LEFT": [],
+      "LIB_001_0_1_LEFT": [],
+      "Treasurebox_LIB001_1": [],
+      "N3100": [],
+      "N3035": []
+    },
+    "LIB_001_0_1_LEFT": {
+      "LIB_001_0_0_LEFT": [],
+      "LIB_001_1_0_RIGHT": [],
+      "Treasurebox_LIB001_1": [],
+      "N3100": [],
+      "N3035": []
+    }
+  },
+  "m07LIB_002": {
+    "LIB_002_0_1_RIGHT": {
+      "LIB_002_0_2_LEFT": ["Height"],
+      "LIB_002_0_2_RIGHT": ["Height"],
+      "Treasurebox_LIB002_1": [],
+      "N3103": []
+    },
+    "LIB_002_0_2_LEFT": {
+      "LIB_002_0_1_RIGHT": [],
+      "LIB_002_0_2_RIGHT": [],
+      "Treasurebox_LIB002_1": [],
+      "N3103": []
+    },
+    "LIB_002_0_2_RIGHT": {
+      "LIB_002_0_1_RIGHT": [],
+      "LIB_002_0_2_LEFT": [],
+      "Treasurebox_LIB002_1": [],
+      "N3103": []
+    }
+  },
+  "m07LIB_003": {
+    "LIB_003_0_0_LEFT": {
+      "LIB_003_0_0_RIGHT": [],
+      "LIB_003_0_1_RIGHT": []
+    },
+    "LIB_003_0_0_RIGHT": {
+      "LIB_003_0_0_LEFT": [],
+      "LIB_003_0_1_RIGHT": []
+    },
+    "LIB_003_0_1_RIGHT": {
+      "LIB_003_0_0_LEFT": [],
+      "LIB_003_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_004": {
+    "LIB_004_0_0_LEFT": {
+      "LIB_004_2_0_TOP": [],
+      "Wall_LIB004_1": [],
+      "N3100": [],
+      "N3055": [],
+      "N3017": []
+    },
+    "LIB_004_2_0_TOP": {
+      "LIB_004_0_0_LEFT": [],
+      "Wall_LIB004_1": [],
+      "N3100": [],
+      "N3055": [],
+      "N3017": []
+    }
+  },
+  "m07LIB_005": {
+    "LIB_005_0_0_LEFT": {
+      "LIB_005_0_0_BOTTOM": []
+    },
+    "LIB_005_0_0_BOTTOM": {
+      "LIB_005_0_0_LEFT": []
+    }
+  },
+  "m07LIB_006": {
+    "LIB_006_0_0_LEFT": {
+      "LIB_006_0_0_RIGHT": ["Dimensionshift", "Reflectionray"]
+    },
+    "LIB_006_0_0_RIGHT": {
+      "LIB_006_0_0_LEFT": ["Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m07LIB_007": {
+    "LIB_007_0_0_LEFT": {
+      "LIB_007_0_0_RIGHT": [],
+      "Treasurebox_LIB007_1": [],
+      "N3103": []
+    },
+    "LIB_007_0_0_RIGHT": {
+      "LIB_007_0_0_LEFT": [],
+      "Treasurebox_LIB007_1": [],
+      "N3103": []
+    }
+  },
+  "m07LIB_008": {
+    "LIB_008_0_0_LEFT": {
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_0_RIGHT": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_1_LEFT": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_1_RIGHT": {
+      "LIB_008_0_0_LEFT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_0_RIGHT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_1_LEFT": ["Dimensionshift", "Reflectionray"],
+      "LIB_008_0_1_TOP": ["Dimensionshift", "Reflectionray"]
+    },
+    "LIB_008_0_1_TOP": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": ["Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m07LIB_009": {
+    "LIB_009_0_0_BOTTOM": {
+      "LIB_009_0_0_RIGHT": [],
+      "Treasurebox_LIB009_1": ["HighJump", "Invert"],
+      "Treasurebox_LIB009_2": ["HighJump", "Invert"]
+    },
+    "LIB_009_0_0_RIGHT": {
+      "LIB_009_0_0_BOTTOM": [],
+      "Treasurebox_LIB009_1": ["HighJump", "Invert"],
+      "Treasurebox_LIB009_2": ["HighJump", "Invert"]
+    },
+    "LIB_009_0_1_RIGHT": {}
+  },
+  "m07LIB_010": {
+    "LIB_010_0_0_LEFT": {
+      "LIB_010_0_0_RIGHT": [],
+      "LIB_010_0_0_TOP": []
+    },
+    "LIB_010_0_0_RIGHT": {
+      "LIB_010_0_0_LEFT": [],
+      "LIB_010_0_0_TOP": []
+    },
+    "LIB_010_0_0_TOP": {
+      "LIB_010_0_0_LEFT": [],
+      "LIB_010_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_011": {
+    "LIB_011_0_0_RIGHT": {
+      "Treasurebox_LIB011_1": ["Height"],
+      "N2004": []
+    }
+  },
+  "m07LIB_012": {
+    "LIB_012_0_1_RIGHT": {
+      "Treasurebox_LIB012_1": ["Dimensionshift", "Reflectionray"],
+      "N3090_Hard": [],
+      "N3109": []
+    }
+  },
+  "m07LIB_013": {
+    "LIB_013_0_0_LEFT": {
+      "LIB_013_1_0_RIGHT": [],
+      "N3099": [],
+      "N3072": []
+    },
+    "LIB_013_1_0_RIGHT": {
+      "LIB_013_0_0_LEFT": [],
+      "N3099": [],
+      "N3072": []
+    }
+  },
+  "m07LIB_014": {
+    "LIB_014_0_0_LEFT": {
+      "LIB_014_0_0_BOTTOM": [],
+      "LIB_014_0_0_RIGHT": ["Dimensionshift", "Reflectionray"]
+    },
+    "LIB_014_0_0_BOTTOM": {
+      "LIB_014_0_0_LEFT": [],
+      "LIB_014_0_0_RIGHT": ["Dimensionshift", "Reflectionray"]
+    },
+    "LIB_014_0_0_RIGHT": {
+      "LIB_014_0_0_LEFT": ["Dimensionshift", "Reflectionray"],
+      "LIB_014_0_0_BOTTOM": ["Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m07LIB_015": {
+    "LIB_015_0_0_LEFT": {
+      "LIB_015_0_0_TOP": ["Height"],
+      "N3085_Hard": [],
+      "N3109": []
+    },
+    "LIB_015_0_0_TOP": {
+      "LIB_015_0_0_LEFT": [],
+      "N3085_Hard": [],
+      "N3109": []
+    }
+  },
+  "m07LIB_016": {
+    "LIB_016_0_0_LEFT": {
+      "LIB_016_0_0_BOTTOM": [],
+      "LIB_016_0_0_TOP": [],
+      "N3012": []
+    },
+    "LIB_016_0_0_BOTTOM": {
+      "LIB_016_0_0_LEFT": [],
+      "LIB_016_0_0_TOP": [],
+      "N3012": []
+    },
+    "LIB_016_0_0_TOP": {
+      "LIB_016_0_0_LEFT": [],
+      "LIB_016_0_0_BOTTOM": [],
+      "N3012": []
+    }
+  },
+  "m07LIB_017": {
+    "LIB_017_0_0_LEFT": {
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_0_1_TOP": [],
+      "LIB_017_1_1_TOP": [],
+      "Treasurebox_LIB017_1": [],
+      "N3099_Hard": [],
+      "N3072": []
+    },
+    "LIB_017_1_0_BOTTOM": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_0_1_TOP": [],
+      "LIB_017_1_1_TOP": [],
+      "Treasurebox_LIB017_1": [],
+      "N3099_Hard": [],
+      "N3072": []
+    },
+    "LIB_017_0_1_TOP": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_1_1_TOP": [],
+      "Treasurebox_LIB017_1": [],
+      "N3099_Hard": [],
+      "N3072": []
+    },
+    "LIB_017_1_1_TOP": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_0_1_TOP": [],
+      "Treasurebox_LIB017_1": [],
+      "N3099_Hard": [],
+      "N3072": []
+    }
+  },
+  "m07LIB_018": {
+    "LIB_018_0_0_LEFT": {
+      "LIB_018_0_0_BOTTOM": [],
+      "N3085": []
+    },
+    "LIB_018_0_0_BOTTOM": {
+      "LIB_018_0_0_LEFT": [],
+      "N3085": []
+    }
+  },
+  "m07LIB_019": {
+    "LIB_019_1_0_RIGHT": {
+      "LIB_019_0_2_LEFT": ["Flight"],
+      "LIB_019_0_2_TOP": ["Flight"],
+      "LIB_019_1_2_RIGHT": ["Flight"],
+      "Treasurebox_LIB019_1": [],
+      "Wall_LIB019_1": ["Flight", "Reflectionray"],
+      "N3099_Hard": [],
+      "N2009": []
+    },
+    "LIB_019_0_2_LEFT": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_TOP": ["Height"],
+      "LIB_019_1_2_RIGHT": [],
+      "Treasurebox_LIB019_1": [],
+      "Wall_LIB019_1": ["Height"],
+      "N3099_Hard": [],
+      "N2009": []
+    },
+    "LIB_019_0_2_TOP": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_LEFT": [],
+      "LIB_019_1_2_RIGHT": [],
+      "Treasurebox_LIB019_1": [],
+      "Wall_LIB019_1": ["Height"],
+      "N3099_Hard": [],
+      "N2009": []
+    },
+    "LIB_019_1_2_RIGHT": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_LEFT": ["Flight", "Accelerator"],
+      "LIB_019_0_2_TOP": ["Flight", "Accelerator"],
+      "Treasurebox_LIB019_1": [],
+      "Wall_LIB019_1": ["Height"],
+      "N3099_Hard": [],
+      "N2009": []
+    }
+  },
+  "m07LIB_020": {
+    "LIB_020_0_0_LEFT": {
+      "LIB_020_1_0_RIGHT": [],
+      "N3085": [],
+      "N3109": []
+    },
+    "LIB_020_1_0_RIGHT": {
+      "LIB_020_0_0_LEFT": [],
+      "N3085": [],
+      "N3109": []
+    }
+  },
+  "m07LIB_021": {
+    "LIB_021_0_0_RIGHT": {
+      "LIB_021_0_2_LEFT": ["Dimensionshift"],
+      "N3093": ["Height"],
+      "N3110": []
+    },
+    "LIB_021_0_2_LEFT": {
+      "LIB_021_0_0_RIGHT": [],
+      "N3093": [],
+      "N3110": []
+    }
+  },
+  "m07LIB_022": {
+    "LIB_022_0_0_LEFT": {
+      "LIB_022_0_1_LEFT": ["Flight", "Reflectionray"],
+      "Treasurebox_LIB022_1": ["Invert", "Dimensionshift", "Reflectionray"]
+    },
+    "LIB_022_0_1_LEFT": {
+      "LIB_022_0_0_LEFT": [],
+      "Treasurebox_LIB022_1": ["Invert", "Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m07LIB_023": {
+    "LIB_023_0_0_LEFT": {
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": ["Demoniccapture"],
+      "LIB_023_0_4_LEFT": ["Height"],
+      "LIB_023_0_4_RIGHT": ["Height"],
+      "N3099": []
+    },
+    "LIB_023_0_0_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": ["Demoniccapture"],
+      "LIB_023_0_4_LEFT": ["Height"],
+      "LIB_023_0_4_RIGHT": ["Height"],
+      "N3099": []
+    },
+    "LIB_023_0_1_LEFT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_2_RIGHT": ["Demoniccapture"],
+      "LIB_023_0_4_LEFT": ["Height"],
+      "LIB_023_0_4_RIGHT": ["Height"],
+      "N3099": []
+    },
+    "LIB_023_0_2_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_4_LEFT": ["Height"],
+      "LIB_023_0_4_RIGHT": ["Height"],
+      "N3099": []
+    },
+    "LIB_023_0_4_LEFT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": ["Demoniccapture"],
+      "LIB_023_0_4_RIGHT": [],
+      "N3099": []
+    },
+    "LIB_023_0_4_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": ["Demoniccapture"],
+      "LIB_023_0_4_LEFT": [],
+      "N3099": []
+    }
+  },
+  "m07LIB_024": {
+    "LIB_024_0_0_RIGHT": {
+      "LIB_024_0_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3085": []
+    },
+    "LIB_024_0_1_RIGHT": {
+      "LIB_024_0_0_RIGHT": [],
+      "N3085": []
+    }
+  },
+  "m07LIB_025": {
+    "LIB_025_0_0_BOTTOM": {
+      "LIB_025_2_0_RIGHT": [],
+      "Wall_LIB025_1": [],
+      "N3033": [],
+      "N3017": [],
+      "N3087_Hard": [],
+      "N3012": []
+    },
+    "LIB_025_2_0_RIGHT": {
+      "LIB_025_0_0_BOTTOM": [],
+      "Wall_LIB025_1": [],
+      "N3033": [],
+      "N3017": [],
+      "N3087_Hard": [],
+      "N3012": []
+    }
+  },
+  "m07LIB_026": {
+    "LIB_026_0_0_LEFT": {
+      "LIB_026_0_0_TOP": ["Height"]
+    },
+    "LIB_026_0_0_TOP": {
+      "LIB_026_0_0_LEFT": []
+    }
+  },
+  "m07LIB_027": {
+    "LIB_027_0_0_BOTTOM": {
+      "LIB_027_0_3_TOP": ["Height"],
+      "N3099": []
+    },
+    "LIB_027_0_3_TOP": {
+      "LIB_027_0_0_BOTTOM": [],
+      "N3099": []
+    }
+  },
+  "m07LIB_028": {
+    "LIB_028_0_0_LEFT": {
+      "LIB_028_0_0_BOTTOM": [],
+      "N3070": []
+    },
+    "LIB_028_0_0_BOTTOM": {
+      "LIB_028_0_0_LEFT": [],
+      "N3070": []
+    }
+  },
+  "m07LIB_029": {
+    "LIB_029_0_0_LEFT": {
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": ["Height"],
+      "LIB_029_2_1_RIGHT": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    },
+    "LIB_029_2_0_RIGHT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": ["Height"],
+      "LIB_029_2_1_RIGHT": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    },
+    "LIB_029_0_1_LEFT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_1_1_TOP": ["Height"],
+      "LIB_029_2_1_RIGHT": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    },
+    "LIB_029_1_1_TOP": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_2_1_RIGHT": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    },
+    "LIB_029_2_1_RIGHT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": ["Height"],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    }
+  },
+  "m07LIB_030": {
+    "LIB_030_0_0_LEFT": {
+      "Treasurebox_LIB030_1": []
+    }
+  },
+  "m07LIB_031": {
+    "LIB_031_0_0_LEFT": {
+      "LIB_031_0_0_RIGHT": [],
+      "N3085": []
+    },
+    "LIB_031_0_0_RIGHT": {
+      "LIB_031_0_0_LEFT": [],
+      "N3085": []
+    }
+  },
+  "m07LIB_032": {
+    "LIB_032_1_0_RIGHT": {
+      "LIB_032_0_1_TOP": ["Demoniccapture"],
+      "LIB_032_1_1_RIGHT": [],
+      "Treasurebox_LIB032_1": [],
+      "N3099_Hard": [],
+      "N2009": []
+    },
+    "LIB_032_0_1_TOP": {
+      "LIB_032_1_0_RIGHT": [],
+      "LIB_032_1_1_RIGHT": [],
+      "Treasurebox_LIB032_1": [],
+      "N3099_Hard": [],
+      "N2009": []
+    },
+    "LIB_032_1_1_RIGHT": {
+      "LIB_032_1_0_RIGHT": [],
+      "LIB_032_0_1_TOP": ["Demoniccapture"],
+      "Treasurebox_LIB032_1": [],
+      "N3099_Hard": [],
+      "N2009": []
+    }
+  },
+  "m07LIB_033": {
+    "LIB_033_0_0_LEFT": {
+      "LIB_033_0_1_LEFT": [],
+      "Treasurebox_LIB033_1": [],
+      "N3072": [],
+      "N3012": [],
+      "N3085": []
+    },
+    "LIB_033_0_1_LEFT": {
+      "LIB_033_0_0_LEFT": [],
+      "Treasurebox_LIB033_1": [],
+      "N3072": [],
+      "N3012": [],
+      "N3085": []
+    }
+  },
+  "m07LIB_034": {
+    "LIB_034_0_0_LEFT": {
+      "LIB_034_1_0_RIGHT": [],
+      "N3109": [],
+      "N3037": []
+    },
+    "LIB_034_1_0_RIGHT": {
+      "LIB_034_0_0_LEFT": [],
+      "N3109": [],
+      "N3037": []
+    }
+  },
+  "m07LIB_035": {
+    "LIB_035_0_0_BOTTOM": {
+      "LIB_035_0_2_RIGHT": ["Invert", "Dimensionshift", ["Doublejump", "Reflectionray"], ["HighJump", "Reflectionray"]],
+      "N3099": []
+    },
+    "LIB_035_0_2_RIGHT": {
+      "LIB_035_0_0_BOTTOM": [],
+      "N3099": []
+    }
+  },
+  "m07LIB_036": {
+    "LIB_036_0_0_LEFT": {
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_1_RIGHT": [],
+      "LIB_036_0_2_LEFT": ["Height"],
+      "N3033": []
+    },
+    "LIB_036_0_0_RIGHT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_1_RIGHT": [],
+      "LIB_036_0_2_LEFT": ["Height"],
+      "N3033": []
+    },
+    "LIB_036_0_1_RIGHT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_2_LEFT": ["Height"],
+      "N3033": []
+    },
+    "LIB_036_0_2_LEFT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_1_RIGHT": [],
+      "N3033": []
+    }
+  },
+  "m07LIB_037": {
+    "LIB_037_0_0_LEFT": {
+      "LIB_037_0_0_RIGHT": []
+    },
+    "LIB_037_0_0_RIGHT": {
+      "LIB_037_0_0_LEFT": []
+    }
+  },
+  "m07LIB_038": {
+    "LIB_038_0_0_LEFT": {
+      "LIB_038_1_0_RIGHT": []
+    },
+    "LIB_038_1_0_RIGHT": {
+      "LIB_038_0_0_LEFT": []
+    }
+  },
+  "m07LIB_039": {
+    "LIB_039_0_0_LEFT": {
+      "LIB_039_0_0_RIGHT": []
+    },
+    "LIB_039_0_0_RIGHT": {
+      "LIB_039_0_0_LEFT": []
+    }
+  },
+  "m07LIB_040": {
+    "LIB_040_0_0_BOTTOM": {
+      "Treasurebox_LIB040_1": []
+    }
+  },
+  "m07LIB_041": {
+    "LIB_041_0_0_BOTTOM": {
+      "FamiliaSilverKnight": []
+    }
+  },
+  "m07LIB_042": {
+    "LIB_042_0_0_LEFT": {
+      "FamiliaSilverKnight": []
+    }
+  },
+  "m07LIB_043": {
+    "LIB_043_0_0_RIGHT": {
+      "Treasurebox_LIB043_1": []
+    }
+  },
+  "m07LIB_044": {
+    "LIB_044_0_0_LEFT": {
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["Flight", "Reflectionray"],
+      "LIB_044_2_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3017": [],
+      "N3063": []
+    },
+    "LIB_044_2_0_BOTTOM": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["Flight", "Reflectionray"],
+      "LIB_044_2_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3017": [],
+      "N3063": []
+    },
+    "LIB_044_2_0_RIGHT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_0_1_LEFT": ["Flight", "Reflectionray"],
+      "LIB_044_2_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3017": [],
+      "N3063": []
+    },
+    "LIB_044_0_1_LEFT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_2_1_RIGHT": ["Flight", "Reflectionray"],
+      "N3017": [],
+      "N3063": []
+    },
+    "LIB_044_2_1_RIGHT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["Flight", "Reflectionray"],
+      "N3017": [],
+      "N3063": []
+    }
+  },
+  "m88BKR_003": {
+    "BKR_003_0_0_RIGHT": {
+      "FamiliaIgniculus": ["Keyofbacker4"]
+    }
+  },
+  "m08TWR_000": {
+    "TWR_000_0_0_LEFT": {
+      "TWR_000_0_1_TOP": [],
+      "Treasurebox_TWR000_1": [],
+      "N3008": [],
+      "N3111_Hard": []
+    },
+    "TWR_000_0_1_TOP": {
+      "TO_TWR_017_TOP": [],
+      "Treasurebox_TWR000_1": [],
+      "N3008": [],
+      "N3111_Hard": []
+    }
+  },
+  "m08TWR_001": {
+    "TWR_001_0_0_LEFT": {
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_RIGHT": [],
+      "TWR_001_1_0_TOP": ["Height"],
+      "N3100": []
+    },
+    "TWR_001_0_0_BOTTOM": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_1_0_RIGHT": [],
+      "TWR_001_1_0_TOP": ["Height"],
+      "N3100": []
+    },
+    "TWR_001_1_0_RIGHT": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_TOP": ["Height"],
+      "N3100": []
+    },
+    "TWR_001_1_0_TOP": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_RIGHT": [],
+      "N3100": []
+    }
+  },
+  "m08TWR_002": {
+    "TWR_002_0_0_LEFT": {
+      "TWR_002_1_0_RIGHT": []
+    },
+    "TWR_002_1_0_RIGHT": {
+      "TWR_002_0_0_LEFT": []
+    }
+  },
+  "m08TWR_003": {
+    "TWR_003_0_0_LEFT": {
+      "TWR_003_0_0_RIGHT": [],
+      "TWR_003_0_1_RIGHT": [],
+      "Treasurebox_TWR003_1": []
+    },
+    "TWR_003_0_0_RIGHT": {
+      "TWR_003_0_0_LEFT": [],
+      "TWR_003_0_1_RIGHT": [],
+      "Treasurebox_TWR003_1": []
+    },
+    "TWR_003_0_1_RIGHT": {
+      "TWR_003_0_0_LEFT": [],
+      "TWR_003_0_0_RIGHT": [],
+      "Treasurebox_TWR003_1": []
+    }
+  },
+  "m08TWR_004": {
+    "TWR_004_0_0_LEFT": {
+      "TWR_004_0_0_RIGHT": [],
+      "Treasurebox_TWR004_1": []
+    },
+    "TWR_004_0_0_RIGHT": {
+      "TWR_004_0_0_LEFT": [],
+      "Treasurebox_TWR004_1": []
+    }
+  },
+  "m08TWR_005": {
+    "TWR_005_1_0_BOTTOM": {
+      "TO_TWR_018_BOTTOM": ["Height"],
+      "Treasurebox_TWR005_1": ["Flight", "Reflectionray"],
+      "N3090_Normal": [],
+      "N3084": [],
+      "N3099_Hard": []
+    },
+    "TWR_005_1_1_RIGHT": {
+      "TWR_005_1_0_BOTTOM": [],
+      "Treasurebox_TWR005_1": ["Flight", "Reflectionray"],
+      "N3090_Normal": [],
+      "N3084": [],
+      "N3099_Hard": []
+    }
+  },
+  "m08TWR_006": {
+    "TWR_006_0_0_LEFT": {
+      "TWR_006_0_1_TOP": [],
+      "Treasurebox_TWR006_1": [],
+      "Wall_TWR006_1": [],
+      "N3090": [],
+      "N3099_Hard": [],
+      "N3008": []
+    },
+    "TWR_006_0_1_TOP": {
+      "TO_TWR_018_TOP": [],
+      "Treasurebox_TWR006_1": [],
+      "Wall_TWR006_1": [],
+      "N3090": [],
+      "N3099_Hard": [],
+      "N3008": []
+    }
+  },
+  "m08TWR_007": {
+    "TWR_007_0_0_LEFT": {
+      "TWR_007_0_0_BOTTOM": [],
+      "TWR_007_1_0_RIGHT": [],
+      "N3100": [],
+      "N3111": []
+    },
+    "TWR_007_0_0_BOTTOM": {
+      "TWR_007_0_0_LEFT": [],
+      "TWR_007_1_0_RIGHT": [],
+      "N3100": [],
+      "N3111": []
+    },
+    "TWR_007_1_0_RIGHT": {
+      "TWR_007_0_0_LEFT": [],
+      "TWR_007_0_0_BOTTOM": [],
+      "N3100": [],
+      "N3111": []
+    }
+  },
+  "m08TWR_008": {
+    "TWR_008_0_0_LEFT": {
+      "TWR_008_0_0_RIGHT": [],
+      "Treasurebox_TWR008_1": []
+    },
+    "TWR_008_0_0_RIGHT": {
+      "TWR_008_0_0_LEFT": [],
+      "Treasurebox_TWR008_1": []
+    }
+  },
+  "m08TWR_009": {
+    "TWR_009_0_0_LEFT": {
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": ["Flight"],
+      "TWR_009_0_10_RIGHT": ["Dimensionshift"],
+      "TWR_009_0_15_LEFT": ["Dimensionshift"],
+      "TWR_009_0_15_RIGHT": ["Dimensionshift"],
+      "Treasurebox_TWR009_1": ["Flight"]
+    },
+    "TWR_009_0_0_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_5_LEFT": ["Flight"],
+      "TWR_009_0_10_RIGHT": ["Dimensionshift"],
+      "TWR_009_0_15_LEFT": ["Dimensionshift"],
+      "TWR_009_0_15_RIGHT": ["Dimensionshift"],
+      "Treasurebox_TWR009_1": ["Flight"]
+    },
+    "TWR_009_0_5_LEFT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_10_RIGHT": ["Dimensionshift"],
+      "TWR_009_0_15_LEFT": ["Dimensionshift"],
+      "TWR_009_0_15_RIGHT": ["Dimensionshift"],
+      "Treasurebox_TWR009_1": []
+    },
+    "TWR_009_0_10_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": ["Doublejump", "Flight"],
+      "TWR_009_0_15_LEFT": ["Dimensionshift"],
+      "TWR_009_0_15_RIGHT": ["Dimensionshift"],
+      "Treasurebox_TWR009_1": ["Doublejump", "Flight"]
+    },
+    "TWR_009_0_15_LEFT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": [],
+      "TWR_009_0_10_RIGHT": ["Dimensionshift"],
+      "TWR_009_0_15_RIGHT": [],
+      "Treasurebox_TWR009_1": []
+    },
+    "TWR_009_0_15_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": [],
+      "TWR_009_0_10_RIGHT": ["Dimensionshift"],
+      "TWR_009_0_15_LEFT": [],
+      "Treasurebox_TWR009_1": []
+    }
+  },
+  "m08TWR_010": {
+    "TWR_010_0_0_LEFT": {
+      "TWR_010_0_0_RIGHT": [],
+      "Treasurebox_TWR010_1": []
+    },
+    "TWR_010_0_0_RIGHT": {
+      "TWR_010_0_0_LEFT": [],
+      "Treasurebox_TWR010_1": []
+    }
+  },
+  "m08TWR_011": {
+    "TWR_011_0_0_LEFT": {
+      "TWR_011_1_0_BOTTOM": [],
+      "TWR_011_1_0_RIGHT": [],
+      "N3100": []
+    },
+    "TWR_011_1_0_BOTTOM": {
+      "TWR_011_0_0_LEFT": [],
+      "TWR_011_1_0_RIGHT": [],
+      "N3100": []
+    },
+    "TWR_011_1_0_RIGHT": {
+      "TWR_011_0_0_LEFT": [],
+      "TWR_011_1_0_BOTTOM": [],
+      "N3100": []
+    }
+  },
+  "m08TWR_012": {
+    "TWR_012_0_0_LEFT": {
+      "Treasurebox_TWR012_1": []
+    }
+  },
+  "m08TWR_013": {
+    "TWR_013_0_0_BOTTOM": {
+      "TWR_013_1_3_TOP": [],
+      "Treasurebox_TWR013_1": [],
+      "Wall_TWR013_1": [],
+      "N3090_Normal": [],
+      "N3099_Hard": [],
+      "N3008": []
+    },
+    "TWR_013_1_3_TOP": {
+      "TWR_013_0_0_BOTTOM": [],
+      "Treasurebox_TWR013_1": [],
+      "Wall_TWR013_1": [],
+      "N3090_Normal": [],
+      "N3099_Hard": [],
+      "N3008": []
+    }
+  },
+  "m08TWR_014": {
+    "TWR_014_0_0_LEFT": {
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_BOTTOM": [],
+      "TWR_014_1_0_RIGHT": [],
+      "N3008": []
+    },
+    "TWR_014_0_0_TOP": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_1_0_BOTTOM": [],
+      "TWR_014_1_0_RIGHT": [],
+      "N3008": []
+    },
+    "TWR_014_1_0_BOTTOM": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_RIGHT": [],
+      "N3008": []
+    },
+    "TWR_014_1_0_RIGHT": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_BOTTOM": [],
+      "N3008": []
+    }
+  },
+  "m08TWR_015": {
+    "TWR_015_0_0_LEFT": {
+      "TWR_015_0_0_RIGHT": []
+    },
+    "TWR_015_0_0_RIGHT": {
+      "TWR_015_0_0_LEFT": []
+    }
+  },
+  "m08TWR_016": {
+    "TWR_016_1_0_RIGHT": {
+      "TWR_016_1_1_TOP": [],
+      "Treasurebox_TWR016_1": [],
+      "Treasurebox_PureMiriam_Sword": ["Dimensionshift"],
+      "Wall_TWR016_1": [],
+      "N3008_Hard": [],
+      "N3111": []
+    },
+    "TWR_016_1_1_TOP": {
+      "TO_TWR_019_TOP": [],
+      "Treasurebox_TWR016_1": [],
+      "Treasurebox_PureMiriam_Sword": ["Dimensionshift"],
+      "Wall_TWR016_1": [],
+      "N3008_Hard": [],
+      "N3111": []
+    }
+  },
+  "m08TWR_017": {
+    "TWR_017_0_0_LEFT": {
+      "TWR_017_3_0_RIGHT": [],
+      "TO_TWR_000_0_0_LEFT": [],
+      "Treasurebox_TWR017_1": [],
+      "Treasurebox_TWR017_2": [],
+      "Treasurebox_TWR017_3": [],
+      "Treasurebox_TWR017_4": [],
+      "Treasurebox_TWR017_5": [],
+      "Treasurebox_TWR017_6": [],
+      "Treasurebox_TWR017_7": [],
+      "N3082": [],
+      "N3084": [],
+      "N2002": []
+    },
+    "TWR_017_3_0_RIGHT": {
+      "TWR_017_0_0_LEFT": [],
+      "TO_TWR_000_0_0_LEFT": [],
+      "Treasurebox_TWR017_1": [],
+      "Treasurebox_TWR017_2": [],
+      "Treasurebox_TWR017_3": [],
+      "Treasurebox_TWR017_4": [],
+      "Treasurebox_TWR017_5": [],
+      "Treasurebox_TWR017_6": [],
+      "Treasurebox_TWR017_7": [],
+      "N3082": [],
+      "N3084": [],
+      "N2002": []
+    },
+    "TWR_017_TOP": {
+      "TWR_017_0_0_LEFT": [],
+      "TWR_017_3_0_RIGHT": [],
+      "Treasurebox_TWR017_1": [],
+      "Treasurebox_TWR017_2": [],
+      "Treasurebox_TWR017_3": [],
+      "Treasurebox_TWR017_4": [],
+      "Treasurebox_TWR017_5": [],
+      "Treasurebox_TWR017_6": [],
+      "Treasurebox_TWR017_7": [],
+      "N3082": [],
+      "N3084": [],
+      "N2002": []
+    }
+  },
+  "m08TWR_018": {
+	"TWR_018_BOTTOM": {
+	  "TO_TWR_006_0_0_LEFT": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_1": [],
+      "Treasurebox_TWR018_2": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_3": [],
+      "Treasurebox_TWR018_4": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_5": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_6": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_7": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_8": ["Doublejump", "HighJump", "Invert"],
+	  "N3082": [],
+	  "N3084": [],
+	  "N2002": [],
+	  "N3043": []
+	},
+	"TWR_018_TOP": {
+	  "TO_TWR_005_1_1_RIGHT": ["Doublejump", "HighJump", "Invert", "Accelerator"],
+      "Treasurebox_TWR018_1": [],
+      "Treasurebox_TWR018_2": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_3": [],
+      "Treasurebox_TWR018_4": ["Doublejump", "HighJump", "Invert", "Accelerator"],
+      "Treasurebox_TWR018_5": ["Doublejump", "HighJump", "Invert", "Accelerator"],
+      "Treasurebox_TWR018_6": ["Doublejump", "HighJump", "Invert"],
+      "Treasurebox_TWR018_7": ["Doublejump", "HighJump", "Invert", "Accelerator"],
+      "Treasurebox_TWR018_8": [],
+	  "N3082": [],
+	  "N3084": [],
+	  "N2002": [],
+	  "N3043": []
+	}
+  },
+  "m08TWR_019": {
+    "TWR_019_0_0_LEFT": {
+      "Treasurebox_TWR019_4": []
+    },
+	"TWR_019_TOP": {
+	  "TWR_019_0_0_LEFT": [],
+      "Treasurebox_TWR019_1": [],
+      "Treasurebox_TWR019_2": ["HighJump", "Invert"],
+      "Treasurebox_TWR019_4": [],
+      "Treasurebox_PureMiriam_Dress": ["HighJump", "Invert"],
+      "N1005": []
+	}
+  },
+  "m09TRN_000": {
+    "TRN_000_0_0_LEFT": {
+      "TRN_000_4_0_RIGHT": [],
+      "N3017": [],
+      "N3114": [],
+      "N3058": []
+    },
+    "TRN_000_4_0_RIGHT": {
+      "TRN_000_0_0_LEFT": [],
+      "N3017": [],
+      "N3114": [],
+      "N3058": []
+    }
+  },
+  "m09TRN_001": {
+    "TRN_001_0_0_LEFT": {
+      "TO_TRN_002_START": ["Silverbromide"]
+    }
+  },
+  "m09TRN_002": {
+	"TRN_002_START": {
+	  "TO_TRN_003_TRN_EXIT": [],
+	  "TO_K2C_000_START": ["MonarchCrown"],
+      "Treasurebox_TRN002_1": ["Flight", "Reflectionray"],
+      "Treasurebox_TRN002_2": ["Flight", "Reflectionray"],
+      "Treasurebox_TRN002_3": ["Height"],
+      "Treasurebox_TRN002_4": ["Height"],
+      "Treasurebox_TRN002_5": [],
+	  "N3017": [],
+	  "N3008": ["Height"],
+	  "N3058": [],
+	  "N3019": [],
+	  "N3025": [],
+	  "N2001": []
+	}
+  },
+  "m09TRN_003": {
+    "TRN_003_TRN_EXIT": {
+      "TRN_003_0_0_RIGHT": []
+    },
+    "TRN_003_0_0_RIGHT": {}
+  },
+  "m09TRN_004": {
+    "TRN_004_0_0_LEFT": {
+      "TRN_004_1_0_RIGHT": []
+    },
+    "TRN_004_1_0_RIGHT": {
+      "TRN_004_0_0_LEFT": []
+    }
+  },
+  "m09TRN_005": {
+    "TRN_005_0_0_LEFT": {
+      "TRN_005_0_4_LEFT": ["Height"],
+      "TRN_005_0_4_RIGHT": ["Height"],
+      "Wall_TRN005_1": ["Height"],
+      "N3001": [],
+      "N3019": []
+    },
+    "TRN_005_0_4_LEFT": {
+      "TRN_005_0_0_LEFT": [],
+      "TRN_005_0_4_RIGHT": [],
+      "Wall_TRN005_1": [],
+      "N3001": [],
+      "N3019": []
+    },
+    "TRN_005_0_4_RIGHT": {
+      "TRN_005_0_0_LEFT": [],
+      "TRN_005_0_4_LEFT": [],
+      "Wall_TRN005_1": [],
+      "N3001": [],
+      "N3019": []
+    }
+  },
+  "m10BIG_000": {
+    "BIG_000_START": {
+      "BIG_000_0_0_LEFT_TOP": [],
+      "BIG_000_3_0_RIGHT_TOP": []
+    },
+    "BIG_000_0_0_LEFT_TOP": {
+      "BIG_000_3_0_RIGHT_TOP": [],
+      "TO_GDN_001_BIG_EXIT": []
+    },
+    "BIG_000_3_0_RIGHT_TOP": {
+      "BIG_000_0_0_LEFT_TOP": [],
+      "TO_GDN_001_BIG_EXIT": []
+    }
+  },
+  "m10BIG_001": {
+    "BIG_001_0_0_LEFT_TOP": {
+      "BIG_001_1_0_RIGHT_TOP": [],
+      "N3038": []
+    },
+    "BIG_001_1_0_RIGHT_TOP": {
+      "BIG_001_0_0_LEFT_TOP": [],
+      "N3038": []
+    }
+  },
+  "m10BIG_002": {
+    "BIG_002_0_0_LEFT_TOP": {
+      "Treasurebox_BIG002_1": [],
+      "Wall_BIG002_1": [],
+      "N3067": [],
+      "N3045": [],
+      "N2003_Hard": []
+    }
+  },
+  "m10BIG_003": {
+    "BIG_003_0_0_LEFT_TOP": {
+      "BIG_003_1_0_RIGHT_TOP": []
+    },
+    "BIG_003_1_0_RIGHT_TOP": {
+      "BIG_003_0_0_LEFT_TOP": []
+    }
+  },
+  "m10BIG_004": {
+    "BIG_004_0_0_LEFT_TOP": {
+      "BIG_004_0_0_BOTTOM_RIGHT": [],
+      "BIG_004_1_0_RIGHT_TOP": []
+    },
+    "BIG_004_0_0_BOTTOM_RIGHT": {
+      "BIG_004_0_0_LEFT_TOP": [],
+      "BIG_004_1_0_RIGHT_TOP": []
+    },
+    "BIG_004_1_0_RIGHT_TOP": {
+      "BIG_004_0_0_LEFT_TOP": [],
+      "BIG_004_0_0_BOTTOM_RIGHT": []
+    }
+  },
+  "m10BIG_005": {
+    "BIG_005_1_0_RIGHT_TOP": {
+      "Treasurebox_BIG005_1": [],
+      "N3038": []
+    }
+  },
+  "m10BIG_006": {
+    "BIG_006_0_2_LEFT_TOP": {
+      "BIG_006_11_2_RIGHT_TOP": ["Flight"],
+      "BIG_006_0_5_TOP_RIGHT": ["Flight"],
+      "Treasurebox_BIG006_1": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG006_2": ["Flight"],
+      "Treasurebox_BIG006_3": ["Flight"],
+      "Treasurebox_BIG006_4": ["Flight"],
+      "Treasurebox_BIG006_5": ["Flight"],
+      "Treasurebox_BIG006_6": [],
+      "N3067": [],
+      "N3030": ["Flight"],
+      "N3045": [],
+      "N3016_Hard": ["Height"],
+      "N3028": [],
+      "N3081": ["Height"],
+      "N2003": ["Height"],
+      "N2008": []
+    },
+    "BIG_006_11_2_RIGHT_TOP": {
+      "BIG_006_0_2_LEFT_TOP": ["Flight"],
+      "BIG_006_0_5_TOP_RIGHT": ["Flight"],
+      "Treasurebox_BIG006_1": ["Flight"],
+      "Treasurebox_BIG006_2": ["Flight"],
+      "Treasurebox_BIG006_3": [],
+      "Treasurebox_BIG006_4": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG006_5": ["Flight"],
+      "Treasurebox_BIG006_6": [],
+      "N3067": [],
+      "N3030": ["Flight"],
+      "N3045": [],
+      "N3016_Hard": [],
+      "N3028": [],
+      "N3081": [],
+      "N2003": [],
+      "N2008": []
+    },
+    "BIG_006_0_5_TOP_RIGHT": {
+      "BIG_006_0_2_LEFT_TOP": [],
+      "BIG_006_11_2_RIGHT_TOP": ["Flight"],
+      "Treasurebox_BIG006_1": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG006_2": ["Flight"],
+      "Treasurebox_BIG006_3": ["Flight"],
+      "Treasurebox_BIG006_4": ["Flight"],
+      "Treasurebox_BIG006_5": ["Flight"],
+      "Treasurebox_BIG006_6": [],
+      "N3067": [],
+      "N3030": ["Flight"],
+      "N3045": [],
+      "N3016_Hard": ["Flight"],
+      "N3028": [],
+      "N3081": ["Flight"],
+      "N2003": ["Flight"],
+      "N2008": []
+    }
+  },
+  "m10BIG_007": {
+    "BIG_007_1_0_RIGHT_TOP": {
+      "BIG_007_0_2_LEFT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG007_1": ["Height"],
+      "N3067": [],
+      "N3030": ["Height"],
+      "N3045": ["Height"]
+    },
+    "BIG_007_0_2_LEFT_TOP": {
+      "BIG_007_1_0_RIGHT_TOP": [],
+      "Treasurebox_BIG007_1": [],
+      "N3067": [],
+      "N3030": [],
+      "N3045": []
+    }
+  },
+  "m10BIG_008": {
+    "BIG_008_0_0_LEFT_TOP": {
+      "BIG_008_0_6_LEFT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG008_1": ["Flight", "Reflectionray"],
+      "N3030": ["Flight", "Reflectionray"],
+      "N3016": [],
+      "N3023": []
+    },
+    "BIG_008_0_6_LEFT_TOP": {
+      "BIG_008_0_0_LEFT_TOP": [],
+      "Treasurebox_BIG008_1": [],
+      "N3030": [],
+      "N3016": [],
+      "N3023": []
+    }
+  },
+  "m10BIG_009": {
+    "BIG_009_0_0_LEFT_TOP": {
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_0_2_LEFT_TOP": ["Flight"],
+      "BIG_009_1_2_RIGHT_TOP": ["Flight"],
+      "N3067": ["Flight"],
+      "N3030": [],
+      "N3045": [],
+      "N3016": ["Flight"]
+    },
+    "BIG_009_1_1_RIGHT": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_0_2_LEFT_TOP": ["Flight"],
+      "BIG_009_1_2_RIGHT_TOP": ["Flight"],
+      "N3067": ["Flight"],
+      "N3030": [],
+      "N3045": [],
+      "N3016": ["Flight"]
+    },
+    "BIG_009_0_2_LEFT_TOP": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_1_2_RIGHT_TOP": [],
+      "N3067": [],
+      "N3030": [],
+      "N3045": [],
+      "N3016": []
+    },
+    "BIG_009_1_2_RIGHT_TOP": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_0_2_LEFT_TOP": [],
+      "N3067": [],
+      "N3030": [],
+      "N3045": [],
+      "N3016": []
+    }
+  },
+  "m10BIG_010": {
+    "BIG_010_1_0_RIGHT_TOP": {
+      "Treasurebox_BIG010_1": [],
+      "N2008": []
+    }
+  },
+  "m10BIG_011": {
+    "BIG_011_0_0_LEFT_TOP": {
+      "BIG_011_1_0_RIGHT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG011_1": ["Flight", "Reflectionray"],
+      "Treasurebox_PureMiriam_Tiare": ["Flight", "Reflectionray"],
+      "N1004": ["Flight", "Reflectionray"]
+    },
+    "BIG_011_1_0_RIGHT_TOP": {
+      "BIG_011_0_0_LEFT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG011_1": [],
+      "Treasurebox_PureMiriam_Tiare": [],
+      "N1004": ["Flight", "Reflectionray"]
+    }
+  },
+  "m10BIG_012": {
+    "BIG_012_4_0_BOTTOM_RIGHT": {
+      "BIG_012_0_2_LEFT_TOP": ["Height"],
+      "BIG_012_5_2_RIGHT_TOP": ["Height"],
+      "Treasurebox_BIG012_1": ["Flight"],
+      "Treasurebox_BIG012_2": ["Flight"],
+      "Treasurebox_BIG012_3": ["Flight", "Reflectionray"],
+      "Wall_BIG012_1": [],
+      "N3030": ["Flight"],
+      "N3045": ["Height"],
+      "N3023": ["Height"],
+      "N3028": ["Height"],
+      "N3081": ["Height"],
+      "N2003": ["Height"],
+      "N2008": ["Height"]
+    },
+    "BIG_012_0_2_LEFT_TOP": {
+      "BIG_012_4_0_BOTTOM_RIGHT": ["Height"],
+      "BIG_012_5_2_RIGHT_TOP": [],
+      "Treasurebox_BIG012_1": ["Flight"],
+      "Treasurebox_BIG012_2": ["Flight"],
+      "Treasurebox_BIG012_3": ["Flight", "Reflectionray"],
+      "Wall_BIG012_1": ["Height"],
+      "N3030": ["Flight"],
+      "N3045": [],
+      "N3023": [],
+      "N3028": [],
+      "N3081": [],
+      "N2003": [],
+      "N2008": []
+    },
+    "BIG_012_5_2_RIGHT_TOP": {
+      "BIG_012_4_0_BOTTOM_RIGHT": ["Height"],
+      "BIG_012_0_2_LEFT_TOP": [],
+      "Treasurebox_BIG012_1": ["Flight"],
+      "Treasurebox_BIG012_2": ["Flight"],
+      "Treasurebox_BIG012_3": ["Flight", "Reflectionray"],
+      "Wall_BIG012_1": ["Height"],
+      "N3030": ["Flight"],
+      "N3045": [],
+      "N3023": [],
+      "N3028": [],
+      "N3081": [],
+      "N2003": [],
+      "N2008": []
+    }
+  },
+  "m10BIG_013": {
+    "BIG_013_0_2_LEFT_TOP": {
+      "BIG_013_1_2_RIGHT_TOP": [],
+      "Treasurebox_BIG013_1": [],
+      "N3030": [],
+      "N3016": [],
+      "N3028": []
+    },
+    "BIG_013_1_2_RIGHT_TOP": {
+      "BIG_013_0_2_LEFT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG013_1": [],
+      "N3030": [],
+      "N3016": [],
+      "N3028": []
+    }
+  },
+  "m10BIG_014": {
+    "BIG_014_1_0_RIGHT_TOP": {
+      "Treasurebox_BIG014_1": [],
+      "N3016": []
+    }
+  },
+  "m10BIG_015": {
+    "BIG_015_0_0_LEFT_TOP": {
+      "N3021": ["Flight", "Reflectionray"]
+    }
+  },
+  "m10BIG_016": {
+    "BIG_016_1_0_RIGHT_TOP": {
+      "BIG_016_1_6_RIGHT_TOP": ["Flight", "Reflectionray"],
+      "Treasurebox_BIG016_1": ["Flight"],
+      "Treasurebox_BIG016_2": ["Flight"],
+      "Treasurebox_BIG016_3": ["Height"],
+      "Wall_BIG016_1": ["Flight"],
+      "N3030": [],
+      "N3045": ["Flight"],
+      "N3016": [],
+      "N3023": []
+    },
+    "BIG_016_1_6_RIGHT_TOP": {
+      "BIG_016_1_0_RIGHT_TOP": [],
+      "Treasurebox_BIG016_1": ["Flight"],
+      "Treasurebox_BIG016_2": ["Flight"],
+      "Treasurebox_BIG016_3": ["Height"],
+      "Wall_BIG016_1": [],
+      "N3030": [],
+      "N3045": [],
+      "N3016": [],
+      "N3023": []
+    }
+  },
+  "m10BIG_017": {
+    "BIG_017_0_0_LEFT_TOP": {
+      "BIG_017_1_2_RIGHT_TOP": ["Flight", "Reflectionray"],
+      "N3067": [],
+      "N3030": [],
+      "N3028": []
+    },
+    "BIG_017_1_2_RIGHT_TOP": {
+      "BIG_017_0_0_LEFT_TOP": [],
+      "N3067": [],
+      "N3030": [],
+      "N3028": []
+    }
+  },
+  "m10BIG_018": {
+    "BIG_018_1_0_RIGHT": {
+      "BIG_018_0_3_TOP_RIGHT": ["Flight"],
+      "N3030": [],
+      "N3045": []
+    },
+    "BIG_018_0_3_TOP_RIGHT": {
+      "BIG_018_1_0_RIGHT": [],
+      "N3030": [],
+      "N3045": []
+    }
+  },
+  "m11UGD_000": {
+    "UGD_000_0_0_LEFT": {
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": [],
+      "Wall_UGD000_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Hard": []
+    },
+    "UGD_000_0_0_BOTTOM": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": [],
+      "Wall_UGD000_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Hard": []
+    },
+    "UGD_000_0_0_RIGHT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": [],
+      "Wall_UGD000_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Hard": []
+    },
+    "UGD_000_0_1_LEFT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_5_LEFT": [],
+      "Wall_UGD000_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Hard": []
+    },
+    "UGD_000_0_5_LEFT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": [],
+      "Wall_UGD000_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Hard": []
+    }
+  },
+  "m11UGD_001": {
+    "UGD_001_0_0_RIGHT": {
+      "Treasurebox_UGD001_1": ["Height"],
+      "N3029": [],
+      "N3001": []
+    }
+  },
+  "m11UGD_002": {
+    "UGD_002_0_0_LEFT": {
+      "UGD_002_1_0_RIGHT": [],
+      "N3029": [],
+      "N3055_Hard": [],
+      "N3064": [],
+      "N3010": []
+    },
+    "UGD_002_1_0_RIGHT": {
+      "UGD_002_0_0_LEFT": [],
+      "N3029": [],
+      "N3055_Hard": [],
+      "N3064": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_003": {
+    "UGD_003_0_0_LEFT": {
+      "UGD_003_1_0_RIGHT": ["Flight", "Reflectionray"],
+      "UGD_003_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "UGD_003_0_6_LEFT": ["Flight", "Reflectionray"],
+      "UGD_003_1_6_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_1": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_2": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_3": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_4": ["Flight", "Reflectionray"],
+      "Wall_UGD003_1": ["Flight", "Reflectionray"],
+      "N3072": ["Flight", "Reflectionray"]
+    },
+    "UGD_003_1_0_RIGHT": {
+      "UGD_003_0_0_LEFT": ["Flight", "Reflectionray"],
+      "UGD_003_1_3_RIGHT": ["Flight", "Reflectionray"],
+      "UGD_003_0_6_LEFT": ["Flight", "Reflectionray"],
+      "UGD_003_1_6_RIGHT": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_1": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_2": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_3": ["Flight", "Reflectionray"],
+      "Treasurebox_UGD003_4": ["Flight", "Reflectionray"],
+      "Wall_UGD003_1": ["Flight", "Reflectionray"],
+      "N3072": ["Flight", "Reflectionray"]
+    },
+    "UGD_003_1_3_RIGHT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_0_6_LEFT": [],
+      "UGD_003_1_6_RIGHT": [],
+      "Treasurebox_UGD003_1": [],
+      "Treasurebox_UGD003_2": [],
+      "Treasurebox_UGD003_3": [],
+      "Treasurebox_UGD003_4": [],
+      "Wall_UGD003_1": [],
+      "N3072": []
+    },
+    "UGD_003_0_6_LEFT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_1_6_RIGHT": [],
+      "Treasurebox_UGD003_1": [],
+      "Treasurebox_UGD003_2": [],
+      "Treasurebox_UGD003_3": [],
+      "Treasurebox_UGD003_4": [],
+      "Wall_UGD003_1": [],
+      "N3072": []
+    },
+    "UGD_003_1_6_RIGHT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_0_6_LEFT": [],
+      "Treasurebox_UGD003_1": [],
+      "Treasurebox_UGD003_2": [],
+      "Treasurebox_UGD003_3": [],
+      "Treasurebox_UGD003_4": [],
+      "Wall_UGD003_1": [],
+      "N3072": []
+    }
+  },
+  "m11UGD_004": {
+    "UGD_004_0_0_LEFT": {
+      "UGD_004_1_0_RIGHT": [],
+      "N3029_Hard": [],
+      "N3042": [],
+      "N3064": []
+    },
+    "UGD_004_1_0_RIGHT": {
+      "UGD_004_0_0_LEFT": [],
+      "N3029_Hard": [],
+      "N3042": [],
+      "N3064": []
+    }
+  },
+  "m11UGD_005": {
+    "UGD_005_0_1_LEFT": {
+      "UGD_005_3_1_TOP": ["WaterM"],
+      "UGD_005_5_1_RIGHT": ["WaterM"],
+      "Treasurebox_UGD005_1": ["Deepsinker"],
+      "Treasurebox_UGD005_2": ["Deepsinker"],
+      "N3029": ["WaterM"],
+      "N3010": ["WaterM"],
+      "N3078": ["WaterM"]
+    },
+    "UGD_005_3_1_TOP": {
+      "UGD_005_0_1_LEFT": ["WaterM"],
+      "UGD_005_5_1_RIGHT": [],
+      "Treasurebox_UGD005_1": ["Deepsinker"],
+      "Treasurebox_UGD005_2": ["Deepsinker"],
+      "N3029": [],
+      "N3010": [],
+      "N3078": ["WaterM"]
+    },
+    "UGD_005_5_1_RIGHT": {
+      "UGD_005_0_1_LEFT": ["WaterM"],
+      "UGD_005_3_1_TOP": [],
+      "Treasurebox_UGD005_1": ["Deepsinker"],
+      "Treasurebox_UGD005_2": ["Deepsinker"],
+      "N3029": [],
+      "N3010": [],
+      "N3078": ["WaterM"]
+    }
+  },
+  "m11UGD_006": {
+    "UGD_006_0_0_LEFT": {
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_LEFT": [],
+      "UGD_006_0_2_RIGHT": [],
+      "Wall_UGD006_1": [],
+      "N3029": [],
+      "N3042": [],
+      "N3001": [],
+      "N3090_Hard": [],
+      "N3010": []
+    },
+    "UGD_006_0_0_BOTTOM": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_2_LEFT": [],
+      "UGD_006_0_2_RIGHT": [],
+      "Wall_UGD006_1": [],
+      "N3029": [],
+      "N3042": [],
+      "N3001": [],
+      "N3090_Hard": [],
+      "N3010": []
+    },
+    "UGD_006_0_2_LEFT": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_RIGHT": [],
+      "Wall_UGD006_1": [],
+      "N3029": [],
+      "N3042": [],
+      "N3001": [],
+      "N3090_Hard": [],
+      "N3010": []
+    },
+    "UGD_006_0_2_RIGHT": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_LEFT": [],
+      "Wall_UGD006_1": [],
+      "N3029": [],
+      "N3042": [],
+      "N3001": [],
+      "N3090_Hard": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_007": {
+    "UGD_007_0_0_LEFT": {
+      "Treasurebox_UGD007_1": [],
+      "N3029_Hard": [],
+      "N3042": [],
+      "N3055": [],
+      "N3001": []
+    }
+  },
+  "m11UGD_008": {
+    "UGD_008_0_0_LEFT": {
+      "UGD_008_2_0_RIGHT": [],
+      "N3029_Hard": [],
+      "N3042": [],
+      "N3055": [],
+      "N3001_Hard": [],
+      "N3010": []
+    },
+    "UGD_008_2_0_RIGHT": {
+      "UGD_008_0_0_LEFT": [],
+      "N3029_Hard": [],
+      "N3042": [],
+      "N3055": [],
+      "N3001_Hard": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_009": {
+    "UGD_009_1_0_RIGHT": {
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": [],
+      "Treasurebox_UGD009_1": [],
+      "Treasurebox_UGD009_2": ["Height"],
+      "Treasurebox_UGD009_3": [],
+      "Treasurebox_UGD009_4": [],
+      "N3029": [],
+      "N3042": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3010": []
+    },
+    "UGD_009_0_1_LEFT": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": [],
+      "Treasurebox_UGD009_1": [],
+      "Treasurebox_UGD009_2": ["Height"],
+      "Treasurebox_UGD009_3": [],
+      "Treasurebox_UGD009_4": [],
+      "N3029": [],
+      "N3042": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3010": []
+    },
+    "UGD_009_1_3_RIGHT": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": [],
+      "Treasurebox_UGD009_1": [],
+      "Treasurebox_UGD009_2": ["Height"],
+      "Treasurebox_UGD009_3": [],
+      "Treasurebox_UGD009_4": [],
+      "N3029": [],
+      "N3042": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3010": []
+    },
+    "UGD_009_0_4_TOP": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_1_4_TOP": [],
+      "Treasurebox_UGD009_1": [],
+      "Treasurebox_UGD009_2": ["Height"],
+      "Treasurebox_UGD009_3": [],
+      "Treasurebox_UGD009_4": [],
+      "N3029": [],
+      "N3042": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3010": []
+    },
+    "UGD_009_1_4_TOP": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": [],
+      "Treasurebox_UGD009_1": [],
+      "Treasurebox_UGD009_2": ["Height"],
+      "Treasurebox_UGD009_3": [],
+      "Treasurebox_UGD009_4": [],
+      "N3029": [],
+      "N3042": [],
+      "N3055_Hard": [],
+      "N3001": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_010": {
+    "UGD_010_0_0_LEFT": {
+      "Treasurebox_UGD010_1": [],
+      "N3055": []
+    }
+  },
+  "m11UGD_011": {
+    "UGD_011_0_0_BOTTOM": {
+      "Treasurebox_UGD011_1": [],
+      "N3029": [],
+      "N3001": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_012": {
+    "UGD_012_0_0_LEFT": {
+      "UGD_012_2_0_BOTTOM": [],
+      "Wall_UGD012_1": [],
+      "N3029_Hard": [],
+      "N3055": [],
+      "N3084": [],
+      "N3064": [],
+      "N3010": []
+    },
+    "UGD_012_2_0_BOTTOM": {
+      "UGD_012_0_0_LEFT": [],
+      "Wall_UGD012_1": [],
+      "N3029_Hard": [],
+      "N3055": [],
+      "N3084": [],
+      "N3064": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_013": {
+    "UGD_013_5_0_RIGHT": {
+      "UGD_013_0_4_TOP": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    },
+    "UGD_013_0_4_TOP": {
+      "UGD_013_5_0_RIGHT": [],
+      "N3029": [],
+      "N3001": [],
+      "N3090_Normal": [],
+      "N3099_Hard": []
+    }
+  },
+  "m11UGD_014": {
+    "UGD_014_0_0_LEFT": {
+      "UGD_014_0_0_BOTTOM": []
+    },
+    "UGD_014_0_0_BOTTOM": {
+      "UGD_014_0_0_LEFT": []
+    }
+  },
+  "m11UGD_015": {
+    "UGD_015_0_0_LEFT": {
+      "UGD_015_1_0_RIGHT": []
+    },
+    "UGD_015_1_0_RIGHT": {
+      "UGD_015_0_0_LEFT": ["Dimensionshift"]
+    }
+  },
+  "m11UGD_016": {
+    "UGD_016_0_0_BOTTOM": {
+      "UGD_016_0_1_RIGHT": ["Dimensionshift", "Reflectionray"]
+    },
+    "UGD_016_0_1_RIGHT": {
+      "UGD_016_0_0_BOTTOM": ["Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m11UGD_017": {
+    "UGD_017_0_0_LEFT": {
+      "UGD_017_0_0_RIGHT": [],
+      "N3055_Hard": []
+    },
+    "UGD_017_0_0_RIGHT": {
+      "UGD_017_0_0_LEFT": [],
+      "N3055_Hard": []
+    }
+  },
+  "m11UGD_018": {
+    "UGD_018_0_0_RIGHT": {
+      "UGD_018_0_1_LEFT": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056_Hard": []
+    },
+    "UGD_018_0_1_LEFT": {
+      "UGD_018_0_0_RIGHT": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056_Hard": []
+    }
+  },
+  "m11UGD_019": {
+    "UGD_019_1_0_RIGHT": {
+      "UGD_019_0_2_LEFT": [],
+      "UGD_019_1_2_RIGHT": [],
+      "N3029": [],
+      "N3022": [],
+      "N3076": ["WaterM"],
+      "Aquastream": []
+    },
+    "UGD_019_0_2_LEFT": {
+      "UGD_019_1_0_RIGHT": ["WaterM"],
+      "UGD_019_1_2_RIGHT": [],
+      "N3029": [],
+      "N3022": [],
+      "N3076": ["WaterM"],
+      "Aquastream": []
+    },
+    "UGD_019_1_2_RIGHT": {
+      "UGD_019_1_0_RIGHT": ["WaterM"],
+      "UGD_019_0_2_LEFT": [],
+      "N3029": [],
+      "N3022": [],
+      "N3076": ["WaterM"],
+      "Aquastream": []
+    }
+  },
+  "m11UGD_020": {
+    "UGD_020_0_0_LEFT": {
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_0_2_LEFT": [],
+      "UGD_020_1_2_TOP": [],
+      "Wall_UGD020_1": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_020_1_1_RIGHT": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_0_2_LEFT": [],
+      "UGD_020_1_2_TOP": [],
+      "Wall_UGD020_1": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_020_0_2_LEFT": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_1_2_TOP": [],
+      "Wall_UGD020_1": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_020_1_2_TOP": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_0_2_LEFT": [],
+      "Wall_UGD020_1": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_021": {
+    "UGD_021_0_0_LEFT": {
+      "UGD_021_0_0_BOTTOM": ["WaterM"],
+      "Treasurebox_UGD021_1": ["Deepsinker"]
+    },
+    "UGD_021_0_0_BOTTOM": {
+      "UGD_021_0_0_LEFT": ["WaterM"],
+      "Treasurebox_UGD021_1": ["Deepsinker"]
+    }
+  },
+  "m11UGD_022": {
+    "UGD_022_1_0_RIGHT": {
+      "UGD_022_1_1_TOP": ["WaterM"],
+      "N3098_Hard": ["WaterM"],
+      "N3078": ["WaterM"]
+    },
+    "UGD_022_1_1_TOP": {
+      "UGD_022_1_0_RIGHT": ["WaterM"],
+      "N3098_Hard": ["WaterM"],
+      "N3078": ["WaterM"]
+    }
+  },
+  "m11UGD_023": {
+    "UGD_023_0_0_LEFT": {
+      "UGD_023_1_0_RIGHT": ["WaterM"],
+      "N3098_Hard": ["WaterM"],
+      "N3076": ["WaterM"]
+    },
+    "UGD_023_1_0_RIGHT": {
+      "UGD_023_0_0_LEFT": ["WaterM"],
+      "N3098_Hard": ["WaterM"],
+      "N3076": ["WaterM"]
+    }
+  },
+  "m11UGD_024": {
+    "UGD_024_1_1_RIGHT": {
+      "UGD_024_0_2_LEFT": ["WaterM"],
+      "Treasurebox_UGD024_1": ["Deepsinker"],
+      "Treasurebox_UGD024_2": ["Deepsinker"],
+      "Treasurebox_UGD024_3": ["Deepsinker"],
+      "N3098": ["WaterM"],
+      "N3078_Hard": ["WaterM"]
+    },
+    "UGD_024_0_2_LEFT": {
+      "UGD_024_1_1_RIGHT": ["WaterM"],
+      "Treasurebox_UGD024_1": ["Deepsinker"],
+      "Treasurebox_UGD024_2": ["Deepsinker"],
+      "Treasurebox_UGD024_3": ["Deepsinker"],
+      "N3098": ["WaterM"],
+      "N3078_Hard": ["WaterM"]
+    }
+  },
+  "m11UGD_025": {
+    "UGD_025_0_0_BOTTOM": {
+      "UGD_025_0_1_LEFT": ["WaterM"],
+      "Treasurebox_UGD025_1": ["Deepsinker"],
+      "Treasurebox_UGD025_2": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "Treasurebox_UGD025_3": ["Deepsinker"],
+      "N3098_Hard": ["WaterM"],
+      "N3078": ["WaterM"],
+      "N3076": ["WaterM"]
+    },
+    "UGD_025_0_1_LEFT": {
+      "UGD_025_0_0_BOTTOM": ["WaterM"],
+      "Treasurebox_UGD025_1": ["Deepsinker"],
+      "Treasurebox_UGD025_2": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "Treasurebox_UGD025_3": ["Deepsinker"],
+      "N3098_Hard": ["WaterM"],
+      "N3078": ["WaterM"],
+      "N3076": ["WaterM"]
+    }
+  },
+  "m11UGD_026": {
+    "UGD_026_0_0_TOP": {
+      "UGD_026_1_0_RIGHT": ["WaterM"]
+    },
+    "UGD_026_1_0_RIGHT": {
+      "UGD_026_0_0_TOP": ["WaterM"]
+    }
+  },
+  "m11UGD_027": {
+    "UGD_027_1_0_RIGHT": {
+      "UGD_027_0_1_LEFT": [],
+      "Treasurebox_UGD027_1": [],
+      "N3029": [],
+      "N3043": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_027_0_1_LEFT": {
+      "UGD_027_1_0_RIGHT": [],
+      "Treasurebox_UGD027_1": [],
+      "N3029": [],
+      "N3043": [],
+      "N3044": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_028": {
+    "UGD_028_0_0_LEFT": {
+      "UGD_028_0_0_RIGHT": []
+    },
+    "UGD_028_0_0_RIGHT": {
+      "UGD_028_0_0_LEFT": []
+    }
+  },
+  "m11UGD_029": {
+    "UGD_029_0_0_LEFT": {
+      "UGD_029_0_1_LEFT": [],
+      "UGD_029_1_1_RIGHT": [],
+      "N3029": [],
+      "N3010": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_029_0_1_LEFT": {
+      "UGD_029_0_0_LEFT": [],
+      "UGD_029_1_1_RIGHT": [],
+      "N3029": [],
+      "N3010": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_029_1_1_RIGHT": {
+      "UGD_029_0_0_LEFT": [],
+      "UGD_029_0_1_LEFT": [],
+      "N3029": [],
+      "N3010": [],
+      "N3044": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_030": {
+    "UGD_030_0_0_RIGHT": {
+      "Treasurebox_UGD030_1": [],
+      "N3029_Hard": [],
+      "N3010": []
+    }
+  },
+  "m11UGD_031": {
+    "UGD_031_10_0_RIGHT": {
+      "UGD_031_0_3_LEFT": [],
+      "Treasurebox_UGD031_1": [],
+      "Treasurebox_UGD031_2": [],
+      "Wall_UGD031_1": ["Height"],
+      "N3001": [],
+      "N3099": []
+    },
+    "UGD_031_0_3_LEFT": {
+      "UGD_031_10_0_RIGHT": [],
+      "Treasurebox_UGD031_1": [],
+      "Treasurebox_UGD031_2": [],
+      "Wall_UGD031_1": ["Height"],
+      "N3001": [],
+      "N3099": []
+    }
+  },
+  "m11UGD_032": {
+    "UGD_032_0_0_LEFT": {
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": ["Height"],
+      "UGD_032_0_2_RIGHT": ["Height"],
+      "N3029": [],
+      "N3044": [],
+      "N3056": ["Height"]
+    },
+    "UGD_032_0_0_RIGHT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": ["Height"],
+      "UGD_032_0_2_RIGHT": ["Height"],
+      "N3029": [],
+      "N3044": [],
+      "N3056": ["Height"]
+    },
+    "UGD_032_0_1_LEFT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_2_LEFT": ["Height"],
+      "UGD_032_0_2_RIGHT": ["Height"],
+      "N3029": [],
+      "N3044": [],
+      "N3056": ["Height"]
+    },
+    "UGD_032_0_2_LEFT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_RIGHT": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_032_0_2_RIGHT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": [],
+      "N3029": [],
+      "N3044": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_033": {
+    "UGD_033_0_0_LEFT": {
+      "UGD_033_4_0_RIGHT": [],
+      "N3029": [],
+      "N3110": [],
+      "N3044_Hard": []
+    },
+    "UGD_033_4_0_RIGHT": {
+      "UGD_033_0_0_LEFT": [],
+      "N3029": [],
+      "N3110": [],
+      "N3044_Hard": []
+    }
+  },
+  "m11UGD_034": {
+    "UGD_034_0_0_LEFT": {
+      "UGD_034_0_0_RIGHT": []
+    },
+    "UGD_034_0_0_RIGHT": {
+      "UGD_034_0_0_LEFT": []
+    }
+  },
+  "m11UGD_035": {
+    "UGD_035_0_0_RIGHT": {
+      "UGD_035_0_2_LEFT": [],
+      "N3029": [],
+      "N3001": [],
+      "N3044_Hard": []
+    },
+    "UGD_035_0_2_LEFT": {
+      "UGD_035_0_0_RIGHT": [],
+      "N3029": [],
+      "N3001": [],
+      "N3044_Hard": []
+    }
+  },
+  "m11UGD_036": {
+    "UGD_036_0_1_LEFT": {
+      "UGD_036_3_1_RIGHT": ["WaterM"],
+      "Treasurebox_UGD036_1": ["Deepsinker"],
+      "Treasurebox_UGD036_2": [],
+      "N3029": [],
+      "N3078": ["WaterM"]
+    },
+    "UGD_036_3_1_RIGHT": {
+      "UGD_036_0_1_LEFT": ["WaterM"],
+      "Treasurebox_UGD036_1": ["Deepsinker"],
+      "Treasurebox_UGD036_2": [],
+      "N3029": [],
+      "N3078": ["WaterM"]
+    }
+  },
+  "m11UGD_037": {
+    "UGD_037_0_0_RIGHT": {
+      "UGD_037_0_2_LEFT": [],
+      "UGD_037_0_4_RIGHT": ["Height"],
+      "Wall_UGD037_1": [],
+      "N3029": [],
+      "N3099_Hard": [],
+      "N3044": [],
+      "N3089": [],
+      "N3056": []
+    },
+    "UGD_037_0_2_LEFT": {
+      "UGD_037_0_0_RIGHT": [],
+      "UGD_037_0_4_RIGHT": ["Height"],
+      "Wall_UGD037_1": [],
+      "N3029": [],
+      "N3099_Hard": [],
+      "N3044": [],
+      "N3089": [],
+      "N3056": []
+    },
+    "UGD_037_0_4_RIGHT": {
+      "UGD_037_0_0_RIGHT": [],
+      "UGD_037_0_2_LEFT": [],
+      "Wall_UGD037_1": [],
+      "N3029": [],
+      "N3099_Hard": [],
+      "N3044": [],
+      "N3089": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_038": {
+    "UGD_038_1_0_RIGHT": {
+      "Treasurebox_UGD038_1": [],
+      "N3029": [],
+      "N3044": [],
+      "N3089": []
+    }
+  },
+  "m11UGD_039": {
+    "UGD_039_0_0_LEFT": {
+      "UGD_039_1_0_RIGHT": [],
+      "N3110": [],
+      "N3089": [],
+      "N3056": []
+    },
+    "UGD_039_1_0_RIGHT": {
+      "UGD_039_0_0_LEFT": [],
+      "N3110": [],
+      "N3089": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_040": {
+    "UGD_040_0_1_RIGHT": {
+      "UGD_040_0_4_LEFT": ["Height"],
+      "UGD_040_0_4_RIGHT": ["Height"],
+      "Treasurebox_UGD040_1": ["Deepsinker"],
+      "N3029": ["Height"],
+      "N3099_Hard": ["Height"],
+      "N3078": ["WaterM"]
+    },
+    "UGD_040_0_4_LEFT": {
+      "UGD_040_0_1_RIGHT": [],
+      "UGD_040_0_4_RIGHT": [],
+      "Treasurebox_UGD040_1": ["Deepsinker"],
+      "N3029": [],
+      "N3099_Hard": [],
+      "N3078": ["WaterM"]
+    },
+    "UGD_040_0_4_RIGHT": {
+      "UGD_040_0_1_RIGHT": [],
+      "UGD_040_0_4_LEFT": [],
+      "Treasurebox_UGD040_1": ["Deepsinker"],
+      "N3029": [],
+      "N3099_Hard": [],
+      "N3078": ["WaterM"]
+    }
+  },
+  "m11UGD_041": {
+    "UGD_041_0_0_LEFT": {
+      "Treasurebox_UGD041_1": [],
+      "N3089": []
+    }
+  },
+  "m11UGD_042": {
+    "UGD_042_0_0_LEFT": {
+      "UGD_042_1_0_RIGHT": ["WaterM"],
+      "UGD_042_0_2_LEFT": [],
+      "UGD_042_1_2_RIGHT": [],
+      "Treasurebox_UGD042_1": ["Deepsinker"],
+      "N3022": [],
+      "N3076": ["WaterM"]
+    },
+    "UGD_042_1_0_RIGHT": {
+      "UGD_042_0_0_LEFT": ["WaterM"],
+      "UGD_042_0_2_LEFT": [],
+      "UGD_042_1_2_RIGHT": [],
+      "Treasurebox_UGD042_1": ["Deepsinker"],
+      "N3022": [],
+      "N3076": ["WaterM"]
+    },
+    "UGD_042_0_2_LEFT": {
+      "UGD_042_0_0_LEFT": ["WaterM"],
+      "UGD_042_1_0_RIGHT": ["WaterM"],
+      "UGD_042_1_2_RIGHT": [],
+      "Treasurebox_UGD042_1": ["Deepsinker"],
+      "N3022": [],
+      "N3076": ["WaterM"]
+    },
+    "UGD_042_1_2_RIGHT": {
+      "UGD_042_0_0_LEFT": ["WaterM"],
+      "UGD_042_1_0_RIGHT": ["WaterM"],
+      "UGD_042_0_2_LEFT": [],
+      "Treasurebox_UGD042_1": ["Deepsinker"],
+      "N3022": [],
+      "N3076": ["WaterM"]
+    }
+  },
+  "m11UGD_043": {
+    "UGD_043_0_0_LEFT": {
+      "UGD_043_2_0_RIGHT": [],
+      "N3029": [],
+      "N3076": []
+    },
+    "UGD_043_2_0_RIGHT": {
+      "UGD_043_0_0_LEFT": [],
+      "N3029": [],
+      "N3076": []
+    }
+  },
+  "m11UGD_044": {
+    "UGD_044_0_0_LEFT": {
+      "Treasurebox_UGD044_1": ["Deepsinker"],
+      "Treasurebox_UGD044_2": ["Deepsinker"],
+      "N3076": ["WaterM"]
+    }
+  },
+  "m11UGD_045": {
+    "UGD_045_0_0_LEFT": {
+      "UGD_045_1_0_RIGHT": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "N3076": ["WaterM"]
+    },
+    "UGD_045_1_0_RIGHT": {
+      "UGD_045_0_0_LEFT": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "N3076": ["WaterM"]
+    }
+  },
+  "m11UGD_046": {
+    "UGD_046_1_0_RIGHT": {
+      "UGD_046_0_3_LEFT": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_UGD046_1": ["Height"],
+      "Treasurebox_UGD046_2": ["Deepsinker"],
+	  "Wall_UGD046_1": ["Height"],
+      "N3098": ["WaterM"],
+      "N3089": []
+    },
+    "UGD_046_0_3_LEFT": {
+      "UGD_046_1_0_RIGHT": ["WaterM"],
+      "Treasurebox_UGD046_1": ["Height"],
+      "Treasurebox_UGD046_2": ["Deepsinker"],
+	  "Wall_UGD046_1": ["Height"],
+      "N3098": ["WaterM"],
+      "N3089": []
+    }
+  },
+  "m11UGD_047": {
+    "UGD_047_0_0_TOP": {
+      "Treasurebox_UGD047_2": [],
+      "Shortcut": []
+    }
+  },
+  "m11UGD_048": {
+    "UGD_048_0_0_RIGHT": {
+      "Treasurebox_UGD048_1": []
+    }
+  },
+  "m11UGD_049": {
+    "UGD_049_0_0_LEFT": {}
+  },
+  "m11UGD_050": {
+    "UGD_050_0_0_LEFT": {
+      "Treasurebox_UGD050_1": []
+    }
+  },
+  "m11UGD_051": {
+    "UGD_051_0_0_BOTTOM": {
+      "Treasurebox_UGD051_1": []
+    }
+  },
+  "m11UGD_052": {
+    "UGD_052_0_0_BOTTOM": {
+      "UGD_052_0_1_TOP": [],
+      "Treasurebox_UGD052_1": [],
+      "Treasurebox_UGD052_2": [],
+      "N3044_Hard": [],
+      "N3089": [],
+      "N3056": []
+    },
+    "UGD_052_0_1_TOP": {
+      "UGD_052_0_0_BOTTOM": [],
+      "Treasurebox_UGD052_1": [],
+      "Treasurebox_UGD052_2": [],
+      "N3044_Hard": [],
+      "N3089": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_053": {
+    "UGD_053_0_0_LEFT": {
+      "UGD_053_0_0_BOTTOM": [],
+      "UGD_053_0_0_TOP": [],
+      "Treasurebox_UGD053_1": [],
+      "N3113": []
+    },
+    "UGD_053_0_0_BOTTOM": {
+      "UGD_053_0_0_LEFT": [],
+      "UGD_053_0_0_TOP": [],
+      "Treasurebox_UGD053_1": [],
+      "N3113": []
+    },
+    "UGD_053_0_0_TOP": {
+      "UGD_053_0_0_LEFT": [],
+      "UGD_053_0_0_BOTTOM": [],
+      "Treasurebox_UGD053_1": [],
+      "N3113": []
+    }
+  },
+  "m11UGD_054": {
+    "UGD_054_0_0_LEFT": {
+      "UGD_054_0_0_RIGHT": [],
+      "UGD_054_0_2_TOP": [],
+      "Treasurebox_UGD054_1": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_054_0_0_RIGHT": {
+      "UGD_054_0_0_LEFT": [],
+      "UGD_054_0_2_TOP": [],
+      "Treasurebox_UGD054_1": [],
+      "N3044": [],
+      "N3056": []
+    },
+    "UGD_054_0_2_TOP": {
+      "UGD_054_0_0_LEFT": [],
+      "UGD_054_0_0_RIGHT": [],
+      "Treasurebox_UGD054_1": [],
+      "N3044": [],
+      "N3056": []
+    }
+  },
+  "m11UGD_055": {
+    "UGD_055_0_0_LEFT": {
+      "UGD_055_0_1_LEFT": ["Height"],
+      "UGD_055_0_1_RIGHT": ["Height"]
+    },
+    "UGD_055_0_1_LEFT": {
+      "UGD_055_0_0_LEFT": [],
+      "UGD_055_0_1_RIGHT": []
+    },
+    "UGD_055_0_1_RIGHT": {
+      "UGD_055_0_0_LEFT": [],
+      "UGD_055_0_1_LEFT": []
+    }
+  },
+  "m11UGD_056": {
+    "UGD_056_0_0_RIGHT": {
+      "UGD_056_0_3_LEFT": ["Invert", "Dimensionshift"],
+      "UGD_056_0_3_RIGHT": ["Dimensionshift"],
+      "Treasurebox_UGD056_1": ["Dimensionshift"],
+      "Wall_UGD056_1": ["Invert", "Dimensionshift"]
+    },
+    "UGD_056_0_3_LEFT": {
+      "UGD_056_0_0_RIGHT": [],
+      "UGD_056_0_3_RIGHT": ["Dimensionshift"],
+      "Treasurebox_UGD056_1": ["Dimensionshift"],
+      "Wall_UGD056_1": []
+    },
+    "UGD_056_0_3_RIGHT": {
+      "UGD_056_0_0_RIGHT": ["Dimensionshift"],
+      "UGD_056_0_3_LEFT": ["Dimensionshift"],
+      "Treasurebox_UGD056_1": [],
+      "Wall_UGD056_1": ["Dimensionshift"]
+    }
+  },
+  "m11UGD_057": {
+    "UGD_057_0_0_LEFT": {
+      "UGD_057_0_0_RIGHT": []
+    },
+    "UGD_057_0_0_RIGHT": {
+      "UGD_057_0_0_LEFT": []
+    }
+  },
+  "m12SND_000": {
+    "SND_000_0_0_RIGHT": {
+      "SND_000_0_2_LEFT": [],
+      "N3014": [],
+      "N3002_Hard": []
+    },
+    "SND_000_0_2_LEFT": {
+      "SND_000_0_0_RIGHT": [],
+      "N3014": [],
+      "N3002_Hard": []
+    }
+  },
+  "m12SND_001": {
+    "SND_001_0_0_LEFT": {
+      "SND_001_1_0_BOTTOM": [],
+      "SND_001_2_0_TOP": [],
+      "Wall_SND001_1": [],
+      "N2010": []
+    },
+    "SND_001_1_0_BOTTOM": {
+      "SND_001_0_0_LEFT": [],
+      "SND_001_2_0_TOP": [],
+      "Wall_SND001_1": [],
+      "N2010": []
+    },
+    "SND_001_2_0_TOP": {
+      "SND_001_0_0_LEFT": [],
+      "SND_001_1_0_BOTTOM": [],
+      "Wall_SND001_1": [],
+      "N2010": []
+    }
+  },
+  "m12SND_002": {
+    "SND_002_0_0_LEFT": {
+      "SND_002_1_0_TOP": [],
+      "SND_002_2_0_RIGHT": [],
+      "Treasurebox_SND002_1": [],
+      "N3014_Hard": [],
+      "N3002": [],
+      "N3115": []
+    },
+    "SND_002_1_0_TOP": {
+      "SND_002_0_0_LEFT": [],
+      "SND_002_2_0_RIGHT": [],
+      "Treasurebox_SND002_1": [],
+      "N3014_Hard": [],
+      "N3002": [],
+      "N3115": []
+    },
+    "SND_002_2_0_RIGHT": {
+      "SND_002_0_0_LEFT": [],
+      "SND_002_1_0_TOP": [],
+      "Treasurebox_SND002_1": [],
+      "N3014_Hard": [],
+      "N3002": [],
+      "N3115": []
+    }
+  },
+  "m12SND_003": {
+    "SND_003_0_0_RIGHT": {
+      "Treasurebox_SND003_1": [],
+      "N3086": []
+    }
+  },
+  "m12SND_004": {
+    "SND_004_0_0_LEFT": {
+      "SND_004_0_1_RIGHT": [],
+      "SND_004_0_2_LEFT": [],
+      "Treasurebox_SND004_1": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_004_0_1_RIGHT": {
+      "SND_004_0_0_LEFT": [],
+      "SND_004_0_2_LEFT": [],
+      "Treasurebox_SND004_1": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_004_0_2_LEFT": {
+      "SND_004_0_0_LEFT": [],
+      "SND_004_0_1_RIGHT": [],
+      "Treasurebox_SND004_1": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    }
+  },
+  "m12SND_005": {
+    "SND_005_0_0_LEFT": {
+      "SND_005_1_0_BOTTOM": [],
+      "SND_005_1_0_RIGHT": [],
+      "N3014": [],
+      "N3002": [],
+      "N3086": []
+    },
+    "SND_005_1_0_BOTTOM": {
+      "SND_005_0_0_LEFT": [],
+      "SND_005_1_0_RIGHT": [],
+      "N3014": [],
+      "N3002": [],
+      "N3086": []
+    },
+    "SND_005_1_0_RIGHT": {
+      "SND_005_0_0_LEFT": [],
+      "SND_005_1_0_BOTTOM": [],
+      "N3014": [],
+      "N3002": [],
+      "N3086": []
+    }
+  },
+  "m12SND_006": {
+    "SND_006_0_0_RIGHT": {
+      "Treasurebox_SND006_1": ["Dimensionshift", "Reflectionray"],
+      "N3112_Hard": []
+    }
+  },
+  "m12SND_007": {
+    "SND_007_0_0_LEFT": {
+      "SND_007_0_0_RIGHT": [],
+      "SND_007_0_0_TOP": ["Flight", "Reflectionray"],
+      "N3014_Hard": []
+    },
+    "SND_007_0_0_RIGHT": {
+      "SND_007_0_0_LEFT": [],
+      "SND_007_0_0_TOP": ["Flight", "Reflectionray"],
+      "N3014_Hard": []
+    },
+    "SND_007_0_0_TOP": {
+      "SND_007_0_0_LEFT": [],
+      "SND_007_0_0_RIGHT": [],
+      "N3014_Hard": []
+    }
+  },
+  "m12SND_008": {
+    "SND_008_0_0_BOTTOM": {
+      "Treasurebox_SND008_1": [],
+      "Treasurebox_SND008_2": []
+    }
+  },
+  "m12SND_009": {
+    "SND_009_0_0_LEFT": {
+      "SND_009_0_1_LEFT": [],
+      "SND_009_1_1_RIGHT": [],
+      "Treasurebox_SND009_1": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_009_0_1_LEFT": {
+      "SND_009_0_0_LEFT": [],
+      "SND_009_1_1_RIGHT": [],
+      "Treasurebox_SND009_1": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_009_1_1_RIGHT": {
+      "SND_009_0_0_LEFT": [],
+      "SND_009_0_1_LEFT": [],
+      "Treasurebox_SND009_1": [],
+      "N3002": [],
+      "N3112": []
+    }
+  },
+  "m12SND_010": {
+    "SND_010_0_0_RIGHT": {
+      "SND_010_0_1_LEFT": [],
+      "Treasurebox_SND010_1": [],
+      "Treasurebox_SND010_2": [],
+      "N3043": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_010_0_1_LEFT": {
+      "SND_010_0_0_RIGHT": [],
+      "Treasurebox_SND010_1": [],
+      "Treasurebox_SND010_2": [],
+      "N3043": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    }
+  },
+  "m12SND_011": {
+    "SND_011_0_0_LEFT": {
+      "SND_011_0_3_RIGHT": [],
+      "SND_011_0_4_LEFT": ["Height"],
+      "N3043": [],
+      "N3014": []
+    },
+    "SND_011_0_3_RIGHT": {
+      "SND_011_0_0_LEFT": [],
+      "SND_011_0_4_LEFT": ["Height"],
+      "N3043": [],
+      "N3014": []
+    },
+    "SND_011_0_4_LEFT": {
+      "SND_011_0_0_LEFT": [],
+      "SND_011_0_3_RIGHT": [],
+      "N3043": [],
+      "N3014": []
+    }
+  },
+  "m12SND_012": {
+    "SND_012_0_0_LEFT": {
+      "SND_012_1_0_BOTTOM": [],
+      "SND_012_2_0_RIGHT": [],
+      "N3014": [],
+      "N2010": []
+    },
+    "SND_012_1_0_BOTTOM": {
+      "SND_012_0_0_LEFT": [],
+      "SND_012_2_0_RIGHT": [],
+      "N3014": [],
+      "N2010": []
+    },
+    "SND_012_2_0_RIGHT": {
+      "SND_012_0_0_LEFT": [],
+      "SND_012_1_0_BOTTOM": [],
+      "N3014": [],
+      "N2010": []
+    }
+  },
+  "m12SND_013": {
+    "SND_013_0_0_LEFT": {
+      "SND_013_0_0_TOP": [],
+      "Treasurebox_SND013_1": [],
+      "N2010": []
+    },
+    "SND_013_0_0_TOP": {
+      "SND_013_0_0_LEFT": [],
+      "Treasurebox_SND013_1": [],
+      "N2010": []
+    }
+  },
+  "m12SND_014": {
+    "SND_014_0_0_RIGHT": {
+      "SND_014_0_1_LEFT": [],
+      "SND_014_0_1_RIGHT": [],
+      "N3043": [],
+      "N3002": [],
+      "N3112": [],
+      "N3086": []
+    },
+    "SND_014_0_1_LEFT": {
+      "SND_014_0_0_RIGHT": [],
+      "SND_014_0_1_RIGHT": [],
+      "N3043": [],
+      "N3002": [],
+      "N3112": [],
+      "N3086": []
+    },
+    "SND_014_0_1_RIGHT": {
+      "SND_014_0_0_RIGHT": [],
+      "SND_014_0_1_LEFT": [],
+      "N3043": [],
+      "N3002": [],
+      "N3112": [],
+      "N3086": []
+    }
+  },
+  "m12SND_015": {
+    "SND_015_0_0_RIGHT": {
+      "SND_015_0_1_LEFT": ["Height"],
+      "SND_015_0_2_LEFT": ["Height"],
+      "Treasurebox_SND015_1": [],
+      "N3002": [],
+      "N3112": ["Height"]
+    },
+    "SND_015_0_1_LEFT": {
+      "SND_015_0_0_RIGHT": [],
+      "SND_015_0_2_LEFT": [],
+      "Treasurebox_SND015_1": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_015_0_2_LEFT": {
+      "SND_015_0_0_RIGHT": [],
+      "SND_015_0_1_LEFT": [],
+      "Treasurebox_SND015_1": [],
+      "N3002": [],
+      "N3112": []
+    }
+  },
+  "m12SND_016": {
+    "SND_016_0_0_LEFT": {
+      "SND_016_1_1_RIGHT": [],
+      "Treasurebox_SND016_1": [],
+      "N3014": [],
+      "N3112_Hard": []
+    },
+    "SND_016_1_1_RIGHT": {
+      "SND_016_0_0_LEFT": [],
+      "Treasurebox_SND016_1": [],
+      "N3014": [],
+      "N3112_Hard": []
+    }
+  },
+  "m12SND_017": {
+    "SND_017_0_0_LEFT": {
+      "SND_017_0_0_RIGHT": [],
+      "Treasurebox_SND017_1": ["Flight", "Reflectionray"],
+      "N3002": ["Flight", "Reflectionray"]
+    },
+    "SND_017_0_0_RIGHT": {
+      "SND_017_0_0_LEFT": [],
+      "Treasurebox_SND017_1": ["Flight", "Reflectionray"],
+      "N3002": ["Flight", "Reflectionray"]
+    }
+  },
+  "m12SND_018": {
+    "SND_018_0_0_BOTTOM": {
+      "SND_018_0_1_RIGHT": [],
+      "Treasurebox_SND018_1": ["Height"],
+      "N3014_Hard": [],
+      "N3002": []
+    },
+    "SND_018_0_1_RIGHT": {
+      "SND_018_0_0_BOTTOM": [],
+      "Treasurebox_SND018_1": ["Height"],
+      "N3014_Hard": [],
+      "N3002": []
+    }
+  },
+  "m12SND_019": {
+    "SND_019_0_0_RIGHT": {
+      "SND_019_0_0_TOP": [],
+      "Treasurebox_SND019_1": [],
+      "Wall_SND019_1": []
+    },
+    "SND_019_0_0_TOP": {
+      "SND_019_0_0_RIGHT": [],
+      "Treasurebox_SND019_1": [],
+      "Wall_SND019_1": []
+    }
+  },
+  "m12SND_020": {
+    "SND_020_0_0_LEFT": {
+      "SND_020_1_0_RIGHT": [],
+      "SND_020_1_1_TOP": [],
+      "Treasurebox_SND020_1": ["Height"],
+      "N3043": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_020_1_0_RIGHT": {
+      "SND_020_0_0_LEFT": [],
+      "SND_020_1_1_TOP": [],
+      "Treasurebox_SND020_1": ["Height"],
+      "N3043": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    },
+    "SND_020_1_1_TOP": {
+      "SND_020_0_0_LEFT": [],
+      "SND_020_1_0_RIGHT": [],
+      "Treasurebox_SND020_1": ["Height"],
+      "N3043": [],
+      "N3014": [],
+      "N3002": [],
+      "N3112": []
+    }
+  },
+  "m12SND_021": {
+    "SND_021_0_0_LEFT": {
+      "N3086": []
+    }
+  },
+  "m12SND_022": {
+    "SND_022_0_0_LEFT": {
+      "SND_022_0_0_BOTTOM": [],
+      "SND_022_0_0_RIGHT": []
+    },
+    "SND_022_0_0_BOTTOM": {
+      "SND_022_0_0_LEFT": [],
+      "SND_022_0_0_RIGHT": []
+    },
+    "SND_022_0_0_RIGHT": {
+      "SND_022_0_0_LEFT": [],
+      "SND_022_0_0_BOTTOM": []
+    }
+  },
+  "m12SND_023": {
+    "SND_023_0_0_LEFT": {
+      "SND_023_0_1_RIGHT": [],
+      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"],
+      "SND_023_0_5_RIGHT": []
+    },
+    "SND_023_0_1_RIGHT": {
+      "SND_023_0_0_LEFT": [],
+      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"],
+      "SND_023_0_5_RIGHT": []
+    },
+    "SND_023_0_3_RIGHT": {
+      "SND_023_0_0_LEFT": ["Dimensionshift"],
+      "SND_023_0_1_RIGHT": ["Dimensionshift"],
+      "SND_023_0_5_RIGHT": ["Dimensionshift"]
+    },
+    "SND_023_0_5_RIGHT": {
+      "SND_023_0_0_LEFT": [],
+      "SND_023_0_1_RIGHT": [],
+      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"]
+    }
+  },
+  "m12SND_024": {
+    "SND_024_0_0_RIGHT": {
+      "Treasurebox_SND024_1": [],
+      "N3086": []
+    }
+  },
+  "m12SND_025": {
+    "SND_025_0_0_LEFT": {
+	  "TO_JRN_000_START": [],
+      "Treasurebox_SND025_1": []
+    }
+  },
+  "m12SND_026": {
+    "SND_026_0_0_LEFT": {
+      "Deepsinker": []
+    }
+  },
+  "m12SND_027": {
+    "SND_027_0_0_LEFT": {
+      "N2014": []
+    }
+  },
+  "m13ARC_000": {
+    "ARC_000_0_0_LEFT": {
+      "ARC_000_1_0_RIGHT": [],
+      "Treasurebox_ARC000_1": [],
+      "N3114": [],
+      "N3092": [],
+      "N3024": [],
+      "N3087_Hard": []
+    },
+    "ARC_000_1_0_RIGHT": {
+      "ARC_000_0_0_LEFT": [],
+      "Treasurebox_ARC000_1": [],
+      "N3114": [],
+      "N3092": [],
+      "N3024": [],
+      "N3087_Hard": []
+    }
+  },
+  "m13ARC_001": {
+    "ARC_001_0_0_LEFT": {
+      "ARC_001_1_0_RIGHT": [],
+      "N3035": []
+    },
+    "ARC_001_1_0_RIGHT": {
+      "ARC_001_0_0_LEFT": [],
+      "N3035": []
+    }
+  },
+  "m13ARC_002": {
+    "ARC_002_0_0_LEFT": {
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_0_1_LEFT": [],
+      "ARC_002_1_1_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ARC002_1": [],
+      "N3043": [],
+      "N3024": [],
+      "N3087_Hard": []
+    },
+    "ARC_002_1_0_RIGHT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_0_1_LEFT": [],
+      "ARC_002_1_1_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ARC002_1": [],
+      "N3043": [],
+      "N3024": [],
+      "N3087_Hard": []
+    },
+    "ARC_002_0_1_LEFT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_1_1_RIGHT": ["Flight", "Reflectionray", ["Doublejump", "Accelerator"]],
+      "Treasurebox_ARC002_1": [],
+      "N3043": [],
+      "N3024": [],
+      "N3087_Hard": []
+    },
+    "ARC_002_1_1_RIGHT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_0_1_LEFT": [],
+      "Treasurebox_ARC002_1": [],
+      "N3043": [],
+      "N3024": [],
+      "N3087_Hard": []
+    }
+  },
+  "m13ARC_003": {
+    "ARC_003_0_0_LEFT": {
+      "ARC_003_0_0_RIGHT": [],
+      "Treasurebox_ARC003_1": [],
+      "N3113": []
+    },
+    "ARC_003_0_0_RIGHT": {
+      "ARC_003_0_0_LEFT": [],
+      "Treasurebox_ARC003_1": [],
+      "N3113": []
+    }
+  },
+  "m13ARC_004": {
+    "ARC_004_0_0_LEFT": {
+      "Treasurebox_ARC004_1": [],
+      "Shortcut": []
+    }
+  },
+  "m13ARC_005": {
+    "ARC_005_0_0_LEFT": {
+      "ARC_005_1_0_RIGHT": [],
+      "N1006": []
+    },
+    "ARC_005_1_0_RIGHT": {
+      "ARC_005_0_0_LEFT": [],
+      "N1006": []
+    }
+  },
+  "m13ARC_006": {
+    "ARC_006_0_0_BOTTOM": {
+      "ARC_006_1_0_RIGHT": [],
+      "ARC_006_1_1_RIGHT": ["Height"],
+      "Treasurebox_ARC006_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_ARC006_2": [],
+      "N3111_Hard": [],
+      "N3114": [],
+      "N3092": [],
+      "N3024": [],
+      "N3070": []
+    },
+    "ARC_006_1_0_RIGHT": {
+      "ARC_006_0_0_BOTTOM": [],
+      "ARC_006_1_1_RIGHT": ["Height"],
+      "Treasurebox_ARC006_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_ARC006_2": [],
+      "N3111_Hard": [],
+      "N3114": [],
+      "N3092": [],
+      "N3024": [],
+      "N3070": []
+    },
+    "ARC_006_1_1_RIGHT": {
+      "ARC_006_0_0_BOTTOM": [],
+      "ARC_006_1_0_RIGHT": [],
+      "Treasurebox_ARC006_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_ARC006_2": [],
+      "N3111_Hard": [],
+      "N3114": [],
+      "N3092": [],
+      "N3024": [],
+      "N3070": []
+    }
+  },
+  "m13ARC_007": {
+    "ARC_007_0_0_TOP": {
+      "Treasurebox_ARC007_1": [],
+      "Treasurebox_ARC007_2": []
+    }
+  },
+  "m14TAR_000": {
+    "TAR_000_0_0_LEFT": {
+      "TAR_000_1_0_RIGHT": []
+    },
+    "TAR_000_1_0_RIGHT": {
+      "TAR_000_0_0_LEFT": []
+    }
+  },
+  "m14TAR_001": {
+    "TAR_001_0_0_LEFT": {
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_0_1_LEFT": [],
+      "TAR_001_1_1_RIGHT": [],
+      "Treasurebox_TAR001_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    },
+    "TAR_001_1_0_RIGHT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_0_1_LEFT": [],
+      "TAR_001_1_1_RIGHT": [],
+      "Treasurebox_TAR001_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    },
+    "TAR_001_0_1_LEFT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_1_1_RIGHT": [],
+      "Treasurebox_TAR001_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    },
+    "TAR_001_1_1_RIGHT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_0_1_LEFT": [],
+      "Treasurebox_TAR001_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    }
+  },
+  "m14TAR_002": {
+    "TAR_002_0_0_LEFT": {
+      "Treasurebox_TAR002_1": []
+    }
+  },
+  "m14TAR_003": {
+    "TAR_003_0_0_LEFT": {
+      "TAR_003_0_0_RIGHT": [],
+      "TAR_003_0_1_RIGHT": [],
+      "N3101": []
+    },
+    "TAR_003_0_0_RIGHT": {
+      "TAR_003_0_0_LEFT": [],
+      "TAR_003_0_1_RIGHT": [],
+      "N3101": []
+    },
+    "TAR_003_0_1_RIGHT": {
+      "TAR_003_0_0_LEFT": [],
+      "TAR_003_0_0_RIGHT": [],
+      "N3101": []
+    }
+  },
+  "m14TAR_004": {
+    "TAR_004_0_0_LEFT": {
+      "TAR_004_1_0_RIGHT": [],
+      "N2007": []
+    },
+    "TAR_004_1_0_RIGHT": {
+      "TAR_004_0_0_LEFT": [],
+      "N2007": []
+    }
+  },
+  "m14TAR_005": {
+    "TAR_005_0_0_RIGHT": {
+      "TAR_005_0_2_RIGHT": ["Height"],
+      "TAR_005_0_3_RIGHT": ["Height"],
+      "N3012_Hard": [],
+      "N3101": ["Height"],
+      "N3059": []
+    },
+    "TAR_005_0_2_RIGHT": {
+      "TAR_005_0_0_RIGHT": [],
+      "TAR_005_0_3_RIGHT": ["Height"],
+      "N3012_Hard": [],
+      "N3101": ["Height"],
+      "N3059": []
+    },
+    "TAR_005_0_3_RIGHT": {
+      "TAR_005_0_0_RIGHT": [],
+      "TAR_005_0_2_RIGHT": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    }
+  },
+  "m14TAR_006": {
+    "TAR_006_0_0_LEFT": {
+      "Treasurebox_TAR006_1": ["Height"],
+      "N3099_Hard": ["Height"]
+    }
+  },
+  "m14TAR_007": {
+    "TAR_007_0_0_LEFT": {
+      "TAR_007_2_1_RIGHT": [],
+      "Treasurebox_TAR007_1": [],
+      "Wall_TAR007_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    },
+    "TAR_007_2_1_RIGHT": {
+      "TAR_007_0_0_LEFT": [],
+      "Treasurebox_TAR007_1": [],
+      "Wall_TAR007_1": [],
+      "N3012_Hard": [],
+      "N3101": [],
+      "N3059": []
+    }
+  },
+  "m14TAR_008": {
+    "TAR_008_0_0_LEFT": {
+      "TAR_008_1_0_RIGHT": [],
+      "N3087_Hard": [],
+      "N3059": [],
+      "N3113": []
+    },
+    "TAR_008_1_0_RIGHT": {
+      "TAR_008_0_0_LEFT": [],
+      "N3087_Hard": [],
+      "N3059": [],
+      "N3113": []
+    }
+  },
+  "m14TAR_009": {
+    "TAR_009_0_0_LEFT": {
+      "TAR_009_0_1_LEFT": [],
+      "TAR_009_0_3_LEFT": [],
+      "N3012_Hard": [],
+      "N3101": []
+    },
+    "TAR_009_0_1_LEFT": {
+      "TAR_009_0_0_LEFT": [],
+      "TAR_009_0_3_LEFT": [],
+      "N3012_Hard": [],
+      "N3101": []
+    },
+    "TAR_009_0_3_LEFT": {
+      "TAR_009_0_0_LEFT": [],
+      "TAR_009_0_1_LEFT": [],
+      "N3012_Hard": [],
+      "N3101": []
+    }
+  },
+  "m14TAR_010": {
+    "TAR_010_1_0_RIGHT": {
+      "Treasurebox_TAR010_1": [],
+      "N3059_Hard": [],
+      "N3113": []
+    }
+  },
+  "m15JPN_000": {
+    "JPN_000_0_0_BOTTOM": {
+      "JPN_000_0_2_RIGHT": [],
+      "N3035": []
+    },
+    "JPN_000_0_2_RIGHT": {
+      "JPN_000_0_0_BOTTOM": [],
+      "N3035": []
+    }
+  },
+  "m15JPN_001": {
+    "JPN_001_0_0_LEFT": {
+      "JPN_001_0_1_LEFT": [],
+      "JPN_001_0_1_TOP": ["Height"],
+      "N3035": []
+    },
+    "JPN_001_0_1_LEFT": {
+      "JPN_001_0_0_LEFT": [],
+      "JPN_001_0_1_TOP": ["Height"],
+      "N3035": []
+    },
+    "JPN_001_0_1_TOP": {
+      "JPN_001_0_0_LEFT": [],
+      "JPN_001_0_1_LEFT": [],
+      "N3035": []
+    }
+  },
+  "m15JPN_002": {
+    "JPN_002_0_1_TOP": {
+      "JPN_002_3_1_RIGHT": [],
+      "Treasurebox_JPN002_1": ["Dimensionshift"],
+      "Treasurebox_JPN002_2": [],
+      "N3035": [],
+      "N3054": [],
+      "N3074": []
+    },
+    "JPN_002_3_1_RIGHT": {
+      "JPN_002_0_1_TOP": [],
+      "Treasurebox_JPN002_1": ["Dimensionshift"],
+      "Treasurebox_JPN002_2": [],
+      "N3035": [],
+      "N3054": [],
+      "N3074": []
+    }
+  },
+  "m15JPN_003": {
+    "JPN_003_0_0_LEFT": {
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": ["Height"],
+      "JPN_003_1_3_TOP": ["Height"],
+      "N3020": []
+    },
+    "JPN_003_1_0_RIGHT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": ["Height"],
+      "JPN_003_1_3_TOP": ["Height"],
+      "N3020": []
+    },
+    "JPN_003_0_1_LEFT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_3_LEFT": ["Height"],
+      "JPN_003_1_3_TOP": ["Height"],
+      "N3020": []
+    },
+    "JPN_003_0_3_LEFT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_1_3_TOP": ["Height"],
+      "N3020": []
+    },
+    "JPN_003_1_3_TOP": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": ["Height"],
+      "N3020": []
+    }
+  },
+  "m15JPN_004": {
+    "JPN_004_0_0_RIGHT": {
+      "Treasurebox_JPN004_1": [],
+      "N3074": []
+    }
+  },
+  "m15JPN_005": {
+    "JPN_005_0_1_RIGHT": {
+      "Treasurebox_JPN005_1": [],
+      "N3035": [],
+      "N3054": []
+    }
+  },
+  "m15JPN_006": {
+    "JPN_006_0_0_LEFT": {
+      "JPN_006_0_0_RIGHT": []
+    },
+    "JPN_006_0_0_RIGHT": {
+      "JPN_006_0_0_LEFT": []
+    }
+  },
+  "m15JPN_007": {
+    "JPN_007_0_0_BOTTOM": {
+      "JPN_007_0_1_LEFT": ["Height"],
+      "N3054": ["Height"]
+    },
+    "JPN_007_0_1_LEFT": {
+      "JPN_007_0_0_BOTTOM": [],
+      "N3054": []
+    }
+  },
+  "m15JPN_008": {
+    "JPN_008_0_0_LEFT": {
+      "N3071": []
+    }
+  },
+  "m15JPN_009": {
+    "JPN_009_0_0_LEFT": {
+      "Treasurebox_JPN009_1": []
+    }
+  },
+  "m15JPN_010": {
+    "JPN_010_0_0_LEFT": {
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_0_1_LEFT": ["Height"],
+      "JPN_010_3_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_2": ["Height"],
+      "N3035": ["Height"],
+      "N3054": ["Height"],
+      "N3074": [],
+      "N3117": ["Height"],
+      "N3020": ["Height"]
+    },
+    "JPN_010_3_0_BOTTOM": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_0_1_LEFT": ["Height"],
+      "JPN_010_3_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_2": ["Height"],
+      "N3035": ["Height"],
+      "N3054": ["Height"],
+      "N3074": [],
+      "N3117": ["Height"],
+      "N3020": ["Height"]
+    },
+    "JPN_010_3_0_RIGHT": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_0_1_LEFT": ["Height"],
+      "JPN_010_3_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_2": ["Height"],
+      "N3035": ["Height"],
+      "N3054": ["Height"],
+      "N3074": [],
+      "N3117": ["Height"],
+      "N3020": ["Height"]
+    },
+    "JPN_010_0_1_LEFT": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_3_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_2": ["Height"],
+      "N3035": [],
+      "N3054": ["Height"],
+      "N3074": [],
+      "N3117": [],
+      "N3020": []
+    },
+    "JPN_010_3_1_RIGHT": {
+      "JPN_010_0_0_LEFT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "JPN_010_3_0_BOTTOM": ["Invert", "Dimensionshift", "Reflectionray"],
+      "JPN_010_3_0_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "JPN_010_0_1_LEFT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_JPN010_2": [],
+      "N3035": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3054": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3074": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3117": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3020": ["Invert", "Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m15JPN_011": {
+    "JPN_011_0_0_RIGHT": {
+      "JPN_011_0_1_RIGHT": ["Height"],
+      "JPN_011_0_2_LEFT": ["Height"],
+      "Wall_JPN011_1": [],
+      "N3054": [],
+      "N3020": []
+    },
+    "JPN_011_0_1_RIGHT": {
+      "JPN_011_0_0_RIGHT": [],
+      "JPN_011_0_2_LEFT": ["Height"],
+      "Wall_JPN011_1": [],
+      "N3054": [],
+      "N3020": []
+    },
+    "JPN_011_0_2_LEFT": {
+      "JPN_011_0_0_RIGHT": [],
+      "JPN_011_0_1_RIGHT": [],
+      "Wall_JPN011_1": [],
+      "N3054": [],
+      "N3020": []
+    }
+  },
+  "m15JPN_012": {
+    "JPN_012_0_0_LEFT": {
+      "JPN_012_3_0_RIGHT": ["Height"],
+      "N3117": [],
+      "N3020": []
+    },
+    "JPN_012_3_0_RIGHT": {
+      "JPN_012_0_0_LEFT": ["Height"],
+      "N3117": ["Height"],
+      "N3020": ["Height"]
+    }
+  },
+  "m15JPN_013": {
+    "JPN_013_0_0_LEFT": {
+      "JPN_013_0_2_LEFT": [],
+      "JPN_013_0_2_TOP": ["Height"],
+      "Treasurebox_JPN013_1": [],
+      "Wall_JPN013_1": [],
+      "N3035": []
+    },
+    "JPN_013_0_2_LEFT": {
+      "JPN_013_0_0_LEFT": [],
+      "JPN_013_0_2_TOP": ["Height"],
+      "Treasurebox_JPN013_1": [],
+      "Wall_JPN013_1": [],
+      "N3035": []
+    },
+    "JPN_013_0_2_TOP": {
+      "JPN_013_0_0_LEFT": [],
+      "JPN_013_0_2_LEFT": [],
+      "Treasurebox_JPN013_1": [],
+      "Wall_JPN013_1": [],
+      "N3035": []
+    }
+  },
+  "m15JPN_014": {
+    "JPN_014_0_0_LEFT": {
+      "JPN_014_3_0_RIGHT": [],
+      "N3020": []
+    },
+    "JPN_014_3_0_RIGHT": {
+      "JPN_014_0_0_LEFT": [],
+      "N3020": []
+    }
+  },
+  "m15JPN_015": {
+    "JPN_015_0_0_RIGHT": {
+      "JPN_015_0_1_LEFT": ["Height"],
+      "JPN_015_0_1_RIGHT": ["Height"],
+      "Treasurebox_JPN015_1": []
+    },
+    "JPN_015_0_1_LEFT": {
+      "JPN_015_0_0_RIGHT": [],
+      "JPN_015_0_1_RIGHT": [],
+      "Treasurebox_JPN015_1": []
+    },
+    "JPN_015_0_1_RIGHT": {
+      "JPN_015_0_0_RIGHT": [],
+      "JPN_015_0_1_LEFT": [],
+      "Treasurebox_JPN015_1": []
+    }
+  },
+  "m15JPN_016": {
+    "JPN_016_1_0_RIGHT": {
+      "Swordsman": [],
+      "N1011_STRONG": []
+    }
+  },
+  "m15JPN_017": {
+    "JPN_017_0_0_BOTTOM": {
+      "Treasurebox_JPN017_1": [],
+      "N3035": [],
+      "N3054": [],
+      "N3020": []
+    }
+  },
+  "m15JPN_018": {
+    "JPN_018_0_0_RIGHT": {
+      "Treasurebox_JPN018_1": []
+    }
+  },
+  "m88BKR_004": {
+    "BKR_004_0_0_RIGHT": {
+      "N3106_1ST_Treasure": ["Keyofbacker1"],
+      "N3106_2ND_Treasure": ["Keyofbacker1"],
+      "N3057": ["Keyofbacker1"],
+      "N3106": ["Keyofbacker1"]
+    }
+  },
+  "m17RVA_000": {
+    "RVA_000_0_0_RIGHT": {
+      "RVA_000_0_4_RIGHT": ["Height"],
+      "N3032": ["Height"]
+    },
+    "RVA_000_0_4_RIGHT": {
+      "RVA_000_0_0_RIGHT": [],
+      "N3032": []
+    }
+  },
+  "m17RVA_001": {
+    "RVA_001_1_0_RIGHT": {
+      "RVA_001_0_1_LEFT": ["Height"],
+      "Treasurebox_RVA001_1": ["Height"],
+      "Treasurebox_RVA001_2": ["Dimensionshift", ["Invert", "Reflectionray"]],
+      "N3032": ["Height"],
+      "N3119": [],
+      "N3123_Hard": [],
+      "N3086": []
+    },
+    "RVA_001_0_1_LEFT": {
+      "RVA_001_1_0_RIGHT": [],
+      "Treasurebox_RVA001_1": ["Height"],
+      "Treasurebox_RVA001_2": ["Dimensionshift", ["Invert", "Reflectionray"]],
+      "N3032": [],
+      "N3119": [],
+      "N3123_Hard": [],
+      "N3086": []
+    }
+  },
+  "m17RVA_002": {
+    "RVA_002_0_0_LEFT": {
+      "RVA_002_1_0_RIGHT": [],
+      "Treasurebox_RVA002_1": ["Height"],
+      "N3083": [],
+      "N3119": [],
+      "N3071": ["Height"]
+    },
+    "RVA_002_1_0_RIGHT": {
+      "RVA_002_0_0_LEFT": [],
+      "Treasurebox_RVA002_1": ["Height"],
+      "N3083": [],
+      "N3119": [],
+      "N3071": ["Height"]
+    }
+  },
+  "m17RVA_003": {
+    "RVA_003_0_0_LEFT": {
+      "RVA_003_1_0_RIGHT": ["Height"],
+      "RVA_003_1_2_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3083": ["Height"],
+      "N3032": ["Height"],
+      "N3119": ["Height"]
+    },
+    "RVA_003_1_0_RIGHT": {
+      "RVA_003_0_0_LEFT": ["Height"],
+      "RVA_003_1_2_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3083": ["Height"],
+      "N3032": [],
+      "N3119": []
+    },
+    "RVA_003_1_2_RIGHT": {
+      "RVA_003_0_0_LEFT": ["Height"],
+      "RVA_003_1_0_RIGHT": [],
+      "N3083": [],
+      "N3032": [],
+      "N3119": []
+    }
+  },
+  "m17RVA_004": {
+    "RVA_004_0_0_LEFT": {
+      "Treasurebox_RVA004_1": [],
+      "N3119_Hard": []
+    }
+  },
+  "m17RVA_005": {
+    "RVA_005_1_0_RIGHT": {
+      "RVA_005_0_1_LEFT": [],
+      "RVA_005_1_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3083": [],
+      "N3119": [],
+      "N3123": []
+    },
+    "RVA_005_0_1_LEFT": {
+      "RVA_005_1_0_RIGHT": [],
+      "RVA_005_1_1_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3083": [],
+      "N3119": [],
+      "N3123": []
+    },
+    "RVA_005_1_1_RIGHT": {
+      "RVA_005_1_0_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "RVA_005_0_1_LEFT": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3083": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3119": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N3123": ["Invert", "Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m17RVA_006": {
+    "RVA_006_0_0_LEFT": {
+      "Treasurebox_RVA006_1": []
+    }
+  },
+  "m17RVA_007": {
+    "RVA_007_0_0_LEFT": {
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_LEFT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "N3032": [],
+      "N3071": []
+    },
+    "RVA_007_0_0_RIGHT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_1_LEFT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "N3032": [],
+      "N3071": []
+    },
+    "RVA_007_0_1_LEFT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "N3032": [],
+      "N3071": []
+    },
+    "RVA_007_0_1_RIGHT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_LEFT": [],
+      "N3032": [],
+      "N3071": []
+    }
+  },
+  "m17RVA_008": {
+    "RVA_008_0_0_LEFT": {
+      "RVA_008_1_0_RIGHT": ["Height"],
+      "N2006": ["Height"]
+    },
+    "RVA_008_1_0_RIGHT": {
+      "RVA_008_0_0_LEFT": ["Height"],
+      "N2006": ["Height"]
+    }
+  },
+  "m17RVA_009": {
+    "RVA_009_0_0_LEFT": {
+      "RVA_009_0_1_LEFT": ["Flight", "Reflectionray"],
+      "RVA_009_0_2_RIGHT": ["Flight", "Reflectionray"],
+      "N3086": []
+    },
+    "RVA_009_0_1_LEFT": {
+      "RVA_009_0_0_LEFT": [],
+      "RVA_009_0_2_RIGHT": ["Flight", "Reflectionray"],
+      "N3086": []
+    },
+    "RVA_009_0_2_RIGHT": {
+      "RVA_009_0_0_LEFT": [],
+      "RVA_009_0_1_LEFT": [],
+      "N3086": []
+    }
+  },
+  "m17RVA_010": {
+    "RVA_010_0_0_RIGHT": {
+      "Treasurebox_RVA010_1": []
+    }
+  },
+  "m17RVA_011": {
+    "RVA_011_1_0_RIGHT": {
+      "RVA_011_0_2_LEFT": ["Flight"],
+      "Treasurebox_RVA011_1": ["Flight"],
+      "Treasurebox_RVA011_2": ["Flight", "Reflectionray"],
+      "Wall_RVA011_1": [],
+      "N3119_Hard": ["Flight", "Reflectionray"],
+      "N3123_Hard": [],
+      "N3086": []
+    },
+    "RVA_011_0_2_LEFT": {
+      "RVA_011_1_0_RIGHT": [],
+      "Treasurebox_RVA011_1": ["Height"],
+      "Treasurebox_RVA011_2": ["Flight", "Reflectionray"],
+      "Wall_RVA011_1": [],
+      "N3119_Hard": ["Flight", "Reflectionray"],
+      "N3123_Hard": [],
+      "N3086": []
+    }
+  },
+  "m17RVA_012": {
+    "RVA_012_0_0_LEFT": {
+      "RVA_012_2_0_RIGHT": [],
+      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N2009": [],
+      "N3119_Hard": [],
+      "N3123": []
+    },
+    "RVA_012_2_0_RIGHT": {
+      "RVA_012_0_0_LEFT": [],
+      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "N2009": [],
+      "N3119_Hard": [],
+      "N3123": []
+    }
+  },
+  "m17RVA_013": {
+    "RVA_013_0_0_LEFT": {
+      "RVA_013_0_2_RIGHT": ["Height"],
+      "N3083": [],
+      "N3119": []
+    },
+    "RVA_013_0_2_RIGHT": {
+      "RVA_013_0_0_LEFT": [],
+      "N3083": [],
+      "N3119": []
+    }
+  },
+  "m17RVA_014": {
+    "RVA_014_0_0_LEFT": {
+      "RVA_014_0_0_RIGHT": [],
+      "RVA_014_0_4_RIGHT": ["Flight"]
+    },
+    "RVA_014_0_0_RIGHT": {
+      "RVA_014_0_0_LEFT": [],
+      "RVA_014_0_4_RIGHT": ["Flight"]
+    },
+    "RVA_014_0_4_RIGHT": {
+      "RVA_014_0_0_LEFT": [],
+      "RVA_014_0_0_RIGHT": []
+    }
+  },
+  "m17RVA_015": {
+    "RVA_015_0_0_LEFT": {
+      "Treasurebox_RVA015_1": []
+    }
+  },
+  "m18ICE_000": {
+    "ICE_000_0_0_LEFT": {
+      "ICE_000_0_0_RIGHT": []
+    },
+    "ICE_000_0_0_RIGHT": {
+      "ICE_000_0_0_LEFT": []
+    }
+  },
+  "m18ICE_001": {
+    "ICE_001_1_0_RIGHT": {
+      "ICE_001_0_1_LEFT": [],
+      "Treasurebox_ICE001_1": [],
+      "Treasurebox_ICE001_2": ["Height", "Accelerator"],
+      "N3031": [],
+      "N3057_Hard": []
+    },
+    "ICE_001_0_1_LEFT": {
+      "ICE_001_1_0_RIGHT": [],
+      "Treasurebox_ICE001_1": [],
+      "Treasurebox_ICE001_2": ["Height", "Accelerator"],
+      "N3031": [],
+      "N3057_Hard": []
+    }
+  },
+  "m18ICE_002": {
+    "ICE_002_0_0_BOTTOM": {
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_1_LEFT": [],
+      "ICE_002_0_5_LEFT": [],
+      "Treasurebox_ICE002_1": [],
+      "N3031": []
+    },
+    "ICE_002_0_0_RIGHT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_1_LEFT": [],
+      "ICE_002_0_5_LEFT": [],
+      "Treasurebox_ICE002_1": [],
+      "N3031": []
+    },
+    "ICE_002_0_1_LEFT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_5_LEFT": [],
+      "Treasurebox_ICE002_1": [],
+      "N3031": []
+    },
+    "ICE_002_0_5_LEFT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_1_LEFT": [],
+      "Treasurebox_ICE002_1": [],
+      "N3031": []
+    }
+  },
+  "m18ICE_003": {
+    "ICE_003_0_0_TOP": {
+      "Treasurebox_ICE003_1": [],
+      "Treasurebox_ICE003_2": [],
+      "Wall_ICE003_1": []
+    }
+  },
+  "m18ICE_004": {
+    "ICE_004_0_0_LEFT": {
+      "ICE_004_0_0_RIGHT": [],
+      "N2012": ["Doublejump"]
+    },
+    "ICE_004_0_0_RIGHT": {
+      "ICE_004_0_0_LEFT": [],
+      "N2012": ["Doublejump"]
+    }
+  },
+  "m18ICE_005": {
+    "ICE_005_0_0_BOTTOM": {
+      "ICE_005_0_2_LEFT": [],
+      "ICE_005_0_2_RIGHT": [],
+      "N3031": [],
+      "N3057": []
+    },
+    "ICE_005_0_2_LEFT": {
+      "ICE_005_0_0_BOTTOM": [],
+      "ICE_005_0_2_RIGHT": [],
+      "N3031": [],
+      "N3057": []
+    },
+    "ICE_005_0_2_RIGHT": {
+      "ICE_005_0_0_BOTTOM": [],
+      "ICE_005_0_2_LEFT": [],
+      "N3031": [],
+      "N3057": []
+    }
+  },
+  "m18ICE_006": {
+    "ICE_006_0_0_TOP": {
+      "Treasurebox_ICE006_1": []
+    }
+  },
+  "m18ICE_007": {
+    "ICE_007_0_0_LEFT": {
+      "ICE_007_2_0_RIGHT": [],
+      "N3088_Hard": [],
+      "N3018": [],
+      "N3120": []
+    },
+    "ICE_007_2_0_RIGHT": {
+      "ICE_007_0_0_LEFT": [],
+      "N3088_Hard": [],
+      "N3018": [],
+      "N3120": []
+    }
+  },
+  "m18ICE_008": {
+    "ICE_008_0_0_BOTTOM": {
+      "ICE_008_0_1_LEFT": ["Height"],
+      "Treasurebox_ICE008_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_ICE008_2": [],
+      "N3031": [],
+      "N3120": [],
+      "N3057": []
+    },
+    "ICE_008_0_1_LEFT": {
+      "ICE_008_0_0_BOTTOM": [],
+      "Treasurebox_ICE008_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_ICE008_2": [],
+      "N3031": [],
+      "N3120": [],
+      "N3057": []
+    }
+  },
+  "m18ICE_009": {
+    "ICE_009_0_0_TOP": {
+      "ICE_009_1_0_RIGHT": [],
+      "N3088": []
+    },
+    "ICE_009_1_0_RIGHT": {
+      "ICE_009_0_0_TOP": ["Flight", "Reflectionray"],
+      "N3088": []
+    }
+  },
+  "m18ICE_010": {
+    "ICE_010_0_0_LEFT": {
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_LEFT": [],
+      "ICE_010_0_2_RIGHT": [],
+      "Treasurebox_ICE010_1": [],
+      "Wall_ICE010_1": [],
+      "N3031": []
+    },
+    "ICE_010_0_0_BOTTOM": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_2_LEFT": [],
+      "ICE_010_0_2_RIGHT": [],
+      "Treasurebox_ICE010_1": [],
+      "Wall_ICE010_1": [],
+      "N3031": []
+    },
+    "ICE_010_0_2_LEFT": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_RIGHT": [],
+      "Treasurebox_ICE010_1": [],
+      "Wall_ICE010_1": [],
+      "N3031": []
+    },
+    "ICE_010_0_2_RIGHT": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_LEFT": [],
+      "Treasurebox_ICE010_1": [],
+      "Wall_ICE010_1": [],
+      "N3031": []
+    }
+  },
+  "m18ICE_011": {
+    "ICE_011_0_0_TOP": {
+      "Treasurebox_ICE011_1": []
+    }
+  },
+  "m18ICE_012": {
+    "ICE_012_0_0_LEFT": {
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": ["Height"],
+      "ICE_012_0_2_RIGHT": ["Height"],
+      "N3031": ["Height"]
+    },
+    "ICE_012_0_0_RIGHT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": ["Height"],
+      "ICE_012_0_2_RIGHT": ["Height"],
+      "N3031": ["Height"]
+    },
+    "ICE_012_0_1_LEFT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_2_LEFT": ["Height"],
+      "ICE_012_0_2_RIGHT": ["Height"],
+      "N3031": ["Height"]
+    },
+    "ICE_012_0_2_LEFT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_RIGHT": [],
+      "N3031": []
+    },
+    "ICE_012_0_2_RIGHT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": [],
+      "N3031": []
+    }
+  },
+  "m18ICE_013": {
+    "ICE_013_0_0_RIGHT": {
+      "Treasurebox_ICE013_1": [],
+      "N3018": []
+    }
+  },
+  "m18ICE_014": {
+    "ICE_014_1_0_RIGHT": {
+      "Treasurebox_ICE014_1": [],
+      "N3018": [],
+      "N3120": [],
+      "N3057": []
+    }
+  },
+  "m18ICE_015": {
+    "ICE_015_0_0_LEFT": {
+      "ICE_015_1_0_RIGHT": ["Dimensionshift"]
+    },
+    "ICE_015_1_0_RIGHT": {
+      "ICE_015_0_0_LEFT": ["Dimensionshift"]
+    }
+  },
+  "m18ICE_016": {
+    "ICE_016_0_0_BOTTOM": {
+      "ICE_016_0_1_RIGHT": ["Dimensionshift", "Reflectionray"]
+    },
+    "ICE_016_0_1_RIGHT": {
+      "ICE_016_0_0_BOTTOM": ["Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m18ICE_017": {
+    "ICE_017_0_0_LEFT": {
+      "ICE_017_0_0_RIGHT": [],
+      "ICE_017_0_2_TOP": [],
+      "Wall_ICE017_1": []
+    },
+    "ICE_017_0_0_RIGHT": {
+      "ICE_017_0_0_LEFT": [],
+      "ICE_017_0_2_TOP": [],
+      "Wall_ICE017_1": []
+    },
+    "ICE_017_0_2_TOP": {
+      "ICE_017_0_0_LEFT": [],
+      "ICE_017_0_0_RIGHT": [],
+      "Wall_ICE017_1": []
+    }
+  },
+  "m18ICE_018": {
+    "ICE_018_1_0_RIGHT": {
+      "N1008": ["Invert", "Dimensionshift", "Reflectionray"]
+    }
+  },
+  "m18ICE_019": {
+    "ICE_019_1_0_RIGHT": {
+	  "TO_LBP_000_START": [],
+      "N1009_Enemy": []
+    }
+  },
+  "m19K2C_000": {
+    "K2C_000_START": {
+      "FamiliaArcher": [],
+      "N2016": [],
+      "N3125": [],
+      "N3077": []
+    }
+  },
+  "m20JRN_000": {
+    "JRN_000_START": {
+      "JRN_000_9_0_RIGHT": ["Flight"],
+      "N3033": ["Flight"],
+      "N3032": ["Flight"],
+      "N3126": ["Flight"],
+      "N3127": []
+    },
+    "JRN_000_9_0_RIGHT": {
+      "N3033": ["Flight"],
+      "N3032": ["Flight"],
+      "N3126": ["Flight"],
+      "N3127": ["Flight"]
+    }
+  },
+  "m20JRN_001": {
+    "JRN_001_0_6_LEFT": {
+      "JRN_001_6_4_RIGHT": ["Flight"],
+      "Treasurebox_JRN001_1": ["Dimensionshift", "Reflectionray"],
+      "Treasurebox_JRN001_2": ["Flight", "Reflectionray"],
+      "Treasurebox_JRN001_3": ["Flight"],
+      "N3033": ["Flight"],
+      "N3102": ["Flight"],
+      "N3101": ["Flight"],
+      "N3031": ["Flight"],
+      "N3126": [],
+      "N3127": ["Height"]
+    },
+    "JRN_001_6_4_RIGHT": {
+      "JRN_001_0_6_LEFT": ["Flight"],
+      "Treasurebox_JRN001_1": ["Dimensionshift", ["Flight", "Reflectionray"]],
+      "Treasurebox_JRN001_2": ["Flight", "Reflectionray"],
+      "Treasurebox_JRN001_3": ["Flight"],
+      "N3033": ["Flight"],
+      "N3102": ["Flight"],
+      "N3101": ["Flight"],
+      "N3031": ["Flight"],
+      "N3126": [],
+      "N3127": []
+    }
+  },
+  "m20JRN_002": {
+    "JRN_002_0_0_LEFT": {
+      "JRN_002_2_3_RIGHT": ["Flight"],
+      "Treasurebox_JRN002_1": [],
+      "N3126": []
+    },
+    "JRN_002_2_3_RIGHT": {
+      "JRN_002_0_0_LEFT": [],
+      "Treasurebox_JRN002_1": [],
+      "N3126": []
+    }
+  },
+  "m20JRN_003": {
+    "JRN_003_0_0_LEFT": {
+      "JRN_003_2_0_RIGHT": [],
+      "N2017": []
+    },
+    "JRN_003_2_0_RIGHT": {
+      "JRN_003_0_0_LEFT": [],
+      "N2017": []
+    }
+  },
+  "m20JRN_004": {
+    "JRN_004_0_0_LEFT": {
+      "Treasurebox_JRN004_1": []
+    }
+  },
+  "m51EBT_000": {
+    "EBT_000_START": {
+      "N3121": [],
+      "N3122": [],
+      "N3124": [],
+      "N2015": ["Doublejump", "Dimensionshift"]
+    }
+  },
+  "m77LBP_000": {
+    "LBP_000_START": {
+      "N1013_Bael": []
+    }
+  }
+}

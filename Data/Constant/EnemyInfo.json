@@ -1,0 +1,842 @@
+{
+  "N3003": {
+    "AreaID": "m01SIP",
+    "HasShard": false,
+    "Type": "Spawner",
+    "Weight": 3
+  },
+  "N3005": {
+    "AreaID": "m01SIP",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3006": {
+    "AreaID": "m01SIP",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 4
+  },
+  "N3007": {
+    "AreaID": "m01SIP",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3013": {
+    "AreaID": "m03ENT",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3015": {
+    "AreaID": "m01SIP",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3051": {
+    "AreaID": "m02VIL",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3004": {
+    "AreaID": "m02VIL",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3029": {
+    "AreaID": "m02VIL",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 1
+  },
+  "N3073": {
+    "AreaID": "m03ENT",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3105": {
+    "AreaID": "m03ENT",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3080": {
+    "AreaID": "m03ENT",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3066": {
+    "AreaID": "m04GDN",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 1
+  },
+  "N3042": {
+    "AreaID": "m04GDN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 1
+  },
+  "N3065": {
+    "AreaID": "m04GDN",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3011": {
+    "AreaID": "m04GDN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3091": {
+    "AreaID": "m04GDN_1",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3034": {
+    "AreaID": "m04GDN_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 2
+  },
+  "N3075": {
+    "AreaID": "m04GDN_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3100": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3104": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3053": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3079": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3055": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 4
+  },
+  "N3001": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3116": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3082": {
+    "AreaID": "m08TWR",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 3
+  },
+  "N3090": {
+    "AreaID": "m08TWR_1",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 4
+  },
+  "N3084": {
+    "AreaID": "m08TWR",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N2002": {
+    "AreaID": "m08TWR",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3033": {
+    "AreaID": "m07LIB",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3017": {
+    "AreaID": "m07LIB",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3063": {
+    "AreaID": "m07LIB",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3103": {
+    "AreaID": "m07LIB",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3064": {
+    "AreaID": "m11UGD_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3010": {
+    "AreaID": "m11UGD_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3099": {
+    "AreaID": "m07LIB_1",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 4
+  },
+  "N3008": {
+    "AreaID": "m08TWR_1",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3111": {
+    "AreaID": "m08TWR_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3114": {
+    "AreaID": "m13ARC",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3058": {
+    "AreaID": "m09TRN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3019": {
+    "AreaID": "m09TRN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N2009": {
+    "AreaID": "m07LIB_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3025": {
+    "AreaID": "m09TRN",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3043": {
+    "AreaID": "m08TWR_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 1
+  },
+  "N3092": {
+    "AreaID": "m13ARC",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3024": {
+    "AreaID": "m13ARC",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3070": {
+    "AreaID": "m13ARC",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3102": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3009": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3087": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 4
+  },
+  "N3072": {
+    "AreaID": "m07LIB_1",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3012": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3052": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3085": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3109": {
+    "AreaID": "m07LIB_1",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3037": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3077": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3093": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3110": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3098": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 2
+  },
+  "N3078": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3022": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3044": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 1
+  },
+  "N3076": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3089": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3056": {
+    "AreaID": "m11UGD",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 4
+  },
+  "N3014": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3002": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3112": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N2010": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3115": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3101": {
+    "AreaID": "m14TAR",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3059": {
+    "AreaID": "m14TAR",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3113": {
+    "AreaID": "m14TAR",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3083": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3032": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3119": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3123": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3086": {
+    "AreaID": "m12SND",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3071": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3035": {
+    "AreaID": "m15JPN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 2
+  },
+  "N3054": {
+    "AreaID": "m15JPN",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3074": {
+    "AreaID": "m15JPN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3117": {
+    "AreaID": "m15JPN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3020": {
+    "AreaID": "m15JPN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3067": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 4
+  },
+  "N3030": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3045": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 2
+  },
+  "N3016": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3023": {
+    "AreaID": "m10BIG",
+    "HasShard": false,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3028": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3038": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3081": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N2003": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N2008": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3021": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3031": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 3
+  },
+  "N3088": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3018": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N3120": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N3057": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 4
+  },
+  "N3121": {
+    "AreaID": "m51EBT",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 4
+  },
+  "N3122": {
+    "AreaID": "m51EBT",
+    "HasShard": true,
+    "Type": "Air",
+    "Weight": 2
+  },
+  "N3124": {
+    "AreaID": "m51EBT",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 3
+  },
+  "N2015": {
+    "AreaID": "m51EBT",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3125": {
+    "AreaID": "m19K2C",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2016": {
+    "AreaID": "m19K2C",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3126": {
+    "AreaID": "m20JRN",
+    "HasShard": true,
+    "Type": "Spawner",
+    "Weight": 4
+  },
+  "N3127": {
+    "AreaID": "m20JRN",
+    "HasShard": true,
+    "Type": "Ground",
+    "Weight": 4
+  },
+  "N2017": {
+    "AreaID": "m20JRN",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3106": {
+    "AreaID": "m88BKR",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3107": {
+    "AreaID": "m88BKR",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N3108": {
+    "AreaID": "m88BKR",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1001": {
+    "AreaID": "m01SIP",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1011": {
+    "AreaID": "m03ENT",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1003": {
+    "AreaID": "m05SAN",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2004": {
+    "AreaID": "m07LIB",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1005": {
+    "AreaID": "m08TWR_1",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2001": {
+    "AreaID": "m09TRN",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1006": {
+    "AreaID": "m13ARC",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1012": {
+    "AreaID": "m06KNG",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1002": {
+    "AreaID": "m05SAN_1",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2014": {
+    "AreaID": "m12SND",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2007": {
+    "AreaID": "m14TAR",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2006": {
+    "AreaID": "m17RVA",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1011_STRONG": {
+    "AreaID": "m15JPN",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1004": {
+    "AreaID": "m10BIG",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1008": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1009_Enemy": {
+    "AreaID": "m18ICE",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N1013_Bael": {
+    "AreaID": "m77LBP",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2012": {
+    "AreaID": "m18ICE",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N2013": {
+    "AreaID": "m06KNG",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "N0000": {
+    "AreaID": "m06KNG",
+    "HasShard": false,
+    "Type": "None",
+    "Weight": 0
+  },
+  "Shortcut": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "Deepsinker": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "FamiliaSilverKnight": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "FamiliaArcher": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "Aquastream": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  },
+  "FamiliaIgniculus": {
+    "AreaID": "None",
+    "HasShard": true,
+    "Type": "None",
+    "Weight": 0
+  }
+}

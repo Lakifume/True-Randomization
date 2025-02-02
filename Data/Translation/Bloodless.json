@@ -1,0 +1,20 @@
+{
+  "BLD_ABILITY_HIGH_JUMP":           "Blood of Flight",
+  "BLD_ABILITY_WATER_PROTECT":       "Water Demon's Blood",
+  "BLD_ABILITY_BLOOD_STEAL":         "Blood Steal",
+  "BLD_ABILITY_SOUL_STEAL": 		 "Vampiric Blood",
+  "BLD_ABILITY_FLOATING_UP": 		 "Wind Demon's Blood",
+  "BLD_ABILITY_UMBRELLA_CHARGE": 	 "Charged Umbrella",
+  "BLD_ABILITY_GUILLOTINE_UMBRELLA": "Guillotine Umbrella",
+  "BLD_ABILITY_UMBRELLA_TOSS": 		 "Umbrella Toss",
+  "BLD_ABILITY_SCARLET_THRUST":      "Scarlet Thrust",
+  "BLD_ABILITY_BLOOD_PILLAR":        "Blood Pillar",
+  "BLD_ABILITY_SCARLET_CYCLONE":     "Scarlet Cyclone",
+  "BLD_ABILITY_BLOOD_RAIN":          "Blood Rain",
+  "BLD_ABILITY_STR_UP": 		     "Blood of Brutality",
+  "BLD_ABILITY_INT_UP": 		     "Blood of Erudition",
+  "BLD_ABILITY_CON_UP": 		     "Blood of Tenacity",
+  "BLD_ABILITY_MND_UP": 		     "Blood of Faith",
+  "BLD_ABILITY_LCK_UP": 		     "Blood of Fortune",
+  "BLD_ABILITY_MP_REGEN_UP":         "Arcane Blood"
+}

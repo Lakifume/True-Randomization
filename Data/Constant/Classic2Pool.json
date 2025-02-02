@@ -1,0 +1,65 @@
+{
+  "AbilityShard": [
+    "BACKSTEP",
+    "DOUBLEJUMP",
+    "STOMP",
+    "ACCELERATOR",
+    "BLOCKBREAKER",
+    "CREATEPLATFORMS",
+    "DIMENSIONSHIFT"
+  ],
+  "PassiveShard": [
+    "SHIELD",
+    "DEEPSINKER",
+    "DETECTIVESEYE"
+  ],
+  "AttackShard": [
+    "DAGGER",
+    "BONEARC",
+    "UNHOLYFIRE",
+    "RUINOUSROOD",
+    "TIMESHARD",
+    "RIGADOHIN",
+    "VAISCHA",
+    "DANTALION"
+  ],
+  "KeyItem": [
+    "OMURICE",
+    "FANCYBAG",
+    "DEVILSRING"
+  ],
+  "Consumable": [
+    "HEALTHRESTORE",
+    "MANARESTORE",
+    "OFUDACHARM",
+    "EFFIGY",
+    "PLUNDERERSRING",
+    "EYEOFHORUS",
+    "WAYSTONE"
+  ],
+  "ShopItem": [
+    "MAX_HP_UP_1",
+    "MAX_HP_UP_2",
+    "MAX_HP_UP_3",
+    "MAX_HP_UP_4",
+    "MAX_HP_UP_5",
+    "MAX_MP_UP_1",
+    "MAX_MP_UP_2",
+    "MAX_MP_UP_3",
+    "MAX_MP_UP_4",
+    "MAX_MP_UP_5",
+    "MAX_MP_UP_6",
+    "MAX_MP_UP_7"
+  ],
+  "ShopOnly": [
+    "RNG_UP_1",
+    "RNG_UP_2",
+    "RNG_UP_3",
+    "RNG_UP_4",
+    "ATK_UP_1",
+    "ATK_UP_2",
+    "ATK_UP_3",
+    "ATK_UP_4",
+    "ATK_UP_5"
+  ]
+}

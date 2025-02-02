@@ -1,0 +1,4183 @@
+{
+  "m01SIP_000": {
+    "SIP_000_1_0_RIGHT_BOTTOM": {
+      "Candle_SIP000_1": []
+    }
+  },
+  "m01SIP_001": {
+    "SIP_001_0_0_TOP": {
+      "SIP_001_0_0_LEFT_BOTTOM": [],
+      "SIP_001_2_0_TOP": []
+    },
+    "SIP_001_0_0_LEFT_BOTTOM": {
+      "SIP_001_0_0_TOP": [],
+      "SIP_001_2_0_TOP": []
+    },
+    "SIP_001_2_0_TOP": {
+      "SIP_001_0_0_TOP": [],
+      "SIP_001_0_0_LEFT_BOTTOM": []
+    }
+  },
+  "m01SIP_002": {
+    "SIP_002_0_0_BOTTOM": {
+      "SIP_002_0_0_RIGHT": []
+    },
+    "SIP_002_0_0_RIGHT": {
+      "SIP_002_0_0_BOTTOM": []
+    }
+  },
+  "m01SIP_003": {
+    "SIP_003_0_0_LEFT": {
+      "SIP_003_2_0_BOTTOM": [],
+      "SIP_003_0_1_LEFT": []
+    },
+    "SIP_003_2_0_BOTTOM": {
+      "SIP_003_0_0_LEFT": [],
+      "SIP_003_0_1_LEFT": []
+    },
+    "SIP_003_0_1_LEFT": {
+      "SIP_003_0_0_LEFT": [],
+      "SIP_003_2_0_BOTTOM": []
+    }
+  },
+  "m01SIP_004": {
+    "SIP_004_1_0_RIGHT": {}
+  },
+  "m01SIP_005": {
+    "SIP_005_2_0_TOP": {
+      "SIP_005_3_0_BOTTOM": [],
+      "SIP_005_3_0_RIGHT": []
+    },
+    "SIP_005_3_0_BOTTOM": {
+      "SIP_005_2_0_TOP": [],
+      "SIP_005_3_0_RIGHT": []
+    },
+    "SIP_005_3_0_RIGHT": {
+      "SIP_005_2_0_TOP": [],
+      "SIP_005_3_0_BOTTOM": []
+    }
+  },
+  "m01SIP_006": {
+    "SIP_006_0_0_LEFT_BOTTOM": {
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": []
+    },
+    "SIP_006_0_0_RIGHT_BOTTOM": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": []
+    },
+    "SIP_006_0_2_LEFT": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_RIGHT": [],
+      "SIP_006_0_2_TOP": []
+    },
+    "SIP_006_0_2_RIGHT": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_TOP": []
+    },
+    "SIP_006_0_2_TOP": {
+      "SIP_006_0_0_LEFT_BOTTOM": [],
+      "SIP_006_0_0_RIGHT_BOTTOM": [],
+      "SIP_006_0_2_LEFT": [],
+      "SIP_006_0_2_RIGHT": []
+    }
+  },
+  "m01SIP_007": {
+    "SIP_007_0_0_RIGHT_BOTTOM": {
+      "Candle_SIP007_1": []
+    }
+  },
+  "m01SIP_008": {
+    "SIP_008_0_0_LEFT": {
+      "SIP_008_4_0_RIGHT": []
+    },
+    "SIP_008_4_0_RIGHT": {
+      "SIP_008_0_0_LEFT": []
+    }
+  },
+  "m01SIP_009": {
+    "SIP_009_0_0_RIGHT": {
+      "SIP_009_0_2_RIGHT": []
+    },
+    "SIP_009_0_2_RIGHT": {
+      "SIP_009_0_0_RIGHT": []
+    }
+  },
+  "m01SIP_010": {
+    "SIP_010_0_0_RIGHT": {
+      "SIP_010_0_2_LEFT": []
+    },
+    "SIP_010_0_2_LEFT": {
+      "SIP_010_0_0_RIGHT": []
+    }
+  },
+  "m01SIP_011": {
+    "SIP_011_0_0_LEFT": {
+      "SIP_011_3_0_RIGHT": []
+    },
+    "SIP_011_3_0_RIGHT": {
+      "SIP_011_0_0_LEFT": []
+    }
+  },
+  "m01SIP_012": {
+    "SIP_012_0_0_LEFT": {
+      "SIP_012_0_0_RIGHT": [],
+      "SIP_012_0_1_RIGHT": []
+    },
+    "SIP_012_0_0_RIGHT": {
+      "SIP_012_0_0_LEFT": [],
+      "SIP_012_0_1_RIGHT": []
+    },
+    "SIP_012_0_1_RIGHT": {
+      "SIP_012_0_0_LEFT": [],
+      "SIP_012_0_0_RIGHT": []
+    }
+  },
+  "m01SIP_013": {
+    "SIP_013_0_0_LEFT": {
+      "SIP_013_0_0_RIGHT": []
+    },
+    "SIP_013_0_0_RIGHT": {
+      "SIP_013_0_0_LEFT": []
+    }
+  },
+  "m01SIP_014": {
+    "SIP_014_1_0_RIGHT": {
+      "SIP_014_0_1_LEFT": []
+    },
+    "SIP_014_0_1_LEFT": {
+      "SIP_014_1_0_RIGHT": []
+    }
+  },
+  "m01SIP_015": {
+    "SIP_015_0_0_LEFT": {
+      "SIP_015_0_2_RIGHT": []
+    },
+    "SIP_015_0_2_RIGHT": {
+      "SIP_015_0_0_LEFT": []
+    }
+  },
+  "m01SIP_016": {
+    "SIP_016_0_0_LEFT": {
+      "SIP_016_0_2_LEFT": []
+    },
+    "SIP_016_0_2_LEFT": {
+      "SIP_016_0_0_LEFT": []
+    }
+  },
+  "m01SIP_017": {
+    "SIP_017_0_0_LEFT": {
+      "SIP_017_1_0_TOP": [],
+      "SIP_017_3_0_RIGHT": []
+    },
+    "SIP_017_1_0_TOP": {
+      "SIP_017_0_0_LEFT": [],
+      "SIP_017_3_0_RIGHT": []
+    },
+    "SIP_017_3_0_RIGHT": {
+      "SIP_017_0_0_LEFT": [],
+      "SIP_017_1_0_TOP": []
+    }
+  },
+  "m01SIP_018": {
+    "SIP_018_0_0_BOTTOM": {
+      "SIP_018_0_0_TOP": []
+    },
+    "SIP_018_0_0_TOP": {
+      "SIP_018_0_0_BOTTOM": []
+    }
+  },
+  "m01SIP_019": {
+    "SIP_019_1_0_BOTTOM": {
+      "SIP_019_2_0_RIGHT": [],
+      "SIP_019_2_1_RIGHT": []
+    },
+    "SIP_019_2_0_RIGHT": {
+      "SIP_019_1_0_BOTTOM": [],
+      "SIP_019_2_1_RIGHT": []
+    },
+    "SIP_019_2_1_RIGHT": {
+      "SIP_019_1_0_BOTTOM": [],
+      "SIP_019_2_0_RIGHT": []
+    }
+  },
+  "m01SIP_020": {
+    "SIP_020_0_0_LEFT": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_BOTTOM": [],
+      "SIP_020_0_0_RIGHT": []
+    },
+    "SIP_020_0_0_BOTTOM": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_LEFT": [],
+      "SIP_020_0_0_RIGHT": []
+    },
+    "SIP_020_0_0_RIGHT": {
+      "TO_SIP_022_0_0_LEFT": [],
+      "SIP_020_0_0_LEFT": [],
+      "SIP_020_0_0_BOTTOM": []
+    }
+  },
+  "m01SIP_021": {
+    "SIP_021_1_0_RIGHT": {
+      "SIP_021_1_0_TOP": []
+    },
+    "SIP_021_1_0_TOP": {
+      "SIP_021_1_0_RIGHT": []
+    }
+  },
+  "m01SIP_022": {
+    "SIP_022_0_0_LEFT": {
+      "TO_VIL_000_START": [],
+      "N1001": []
+    }
+  },
+  "m01SIP_023": {
+    "SIP_023_0_0_LEFT_BOTTOM": {
+      "SIP_023_1_0_BOTTOM": [],
+      "SIP_023_1_0_RIGHT": []
+    },
+    "SIP_023_1_0_BOTTOM": {
+      "SIP_023_0_0_LEFT_BOTTOM": [],
+      "SIP_023_1_0_RIGHT": []
+    },
+    "SIP_023_1_0_RIGHT": {
+      "SIP_023_0_0_LEFT_BOTTOM": [],
+      "SIP_023_1_0_BOTTOM": []
+    }
+  },
+  "m01SIP_024": {
+    "SIP_024_0_0_RIGHT_BOTTOM": {}
+  },
+  "m01SIP_025": {
+    "SIP_025_0_0_LEFT_BOTTOM": {}
+  },
+  "m01SIP_026": {
+    "SIP_026_0_0_LEFT": {
+      "Candle_SIP026_1": []
+    }
+  },
+  "m02VIL_000": {
+    "VIL_000_START": {
+      "VIL_000_0_0_LEFT": [],
+      "VIL_000_1_0_RIGHT": []
+    },
+    "VIL_000_0_0_LEFT": {
+      "VIL_000_1_0_RIGHT": []
+    },
+    "VIL_000_1_0_RIGHT": {
+      "VIL_000_0_0_LEFT": []
+    }
+  },
+  "m02VIL_001": {
+    "VIL_001_0_0_LEFT": {
+      "VIL_001_2_0_RIGHT": []
+    },
+    "VIL_001_2_0_RIGHT": {
+      "VIL_001_0_0_LEFT": []
+    }
+  },
+  "m02VIL_002": {
+    "VIL_002_0_0_LEFT": {
+      "VIL_002_1_0_RIGHT": []
+    },
+    "VIL_002_1_0_RIGHT": {
+      "VIL_002_0_0_LEFT": []
+    }
+  },
+  "m02VIL_003": {
+    "VIL_003_0_0_LEFT_BOTTOM": {
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": [],
+      "VIL_003_0_1_RIGHT": []
+    },
+    "VIL_003_0_0_RIGHT_BOTTOM": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": [],
+      "VIL_003_0_1_RIGHT": []
+    },
+    "VIL_003_0_1_LEFT": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_RIGHT": []
+    },
+    "VIL_003_0_1_RIGHT": {
+      "VIL_003_0_0_LEFT_BOTTOM": [],
+      "VIL_003_0_0_RIGHT_BOTTOM": [],
+      "VIL_003_0_1_LEFT": []
+    }
+  },
+  "m02VIL_004": {
+    "VIL_004_1_0_RIGHT_BOTTOM": {
+      "Candle_VIL004_1": []
+    }
+  },
+  "m02VIL_005": {
+    "VIL_005_0_0_RIGHT": {
+      "VIL_005_0_0_LEFT_BOTTOM": [],
+      "Candle_VIL005_1": []
+    },
+    "VIL_005_0_0_LEFT_BOTTOM": {
+      "VIL_005_0_0_RIGHT": [],
+      "Candle_VIL005_1": []
+    }
+  },
+  "m02VIL_006": {
+    "VIL_006_0_0_LEFT": {
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": [],
+      "VIL_006_0_1_LEFT": []
+    },
+    "VIL_006_3_0_BOTTOM": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": [],
+      "VIL_006_0_1_LEFT": []
+    },
+    "VIL_006_4_0_RIGHT_BOTTOM": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_0_1_LEFT": []
+    },
+    "VIL_006_0_1_LEFT": {
+      "VIL_006_0_0_LEFT": [],
+      "VIL_006_3_0_BOTTOM": [],
+      "VIL_006_4_0_RIGHT_BOTTOM": []
+    }
+  },
+  "m02VIL_007": {
+    "VIL_007_0_0_LEFT_BOTTOM": {
+      "VIL_007_0_0_RIGHT_BOTTOM": []
+    },
+    "VIL_007_0_0_RIGHT_BOTTOM": {
+      "VIL_007_0_0_LEFT_BOTTOM": []
+    }
+  },
+  "m02VIL_008": {
+    "VIL_008_0_0_LEFT_BOTTOM": {
+      "VIL_008_3_0_RIGHT": [],
+      "VIL_008_3_0_BOTTOM_RIGHT": []
+    },
+    "VIL_008_3_0_RIGHT": {
+      "VIL_008_0_0_LEFT_BOTTOM": [],
+      "VIL_008_3_0_BOTTOM_RIGHT": []
+    },
+    "VIL_008_3_0_BOTTOM_RIGHT": {
+      "VIL_008_0_0_LEFT_BOTTOM": [],
+      "VIL_008_3_0_RIGHT": []
+    }
+  },
+  "m02VIL_009": {
+    "VIL_009_0_0_RIGHT": {
+      "VIL_009_0_0_TOP": [],
+      "VIL_009_0_0_LEFT_BOTTOM": []
+    },
+    "VIL_009_0_0_TOP": {
+      "VIL_009_0_0_RIGHT": [],
+      "VIL_009_0_0_LEFT_BOTTOM": []
+    },
+    "VIL_009_0_0_LEFT_BOTTOM": {
+      "VIL_009_0_0_RIGHT": [],
+      "VIL_009_0_0_TOP": []
+    }
+  },
+  "m02VIL_010": {
+    "VIL_010_0_0_RIGHT_BOTTOM": {}
+  },
+  "m02VIL_011": {
+    "VIL_011_0_0_LEFT": {
+      "VIL_011_5_0_RIGHT": [],
+      "VIL_011_5_0_TOP_RIGHT": []
+    },
+    "VIL_011_5_0_RIGHT": {
+      "VIL_011_0_0_LEFT": [],
+      "VIL_011_5_0_TOP_RIGHT": []
+    },
+    "VIL_011_5_0_TOP_RIGHT": {
+      "VIL_011_0_0_LEFT": [],
+      "VIL_011_5_0_RIGHT": []
+    }
+  },
+  "m02VIL_012": {
+    "VIL_012_0_0_RIGHT": {
+      "VIL_012_0_1_LEFT": []
+    },
+    "VIL_012_0_1_LEFT": {
+      "VIL_012_0_0_RIGHT": []
+    }
+  },
+  "m03ENT_000": {
+    "ENT_000_0_0_LEFT": {
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_9_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_0_15_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_15_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_000_1_0_RIGHT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_0_9_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_9_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_0_15_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_15_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_000_0_9_LEFT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_1_9_RIGHT": [],
+      "ENT_000_0_15_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_15_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_000_1_9_RIGHT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": [],
+      "ENT_000_0_15_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_000_1_15_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_000_0_15_LEFT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": [],
+      "ENT_000_1_9_RIGHT": [],
+      "ENT_000_1_15_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_000_1_15_RIGHT": {
+      "ENT_000_0_0_LEFT": [],
+      "ENT_000_1_0_RIGHT": [],
+      "ENT_000_0_9_LEFT": [],
+      "ENT_000_1_9_RIGHT": [],
+      "ENT_000_0_15_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m03ENT_001": {
+    "ENT_001_0_0_LEFT": {
+      "ENT_001_4_0_RIGHT": []
+    },
+    "ENT_001_4_0_RIGHT": {
+      "ENT_001_0_0_LEFT": []
+    }
+  },
+  "m03ENT_002": {
+    "ENT_002_0_0_LEFT": {
+      "ENT_002_1_0_RIGHT": [],
+      "ENT_002_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_002_1_0_RIGHT": {
+      "ENT_002_0_0_LEFT": [],
+      "ENT_002_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_002_0_3_LEFT": {
+      "ENT_002_0_0_LEFT": [],
+      "ENT_002_1_0_RIGHT": []
+    }
+  },
+  "m03ENT_003": {
+    "ENT_003_0_0_LEFT": {
+      "ENT_003_3_0_RIGHT": []
+    },
+    "ENT_003_3_0_RIGHT": {
+      "ENT_003_0_0_LEFT": []
+    }
+  },
+  "m03ENT_004": {
+    "ENT_004_0_0_LEFT": {
+      "ENT_004_1_0_BOTTOM": ["BLD_ABILITY_BLOOD_STEAL"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": []
+    },
+    "ENT_004_1_0_BOTTOM": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": []
+    },
+    "ENT_004_2_0_RIGHT": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["BLD_ABILITY_BLOOD_STEAL"],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": []
+    },
+    "ENT_004_0_1_TOP": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["BLD_ABILITY_BLOOD_STEAL"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_2_1_RIGHT": [],
+      "ENT_004_2_1_TOP": []
+    },
+    "ENT_004_2_1_RIGHT": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["BLD_ABILITY_BLOOD_STEAL"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_TOP": []
+    },
+    "ENT_004_2_1_TOP": {
+      "ENT_004_0_0_LEFT": [],
+      "ENT_004_1_0_BOTTOM": ["BLD_ABILITY_BLOOD_STEAL"],
+      "ENT_004_2_0_RIGHT": [],
+      "ENT_004_0_1_TOP": [],
+      "ENT_004_2_1_RIGHT": []
+    }
+  },
+  "m03ENT_005": {
+    "ENT_005_0_0_BOTTOM": {
+      "ENT_005_2_0_BOTTOM": []
+    },
+    "ENT_005_2_0_BOTTOM": {
+      "ENT_005_0_0_BOTTOM": []
+    }
+  },
+  "m03ENT_006": {
+    "ENT_006_0_0_LEFT": {
+      "ENT_006_0_0_RIGHT": []
+    },
+    "ENT_006_0_0_RIGHT": {
+      "ENT_006_0_0_LEFT": []
+    }
+  },
+  "m03ENT_007": {
+    "ENT_007_0_0_LEFT": {
+      "ENT_007_1_0_RIGHT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_1_3_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_007_1_0_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_1_3_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_007_1_1_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": [],
+      "ENT_007_1_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_1_3_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_007_1_2_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "ENT_007_1_3_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_007_0_3_LEFT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": [],
+      "ENT_007_1_3_RIGHT": []
+    },
+    "ENT_007_1_3_RIGHT": {
+      "ENT_007_0_0_LEFT": [],
+      "ENT_007_1_0_RIGHT": [],
+      "ENT_007_1_1_RIGHT": [],
+      "ENT_007_1_2_RIGHT": [],
+      "ENT_007_0_3_LEFT": []
+    }
+  },
+  "m03ENT_008": {
+    "ENT_008_0_0_LEFT": {
+      "ENT_008_1_0_RIGHT": []
+    },
+    "ENT_008_1_0_RIGHT": {
+      "ENT_008_0_0_LEFT": []
+    }
+  },
+  "m03ENT_009": {
+    "ENT_009_0_0_LEFT": {}
+  },
+  "m03ENT_011": {
+    "ENT_011_0_0_LEFT": {
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_0_1_LEFT": [],
+      "ENT_011_1_1_RIGHT": []
+    },
+    "ENT_011_1_0_RIGHT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_0_1_LEFT": [],
+      "ENT_011_1_1_RIGHT": []
+    },
+    "ENT_011_0_1_LEFT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_1_1_RIGHT": []
+    },
+    "ENT_011_1_1_RIGHT": {
+      "ENT_011_0_0_LEFT": [],
+      "ENT_011_1_0_RIGHT": [],
+      "ENT_011_0_1_LEFT": []
+    }
+  },
+  "m03ENT_012": {
+    "ENT_012_0_0_RIGHT": {}
+  },
+  "m03ENT_013": {
+    "ENT_013_0_0_LEFT": {
+      "ENT_013_1_0_RIGHT": [],
+      "N1011": []
+    },
+    "ENT_013_1_0_RIGHT": {
+      "ENT_013_0_0_LEFT": [],
+      "N1011": []
+    }
+  },
+  "m03ENT_014": {
+    "ENT_014_0_0_LEFT": {
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": []
+    },
+    "ENT_014_1_0_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": []
+    },
+    "ENT_014_0_1_LEFT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_1_1_RIGHT": [],
+      "ENT_014_1_2_RIGHT": []
+    },
+    "ENT_014_1_1_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_2_RIGHT": []
+    },
+    "ENT_014_1_2_RIGHT": {
+      "ENT_014_0_0_LEFT": [],
+      "ENT_014_1_0_RIGHT": [],
+      "ENT_014_0_1_LEFT": [],
+      "ENT_014_1_1_RIGHT": []
+    }
+  },
+  "m03ENT_015": {
+    "ENT_015_0_0_LEFT": {}
+  },
+  "m03ENT_016": {
+    "ENT_016_0_0_LEFT": {
+      "ENT_016_2_0_RIGHT": []
+    },
+    "ENT_016_2_0_RIGHT": {
+      "ENT_016_0_0_LEFT": []
+    }
+  },
+  "m03ENT_017": {
+    "ENT_017_0_0_LEFT": {
+      "ENT_017_4_0_RIGHT": []
+    },
+    "ENT_017_4_0_RIGHT": {
+      "ENT_017_0_0_LEFT": []
+    }
+  },
+  "m03ENT_018": {
+    "ENT_018_0_0_LEFT": {
+      "ENT_018_0_0_BOTTOM": [],
+      "ENT_018_0_2_LEFT": []
+    },
+    "ENT_018_0_0_BOTTOM": {
+      "ENT_018_0_0_LEFT": [],
+      "ENT_018_0_2_LEFT": []
+    },
+    "ENT_018_0_2_LEFT": {
+      "ENT_018_0_0_LEFT": [],
+      "ENT_018_0_0_BOTTOM": []
+    }
+  },
+  "m03ENT_019": {
+    "ENT_019_0_0_LEFT": {
+      "ENT_019_0_3_TOP": []
+    },
+    "ENT_019_0_3_TOP": {
+      "ENT_019_0_0_LEFT": []
+    }
+  },
+  "m03ENT_020": {
+    "ENT_020_0_0_TOP": {}
+  },
+  "m03ENT_021": {
+    "ENT_021_0_0_RIGHT": {}
+  },
+  "m03ENT_022": {
+    "ENT_022_0_0_RIGHT": {}
+  },
+  "m03ENT_023": {
+    "ENT_023_0_0_RIGHT": {
+      "ENT_023_0_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "ENT_023_0_1_RIGHT": {
+      "ENT_023_0_0_RIGHT": []
+    }
+  },
+  "m03ENT_024": {
+    "ENT_024_0_0_LEFT": {
+      "Candle_ENT024_1": []
+    }
+  },
+  "m04GDN_000": {
+    "GDN_000_0_0_LEFT": {
+      "GDN_000_0_0_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "GDN_000_2_0_RIGHT": []
+    },
+    "GDN_000_0_0_TOP": {
+      "GDN_000_0_0_LEFT": [],
+      "GDN_000_2_0_RIGHT": []
+    },
+    "GDN_000_2_0_RIGHT": {
+      "GDN_000_0_0_LEFT": [],
+      "GDN_000_0_0_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m04GDN_001": {
+    "GDN_001_0_0_LEFT": {
+      "GDN_001_1_0_RIGHT": [],
+      "TO_BIG_000_START": []
+    },
+    "GDN_001_1_0_RIGHT": {
+      "GDN_001_0_0_LEFT": [],
+      "TO_BIG_000_START": []
+    },
+    "GDN_001_BIG_EXIT": {
+      "GDN_001_0_0_LEFT": [],
+      "GDN_001_1_0_RIGHT": []
+    }
+  },
+  "m04GDN_002": {
+    "GDN_002_0_0_BOTTOM": {
+      "GDN_002_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "GDN_002_0_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "GDN_002_0_1_LEFT": {
+      "GDN_002_0_0_BOTTOM": [],
+      "GDN_002_0_1_RIGHT": []
+    },
+    "GDN_002_0_1_RIGHT": {
+      "GDN_002_0_0_BOTTOM": [],
+      "GDN_002_0_1_LEFT": []
+    }
+  },
+  "m04GDN_003": {
+    "GDN_003_0_0_LEFT": {
+      "GDN_003_1_0_RIGHT": []
+    },
+    "GDN_003_1_0_RIGHT": {
+      "GDN_003_0_0_LEFT": []
+    }
+  },
+  "m04GDN_004": {
+    "GDN_004_1_0_RIGHT": {
+      "Candle_GDN004_1": []
+    }
+  },
+  "m04GDN_005": {
+    "GDN_005_0_0_LEFT": {
+      "GDN_005_0_0_BOTTOM": []
+    },
+    "GDN_005_0_0_BOTTOM": {
+      "GDN_005_0_0_LEFT": []
+    }
+  },
+  "m04GDN_006": {
+    "GDN_006_0_0_LEFT": {
+      "GDN_006_5_0_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": []
+    },
+    "GDN_006_5_0_RIGHT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": [],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": []
+    },
+    "GDN_006_0_1_LEFT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_5_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": []
+    },
+    "GDN_006_5_1_RIGHT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": [],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_0_2_LEFT": [],
+      "GDN_006_0_2_TOP": []
+    },
+    "GDN_006_0_2_LEFT": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_2_TOP": []
+    },
+    "GDN_006_0_2_TOP": {
+      "GDN_006_0_0_LEFT": [],
+      "GDN_006_5_0_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_1_LEFT": [],
+      "GDN_006_5_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"],
+      "GDN_006_0_2_LEFT": []
+    }
+  },
+  "m04GDN_007": {
+    "GDN_007_0_0_LEFT": {
+      "GDN_007_0_0_RIGHT": []
+    },
+    "GDN_007_0_0_RIGHT": {
+      "GDN_007_0_0_LEFT": []
+    }
+  },
+  "m04GDN_008": {
+    "GDN_008_0_0_RIGHT": {
+      "GDN_008_0_1_LEFT": [],
+      "GDN_008_0_1_RIGHT": []
+    },
+    "GDN_008_0_1_LEFT": {
+      "GDN_008_0_0_RIGHT": [],
+      "GDN_008_0_1_RIGHT": []
+    },
+    "GDN_008_0_1_RIGHT": {
+      "GDN_008_0_0_RIGHT": [],
+      "GDN_008_0_1_LEFT": []
+    }
+  },
+  "m04GDN_009": {
+    "GDN_009_0_0_LEFT": {
+      "GDN_009_2_0_RIGHT": [],
+      "GDN_009_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "GDN_009_2_0_RIGHT": {
+      "GDN_009_0_0_LEFT": [],
+      "GDN_009_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "GDN_009_0_1_LEFT": {
+      "GDN_009_0_0_LEFT": [],
+      "GDN_009_2_0_RIGHT": []
+    }
+  },
+  "m04GDN_010": {
+    "GDN_010_0_0_LEFT": {
+      "GDN_010_0_1_RIGHT": []
+    },
+    "GDN_010_0_1_RIGHT": {
+      "GDN_010_0_0_LEFT": []
+    }
+  },
+  "m04GDN_011": {
+    "GDN_011_0_0_LEFT": {
+      "GDN_011_0_0_RIGHT": []
+    },
+    "GDN_011_0_0_RIGHT": {
+      "GDN_011_0_0_LEFT": []
+    }
+  },
+  "m04GDN_012": {
+    "GDN_012_0_0_RIGHT": {}
+  },
+  "m04GDN_013": {
+    "GDN_013_0_0_LEFT": {
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_0_1_LEFT": [],
+      "GDN_013_2_1_RIGHT": []
+    },
+    "GDN_013_2_0_BOTTOM": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_0_1_LEFT": [],
+      "GDN_013_2_1_RIGHT": []
+    },
+    "GDN_013_0_1_LEFT": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_2_1_RIGHT": []
+    },
+    "GDN_013_2_1_RIGHT": {
+      "GDN_013_0_0_LEFT": [],
+      "GDN_013_2_0_BOTTOM": [],
+      "GDN_013_0_1_LEFT": []
+    }
+  },
+  "m04GDN_014": {
+    "GDN_014_0_0_LEFT": {
+      "GDN_014_0_0_RIGHT": []
+    },
+    "GDN_014_0_0_RIGHT": {
+      "GDN_014_0_0_LEFT": []
+    }
+  },
+  "m04GDN_015": {
+    "GDN_015_0_0_LEFT": {
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_LEFT": [],
+      "GDN_015_0_1_RIGHT": []
+    },
+    "GDN_015_0_0_RIGHT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_1_LEFT": [],
+      "GDN_015_0_1_RIGHT": []
+    },
+    "GDN_015_0_1_LEFT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_RIGHT": []
+    },
+    "GDN_015_0_1_RIGHT": {
+      "GDN_015_0_0_LEFT": [],
+      "GDN_015_0_0_RIGHT": [],
+      "GDN_015_0_1_LEFT": []
+    }
+  },
+  "m04GDN_016": {
+    "GDN_016_0_0_LEFT": {
+      "GDN_016_0_0_RIGHT": []
+    },
+    "GDN_016_0_0_RIGHT": {
+      "GDN_016_0_0_LEFT": []
+    }
+  },
+  "m04GDN_017": {
+    "GDN_017_0_0_RIGHT": {
+      "GDN_017_0_1_TOP": []
+    },
+    "GDN_017_0_1_TOP": {
+      "GDN_017_0_0_RIGHT": []
+    }
+  },
+  "m88BKR_001": {
+    "BKR_001_0_0_RIGHT": {
+      "Candle_BKR001_1": []
+    }
+  },
+  "m05SAN_000": {
+    "SAN_000_0_0_LEFT": {
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_0_4_LEFT": [],
+      "SAN_000_1_4_RIGHT": []
+    },
+    "SAN_000_1_0_RIGHT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_0_4_LEFT": [],
+      "SAN_000_1_4_RIGHT": []
+    },
+    "SAN_000_0_4_LEFT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_1_4_RIGHT": []
+    },
+    "SAN_000_1_4_RIGHT": {
+      "SAN_000_0_0_LEFT": [],
+      "SAN_000_1_0_RIGHT": [],
+      "SAN_000_0_4_LEFT": []
+    }
+  },
+  "m05SAN_001": {
+    "SAN_001_0_0_LEFT": {
+      "SAN_001_1_0_RIGHT": []
+    },
+    "SAN_001_1_0_RIGHT": {
+      "SAN_001_0_0_LEFT": []
+    }
+  },
+  "m05SAN_002": {
+    "SAN_002_0_0_LEFT": {
+      "SAN_002_1_0_RIGHT": []
+    },
+    "SAN_002_1_0_RIGHT": {
+      "SAN_002_0_0_LEFT": []
+    }
+  },
+  "m05SAN_003": {
+    "SAN_003_0_0_LEFT": {
+      "SAN_003_1_1_RIGHT": [],
+      "SAN_003_1_5_RIGHT": [],
+      "SAN_003_0_8_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN003_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_003_1_1_RIGHT": {
+      "SAN_003_0_0_LEFT": [],
+      "SAN_003_1_5_RIGHT": [],
+      "SAN_003_0_8_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN003_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_003_1_5_RIGHT": {
+      "SAN_003_0_0_LEFT": [],
+      "SAN_003_1_1_RIGHT": [],
+      "SAN_003_0_8_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN003_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_003_0_8_LEFT": {
+      "SAN_003_0_0_LEFT": [],
+      "SAN_003_1_1_RIGHT": [],
+      "SAN_003_1_5_RIGHT": [],
+      "Candle_SAN003_1": []
+    }
+  },
+  "m05SAN_004": {
+    "SAN_004_0_0_LEFT": {
+      "SAN_004_1_0_RIGHT": []
+    },
+    "SAN_004_1_0_RIGHT": {
+      "SAN_004_0_0_LEFT": []
+    }
+  },
+  "m05SAN_005": {
+    "SAN_005_0_0_LEFT": {
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_0_1_LEFT": [],
+      "SAN_005_1_1_RIGHT": []
+    },
+    "SAN_005_1_0_RIGHT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_0_1_LEFT": [],
+      "SAN_005_1_1_RIGHT": []
+    },
+    "SAN_005_0_1_LEFT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_1_1_RIGHT": []
+    },
+    "SAN_005_1_1_RIGHT": {
+      "SAN_005_0_0_LEFT": [],
+      "SAN_005_1_0_RIGHT": [],
+      "SAN_005_0_1_LEFT": []
+    }
+  },
+  "m05SAN_006": {
+    "SAN_006_0_0_RIGHT": {
+      "Candle_SAN006_1": []
+    }
+  },
+  "m05SAN_008": {
+    "SAN_008_0_0_LEFT": {
+      "SAN_008_1_0_RIGHT": []
+    },
+    "SAN_008_1_0_RIGHT": {
+      "SAN_008_0_0_LEFT": []
+    }
+  },
+  "m05SAN_009": {
+    "SAN_009_0_0_LEFT": {
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": []
+    },
+    "SAN_009_1_0_RIGHT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": []
+    },
+    "SAN_009_0_1_LEFT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_1_1_RIGHT": []
+    },
+    "SAN_009_1_1_RIGHT": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": []
+    },
+    "SAN_009_1_4_TOP": {
+      "SAN_009_0_0_LEFT": [],
+      "SAN_009_1_0_RIGHT": [],
+      "SAN_009_0_1_LEFT": [],
+      "SAN_009_1_1_RIGHT": []
+    }
+  },
+  "m05SAN_010": {
+    "SAN_010_0_0_RIGHT": {
+      "SAN_010_0_1_RIGHT": []
+    },
+    "SAN_010_0_1_RIGHT": {
+      "SAN_010_0_0_RIGHT": []
+    }
+  },
+  "m05SAN_011": {
+    "SAN_011_0_0_LEFT": {
+      "SAN_011_1_0_RIGHT_BOTTOM": [],
+      "Candle_SAN011_1": []
+    },
+    "SAN_011_1_0_RIGHT_BOTTOM": {
+      "SAN_011_0_0_LEFT": [],
+      "Candle_SAN011_1": []
+    }
+  },
+  "m05SAN_012": {
+    "SAN_012_0_0_LEFT_BOTTOM": {
+      "SAN_012_1_0_RIGHT_BOTTOM": [],
+      "SAN_012_1_1_RIGHT": [],
+      "N1003": []
+    },
+    "SAN_012_1_0_RIGHT_BOTTOM": {
+      "SAN_012_0_0_LEFT_BOTTOM": [],
+      "SAN_012_1_1_RIGHT": [],
+      "N1003": []
+    },
+    "SAN_012_1_1_RIGHT": {
+      "SAN_012_0_0_LEFT_BOTTOM": [],
+      "SAN_012_1_0_RIGHT_BOTTOM": [],
+      "N1003": []
+    }
+  },
+  "m05SAN_013": {
+    "SAN_013_0_0_LEFT_BOTTOM": {}
+  },
+  "m05SAN_014": {
+    "SAN_014_0_0_LEFT": {
+      "Candle_SAN014_1": []
+    }
+  },
+  "m05SAN_015": {
+    "SAN_015_0_0_LEFT": {
+      "SAN_015_1_0_RIGHT": []
+    },
+    "SAN_015_1_0_RIGHT": {
+      "SAN_015_0_0_LEFT": []
+    }
+  },
+  "m05SAN_016": {
+    "SAN_016_0_0_LEFT": {
+      "SAN_016_1_0_RIGHT": [],
+      "SAN_016_1_3_RIGHT": [],
+      "Candle_SAN016_1": []
+    },
+    "SAN_016_1_0_RIGHT": {
+      "SAN_016_0_0_LEFT": [],
+      "SAN_016_1_3_RIGHT": [],
+      "Candle_SAN016_1": []
+    },
+    "SAN_016_1_3_RIGHT": {
+      "SAN_016_0_0_LEFT": [],
+      "SAN_016_1_0_RIGHT": [],
+      "Candle_SAN016_1": []
+    }
+  },
+  "m05SAN_017": {
+    "SAN_017_0_0_LEFT": {},
+    "SAN_017_1_0_RIGHT": {
+      "SAN_017_0_0_LEFT": []
+    }
+  },
+  "m05SAN_018": {
+    "SAN_018_0_0_LEFT": {
+      "SAN_018_1_0_RIGHT": []
+    },
+    "SAN_018_1_0_RIGHT": {
+      "SAN_018_0_0_LEFT": []
+    }
+  },
+  "m05SAN_019": {
+    "SAN_019_0_0_LEFT": {},
+    "SAN_019_1_0_BOTTOM": {
+      "SAN_019_0_0_LEFT": [],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_1_1_RIGHT": [],
+      "SAN_019_0_3_LEFT": []
+    },
+    "SAN_019_1_0_RIGHT": {
+      "SAN_019_0_0_LEFT": [],
+      "SAN_019_1_0_BOTTOM": [],
+      "SAN_019_1_1_RIGHT": [],
+      "SAN_019_0_3_LEFT": []
+    },
+    "SAN_019_1_1_RIGHT": {
+      "SAN_019_0_0_LEFT": [],
+      "SAN_019_1_0_BOTTOM": [],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_0_3_LEFT": []
+    },
+    "SAN_019_0_3_LEFT": {
+      "SAN_019_0_0_LEFT": [],
+      "SAN_019_1_0_BOTTOM": [],
+      "SAN_019_1_0_RIGHT": [],
+      "SAN_019_1_1_RIGHT": []
+    }
+  },
+  "m05SAN_020": {
+    "SAN_020_0_0_LEFT": {
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_0_1_LEFT": [],
+      "SAN_020_1_1_RIGHT": []
+    },
+    "SAN_020_1_0_RIGHT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_0_1_LEFT": [],
+      "SAN_020_1_1_RIGHT": []
+    },
+    "SAN_020_0_1_LEFT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_1_1_RIGHT": []
+    },
+    "SAN_020_1_1_RIGHT": {
+      "SAN_020_0_0_LEFT": [],
+      "SAN_020_1_0_RIGHT": [],
+      "SAN_020_0_1_LEFT": []
+    }
+  },
+  "m05SAN_021": {
+    "SAN_021_0_0_LEFT": {
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN021_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_021_1_0_RIGHT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN021_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_021_0_1_LEFT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "SAN_021_1_5_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN021_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_021_1_1_RIGHT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_5_RIGHT": ["BLD_ABILITY_HIGH_JUMP"],
+      "Candle_SAN021_1": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SAN_021_1_5_RIGHT": {
+      "SAN_021_0_0_LEFT": [],
+      "SAN_021_1_0_RIGHT": [],
+      "SAN_021_0_1_LEFT": [],
+      "SAN_021_1_1_RIGHT": [],
+      "Candle_SAN021_1": ["BLD_ABILITY_HIGH_JUMP"]
+	}
+  },
+  "m05SAN_022": {
+    "SAN_022_0_0_LEFT": {
+      "SAN_022_1_0_RIGHT": []
+    },
+    "SAN_022_1_0_RIGHT": {
+      "SAN_022_0_0_LEFT": []
+    }
+  },
+  "m05SAN_023": {
+    "SAN_023_START": {
+      "SAN_023_0_0_LEFT": [],
+      "SAN_023_1_0_RIGHT": []
+    },
+    "SAN_023_0_0_LEFT": {
+      "SAN_023_1_0_RIGHT": []
+    },
+    "SAN_023_1_0_RIGHT": {
+      "SAN_023_0_0_LEFT": []
+    }
+  },
+  "m05SAN_024": {
+    "SAN_024_0_0_LEFT": {
+      "SAN_024_1_0_RIGHT": []
+    },
+    "SAN_024_1_0_RIGHT": {
+      "SAN_024_0_0_LEFT": []
+    }
+  },
+  "m06KNG_000": {
+    "KNG_000_0_0_LEFT": {
+      "KNG_000_1_0_RIGHT": [],
+      "KNG_000_0_1_LEFT": []
+    },
+    "KNG_000_1_0_RIGHT": {
+      "KNG_000_0_0_LEFT": [],
+      "KNG_000_0_1_LEFT": []
+    },
+    "KNG_000_0_1_LEFT": {
+      "KNG_000_0_0_LEFT": [],
+      "KNG_000_1_0_RIGHT": []
+    }
+  },
+  "m06KNG_001": {
+    "KNG_001_0_0_RIGHT": {
+      "KNG_001_0_1_RIGHT": []
+    },
+    "KNG_001_0_1_RIGHT": {
+      "KNG_001_0_0_RIGHT": []
+    }
+  },
+  "m06KNG_002": {
+    "KNG_002_1_0_BOTTOM": {
+      "KNG_002_0_1_LEFT": []
+    },
+    "KNG_002_0_1_LEFT": {
+      "KNG_002_1_0_BOTTOM": []
+    }
+  },
+  "m06KNG_003": {
+    "KNG_003_0_0_LEFT": {
+      "KNG_003_0_1_LEFT": [],
+      "KNG_003_0_1_TOP": []
+    },
+    "KNG_003_0_1_LEFT": {
+      "KNG_003_0_0_LEFT": [],
+      "KNG_003_0_1_TOP": []
+    },
+    "KNG_003_0_1_TOP": {
+      "KNG_003_0_0_LEFT": [],
+      "KNG_003_0_1_LEFT": []
+    }
+  },
+  "m06KNG_004": {
+    "KNG_004_0_0_LEFT": {
+      "KNG_004_1_0_RIGHT": []
+    },
+    "KNG_004_1_0_RIGHT": {
+      "KNG_004_0_0_LEFT": []
+    }
+  },
+  "m06KNG_005": {
+    "KNG_005_0_0_LEFT": {
+      "KNG_005_0_0_RIGHT": []
+    },
+    "KNG_005_0_0_RIGHT": {
+      "KNG_005_0_0_LEFT": []
+    }
+  },
+  "m06KNG_006": {
+    "KNG_006_0_0_RIGHT": {
+      "KNG_006_0_1_LEFT": []
+    },
+    "KNG_006_0_1_LEFT": {
+      "KNG_006_0_0_RIGHT": []
+    }
+  },
+  "m06KNG_007": {
+    "KNG_007_0_0_LEFT": {
+      "KNG_007_0_1_RIGHT": []
+    },
+    "KNG_007_0_1_RIGHT": {
+      "KNG_007_0_0_LEFT": []
+    }
+  },
+  "m06KNG_008": {
+    "KNG_008_0_0_RIGHT": {
+      "KNG_008_0_2_LEFT": [],
+      "KNG_008_0_2_RIGHT": []
+    },
+    "KNG_008_0_2_LEFT": {
+      "KNG_008_0_0_RIGHT": [],
+      "KNG_008_0_2_RIGHT": []
+    },
+    "KNG_008_0_2_RIGHT": {
+      "KNG_008_0_0_RIGHT": [],
+      "KNG_008_0_2_LEFT": []
+    }
+  },
+  "m06KNG_009": {
+    "KNG_009_0_0_LEFT": {
+      "KNG_009_1_0_TOP": []
+    },
+    "KNG_009_1_0_TOP": {
+      "KNG_009_0_0_LEFT": []
+    }
+  },
+  "m06KNG_010": {
+    "KNG_010_1_0_BOTTOM": {
+      "KNG_010_0_1_LEFT": [],
+      "KNG_010_1_1_RIGHT": [],
+      "KNG_010_1_1_TOP": []
+    },
+    "KNG_010_0_1_LEFT": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_1_1_RIGHT": [],
+      "KNG_010_1_1_TOP": []
+    },
+    "KNG_010_1_1_RIGHT": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_0_1_LEFT": [],
+      "KNG_010_1_1_TOP": []
+    },
+    "KNG_010_1_1_TOP": {
+      "KNG_010_1_0_BOTTOM": [],
+      "KNG_010_0_1_LEFT": [],
+      "KNG_010_1_1_RIGHT": []
+    }
+  },
+  "m06KNG_011": {
+    "KNG_011_0_1_LEFT": {}
+  },
+  "m06KNG_012": {
+    "KNG_012_0_1_RIGHT": {}
+  },
+  "m06KNG_013": {
+    "KNG_013_0_0_LEFT": {
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": [],
+      "KNG_013_0_1_RIGHT": []
+    },
+    "KNG_013_0_0_BOTTOM": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": [],
+      "KNG_013_0_1_RIGHT": []
+    },
+    "KNG_013_0_0_RIGHT": {},
+    "KNG_013_0_1_LEFT": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_RIGHT": []
+    },
+    "KNG_013_0_1_RIGHT": {
+      "KNG_013_0_0_LEFT": [],
+      "KNG_013_0_0_BOTTOM": [],
+      "KNG_013_0_0_RIGHT": [],
+      "KNG_013_0_1_LEFT": []
+    }
+  },
+  "m06KNG_014": {
+    "KNG_014_0_0_LEFT": {
+      "KNG_014_1_0_RIGHT": []
+    },
+    "KNG_014_1_0_RIGHT": {
+      "KNG_014_0_0_LEFT": []
+    }
+  },
+  "m06KNG_015": {
+    "KNG_015_0_0_LEFT": {
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": [],
+      "KNG_015_0_2_TOP": []
+    },
+    "KNG_015_0_0_RIGHT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": [],
+      "KNG_015_0_2_TOP": []
+    },
+    "KNG_015_0_1_LEFT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": [],
+      "KNG_015_0_2_TOP": []
+    },
+    "KNG_015_0_1_RIGHT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_2_LEFT": [],
+      "KNG_015_0_2_TOP": []
+    },
+    "KNG_015_0_2_LEFT": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_TOP": []
+    },
+    "KNG_015_0_2_TOP": {
+      "KNG_015_0_0_LEFT": [],
+      "KNG_015_0_0_RIGHT": [],
+      "KNG_015_0_1_LEFT": [],
+      "KNG_015_0_1_RIGHT": [],
+      "KNG_015_0_2_LEFT": []
+    }
+  },
+  "m06KNG_016": {
+    "KNG_016_0_0_RIGHT": {}
+  },
+  "m06KNG_017": {
+    "KNG_017_0_0_LEFT": {
+      "KNG_017_1_0_BOTTOM": []
+    },
+    "KNG_017_1_0_BOTTOM": {
+      "KNG_017_0_0_LEFT": []
+    }
+  },
+  "m06KNG_018": {
+    "KNG_018_0_0_LEFT": {
+      "KNG_018_1_2_RIGHT": []
+    },
+    "KNG_018_1_2_RIGHT": {
+      "KNG_018_0_0_LEFT": []
+    }
+  },
+  "m06KNG_019": {
+    "KNG_019_0_0_LEFT": {
+      "KNG_019_0_0_RIGHT_BOTTOM": []
+    },
+    "KNG_019_0_0_RIGHT_BOTTOM": {
+      "KNG_019_0_0_LEFT": []
+    }
+  },
+  "m06KNG_020": {
+    "KNG_020_0_0_LEFT_BOTTOM": {
+      "N1012": []
+	}
+  },
+  "m06KNG_021": {
+    "KNG_021_0_0_RIGHT": {
+      "TO_EBT_000_START": []
+    }
+  },
+  "m06KNG_022": {
+    "KNG_022_0_0_RIGHT": {
+      "Candle_KNG022_1": []
+    }
+  },
+  "m88BKR_002": {
+    "BKR_002_0_0_LEFT": {
+      "Candle_BKR002_1": []
+    }
+  },
+  "m07LIB_000": {
+    "LIB_000_0_0_LEFT": {
+      "LIB_000_0_2_RIGHT": []
+    },
+    "LIB_000_0_2_RIGHT": {
+      "LIB_000_0_0_LEFT": []
+    },
+    "LIB_000_0_2_TOP": {
+      "LIB_000_0_0_LEFT": [],
+      "LIB_000_0_2_RIGHT": []
+    }
+  },
+  "m07LIB_001": {
+    "LIB_001_0_0_LEFT": {
+      "LIB_001_1_0_RIGHT": [],
+      "LIB_001_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "LIB_001_1_0_RIGHT": {
+      "LIB_001_0_0_LEFT": [],
+      "LIB_001_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "LIB_001_0_1_LEFT": {
+      "LIB_001_0_0_LEFT": [],
+      "LIB_001_1_0_RIGHT": []
+    }
+  },
+  "m07LIB_002": {
+    "LIB_002_0_1_RIGHT": {
+      "LIB_002_0_2_LEFT": [],
+      "LIB_002_0_2_RIGHT": []
+    },
+    "LIB_002_0_2_LEFT": {
+      "LIB_002_0_1_RIGHT": [],
+      "LIB_002_0_2_RIGHT": []
+    },
+    "LIB_002_0_2_RIGHT": {
+      "LIB_002_0_1_RIGHT": [],
+      "LIB_002_0_2_LEFT": []
+    }
+  },
+  "m07LIB_003": {
+    "LIB_003_0_0_LEFT": {
+      "LIB_003_0_0_RIGHT": [],
+      "LIB_003_0_1_RIGHT": []
+    },
+    "LIB_003_0_0_RIGHT": {
+      "LIB_003_0_0_LEFT": [],
+      "LIB_003_0_1_RIGHT": []
+    },
+    "LIB_003_0_1_RIGHT": {
+      "LIB_003_0_0_LEFT": [],
+      "LIB_003_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_004": {
+    "LIB_004_0_0_LEFT": {
+      "LIB_004_2_0_TOP": []
+    },
+    "LIB_004_2_0_TOP": {
+      "LIB_004_0_0_LEFT": []
+    }
+  },
+  "m07LIB_005": {
+    "LIB_005_0_0_LEFT": {
+      "LIB_005_0_0_BOTTOM": []
+    },
+    "LIB_005_0_0_BOTTOM": {
+      "LIB_005_0_0_LEFT": []
+    }
+  },
+  "m07LIB_006": {
+    "LIB_006_0_0_LEFT": {
+      "LIB_006_0_0_RIGHT": []
+    },
+    "LIB_006_0_0_RIGHT": {
+      "LIB_006_0_0_LEFT": []
+    }
+  },
+  "m07LIB_007": {
+    "LIB_007_0_0_LEFT": {
+      "LIB_007_0_0_RIGHT": []
+    },
+    "LIB_007_0_0_RIGHT": {
+      "LIB_007_0_0_LEFT": []
+    }
+  },
+  "m07LIB_008": {
+    "LIB_008_0_0_LEFT": {
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": [],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_0_RIGHT": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": [],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_1_LEFT": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_RIGHT": [],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_1_RIGHT": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_TOP": []
+    },
+    "LIB_008_0_1_TOP": {
+      "LIB_008_0_0_LEFT": [],
+      "LIB_008_0_0_RIGHT": [],
+      "LIB_008_0_1_LEFT": [],
+      "LIB_008_0_1_RIGHT": []
+    }
+  },
+  "m07LIB_009": {
+    "LIB_009_0_0_BOTTOM": {
+      "LIB_009_0_0_RIGHT": []
+    },
+    "LIB_009_0_0_RIGHT": {
+      "LIB_009_0_0_BOTTOM": []
+    },
+    "LIB_009_0_1_RIGHT": {
+      "Candle_LIB009_1": []
+    }
+  },
+  "m07LIB_010": {
+    "LIB_010_0_0_LEFT": {
+      "LIB_010_0_0_RIGHT": [],
+      "LIB_010_0_0_TOP": []
+    },
+    "LIB_010_0_0_RIGHT": {
+      "LIB_010_0_0_LEFT": [],
+      "LIB_010_0_0_TOP": []
+    },
+    "LIB_010_0_0_TOP": {
+      "LIB_010_0_0_LEFT": [],
+      "LIB_010_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_011": {
+    "LIB_011_0_0_RIGHT": {
+      "N2004": []
+	}
+  },
+  "m07LIB_012": {
+    "LIB_012_0_1_RIGHT": {
+      "Candle_LIB012_1": []
+    }
+  },
+  "m07LIB_013": {
+    "LIB_013_0_0_LEFT": {
+      "LIB_013_1_0_RIGHT": []
+    },
+    "LIB_013_1_0_RIGHT": {
+      "LIB_013_0_0_LEFT": []
+    }
+  },
+  "m07LIB_014": {
+    "LIB_014_0_0_LEFT": {
+      "LIB_014_0_0_BOTTOM": [],
+      "LIB_014_0_0_RIGHT": []
+    },
+    "LIB_014_0_0_BOTTOM": {
+      "LIB_014_0_0_LEFT": [],
+      "LIB_014_0_0_RIGHT": []
+    },
+    "LIB_014_0_0_RIGHT": {
+      "LIB_014_0_0_LEFT": [],
+      "LIB_014_0_0_BOTTOM": []
+    }
+  },
+  "m07LIB_015": {
+    "LIB_015_0_0_LEFT": {
+      "LIB_015_0_0_TOP": []
+    },
+    "LIB_015_0_0_TOP": {
+      "LIB_015_0_0_LEFT": []
+    }
+  },
+  "m07LIB_016": {
+    "LIB_016_0_0_LEFT": {
+      "LIB_016_0_0_BOTTOM": [],
+      "LIB_016_0_0_TOP": []
+    },
+    "LIB_016_0_0_BOTTOM": {
+      "LIB_016_0_0_LEFT": [],
+      "LIB_016_0_0_TOP": []
+    },
+    "LIB_016_0_0_TOP": {
+      "LIB_016_0_0_LEFT": [],
+      "LIB_016_0_0_BOTTOM": []
+    }
+  },
+  "m07LIB_017": {
+    "LIB_017_0_0_LEFT": {
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_0_1_TOP": [],
+      "LIB_017_1_1_TOP": []
+    },
+    "LIB_017_1_0_BOTTOM": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_0_1_TOP": [],
+      "LIB_017_1_1_TOP": []
+    },
+    "LIB_017_0_1_TOP": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_1_1_TOP": []
+    },
+    "LIB_017_1_1_TOP": {
+      "LIB_017_0_0_LEFT": [],
+      "LIB_017_1_0_BOTTOM": [],
+      "LIB_017_0_1_TOP": []
+    }
+  },
+  "m07LIB_018": {
+    "LIB_018_0_0_LEFT": {
+      "LIB_018_0_0_BOTTOM": []
+    },
+    "LIB_018_0_0_BOTTOM": {
+      "LIB_018_0_0_LEFT": []
+    }
+  },
+  "m07LIB_019": {
+    "LIB_019_1_0_RIGHT": {
+      "LIB_019_0_2_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "LIB_019_0_2_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "LIB_019_1_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "LIB_019_0_2_LEFT": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_TOP": [],
+      "LIB_019_1_2_RIGHT": []
+    },
+    "LIB_019_0_2_TOP": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_LEFT": [],
+      "LIB_019_1_2_RIGHT": []
+    },
+    "LIB_019_1_2_RIGHT": {
+      "LIB_019_1_0_RIGHT": [],
+      "LIB_019_0_2_LEFT": [],
+      "LIB_019_0_2_TOP": []
+    }
+  },
+  "m07LIB_020": {
+    "LIB_020_0_0_LEFT": {
+      "LIB_020_1_0_RIGHT": []
+    },
+    "LIB_020_1_0_RIGHT": {
+      "LIB_020_0_0_LEFT": []
+    }
+  },
+  "m07LIB_021": {
+    "LIB_021_0_0_RIGHT": {
+      "LIB_021_0_2_LEFT": []
+	},
+    "LIB_021_0_2_LEFT": {
+      "LIB_021_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_022": {
+    "LIB_022_0_0_LEFT": {
+      "LIB_022_0_1_LEFT": []
+    },
+    "LIB_022_0_1_LEFT": {
+      "LIB_022_0_0_LEFT": []
+    }
+  },
+  "m07LIB_023": {
+    "LIB_023_0_0_LEFT": {
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": [],
+      "LIB_023_0_4_LEFT": [],
+      "LIB_023_0_4_RIGHT": []
+    },
+    "LIB_023_0_0_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": [],
+      "LIB_023_0_4_LEFT": [],
+      "LIB_023_0_4_RIGHT": []
+    },
+    "LIB_023_0_1_LEFT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_2_RIGHT": [],
+      "LIB_023_0_4_LEFT": [],
+      "LIB_023_0_4_RIGHT": []
+    },
+    "LIB_023_0_2_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_4_LEFT": [],
+      "LIB_023_0_4_RIGHT": []
+    },
+    "LIB_023_0_4_LEFT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": [],
+      "LIB_023_0_4_RIGHT": []
+    },
+    "LIB_023_0_4_RIGHT": {
+      "LIB_023_0_0_LEFT": [],
+      "LIB_023_0_0_RIGHT": [],
+      "LIB_023_0_1_LEFT": [],
+      "LIB_023_0_2_RIGHT": [],
+      "LIB_023_0_4_LEFT": []
+    }
+  },
+  "m07LIB_024": {
+    "LIB_024_0_0_RIGHT": {
+      "LIB_024_0_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "LIB_024_0_1_RIGHT": {
+      "LIB_024_0_0_RIGHT": []
+    }
+  },
+  "m07LIB_025": {
+    "LIB_025_0_0_BOTTOM": {
+      "LIB_025_2_0_RIGHT": []
+    },
+    "LIB_025_2_0_RIGHT": {
+      "LIB_025_0_0_BOTTOM": []
+    }
+  },
+  "m07LIB_026": {
+    "LIB_026_0_0_LEFT": {
+      "LIB_026_0_0_TOP": []
+    },
+    "LIB_026_0_0_TOP": {
+      "LIB_026_0_0_LEFT": []
+    }
+  },
+  "m07LIB_027": {
+    "LIB_027_0_0_BOTTOM": {
+      "LIB_027_0_3_TOP": []
+    },
+    "LIB_027_0_3_TOP": {
+      "LIB_027_0_0_BOTTOM": []
+    }
+  },
+  "m07LIB_028": {
+    "LIB_028_0_0_LEFT": {
+      "LIB_028_0_0_BOTTOM": []
+    },
+    "LIB_028_0_0_BOTTOM": {
+      "LIB_028_0_0_LEFT": []
+    }
+  },
+  "m07LIB_029": {
+    "LIB_029_0_0_LEFT": {
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": [],
+      "LIB_029_2_1_RIGHT": []
+    },
+    "LIB_029_2_0_RIGHT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": [],
+      "LIB_029_2_1_RIGHT": []
+    },
+    "LIB_029_0_1_LEFT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_1_1_TOP": [],
+      "LIB_029_2_1_RIGHT": []
+    },
+    "LIB_029_1_1_TOP": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_2_1_RIGHT": []
+    },
+    "LIB_029_2_1_RIGHT": {
+      "LIB_029_0_0_LEFT": [],
+      "LIB_029_2_0_RIGHT": [],
+      "LIB_029_0_1_LEFT": [],
+      "LIB_029_1_1_TOP": []
+    }
+  },
+  "m07LIB_030": {
+    "LIB_030_0_0_LEFT": {
+      "Candle_LIB030_1": []
+    }
+  },
+  "m07LIB_031": {
+    "LIB_031_0_0_LEFT": {
+      "LIB_031_0_0_RIGHT": []
+    },
+    "LIB_031_0_0_RIGHT": {
+      "LIB_031_0_0_LEFT": []
+    }
+  },
+  "m07LIB_032": {
+    "LIB_032_1_0_RIGHT": {
+      "LIB_032_0_1_TOP": [],
+      "LIB_032_1_1_RIGHT": []
+    },
+    "LIB_032_0_1_TOP": {
+      "LIB_032_1_0_RIGHT": [],
+      "LIB_032_1_1_RIGHT": []
+    },
+    "LIB_032_1_1_RIGHT": {
+      "LIB_032_1_0_RIGHT": [],
+      "LIB_032_0_1_TOP": []
+    }
+  },
+  "m07LIB_033": {
+    "LIB_033_0_0_LEFT": {
+      "LIB_033_0_1_LEFT": []
+    },
+    "LIB_033_0_1_LEFT": {
+      "LIB_033_0_0_LEFT": []
+    }
+  },
+  "m07LIB_034": {
+    "LIB_034_0_0_LEFT": {
+      "LIB_034_1_0_RIGHT": []
+    },
+    "LIB_034_1_0_RIGHT": {
+      "LIB_034_0_0_LEFT": []
+    }
+  },
+  "m07LIB_035": {
+    "LIB_035_0_0_BOTTOM": {
+      "LIB_035_0_2_RIGHT": []
+    },
+    "LIB_035_0_2_RIGHT": {
+      "LIB_035_0_0_BOTTOM": []
+    }
+  },
+  "m07LIB_036": {
+    "LIB_036_0_0_LEFT": {
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_1_RIGHT": [],
+      "LIB_036_0_2_LEFT": []
+    },
+    "LIB_036_0_0_RIGHT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_1_RIGHT": [],
+      "LIB_036_0_2_LEFT": []
+    },
+    "LIB_036_0_1_RIGHT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_2_LEFT": []
+    },
+    "LIB_036_0_2_LEFT": {
+      "LIB_036_0_0_LEFT": [],
+      "LIB_036_0_0_RIGHT": [],
+      "LIB_036_0_1_RIGHT": []
+    }
+  },
+  "m07LIB_037": {
+    "LIB_037_0_0_LEFT": {
+      "LIB_037_0_0_RIGHT": []
+    },
+    "LIB_037_0_0_RIGHT": {
+      "LIB_037_0_0_LEFT": []
+    }
+  },
+  "m07LIB_038": {
+    "LIB_038_0_0_LEFT": {
+      "LIB_038_1_0_RIGHT": [],
+	  "N2008_BOSS": []
+    },
+    "LIB_038_1_0_RIGHT": {
+      "LIB_038_0_0_LEFT": [],
+	  "N2008_BOSS": []
+    }
+  },
+  "m07LIB_039": {
+    "LIB_039_0_0_LEFT": {
+      "LIB_039_0_0_RIGHT": []
+    },
+    "LIB_039_0_0_RIGHT": {
+      "LIB_039_0_0_LEFT": []
+    }
+  },
+  "m07LIB_040": {
+    "LIB_040_0_0_BOTTOM": {
+      "Candle_LIB040_1": []
+    }
+  },
+  "m07LIB_041": {
+    "LIB_041_0_0_BOTTOM": {
+      "Candle_LIB041_1": []
+    }
+  },
+  "m07LIB_042": {
+    "LIB_042_0_0_LEFT": {
+      "Candle_LIB042_1": []
+    }
+  },
+  "m07LIB_043": {
+    "LIB_043_0_0_RIGHT": {}
+  },
+  "m07LIB_044": {
+    "LIB_044_0_0_LEFT": {
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "LIB_044_2_1_RIGHT": []
+    },
+    "LIB_044_2_0_BOTTOM": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "LIB_044_2_1_RIGHT": []
+    },
+    "LIB_044_2_0_RIGHT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "LIB_044_2_1_RIGHT": []
+    },
+    "LIB_044_0_1_LEFT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_2_1_RIGHT": []
+    },
+    "LIB_044_2_1_RIGHT": {
+      "LIB_044_0_0_LEFT": [],
+      "LIB_044_2_0_BOTTOM": [],
+      "LIB_044_2_0_RIGHT": [],
+      "LIB_044_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m88BKR_003": {
+    "BKR_003_0_0_RIGHT": {
+      "Candle_BKR003_1": []
+    }
+  },
+  "m08TWR_000": {
+    "TWR_000_0_0_LEFT": {
+      "TWR_000_0_1_TOP": []
+    },
+    "TWR_000_0_1_TOP": {
+      "TO_TWR_017_TOP": []
+    }
+  },
+  "m08TWR_001": {
+    "TWR_001_0_0_LEFT": {
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_RIGHT": [],
+      "TWR_001_1_0_TOP": []
+    },
+    "TWR_001_0_0_BOTTOM": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_1_0_RIGHT": [],
+      "TWR_001_1_0_TOP": []
+    },
+    "TWR_001_1_0_RIGHT": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_TOP": []
+    },
+    "TWR_001_1_0_TOP": {
+      "TWR_001_0_0_LEFT": [],
+      "TWR_001_0_0_BOTTOM": [],
+      "TWR_001_1_0_RIGHT": []
+    }
+  },
+  "m08TWR_002": {
+    "TWR_002_0_0_LEFT": {
+      "TWR_002_1_0_RIGHT": []
+    },
+    "TWR_002_1_0_RIGHT": {
+      "TWR_002_0_0_LEFT": []
+    }
+  },
+  "m08TWR_003": {
+    "TWR_003_0_0_LEFT": {
+      "TWR_003_0_0_RIGHT": [],
+      "TWR_003_0_1_RIGHT": []
+    },
+    "TWR_003_0_0_RIGHT": {
+      "TWR_003_0_0_LEFT": [],
+      "TWR_003_0_1_RIGHT": []
+    },
+    "TWR_003_0_1_RIGHT": {
+      "TWR_003_0_0_LEFT": [],
+      "TWR_003_0_0_RIGHT": []
+    }
+  },
+  "m08TWR_004": {
+    "TWR_004_0_0_LEFT": {
+      "TWR_004_0_0_RIGHT": []
+    },
+    "TWR_004_0_0_RIGHT": {
+      "TWR_004_0_0_LEFT": []
+    }
+  },
+  "m08TWR_005": {
+    "TWR_005_1_0_BOTTOM": {
+      "TO_TWR_018_BOTTOM": []
+    },
+    "TWR_005_1_1_RIGHT": {
+      "TWR_005_1_0_BOTTOM": []
+    }
+  },
+  "m08TWR_006": {
+    "TWR_006_0_0_LEFT": {
+      "TWR_006_0_1_TOP": []
+    },
+    "TWR_006_0_1_TOP": {
+      "TO_TWR_018_TOP": []
+    }
+  },
+  "m08TWR_007": {
+    "TWR_007_0_0_LEFT": {
+      "TWR_007_0_0_BOTTOM": [],
+      "TWR_007_1_0_RIGHT": []
+    },
+    "TWR_007_0_0_BOTTOM": {
+      "TWR_007_0_0_LEFT": [],
+      "TWR_007_1_0_RIGHT": []
+    },
+    "TWR_007_1_0_RIGHT": {
+      "TWR_007_0_0_LEFT": [],
+      "TWR_007_0_0_BOTTOM": []
+    }
+  },
+  "m08TWR_008": {
+    "TWR_008_0_0_LEFT": {
+      "TWR_008_0_0_RIGHT": []
+    },
+    "TWR_008_0_0_RIGHT": {
+      "TWR_008_0_0_LEFT": []
+    }
+  },
+  "m08TWR_009": {
+    "TWR_009_0_0_LEFT": {
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "TWR_009_0_0_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_5_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "TWR_009_0_5_LEFT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": []
+    },
+    "TWR_009_0_10_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": []
+    },
+    "TWR_009_0_15_LEFT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": [],
+      "TWR_009_0_15_RIGHT": []
+    },
+    "TWR_009_0_15_RIGHT": {
+      "TWR_009_0_0_LEFT": [],
+      "TWR_009_0_0_RIGHT": [],
+      "TWR_009_0_5_LEFT": [],
+      "TWR_009_0_15_LEFT": []
+    }
+  },
+  "m08TWR_010": {
+    "TWR_010_0_0_LEFT": {
+      "TWR_010_0_0_RIGHT": []
+    },
+    "TWR_010_0_0_RIGHT": {
+      "TWR_010_0_0_LEFT": []
+    }
+  },
+  "m08TWR_011": {
+    "TWR_011_0_0_LEFT": {
+      "TWR_011_1_0_BOTTOM": [],
+      "TWR_011_1_0_RIGHT": []
+    },
+    "TWR_011_1_0_BOTTOM": {
+      "TWR_011_0_0_LEFT": [],
+      "TWR_011_1_0_RIGHT": []
+    },
+    "TWR_011_1_0_RIGHT": {
+      "TWR_011_0_0_LEFT": [],
+      "TWR_011_1_0_BOTTOM": []
+    }
+  },
+  "m08TWR_012": {
+    "TWR_012_0_0_LEFT": {}
+  },
+  "m08TWR_013": {
+    "TWR_013_0_0_BOTTOM": {
+      "TWR_013_1_3_TOP": []
+    },
+    "TWR_013_1_3_TOP": {
+      "TWR_013_0_0_BOTTOM": []
+    }
+  },
+  "m08TWR_014": {
+    "TWR_014_0_0_LEFT": {
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_BOTTOM": [],
+      "TWR_014_1_0_RIGHT": []
+    },
+    "TWR_014_0_0_TOP": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_1_0_BOTTOM": [],
+      "TWR_014_1_0_RIGHT": []
+    },
+    "TWR_014_1_0_BOTTOM": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_RIGHT": []
+    },
+    "TWR_014_1_0_RIGHT": {
+      "TWR_014_0_0_LEFT": [],
+      "TWR_014_0_0_TOP": [],
+      "TWR_014_1_0_BOTTOM": []
+    }
+  },
+  "m08TWR_015": {
+    "TWR_015_0_0_LEFT": {
+      "TWR_015_0_0_RIGHT": []
+    },
+    "TWR_015_0_0_RIGHT": {
+      "TWR_015_0_0_LEFT": []
+    }
+  },
+  "m08TWR_016": {
+    "TWR_016_1_0_RIGHT": {
+      "TWR_016_1_1_TOP": []
+    },
+    "TWR_016_1_1_TOP": {
+      "TO_TWR_019_TOP": []
+    }
+  },
+  "m08TWR_017": {
+    "TWR_017_0_0_LEFT": {
+      "TWR_017_3_0_RIGHT": [],
+      "TO_TWR_000_0_0_LEFT": []
+    },
+    "TWR_017_3_0_RIGHT": {
+      "TWR_017_0_0_LEFT": [],
+      "TO_TWR_000_0_0_LEFT": []
+    },
+    "TWR_017_TOP": {
+      "TWR_017_0_0_LEFT": [],
+      "TWR_017_3_0_RIGHT": []
+    }
+  },
+  "m08TWR_018": {
+    "TWR_018_BOTTOM": {
+      "TO_TWR_006_0_0_LEFT": [],
+      "Candle_TWR018_1": []
+    },
+    "TWR_018_TOP": {
+      "TO_TWR_005_1_1_RIGHT": [],
+      "Candle_TWR018_1": []
+    }
+  },
+  "m08TWR_019": {
+    "TWR_019_0_0_LEFT": {},
+    "TWR_019_TOP": {
+      "TWR_019_0_0_LEFT": [],
+      "Candle_TWR019_1": [],
+      "Candle_TWR019_2": ["BLD_ABILITY_HIGH_JUMP"],
+      "N1005": []
+    }
+  },
+  "m09TRN_000": {
+    "TRN_000_0_0_LEFT": {
+      "TRN_000_4_0_RIGHT": []
+    },
+    "TRN_000_4_0_RIGHT": {
+      "TRN_000_0_0_LEFT": []
+    }
+  },
+  "m09TRN_001": {
+    "TRN_001_0_0_LEFT": {
+      "TO_TRN_002_START": []
+    }
+  },
+  "m09TRN_002": {
+    "TRN_002_START": {
+      "TO_TRN_003_TRN_EXIT": [],
+	  "N2001": []
+    }
+  },
+  "m09TRN_003": {
+    "TRN_003_TRN_EXIT": {
+      "TRN_003_0_0_RIGHT": []
+    },
+    "TRN_003_0_0_RIGHT": {}
+  },
+  "m09TRN_004": {
+    "TRN_004_0_0_LEFT": {
+      "TRN_004_1_0_RIGHT": []
+    },
+    "TRN_004_1_0_RIGHT": {
+      "TRN_004_0_0_LEFT": []
+    }
+  },
+  "m09TRN_005": {
+    "TRN_005_0_0_LEFT": {
+      "TRN_005_0_4_LEFT": [],
+      "TRN_005_0_4_RIGHT": []
+    },
+    "TRN_005_0_4_LEFT": {
+      "TRN_005_0_0_LEFT": [],
+      "TRN_005_0_4_RIGHT": []
+    },
+    "TRN_005_0_4_RIGHT": {
+      "TRN_005_0_0_LEFT": [],
+      "TRN_005_0_4_LEFT": []
+    }
+  },
+  "m10BIG_000": {
+    "BIG_000_START": {
+      "BIG_000_0_0_LEFT_TOP": [],
+      "BIG_000_3_0_RIGHT_TOP": []
+    },
+    "BIG_000_0_0_LEFT_TOP": {
+      "BIG_000_3_0_RIGHT_TOP": [],
+      "TO_GDN_001_BIG_EXIT": []
+    },
+    "BIG_000_3_0_RIGHT_TOP": {
+      "BIG_000_0_0_LEFT_TOP": [],
+      "TO_GDN_001_BIG_EXIT": []
+    }
+  },
+  "m10BIG_001": {
+    "BIG_001_0_0_LEFT_TOP": {
+      "BIG_001_1_0_RIGHT_TOP": []
+    },
+    "BIG_001_1_0_RIGHT_TOP": {
+      "BIG_001_0_0_LEFT_TOP": []
+    }
+  },
+  "m10BIG_002": {
+    "BIG_002_0_0_LEFT_TOP": {
+      "Candle_BIG002_1": []
+    }
+  },
+  "m10BIG_003": {
+    "BIG_003_0_0_LEFT_TOP": {
+      "BIG_003_1_0_RIGHT_TOP": []
+    },
+    "BIG_003_1_0_RIGHT_TOP": {
+      "BIG_003_0_0_LEFT_TOP": []
+    }
+  },
+  "m10BIG_004": {
+    "BIG_004_0_0_LEFT_TOP": {
+      "BIG_004_0_0_BOTTOM_RIGHT": [],
+      "BIG_004_1_0_RIGHT_TOP": []
+    },
+    "BIG_004_0_0_BOTTOM_RIGHT": {
+      "BIG_004_0_0_LEFT_TOP": [],
+      "BIG_004_1_0_RIGHT_TOP": []
+    },
+    "BIG_004_1_0_RIGHT_TOP": {
+      "BIG_004_0_0_LEFT_TOP": [],
+      "BIG_004_0_0_BOTTOM_RIGHT": []
+    }
+  },
+  "m10BIG_005": {
+    "BIG_005_1_0_RIGHT_TOP": {}
+  },
+  "m10BIG_006": {
+    "BIG_006_0_2_LEFT_TOP": {
+      "BIG_006_11_2_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "BIG_006_0_5_TOP_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_006_11_2_RIGHT_TOP": {
+      "BIG_006_0_2_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "BIG_006_0_5_TOP_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_006_0_5_TOP_RIGHT": {
+      "BIG_006_0_2_LEFT_TOP": [],
+      "BIG_006_11_2_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m10BIG_007": {
+    "BIG_007_1_0_RIGHT_TOP": {
+      "BIG_007_0_2_LEFT_TOP": []
+    },
+    "BIG_007_0_2_LEFT_TOP": {
+      "BIG_007_1_0_RIGHT_TOP": []
+    }
+  },
+  "m10BIG_008": {
+    "BIG_008_0_0_LEFT_TOP": {
+      "BIG_008_0_6_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_008_0_6_LEFT_TOP": {
+      "BIG_008_0_0_LEFT_TOP": []
+    }
+  },
+  "m10BIG_009": {
+    "BIG_009_0_0_LEFT_TOP": {
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_0_2_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "BIG_009_1_2_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_009_1_1_RIGHT": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_0_2_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "BIG_009_1_2_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_009_0_2_LEFT_TOP": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_1_2_RIGHT_TOP": []
+    },
+    "BIG_009_1_2_RIGHT_TOP": {
+      "BIG_009_0_0_LEFT_TOP": [],
+      "BIG_009_1_1_RIGHT": [],
+      "BIG_009_0_2_LEFT_TOP": []
+    }
+  },
+  "m10BIG_010": {
+    "BIG_010_1_0_RIGHT_TOP": {
+      "Candle_BIG010_1": []
+    }
+  },
+  "m10BIG_011": {
+    "BIG_011_0_0_LEFT_TOP": {
+      "BIG_011_1_0_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "N1004": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_011_1_0_RIGHT_TOP": {
+      "BIG_011_0_0_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"],
+      "N1004": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m10BIG_012": {
+    "BIG_012_4_0_BOTTOM_RIGHT": {
+      "BIG_012_0_2_LEFT_TOP": [],
+      "BIG_012_5_2_RIGHT_TOP": []
+    },
+    "BIG_012_0_2_LEFT_TOP": {
+      "BIG_012_4_0_BOTTOM_RIGHT": [],
+      "BIG_012_5_2_RIGHT_TOP": []
+    },
+    "BIG_012_5_2_RIGHT_TOP": {
+      "BIG_012_4_0_BOTTOM_RIGHT": [],
+      "BIG_012_0_2_LEFT_TOP": []
+    }
+  },
+  "m10BIG_013": {
+    "BIG_013_0_2_LEFT_TOP": {
+      "BIG_013_1_2_RIGHT_TOP": []
+    },
+    "BIG_013_1_2_RIGHT_TOP": {
+      "BIG_013_0_2_LEFT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m10BIG_014": {
+    "BIG_014_1_0_RIGHT_TOP": {
+      "Candle_BIG014_1": []
+    }
+  },
+  "m10BIG_015": {
+    "BIG_015_0_0_LEFT_TOP": {
+      "Candle_BIG015_1": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m10BIG_016": {
+    "BIG_016_1_0_RIGHT_TOP": {
+      "BIG_016_1_6_RIGHT_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_016_1_6_RIGHT_TOP": {
+      "BIG_016_1_0_RIGHT_TOP": []
+    }
+  },
+  "m10BIG_017": {
+    "BIG_017_0_0_LEFT_TOP": {
+      "BIG_017_1_2_RIGHT_TOP": []
+    },
+    "BIG_017_1_2_RIGHT_TOP": {
+      "BIG_017_0_0_LEFT_TOP": []
+    }
+  },
+  "m10BIG_018": {
+    "BIG_018_1_0_RIGHT": {
+      "BIG_018_0_3_TOP_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "BIG_018_0_3_TOP_RIGHT": {
+      "BIG_018_1_0_RIGHT": []
+    }
+  },
+  "m11UGD_000": {
+    "UGD_000_0_0_LEFT": {
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": []
+    },
+    "UGD_000_0_0_BOTTOM": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": []
+    },
+    "UGD_000_0_0_RIGHT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_1_LEFT": [],
+      "UGD_000_0_5_LEFT": []
+    },
+    "UGD_000_0_1_LEFT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_5_LEFT": []
+    },
+    "UGD_000_0_5_LEFT": {
+      "UGD_000_0_0_LEFT": [],
+      "UGD_000_0_0_BOTTOM": [],
+      "UGD_000_0_0_RIGHT": [],
+      "UGD_000_0_1_LEFT": []
+    }
+  },
+  "m11UGD_001": {
+    "UGD_001_0_0_RIGHT": {}
+  },
+  "m11UGD_002": {
+    "UGD_002_0_0_LEFT": {
+      "UGD_002_1_0_RIGHT": []
+    },
+    "UGD_002_1_0_RIGHT": {
+      "UGD_002_0_0_LEFT": []
+    }
+  },
+  "m11UGD_003": {
+    "UGD_003_0_0_LEFT": {
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_0_6_LEFT": [],
+      "UGD_003_1_6_RIGHT": []
+    },
+    "UGD_003_1_0_RIGHT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_0_6_LEFT": [],
+      "UGD_003_1_6_RIGHT": []
+    },
+    "UGD_003_1_3_RIGHT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_0_6_LEFT": [],
+      "UGD_003_1_6_RIGHT": []
+    },
+    "UGD_003_0_6_LEFT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_1_6_RIGHT": []
+    },
+    "UGD_003_1_6_RIGHT": {
+      "UGD_003_0_0_LEFT": [],
+      "UGD_003_1_0_RIGHT": [],
+      "UGD_003_1_3_RIGHT": [],
+      "UGD_003_0_6_LEFT": []
+    }
+  },
+  "m11UGD_004": {
+    "UGD_004_0_0_LEFT": {
+      "UGD_004_1_0_RIGHT": []
+    },
+    "UGD_004_1_0_RIGHT": {
+      "UGD_004_0_0_LEFT": []
+    }
+  },
+  "m11UGD_005": {
+    "UGD_005_0_1_LEFT": {
+      "UGD_005_3_1_TOP": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_005_5_1_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_005_3_1_TOP": {
+      "UGD_005_0_1_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_005_5_1_RIGHT": []
+    },
+    "UGD_005_5_1_RIGHT": {
+      "UGD_005_0_1_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_005_3_1_TOP": []
+    }
+  },
+  "m11UGD_006": {
+    "UGD_006_0_0_LEFT": {
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_LEFT": [],
+      "UGD_006_0_2_RIGHT": []
+    },
+    "UGD_006_0_0_BOTTOM": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_2_LEFT": [],
+      "UGD_006_0_2_RIGHT": []
+    },
+    "UGD_006_0_2_LEFT": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_RIGHT": []
+    },
+    "UGD_006_0_2_RIGHT": {
+      "UGD_006_0_0_LEFT": [],
+      "UGD_006_0_0_BOTTOM": [],
+      "UGD_006_0_2_LEFT": []
+    }
+  },
+  "m11UGD_007": {
+    "UGD_007_0_0_LEFT": {
+      "N3093Hard": []
+    }
+  },
+  "m11UGD_008": {
+    "UGD_008_0_0_LEFT": {
+      "UGD_008_2_0_RIGHT": []
+    },
+    "UGD_008_2_0_RIGHT": {
+      "UGD_008_0_0_LEFT": []
+    }
+  },
+  "m11UGD_009": {
+    "UGD_009_1_0_RIGHT": {
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": []
+    },
+    "UGD_009_0_1_LEFT": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": []
+    },
+    "UGD_009_1_3_RIGHT": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_0_4_TOP": [],
+      "UGD_009_1_4_TOP": []
+    },
+    "UGD_009_0_4_TOP": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_1_4_TOP": []
+    },
+    "UGD_009_1_4_TOP": {
+      "UGD_009_1_0_RIGHT": [],
+      "UGD_009_0_1_LEFT": [],
+      "UGD_009_1_3_RIGHT": [],
+      "UGD_009_0_4_TOP": []
+    }
+  },
+  "m11UGD_010": {
+    "UGD_010_0_0_LEFT": {
+      "Candle_UGD010_1": []
+    }
+  },
+  "m11UGD_011": {
+    "UGD_011_0_0_BOTTOM": {}
+  },
+  "m11UGD_012": {
+    "UGD_012_0_0_LEFT": {
+      "UGD_012_2_0_BOTTOM": []
+    },
+    "UGD_012_2_0_BOTTOM": {
+      "UGD_012_0_0_LEFT": []
+    }
+  },
+  "m11UGD_013": {
+    "UGD_013_5_0_RIGHT": {
+      "UGD_013_0_4_TOP": []
+    },
+    "UGD_013_0_4_TOP": {
+      "UGD_013_5_0_RIGHT": []
+    }
+  },
+  "m11UGD_014": {
+    "UGD_014_0_0_LEFT": {
+      "UGD_014_0_0_BOTTOM": []
+    },
+    "UGD_014_0_0_BOTTOM": {
+      "UGD_014_0_0_LEFT": []
+    }
+  },
+  "m11UGD_015": {
+    "UGD_015_0_0_LEFT": {
+      "UGD_015_1_0_RIGHT": [],
+      "Candle_UGD015_1": []
+    },
+    "UGD_015_1_0_RIGHT": {}
+  },
+  "m11UGD_016": {
+    "UGD_016_0_0_BOTTOM": {
+      "UGD_016_0_1_RIGHT": []
+    },
+    "UGD_016_0_1_RIGHT": {
+      "UGD_016_0_0_BOTTOM": []
+    }
+  },
+  "m11UGD_017": {
+    "UGD_017_0_0_LEFT": {
+      "UGD_017_0_0_RIGHT": []
+    },
+    "UGD_017_0_0_RIGHT": {
+      "UGD_017_0_0_LEFT": []
+    }
+  },
+  "m11UGD_018": {
+    "UGD_018_0_0_RIGHT": {
+      "UGD_018_0_1_LEFT": []
+    },
+    "UGD_018_0_1_LEFT": {
+      "UGD_018_0_0_RIGHT": []
+    }
+  },
+  "m11UGD_019": {
+    "UGD_019_1_0_RIGHT": {
+      "UGD_019_0_2_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_019_1_2_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_019_0_2_LEFT": {
+      "UGD_019_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_019_1_2_RIGHT": []
+    },
+    "UGD_019_1_2_RIGHT": {
+      "UGD_019_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_019_0_2_LEFT": []
+    }
+  },
+  "m11UGD_020": {
+    "UGD_020_0_0_LEFT": {
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_0_2_LEFT": [],
+      "UGD_020_1_2_TOP": []
+    },
+    "UGD_020_1_1_RIGHT": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_0_2_LEFT": [],
+      "UGD_020_1_2_TOP": []
+    },
+    "UGD_020_0_2_LEFT": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_1_2_TOP": []
+    },
+    "UGD_020_1_2_TOP": {
+      "UGD_020_0_0_LEFT": [],
+      "UGD_020_1_1_RIGHT": [],
+      "UGD_020_0_2_LEFT": []
+    }
+  },
+  "m11UGD_021": {
+    "UGD_021_0_0_LEFT": {
+      "UGD_021_0_0_BOTTOM": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_021_0_0_BOTTOM": {
+      "UGD_021_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_022": {
+    "UGD_022_1_0_RIGHT": {
+      "UGD_022_1_1_TOP": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_022_1_1_TOP": {
+      "UGD_022_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_023": {
+    "UGD_023_0_0_LEFT": {
+      "UGD_023_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_023_1_0_RIGHT": {
+      "UGD_023_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_024": {
+    "UGD_024_1_1_RIGHT": {
+      "UGD_024_0_2_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_024_0_2_LEFT": {
+      "UGD_024_1_1_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_025": {
+    "UGD_025_0_0_BOTTOM": {
+      "UGD_025_0_1_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_025_0_1_LEFT": {
+      "UGD_025_0_0_BOTTOM": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_026": {
+    "UGD_026_0_0_TOP": {
+      "UGD_026_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_026_1_0_RIGHT": {
+      "UGD_026_0_0_TOP": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_027": {
+    "UGD_027_1_0_RIGHT": {
+      "UGD_027_0_1_LEFT": []
+    },
+    "UGD_027_0_1_LEFT": {
+      "UGD_027_1_0_RIGHT": []
+    }
+  },
+  "m11UGD_028": {
+    "UGD_028_0_0_LEFT": {
+      "UGD_028_0_0_RIGHT": []
+    },
+    "UGD_028_0_0_RIGHT": {
+      "UGD_028_0_0_LEFT": []
+    }
+  },
+  "m11UGD_029": {
+    "UGD_029_0_0_LEFT": {
+      "UGD_029_0_1_LEFT": [],
+      "UGD_029_1_1_RIGHT": []
+    },
+    "UGD_029_0_1_LEFT": {
+      "UGD_029_0_0_LEFT": [],
+      "UGD_029_1_1_RIGHT": []
+    },
+    "UGD_029_1_1_RIGHT": {
+      "UGD_029_0_0_LEFT": [],
+      "UGD_029_0_1_LEFT": []
+    }
+  },
+  "m11UGD_030": {
+    "UGD_030_0_0_RIGHT": {
+      "Candle_UGD030_1": []
+    }
+  },
+  "m11UGD_031": {
+    "UGD_031_10_0_RIGHT": {
+      "UGD_031_0_3_LEFT": []
+    },
+    "UGD_031_0_3_LEFT": {
+      "UGD_031_10_0_RIGHT": []
+    }
+  },
+  "m11UGD_032": {
+    "UGD_032_0_0_LEFT": {
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": [],
+      "UGD_032_0_2_RIGHT": []
+    },
+    "UGD_032_0_0_RIGHT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": [],
+      "UGD_032_0_2_RIGHT": []
+    },
+    "UGD_032_0_1_LEFT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_2_LEFT": [],
+      "UGD_032_0_2_RIGHT": []
+    },
+    "UGD_032_0_2_LEFT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_RIGHT": []
+    },
+    "UGD_032_0_2_RIGHT": {
+      "UGD_032_0_0_LEFT": [],
+      "UGD_032_0_0_RIGHT": [],
+      "UGD_032_0_1_LEFT": [],
+      "UGD_032_0_2_LEFT": []
+    }
+  },
+  "m11UGD_033": {
+    "UGD_033_0_0_LEFT": {
+      "UGD_033_4_0_RIGHT": []
+    },
+    "UGD_033_4_0_RIGHT": {
+      "UGD_033_0_0_LEFT": []
+    }
+  },
+  "m11UGD_034": {
+    "UGD_034_0_0_LEFT": {
+      "UGD_034_0_0_RIGHT": []
+    },
+    "UGD_034_0_0_RIGHT": {
+      "UGD_034_0_0_LEFT": []
+    }
+  },
+  "m11UGD_035": {
+    "UGD_035_0_0_RIGHT": {
+      "UGD_035_0_2_LEFT": []
+    },
+    "UGD_035_0_2_LEFT": {
+      "UGD_035_0_0_RIGHT": []
+    }
+  },
+  "m11UGD_036": {
+    "UGD_036_0_1_LEFT": {
+      "UGD_036_3_1_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_036_3_1_RIGHT": {
+      "UGD_036_0_1_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_037": {
+    "UGD_037_0_0_RIGHT": {
+      "UGD_037_0_2_LEFT": [],
+      "UGD_037_0_4_RIGHT": []
+    },
+    "UGD_037_0_2_LEFT": {
+      "UGD_037_0_0_RIGHT": [],
+      "UGD_037_0_4_RIGHT": []
+    },
+    "UGD_037_0_4_RIGHT": {
+      "UGD_037_0_0_RIGHT": [],
+      "UGD_037_0_2_LEFT": []
+    }
+  },
+  "m11UGD_038": {
+    "UGD_038_1_0_RIGHT": {
+      "Candle_UGD038_1": []
+    }
+  },
+  "m11UGD_039": {
+    "UGD_039_0_0_LEFT": {
+      "UGD_039_1_0_RIGHT": []
+    },
+    "UGD_039_1_0_RIGHT": {
+      "UGD_039_0_0_LEFT": []
+    }
+  },
+  "m11UGD_040": {
+    "UGD_040_0_1_RIGHT": {
+      "UGD_040_0_4_LEFT": [],
+      "UGD_040_0_4_RIGHT": []
+    },
+    "UGD_040_0_4_LEFT": {
+      "UGD_040_0_1_RIGHT": [],
+      "UGD_040_0_4_RIGHT": []
+    },
+    "UGD_040_0_4_RIGHT": {
+      "UGD_040_0_1_RIGHT": [],
+      "UGD_040_0_4_LEFT": []
+    }
+  },
+  "m11UGD_041": {
+    "UGD_041_0_0_LEFT": {}
+  },
+  "m11UGD_042": {
+    "UGD_042_0_0_LEFT": {
+      "UGD_042_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_0_2_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_1_2_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_042_1_0_RIGHT": {
+      "UGD_042_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_0_2_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_1_2_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_042_0_2_LEFT": {
+      "UGD_042_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_1_2_RIGHT": []
+    },
+    "UGD_042_1_2_RIGHT": {
+      "UGD_042_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"],
+      "UGD_042_0_2_LEFT": []
+    }
+  },
+  "m11UGD_043": {
+    "UGD_043_0_0_LEFT": {
+      "UGD_043_2_0_RIGHT": []
+    },
+    "UGD_043_2_0_RIGHT": {
+      "UGD_043_0_0_LEFT": []
+    }
+  },
+  "m11UGD_044": {
+    "UGD_044_0_0_LEFT": {}
+  },
+  "m11UGD_045": {
+    "UGD_045_0_0_LEFT": {
+      "UGD_045_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_045_1_0_RIGHT": {
+      "UGD_045_0_0_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_046": {
+    "UGD_046_1_0_RIGHT": {
+      "UGD_046_0_3_LEFT": ["BLD_ABILITY_WATER_PROTECT"]
+    },
+    "UGD_046_0_3_LEFT": {
+      "UGD_046_1_0_RIGHT": ["BLD_ABILITY_WATER_PROTECT"]
+    }
+  },
+  "m11UGD_047": {
+    "UGD_047_0_0_TOP": {}
+  },
+  "m11UGD_048": {
+    "UGD_048_0_0_RIGHT": {
+      "Candle_UGD048_1": []
+    }
+  },
+  "m11UGD_049": {
+    "UGD_049_0_0_LEFT": {
+      "Candle_UGD049_1": []
+    }
+  },
+  "m11UGD_050": {
+    "UGD_050_0_0_LEFT": {
+      "Candle_UGD050_1": []
+    }
+  },
+  "m11UGD_051": {
+    "UGD_051_0_0_BOTTOM": {
+      "Candle_UGD051_1": []
+    }
+  },
+  "m11UGD_052": {
+    "UGD_052_0_0_BOTTOM": {
+      "UGD_052_0_1_TOP": []
+    },
+    "UGD_052_0_1_TOP": {
+      "UGD_052_0_0_BOTTOM": []
+    }
+  },
+  "m11UGD_053": {
+    "UGD_053_0_0_LEFT": {
+      "UGD_053_0_0_BOTTOM": [],
+      "UGD_053_0_0_TOP": []
+    },
+    "UGD_053_0_0_BOTTOM": {
+      "UGD_053_0_0_LEFT": [],
+      "UGD_053_0_0_TOP": []
+    },
+    "UGD_053_0_0_TOP": {
+      "UGD_053_0_0_LEFT": [],
+      "UGD_053_0_0_BOTTOM": []
+    }
+  },
+  "m11UGD_054": {
+    "UGD_054_0_0_LEFT": {
+      "UGD_054_0_0_RIGHT": [],
+      "UGD_054_0_2_TOP": []
+    },
+    "UGD_054_0_0_RIGHT": {
+      "UGD_054_0_0_LEFT": [],
+      "UGD_054_0_2_TOP": []
+    },
+    "UGD_054_0_2_TOP": {
+      "UGD_054_0_0_LEFT": [],
+      "UGD_054_0_0_RIGHT": []
+    }
+  },
+  "m11UGD_055": {
+    "UGD_055_0_0_LEFT": {
+      "UGD_055_0_1_LEFT": [],
+      "UGD_055_0_1_RIGHT": []
+    },
+    "UGD_055_0_1_LEFT": {
+      "UGD_055_0_0_LEFT": [],
+      "UGD_055_0_1_RIGHT": []
+    },
+    "UGD_055_0_1_RIGHT": {
+      "UGD_055_0_0_LEFT": [],
+      "UGD_055_0_1_LEFT": []
+    }
+  },
+  "m11UGD_056": {
+    "UGD_056_0_0_RIGHT": {
+      "UGD_056_0_3_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "UGD_056_0_3_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "UGD_056_0_3_LEFT": {
+      "UGD_056_0_0_RIGHT": [],
+      "UGD_056_0_3_RIGHT": []
+    },
+    "UGD_056_0_3_RIGHT": {
+      "UGD_056_0_0_RIGHT": [],
+      "UGD_056_0_3_LEFT": []
+    }
+  },
+  "m11UGD_057": {
+    "UGD_057_0_0_LEFT": {
+      "UGD_057_0_0_RIGHT": []
+    },
+    "UGD_057_0_0_RIGHT": {
+      "UGD_057_0_0_LEFT": []
+    }
+  },
+  "m12SND_000": {
+    "SND_000_0_0_RIGHT": {
+      "SND_000_0_2_LEFT": []
+    },
+    "SND_000_0_2_LEFT": {
+      "SND_000_0_0_RIGHT": []
+    }
+  },
+  "m12SND_001": {
+    "SND_001_0_0_LEFT": {
+      "SND_001_1_0_BOTTOM": [],
+      "SND_001_2_0_TOP": []
+    },
+    "SND_001_1_0_BOTTOM": {
+      "SND_001_0_0_LEFT": [],
+      "SND_001_2_0_TOP": []
+    },
+    "SND_001_2_0_TOP": {
+      "SND_001_0_0_LEFT": [],
+      "SND_001_1_0_BOTTOM": []
+    }
+  },
+  "m12SND_002": {
+    "SND_002_0_0_LEFT": {
+      "SND_002_1_0_TOP": [],
+      "SND_002_2_0_RIGHT": []
+    },
+    "SND_002_1_0_TOP": {
+      "SND_002_0_0_LEFT": [],
+      "SND_002_2_0_RIGHT": []
+    },
+    "SND_002_2_0_RIGHT": {
+      "SND_002_0_0_LEFT": [],
+      "SND_002_1_0_TOP": []
+    }
+  },
+  "m12SND_003": {
+    "SND_003_0_0_RIGHT": {
+      "Candle_SND003_1": []
+    }
+  },
+  "m12SND_004": {
+    "SND_004_0_0_LEFT": {
+      "SND_004_0_1_RIGHT": [],
+      "SND_004_0_2_LEFT": []
+    },
+    "SND_004_0_1_RIGHT": {
+      "SND_004_0_0_LEFT": [],
+      "SND_004_0_2_LEFT": []
+    },
+    "SND_004_0_2_LEFT": {
+      "SND_004_0_0_LEFT": [],
+      "SND_004_0_1_RIGHT": []
+    }
+  },
+  "m12SND_005": {
+    "SND_005_0_0_LEFT": {
+      "SND_005_1_0_BOTTOM": [],
+      "SND_005_1_0_RIGHT": []
+    },
+    "SND_005_1_0_BOTTOM": {
+      "SND_005_0_0_LEFT": [],
+      "SND_005_1_0_RIGHT": []
+    },
+    "SND_005_1_0_RIGHT": {
+      "SND_005_0_0_LEFT": [],
+      "SND_005_1_0_BOTTOM": []
+    }
+  },
+  "m12SND_006": {
+    "SND_006_0_0_RIGHT": {}
+  },
+  "m12SND_007": {
+    "SND_007_0_0_LEFT": {
+      "SND_007_0_0_RIGHT": [],
+      "SND_007_0_0_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SND_007_0_0_RIGHT": {
+      "SND_007_0_0_LEFT": [],
+      "SND_007_0_0_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "SND_007_0_0_TOP": {
+      "SND_007_0_0_LEFT": [],
+      "SND_007_0_0_RIGHT": []
+    }
+  },
+  "m12SND_008": {
+    "SND_008_0_0_BOTTOM": {}
+  },
+  "m12SND_009": {
+    "SND_009_0_0_LEFT": {
+      "SND_009_0_1_LEFT": [],
+      "SND_009_1_1_RIGHT": []
+    },
+    "SND_009_0_1_LEFT": {
+      "SND_009_0_0_LEFT": [],
+      "SND_009_1_1_RIGHT": []
+    },
+    "SND_009_1_1_RIGHT": {
+      "SND_009_0_0_LEFT": [],
+      "SND_009_0_1_LEFT": []
+    }
+  },
+  "m12SND_010": {
+    "SND_010_0_0_RIGHT": {
+      "SND_010_0_1_LEFT": []
+    },
+    "SND_010_0_1_LEFT": {
+      "SND_010_0_0_RIGHT": []
+    }
+  },
+  "m12SND_011": {
+    "SND_011_0_0_LEFT": {
+      "SND_011_0_3_RIGHT": [],
+      "SND_011_0_4_LEFT": []
+    },
+    "SND_011_0_3_RIGHT": {
+      "SND_011_0_0_LEFT": [],
+      "SND_011_0_4_LEFT": []
+    },
+    "SND_011_0_4_LEFT": {
+      "SND_011_0_0_LEFT": [],
+      "SND_011_0_3_RIGHT": []
+    }
+  },
+  "m12SND_012": {
+    "SND_012_0_0_LEFT": {
+      "SND_012_1_0_BOTTOM": [],
+      "SND_012_2_0_RIGHT": []
+    },
+    "SND_012_1_0_BOTTOM": {
+      "SND_012_0_0_LEFT": [],
+      "SND_012_2_0_RIGHT": []
+    },
+    "SND_012_2_0_RIGHT": {
+      "SND_012_0_0_LEFT": [],
+      "SND_012_1_0_BOTTOM": []
+    }
+  },
+  "m12SND_013": {
+    "SND_013_0_0_LEFT": {
+      "SND_013_0_0_TOP": []
+    },
+    "SND_013_0_0_TOP": {
+      "SND_013_0_0_LEFT": []
+    }
+  },
+  "m12SND_014": {
+    "SND_014_0_0_RIGHT": {
+      "SND_014_0_1_LEFT": [],
+      "SND_014_0_1_RIGHT": []
+    },
+    "SND_014_0_1_LEFT": {
+      "SND_014_0_0_RIGHT": [],
+      "SND_014_0_1_RIGHT": []
+    },
+    "SND_014_0_1_RIGHT": {
+      "SND_014_0_0_RIGHT": [],
+      "SND_014_0_1_LEFT": []
+    }
+  },
+  "m12SND_015": {
+    "SND_015_0_0_RIGHT": {
+      "SND_015_0_1_LEFT": [],
+      "SND_015_0_2_LEFT": []
+    },
+    "SND_015_0_1_LEFT": {
+      "SND_015_0_0_RIGHT": [],
+      "SND_015_0_2_LEFT": []
+    },
+    "SND_015_0_2_LEFT": {
+      "SND_015_0_0_RIGHT": [],
+      "SND_015_0_1_LEFT": []
+    }
+  },
+  "m12SND_016": {
+    "SND_016_0_0_LEFT": {
+      "SND_016_1_1_RIGHT": []
+    },
+    "SND_016_1_1_RIGHT": {
+      "SND_016_0_0_LEFT": []
+    }
+  },
+  "m12SND_017": {
+    "SND_017_0_0_LEFT": {
+      "SND_017_0_0_RIGHT": []
+    },
+    "SND_017_0_0_RIGHT": {
+      "SND_017_0_0_LEFT": []
+    }
+  },
+  "m12SND_018": {
+    "SND_018_0_0_BOTTOM": {
+      "SND_018_0_1_RIGHT": []
+    },
+    "SND_018_0_1_RIGHT": {
+      "SND_018_0_0_BOTTOM": []
+    }
+  },
+  "m12SND_019": {
+    "SND_019_0_0_RIGHT": {
+      "SND_019_0_0_TOP": []
+    },
+    "SND_019_0_0_TOP": {
+      "SND_019_0_0_RIGHT": []
+    }
+  },
+  "m12SND_020": {
+    "SND_020_0_0_LEFT": {
+      "SND_020_1_0_RIGHT": [],
+      "SND_020_1_1_TOP": []
+    },
+    "SND_020_1_0_RIGHT": {
+      "SND_020_0_0_LEFT": [],
+      "SND_020_1_1_TOP": []
+    },
+    "SND_020_1_1_TOP": {
+      "SND_020_0_0_LEFT": [],
+      "SND_020_1_0_RIGHT": []
+    }
+  },
+  "m12SND_021": {
+    "SND_021_0_0_LEFT": {}
+  },
+  "m12SND_022": {
+    "SND_022_0_0_LEFT": {
+      "SND_022_0_0_BOTTOM": [],
+      "SND_022_0_0_RIGHT": []
+    },
+    "SND_022_0_0_BOTTOM": {
+      "SND_022_0_0_LEFT": [],
+      "SND_022_0_0_RIGHT": []
+    },
+    "SND_022_0_0_RIGHT": {
+      "SND_022_0_0_LEFT": [],
+      "SND_022_0_0_BOTTOM": []
+    }
+  },
+  "m12SND_023": {
+    "SND_023_0_0_LEFT": {
+      "SND_023_0_1_RIGHT": [],
+      "SND_023_0_3_RIGHT": [],
+      "SND_023_0_5_RIGHT": []
+    },
+    "SND_023_0_1_RIGHT": {
+      "SND_023_0_0_LEFT": [],
+      "SND_023_0_3_RIGHT": [],
+      "SND_023_0_5_RIGHT": []
+    },
+    "SND_023_0_3_RIGHT": {},
+    "SND_023_0_5_RIGHT": {
+      "SND_023_0_0_LEFT": [],
+      "SND_023_0_1_RIGHT": [],
+      "SND_023_0_3_RIGHT": []
+    }
+  },
+  "m12SND_024": {
+    "SND_024_0_0_RIGHT": {
+      "Candle_SND024_1": []
+    }
+  },
+  "m12SND_025": {
+    "SND_025_0_0_LEFT": {}
+  },
+  "m12SND_026": {
+    "SND_026_0_0_LEFT": {
+      "Candle_SND026_1": []
+    }
+  },
+  "m12SND_027": {
+    "SND_027_0_0_LEFT": {
+      "N2014": []
+    }
+  },
+  "m13ARC_000": {
+    "ARC_000_0_0_LEFT": {
+      "ARC_000_1_0_RIGHT": []
+    },
+    "ARC_000_1_0_RIGHT": {
+      "ARC_000_0_0_LEFT": []
+    }
+  },
+  "m13ARC_001": {
+    "ARC_001_0_0_LEFT": {
+      "ARC_001_1_0_RIGHT": []
+    },
+    "ARC_001_1_0_RIGHT": {
+      "ARC_001_0_0_LEFT": []
+    }
+  },
+  "m13ARC_002": {
+    "ARC_002_0_0_LEFT": {
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_0_1_LEFT": [],
+      "ARC_002_1_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"]
+    },
+    "ARC_002_1_0_RIGHT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_0_1_LEFT": [],
+      "ARC_002_1_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"]
+    },
+    "ARC_002_0_1_LEFT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_1_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP", "BLD_ABILITY_FLOATING_UP"]
+    },
+    "ARC_002_1_1_RIGHT": {
+      "ARC_002_0_0_LEFT": [],
+      "ARC_002_1_0_RIGHT": [],
+      "ARC_002_0_1_LEFT": []
+    }
+  },
+  "m13ARC_003": {
+    "ARC_003_0_0_LEFT": {
+      "ARC_003_0_0_RIGHT": []
+    },
+    "ARC_003_0_0_RIGHT": {
+      "ARC_003_0_0_LEFT": []
+    }
+  },
+  "m13ARC_004": {
+    "ARC_004_0_0_LEFT": {}
+  },
+  "m13ARC_005": {
+    "ARC_005_0_0_LEFT": {
+      "ARC_005_1_0_RIGHT": [],
+      "N1006": []
+    },
+    "ARC_005_1_0_RIGHT": {
+      "ARC_005_0_0_LEFT": [],
+      "N1006": []
+    }
+  },
+  "m13ARC_006": {
+    "ARC_006_0_0_BOTTOM": {
+      "ARC_006_1_0_RIGHT": [],
+      "ARC_006_1_1_RIGHT": [],
+      "Candle_ARC006_1": []
+    },
+    "ARC_006_1_0_RIGHT": {
+      "ARC_006_0_0_BOTTOM": [],
+      "ARC_006_1_1_RIGHT": [],
+      "Candle_ARC006_1": []
+    },
+    "ARC_006_1_1_RIGHT": {
+      "ARC_006_0_0_BOTTOM": [],
+      "ARC_006_1_0_RIGHT": [],
+      "Candle_ARC006_1": []
+    }
+  },
+  "m13ARC_007": {
+    "ARC_007_0_0_TOP": {}
+  },
+  "m14TAR_000": {
+    "TAR_000_0_0_LEFT": {
+      "TAR_000_1_0_RIGHT": []
+    },
+    "TAR_000_1_0_RIGHT": {
+      "TAR_000_0_0_LEFT": []
+    }
+  },
+  "m14TAR_001": {
+    "TAR_001_0_0_LEFT": {
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_0_1_LEFT": [],
+      "TAR_001_1_1_RIGHT": []
+    },
+    "TAR_001_1_0_RIGHT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_0_1_LEFT": [],
+      "TAR_001_1_1_RIGHT": []
+    },
+    "TAR_001_0_1_LEFT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_1_1_RIGHT": []
+    },
+    "TAR_001_1_1_RIGHT": {
+      "TAR_001_0_0_LEFT": [],
+      "TAR_001_1_0_RIGHT": [],
+      "TAR_001_0_1_LEFT": []
+    }
+  },
+  "m14TAR_002": {
+    "TAR_002_0_0_LEFT": {
+      "Candle_TAR002_1": []
+    }
+  },
+  "m14TAR_003": {
+    "TAR_003_0_0_LEFT": {
+      "TAR_003_0_0_RIGHT": [],
+      "TAR_003_0_1_RIGHT": []
+    },
+    "TAR_003_0_0_RIGHT": {
+      "TAR_003_0_0_LEFT": [],
+      "TAR_003_0_1_RIGHT": []
+    },
+    "TAR_003_0_1_RIGHT": {
+      "TAR_003_0_0_LEFT": [],
+      "TAR_003_0_0_RIGHT": []
+    }
+  },
+  "m14TAR_004": {
+    "TAR_004_0_0_LEFT": {
+      "TAR_004_1_0_RIGHT": [],
+      "N2007": []
+    },
+    "TAR_004_1_0_RIGHT": {
+      "TAR_004_0_0_LEFT": [],
+      "N2007": []
+    }
+  },
+  "m14TAR_005": {
+    "TAR_005_0_0_RIGHT": {
+      "TAR_005_0_2_RIGHT": [],
+      "TAR_005_0_3_RIGHT": []
+    },
+    "TAR_005_0_2_RIGHT": {
+      "TAR_005_0_0_RIGHT": [],
+      "TAR_005_0_3_RIGHT": []
+    },
+    "TAR_005_0_3_RIGHT": {
+      "TAR_005_0_0_RIGHT": [],
+      "TAR_005_0_2_RIGHT": []
+    }
+  },
+  "m14TAR_006": {
+    "TAR_006_0_0_LEFT": {
+      "Candle_TAR006_1": []
+    }
+  },
+  "m14TAR_007": {
+    "TAR_007_0_0_LEFT": {
+      "TAR_007_2_1_RIGHT": []
+    },
+    "TAR_007_2_1_RIGHT": {
+      "TAR_007_0_0_LEFT": []
+    }
+  },
+  "m14TAR_008": {
+    "TAR_008_0_0_LEFT": {
+      "TAR_008_1_0_RIGHT": []
+    },
+    "TAR_008_1_0_RIGHT": {
+      "TAR_008_0_0_LEFT": []
+    }
+  },
+  "m14TAR_009": {
+    "TAR_009_0_0_LEFT": {
+      "TAR_009_0_1_LEFT": [],
+      "TAR_009_0_3_LEFT": []
+    },
+    "TAR_009_0_1_LEFT": {
+      "TAR_009_0_0_LEFT": [],
+      "TAR_009_0_3_LEFT": []
+    },
+    "TAR_009_0_3_LEFT": {
+      "TAR_009_0_0_LEFT": [],
+      "TAR_009_0_1_LEFT": []
+    }
+  },
+  "m14TAR_010": {
+    "TAR_010_1_0_RIGHT": {}
+  },
+  "m15JPN_000": {
+    "JPN_000_0_0_BOTTOM": {
+      "JPN_000_0_2_RIGHT": []
+    },
+    "JPN_000_0_2_RIGHT": {
+      "JPN_000_0_0_BOTTOM": []
+    }
+  },
+  "m15JPN_001": {
+    "JPN_001_0_0_LEFT": {
+      "JPN_001_0_1_LEFT": [],
+      "JPN_001_0_1_TOP": []
+    },
+    "JPN_001_0_1_LEFT": {
+      "JPN_001_0_0_LEFT": [],
+      "JPN_001_0_1_TOP": []
+    },
+    "JPN_001_0_1_TOP": {
+      "JPN_001_0_0_LEFT": [],
+      "JPN_001_0_1_LEFT": []
+    }
+  },
+  "m15JPN_002": {
+    "JPN_002_0_1_TOP": {
+      "JPN_002_3_1_RIGHT": []
+    },
+    "JPN_002_3_1_RIGHT": {
+      "JPN_002_0_1_TOP": []
+    }
+  },
+  "m15JPN_003": {
+    "JPN_003_0_0_LEFT": {
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": [],
+      "JPN_003_1_3_TOP": []
+    },
+    "JPN_003_1_0_RIGHT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": [],
+      "JPN_003_1_3_TOP": []
+    },
+    "JPN_003_0_1_LEFT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_3_LEFT": [],
+      "JPN_003_1_3_TOP": []
+    },
+    "JPN_003_0_3_LEFT": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_1_3_TOP": []
+    },
+    "JPN_003_1_3_TOP": {
+      "JPN_003_0_0_LEFT": [],
+      "JPN_003_1_0_RIGHT": [],
+      "JPN_003_0_1_LEFT": [],
+      "JPN_003_0_3_LEFT": []
+    }
+  },
+  "m15JPN_004": {
+    "JPN_004_0_0_RIGHT": {}
+  },
+  "m15JPN_005": {
+    "JPN_005_0_1_RIGHT": {
+      "Candle_JPN005_1": []
+    }
+  },
+  "m15JPN_006": {
+    "JPN_006_0_0_LEFT": {
+      "JPN_006_0_0_RIGHT": []
+    },
+    "JPN_006_0_0_RIGHT": {
+      "JPN_006_0_0_LEFT": []
+    }
+  },
+  "m15JPN_007": {
+    "JPN_007_0_0_BOTTOM": {
+      "JPN_007_0_1_LEFT": []
+    },
+    "JPN_007_0_1_LEFT": {
+      "JPN_007_0_0_BOTTOM": []
+    }
+  },
+  "m15JPN_008": {
+    "JPN_008_0_0_LEFT": {}
+  },
+  "m15JPN_009": {
+    "JPN_009_0_0_LEFT": {}
+  },
+  "m15JPN_010": {
+    "JPN_010_0_0_LEFT": {
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_0_1_LEFT": [],
+      "JPN_010_3_1_RIGHT": []
+    },
+    "JPN_010_3_0_BOTTOM": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_0_1_LEFT": [],
+      "JPN_010_3_1_RIGHT": []
+    },
+    "JPN_010_3_0_RIGHT": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_0_1_LEFT": [],
+      "JPN_010_3_1_RIGHT": []
+    },
+    "JPN_010_0_1_LEFT": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_3_1_RIGHT": []
+    },
+    "JPN_010_3_1_RIGHT": {
+      "JPN_010_0_0_LEFT": [],
+      "JPN_010_3_0_BOTTOM": [],
+      "JPN_010_3_0_RIGHT": [],
+      "JPN_010_0_1_LEFT": []
+    }
+  },
+  "m15JPN_011": {
+    "JPN_011_0_0_RIGHT": {
+      "JPN_011_0_1_RIGHT": [],
+      "JPN_011_0_2_LEFT": []
+    },
+    "JPN_011_0_1_RIGHT": {
+      "JPN_011_0_0_RIGHT": [],
+      "JPN_011_0_2_LEFT": []
+    },
+    "JPN_011_0_2_LEFT": {
+      "JPN_011_0_0_RIGHT": [],
+      "JPN_011_0_1_RIGHT": []
+    }
+  },
+  "m15JPN_012": {
+    "JPN_012_0_0_LEFT": {
+      "JPN_012_3_0_RIGHT": []
+    },
+    "JPN_012_3_0_RIGHT": {
+      "JPN_012_0_0_LEFT": []
+    }
+  },
+  "m15JPN_013": {
+    "JPN_013_0_0_LEFT": {
+      "JPN_013_0_2_LEFT": [],
+      "JPN_013_0_2_TOP": []
+    },
+    "JPN_013_0_2_LEFT": {
+      "JPN_013_0_0_LEFT": [],
+      "JPN_013_0_2_TOP": []
+    },
+    "JPN_013_0_2_TOP": {
+      "JPN_013_0_0_LEFT": [],
+      "JPN_013_0_2_LEFT": []
+    }
+  },
+  "m15JPN_014": {
+    "JPN_014_0_0_LEFT": {
+      "JPN_014_3_0_RIGHT": []
+    },
+    "JPN_014_3_0_RIGHT": {
+      "JPN_014_0_0_LEFT": []
+    }
+  },
+  "m15JPN_015": {
+    "JPN_015_0_0_RIGHT": {
+      "JPN_015_0_1_LEFT": [],
+      "JPN_015_0_1_RIGHT": []
+    },
+    "JPN_015_0_1_LEFT": {
+      "JPN_015_0_0_RIGHT": [],
+      "JPN_015_0_1_RIGHT": []
+    },
+    "JPN_015_0_1_RIGHT": {
+      "JPN_015_0_0_RIGHT": [],
+      "JPN_015_0_1_LEFT": []
+    }
+  },
+  "m15JPN_016": {
+    "JPN_016_1_0_RIGHT": {
+      "Swordsman": [],
+      "N1011_STRONG": []
+    }
+  },
+  "m15JPN_017": {
+    "JPN_017_0_0_BOTTOM": {
+      "Candle_JPN017_1": []
+    }
+  },
+  "m15JPN_018": {
+    "JPN_018_0_0_RIGHT": {
+      "Candle_JPN018_1": []
+    }
+  },
+  "m88BKR_004": {
+    "BKR_004_0_0_RIGHT": {
+      "Candle_BKR004_1": []
+    }
+  },
+  "m17RVA_000": {
+    "RVA_000_0_0_RIGHT": {
+      "RVA_000_0_4_RIGHT": []
+    },
+    "RVA_000_0_4_RIGHT": {
+      "RVA_000_0_0_RIGHT": []
+    }
+  },
+  "m17RVA_001": {
+    "RVA_001_1_0_RIGHT": {
+      "RVA_001_0_1_LEFT": []
+    },
+    "RVA_001_0_1_LEFT": {
+      "RVA_001_1_0_RIGHT": []
+    }
+  },
+  "m17RVA_002": {
+    "RVA_002_0_0_LEFT": {
+      "RVA_002_1_0_RIGHT": []
+    },
+    "RVA_002_1_0_RIGHT": {
+      "RVA_002_0_0_LEFT": []
+    }
+  },
+  "m17RVA_003": {
+    "RVA_003_0_0_LEFT": {
+      "RVA_003_1_0_RIGHT": [],
+      "RVA_003_1_2_RIGHT": []
+    },
+    "RVA_003_1_0_RIGHT": {
+      "RVA_003_0_0_LEFT": [],
+      "RVA_003_1_2_RIGHT": []
+    },
+    "RVA_003_1_2_RIGHT": {
+      "RVA_003_0_0_LEFT": [],
+      "RVA_003_1_0_RIGHT": []
+    }
+  },
+  "m17RVA_004": {
+    "RVA_004_0_0_LEFT": {
+      "Candle_RVA004_1": []
+    }
+  },
+  "m17RVA_005": {
+    "RVA_005_1_0_RIGHT": {
+      "RVA_005_0_1_LEFT": [],
+      "RVA_005_1_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_005_0_1_LEFT": {
+      "RVA_005_1_0_RIGHT": [],
+      "RVA_005_1_1_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_005_1_1_RIGHT": {
+      "RVA_005_1_0_RIGHT": [],
+      "RVA_005_0_1_LEFT": []
+    }
+  },
+  "m17RVA_006": {
+    "RVA_006_0_0_LEFT": {}
+  },
+  "m17RVA_007": {
+    "RVA_007_0_0_LEFT": {
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_LEFT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "Candle_RVA007_1": []
+    },
+    "RVA_007_0_0_RIGHT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_1_LEFT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "Candle_RVA007_1": []
+    },
+    "RVA_007_0_1_LEFT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_RIGHT": [],
+      "Candle_RVA007_1": []
+    },
+    "RVA_007_0_1_RIGHT": {
+      "RVA_007_0_0_LEFT": [],
+      "RVA_007_0_0_RIGHT": [],
+      "RVA_007_0_1_LEFT": [],
+      "Candle_RVA007_1": []
+    }
+  },
+  "m17RVA_008": {
+    "RVA_008_0_0_LEFT": {
+      "RVA_008_1_0_RIGHT": [],
+      "N2006": []
+    },
+    "RVA_008_1_0_RIGHT": {
+      "RVA_008_0_0_LEFT": [],
+      "N2006": []
+    }
+  },
+  "m17RVA_009": {
+    "RVA_009_0_0_LEFT": {
+      "RVA_009_0_1_LEFT": ["BLD_ABILITY_HIGH_JUMP"],
+      "RVA_009_0_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_009_0_1_LEFT": {
+      "RVA_009_0_0_LEFT": [],
+      "RVA_009_0_2_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_009_0_2_RIGHT": {
+      "RVA_009_0_0_LEFT": [],
+      "RVA_009_0_1_LEFT": []
+    }
+  },
+  "m17RVA_010": {
+    "RVA_010_0_0_RIGHT": {}
+  },
+  "m17RVA_011": {
+    "RVA_011_1_0_RIGHT": {
+      "RVA_011_0_2_LEFT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_011_0_2_LEFT": {
+      "RVA_011_1_0_RIGHT": []
+    }
+  },
+  "m17RVA_012": {
+    "RVA_012_0_0_LEFT": {
+      "RVA_012_2_0_RIGHT": []
+    },
+    "RVA_012_2_0_RIGHT": {
+      "RVA_012_0_0_LEFT": []
+    }
+  },
+  "m17RVA_013": {
+    "RVA_013_0_0_LEFT": {
+      "RVA_013_0_2_RIGHT": []
+    },
+    "RVA_013_0_2_RIGHT": {
+      "RVA_013_0_0_LEFT": []
+    }
+  },
+  "m17RVA_014": {
+    "RVA_014_0_0_LEFT": {
+      "RVA_014_0_0_RIGHT": [],
+      "RVA_014_0_4_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_014_0_0_RIGHT": {
+      "RVA_014_0_0_LEFT": [],
+      "RVA_014_0_4_RIGHT": ["BLD_ABILITY_HIGH_JUMP"]
+    },
+    "RVA_014_0_4_RIGHT": {
+      "RVA_014_0_0_LEFT": [],
+      "RVA_014_0_0_RIGHT": []
+    }
+  },
+  "m17RVA_015": {
+    "RVA_015_0_0_LEFT": {
+      "Candle_RVA015_1": []
+    }
+  },
+  "m18ICE_000": {
+    "ICE_000_0_0_LEFT": {
+      "ICE_000_0_0_RIGHT": []
+    },
+    "ICE_000_0_0_RIGHT": {
+      "ICE_000_0_0_LEFT": []
+    }
+  },
+  "m18ICE_001": {
+    "ICE_001_1_0_RIGHT": {
+      "ICE_001_0_1_LEFT": []
+    },
+    "ICE_001_0_1_LEFT": {
+      "ICE_001_1_0_RIGHT": []
+    }
+  },
+  "m18ICE_002": {
+    "ICE_002_0_0_BOTTOM": {
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_1_LEFT": [],
+      "ICE_002_0_5_LEFT": []
+    },
+    "ICE_002_0_0_RIGHT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_1_LEFT": [],
+      "ICE_002_0_5_LEFT": []
+    },
+    "ICE_002_0_1_LEFT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_5_LEFT": []
+    },
+    "ICE_002_0_5_LEFT": {
+      "ICE_002_0_0_BOTTOM": [],
+      "ICE_002_0_0_RIGHT": [],
+      "ICE_002_0_1_LEFT": []
+    }
+  },
+  "m18ICE_003": {
+    "ICE_003_0_0_TOP": {}
+  },
+  "m18ICE_004": {
+    "ICE_004_0_0_LEFT": {
+      "ICE_004_0_0_RIGHT": []
+    },
+    "ICE_004_0_0_RIGHT": {
+      "ICE_004_0_0_LEFT": []
+    }
+  },
+  "m18ICE_005": {
+    "ICE_005_0_0_BOTTOM": {
+      "ICE_005_0_2_LEFT": [],
+      "ICE_005_0_2_RIGHT": []
+    },
+    "ICE_005_0_2_LEFT": {
+      "ICE_005_0_0_BOTTOM": [],
+      "ICE_005_0_2_RIGHT": []
+    },
+    "ICE_005_0_2_RIGHT": {
+      "ICE_005_0_0_BOTTOM": [],
+      "ICE_005_0_2_LEFT": []
+    }
+  },
+  "m18ICE_006": {
+    "ICE_006_0_0_TOP": {}
+  },
+  "m18ICE_007": {
+    "ICE_007_0_0_LEFT": {
+      "ICE_007_2_0_RIGHT": []
+    },
+    "ICE_007_2_0_RIGHT": {
+      "ICE_007_0_0_LEFT": []
+    }
+  },
+  "m18ICE_008": {
+    "ICE_008_0_0_BOTTOM": {
+      "ICE_008_0_1_LEFT": []
+    },
+    "ICE_008_0_1_LEFT": {
+      "ICE_008_0_0_BOTTOM": []
+    }
+  },
+  "m18ICE_009": {
+    "ICE_009_0_0_TOP": {
+      "ICE_009_1_0_RIGHT": []
+    },
+    "ICE_009_1_0_RIGHT": {
+      "ICE_009_0_0_TOP": ["BLD_ABILITY_HIGH_JUMP"]
+    }
+  },
+  "m18ICE_010": {
+    "ICE_010_0_0_LEFT": {
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_LEFT": [],
+      "ICE_010_0_2_RIGHT": []
+    },
+    "ICE_010_0_0_BOTTOM": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_2_LEFT": [],
+      "ICE_010_0_2_RIGHT": []
+    },
+    "ICE_010_0_2_LEFT": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_RIGHT": []
+    },
+    "ICE_010_0_2_RIGHT": {
+      "ICE_010_0_0_LEFT": [],
+      "ICE_010_0_0_BOTTOM": [],
+      "ICE_010_0_2_LEFT": []
+    }
+  },
+  "m18ICE_011": {
+    "ICE_011_0_0_TOP": {}
+  },
+  "m18ICE_012": {
+    "ICE_012_0_0_LEFT": {
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": [],
+      "ICE_012_0_2_RIGHT": []
+    },
+    "ICE_012_0_0_RIGHT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": [],
+      "ICE_012_0_2_RIGHT": []
+    },
+    "ICE_012_0_1_LEFT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_2_LEFT": [],
+      "ICE_012_0_2_RIGHT": []
+    },
+    "ICE_012_0_2_LEFT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_RIGHT": []
+    },
+    "ICE_012_0_2_RIGHT": {
+      "ICE_012_0_0_LEFT": [],
+      "ICE_012_0_0_RIGHT": [],
+      "ICE_012_0_1_LEFT": [],
+      "ICE_012_0_2_LEFT": []
+    }
+  },
+  "m18ICE_013": {
+    "ICE_013_0_0_RIGHT": {}
+  },
+  "m18ICE_014": {
+    "ICE_014_1_0_RIGHT": {}
+  },
+  "m18ICE_015": {
+    "ICE_015_0_0_LEFT": {
+      "ICE_015_1_0_RIGHT": []
+    },
+    "ICE_015_1_0_RIGHT": {
+      "ICE_015_0_0_LEFT": []
+    }
+  },
+  "m18ICE_016": {
+    "ICE_016_0_0_BOTTOM": {
+      "ICE_016_0_1_RIGHT": []
+    },
+    "ICE_016_0_1_RIGHT": {
+      "ICE_016_0_0_BOTTOM": []
+    }
+  },
+  "m18ICE_017": {
+    "ICE_017_0_0_LEFT": {
+      "ICE_017_0_0_RIGHT": [],
+      "ICE_017_0_2_TOP": []
+    },
+    "ICE_017_0_0_RIGHT": {
+      "ICE_017_0_0_LEFT": [],
+      "ICE_017_0_2_TOP": []
+    },
+    "ICE_017_0_2_TOP": {
+      "ICE_017_0_0_LEFT": [],
+      "ICE_017_0_0_RIGHT": []
+    }
+  },
+  "m18ICE_018": {
+    "ICE_018_1_0_RIGHT": {
+      "N1008": []
+    }
+  },
+  "m18ICE_019": {
+    "ICE_019_1_0_RIGHT": {
+	  "TO_LBP_000_START": [],
+      "N1009_Enemy": []
+    }
+  },
+  "m51EBT_000": {
+    "EBT_000_START": {
+      "Candle_EBT000_1": []
+    }
+  },
+  "m77LBP_000": {
+    "LBP_000_START": {
+      "N1013_Bael": []
+    }
+  }
+}

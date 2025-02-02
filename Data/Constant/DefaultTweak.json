@@ -1,0 +1,5767 @@
+{
+  "PB_DT_AmmunitionMaster": {
+    "WeaponbaneRounds": {
+      "MeleeAttack": 60
+    },
+    "ShieldbaneRounds": {
+      "MeleeAttack": 60
+    },
+    "PoisonRounds": {
+      "MeleeAttack": 60
+    },
+    "PetrifyingRounds": {
+      "MeleeAttack": 45
+    },
+    "CurseRounds": {
+      "MeleeAttack": 60
+    },
+    "Shotshell": {
+      "MeleeAttack": 40
+    }
+  },
+  "PB_DT_ArmorMaster": {
+    "Safering": {
+      "MeleeAttack": 0,
+      "MeleeDefense": 5,
+      "MagicDefense": 5,
+      "ZAN": 5,
+      "DAG": 5,
+      "TOT": 5,
+      "FLA": 5,
+      "ICE": 5,
+      "LIG": 5,
+      "HOL": 5,
+      "DAR": 5,
+      "POI": 5,
+      "CUR": 5,
+      "STO": 5,
+      "STR": -10,
+      "CON": 10,
+      "INT": -10,
+      "MND": 10
+    },
+    "Cursering": {
+      "LUC": -20
+    },
+    "Riskring": {
+      "CUR": -50,
+      "STO": -50,
+      "STR": 25,
+      "CON": -50,
+      "INT": 25,
+      "MND": -50
+    },
+    "Adversityring": {
+      "MeleeAttack": 0,
+      "MeleeDefense": 0
+    },
+    "VampiricSkinsuit1": {
+      "MagicDefense": 2
+    },
+    "VampiricSkinsuit3": {
+      "MagicDefense": 5
+    },
+    "VampiricSkinsuit5": {
+      "MagicDefense": 8
+    },
+    "MagicalGirlBody1": {
+      "MeleeDefense": 4,
+      "MagicDefense": 11
+    },
+    "MagicalGirlBody3": {
+      "MeleeDefense": 9,
+      "MagicDefense": 25
+    },
+    "MagicalGirlBody5": {
+      "MeleeDefense": 15,
+      "MagicDefense": 38
+    },
+    "FestivalKimono1": {
+      "MagicDefense": 3
+    },
+    "FestivalKimono3": {
+      "MagicDefense": 7
+    },
+    "FestivalKimono5": {
+      "MagicDefense": 11
+    }
+  },
+  "PB_DT_ArtsCommandMaster": {
+    "LSword_GroundMoon1": {
+      "CostMP": 40
+    },
+    "LSword_GroundMoon2": {
+      "CostMP": 40
+    },
+    "LSword_GroundMoon3": {
+      "CostMP": 40
+    },
+    "Spear_Roll1": {
+      "CostMP": 30
+    },
+    "Spear_Roll2": {
+      "CostMP": 30
+    },
+    "JSword_GodSpeed1": {
+      "CostMP": 80
+    },
+    "JSword_GodSpeed2": {
+      "CostMP": 80
+    },
+    "Gun_Burst1": {
+      "CostMP": 40
+    },
+    "Gun_Burst2": {
+      "CostMP": 40
+    },
+    "Gun_Burst3": {
+      "CostMP": 40
+    }
+  },
+  "PB_DT_BloodlessAbilityData": {
+    "BLD_ABILITY_UMBRELLA": {
+      "GimmickBloodColor": "EPBBloodColor::Blue"
+    },
+    "BLD_ABILITY_UMBRELLA_TOSS": {
+      "GimmickBloodColor": "EPBBloodColor::Blue"
+    },
+    "BLD_ABILITY_BLOOD_STEAL": {
+      "GimmickBloodColor": "EPBBloodColor::Black"
+    },
+    "BLD_ABILITY_HIGH_JUMP": {
+      "GimmickBloodColor": "EPBBloodColor::White"
+    },
+    "BLD_ABILITY_SLIDE": {
+      "IsUnlockedByDefault": true
+    },
+    "BLD_ABILITY_FLOATING_UP": {
+      "GimmickBloodColor": "EPBBloodColor::White"
+    },
+    "BLD_ABILITY_WATER_PROTECT": {
+      "GimmickBloodColor": "EPBBloodColor::White"
+    },
+    "BLD_ABILITY_SOUL_STEAL": {
+      "GimmickBloodColor": "EPBBloodColor::Black"
+    }
+  },
+  "PB_DT_BookMaster": {
+    "GuardiansBook": {
+      "CON": 20
+    },
+    "Bookoffaith": {
+      "MND": 20
+    },
+    "BookofFortune": {
+      "LCK": 10
+    },
+    "Bookofwinter": {
+      "ICE": 20
+    },
+    "Heatresistantbook": {
+      "FLA": 20
+    },
+    "LightningProtectionBook": {
+      "LIG": 20
+    },
+    "Bookoflatency": {
+      "DAR": 20
+    },
+    "ShadingBook": {
+      "HOL": 20
+    },
+    "Bookoffossilstone": {
+      "STO": 30
+    },
+    "Bookofdetoxification": {
+      "POI": 30
+    },
+    "TheBookofMonster": {
+      "CUR": 30
+    },
+    "BookofFury": {
+      "LCK": 20
+    }
+  },
+  "PB_DT_BRVAttackDamage": {
+    "N2004_ATTACK_001_BRV": {
+      "MPCost": 0.0,
+      "MPRecoveryOnHit": 15.0,
+      "MainStoryMPCost": 0.0
+    },
+    "N2004_Jump_Kick": {
+      "MPCost": 0.0,
+      "MPRecoveryOnHit": 25.0,
+      "MainStoryMPCost": 0.0
+    },
+    "N1006_DARK_BOMB_MAIN": {
+      "KnockbackDist": 0.0,
+      "KnockbackFromCharacter": false
+    },
+    "N1006_DARK_BOMB_MAIN_BRV": {
+      "KnockbackDist": 0.0,
+      "KnockbackFromCharacter": false
+    },
+    "N1006_ATTACK_DEFAULT_L": {
+      "MPCost": 0.0,
+      "MPRecoveryOnHit": 20.0,
+      "MainStoryMPCost": 0.0
+    },
+    "N1006_ATTACK_DEFAULT_R": {
+      "MPCost": 0.0,
+      "MPRecoveryOnHit": 20.0,
+      "MainStoryMPCost": 0.0
+    },
+    "N1002_ATTACK_001": {
+      "MPCost": 0.0,
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0,
+      "MainStoryBaseAttack": 18.0,
+      "MainStoryMinimumDamage": 1.0
+    },
+    "N1002_ATTACK_001_OPEN": {
+      "MPCost": 0.0,
+      "MainStoryBaseAttack": 25.0,
+      "MainStoryMinimumDamage": 1.0
+    },
+    "N1002_UMBRELLA_ROCKET": {
+      "KnockbackDist": 100.0,
+      "KnockbackFromCharacter": true,
+      "CriticalRate": 0.2,
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0,
+      "MainStorySAValue": 200.0,
+      "MainStoryBaseAttack": 35.0,
+      "MainStorySTRAddRate": 1.0,
+      "MainStoryINTAddRate": 0.0,
+      "MainStoryMinimumDamage": 1.0,
+      "MainStoryMPCost": 100.0
+    },
+    "N1002_ATTACK_002": {
+      "MPCost": 30.0,
+      "KnockbackDist": 0.0,
+      "KnockbackFromCharacter": false,
+      "MainStoryBaseAttack": 25.0,
+      "MainStoryMinimumDamage": 1.0,
+      "MainStoryMPCost": 60.0
+    },
+    "N1002_ATTACK_002_Charge": {
+      "MPCost": 30.0,
+      "MainStoryBaseAttack": 37.0,
+      "MainStoryMinimumDamage": 1.0,
+      "MainStoryMPCost": 60.0
+    },
+    "N1002_ATTACK_RED_TYPHOON": {
+      "MPCost": 40.0,
+      "MainStorySAValue": 0.0,
+      "MainStoryBaseAttack": 18.0,
+      "MainStoryMinimumDamage": 1.0,
+      "MainStoryMPCost": 80.0
+    },
+    "N100_ATTACK_005_RAIN": {
+      "MPCost": 22.0,
+      "MainStoryBaseAttack": 8.0,
+      "MainStoryMinimumDamage": 1.0
+    },
+    "N1002_ATTACK_003_LAUNCH": {
+      "MPCost": 33.0,
+      "KnockbackDist": 0.0,
+      "KnockbackFromCharacter": false,
+      "MainStorySAValue": 0.0,
+      "MainStoryBaseAttack": 8.0,
+      "MainStoryMinimumDamage": 1.0
+    },
+    "N1002_ATTACK_006_STEEL": {
+      "MPCost": 0.0
+    },
+    "N1002_UMBRELLA_GUILLOTINE": {
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0,
+      "MainStorySAValue": 50.0,
+      "MainStoryBaseAttack": 12.0,
+      "MainStoryMinimumDamage": 1.0
+    },
+    "N1008_Moon_Attack_01": {
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0
+    },
+    "N1008_Moon_Attack_01_Burst": {
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0
+    },
+    "N1008_Moon_Attack_02": {
+      "IsOverrideSAValue": false,
+      "SAOverrideValue": 0.0
+    },
+    "N1008_AttackArm": {
+      "MPCost": 0.0,
+      "MPRecoveryOnHit": 15.0,
+      "MainStoryMPCost": 0.0
+    },
+    "N1011_ATTACK_GIGADEIN_FALL": {
+      "IsZangetsutoAttack": false
+    }
+  },
+  "PB_DT_BRVCharacterParameters": {
+    "Andrealphus": {
+      "MP_RegenRate": 4.0
+    },
+    "Bathin": {
+      "MP_RegenRate": 4.0
+    },
+    "Bloodless": {
+      "MP_RegenRate": 4.0
+    },
+    "Zangetsu": {
+      "HP": 6000
+    },
+    "Dominique": {
+      "HP": 5000
+    },
+    "Miriam": {
+      "HP": 7000
+    }
+  },
+  "PB_DT_BulletMaster": {
+    "N3108_Bomb_Explosion": {
+      "LifeTime": 0.5
+    },
+    "N1013_FlameSkull_Explosion": {
+      "LifeTime": 0.25
+    }
+  },
+  "PB_DT_CharacterParameterMaster": {
+    "P0000": {
+      "MaxMP": 80.0,
+      "MaxMP99Enemy": 80.0
+    },
+    "P0001": {
+      "MaxHP": 200.0,
+      "MaxMP": 100.0,
+      "STR": 90.0,
+      "INT": 90.0,
+      "CON": 87.0,
+      "MND": 87.0,
+      "LUC": 45.0,
+      "MaxHP99Enemy": 200.0,
+      "MaxMP99Enemy": 100.0,
+      "STR99Enemy": 90.0,
+      "INT99Enemy": 90.0,
+      "CON99Enemy": 87.0,
+      "MND99Enemy": 87.0,
+      "LUC99Enemy": 45.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 0.0,
+      "ICE": 0.0,
+      "LIG": 0.0,
+      "HOL": 25.0,
+      "DAR": -25.0,
+      "POI": 25.0,
+      "CUR": 100.0,
+      "STO": 0.0
+    },
+    "P0004": {
+      "SLO": 0.0
+    },
+    "P0005": {
+      "SLO": 0.0,
+      "AnimaionPlayRateNormal": 1.25,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "P0006": {
+      "MaxHP": 200.0,
+      "MaxMP": 100.0,
+      "LUC": 2.0,
+      "LUC99Enemy": 10.0,
+      "ZAN": -10.0,
+      "DAG": 25.0,
+      "TOT": -25.0,
+      "SLO": 0.0
+    },
+    "P0007": {
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "SLO": 0.0
+    },
+    "N3003": {
+      "BloodlessModeDefaultEnemyLevel": 11,
+      "BloodlessModeHardEnemyLevel": 11,
+      "BloodlessModeNightmareEnemyLevel": 11,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3006": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3005": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3007": {
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 25.0,
+      "SLO": 25.0
+    },
+    "N3013": {
+      "DefaultEnemyLevel": 5,
+      "HardEnemyLevel": 5,
+      "NightmareEnemyLevel": 5,
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 8.0,
+      "INT": 8.0,
+      "CON": 4.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CON99Enemy": 60.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3015": {
+      "BloodlessModeDefaultEnemyLevel": 14,
+      "BloodlessModeHardEnemyLevel": 14,
+      "BloodlessModeNightmareEnemyLevel": 14,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3015_HEAD": {
+      "BloodlessModeDefaultEnemyLevel": 14,
+      "BloodlessModeHardEnemyLevel": 14,
+      "BloodlessModeNightmareEnemyLevel": 14,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "ICE": -80.0,
+      "HOL": -80.0,
+      "DAR": -80.0,
+      "SLO": 25.0
+    },
+    "N3051": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3051_CHILD": {
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3004": {
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 2.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 40.0,
+      "SLO": 25.0
+    },
+    "N3029": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3073": {
+      "BloodlessModeDefaultEnemyLevel": 11,
+      "BloodlessModeHardEnemyLevel": 11,
+      "BloodlessModeNightmareEnemyLevel": 11,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "SLO": 25.0
+    },
+    "N3105": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 5.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 70.0,
+      "SLO": 25.0
+    },
+    "N3080": {
+      "MeshScaleX": 1.4,
+      "MeshScaleY": 1.4,
+      "MeshScaleZ": 1.4,
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 3.0,
+      "MaxHP99Enemy": 1800,
+      "MaxMP99Enemy": 1800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 50.0,
+      "CUR": 25.0,
+      "SLO": 25.0
+    },
+    "N3066": {
+      "BloodlessModeDefaultEnemyLevel": 11,
+      "BloodlessModeHardEnemyLevel": 11,
+      "BloodlessModeNightmareEnemyLevel": 11,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CUR": 25.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3042": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3065": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 500,
+      "MaxMP99Enemy": 500,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3011": {
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3091": {
+      "BloodlessModeDefaultEnemyLevel": 12,
+      "BloodlessModeHardEnemyLevel": 12,
+      "BloodlessModeNightmareEnemyLevel": 12,
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 1.0,
+      "MND": 1.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 30.0,
+      "MND99Enemy": 30.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3034": {
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 25.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3075": {
+      "BloodlessModeDefaultEnemyLevel": 14,
+      "BloodlessModeHardEnemyLevel": 14,
+      "BloodlessModeNightmareEnemyLevel": 14,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1800,
+      "MaxMP99Enemy": 1800,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CUR": 25.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3100": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3104": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3053": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3079": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3055": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 4.0,
+      "MaxHP99Enemy": 2000,
+      "MaxMP99Enemy": 2000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 60.0,
+      "SLO": 50.0
+    },
+    "N3001": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3001_EX": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3116": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 3.0,
+      "MaxHP99Enemy": 3000,
+      "MaxMP99Enemy": 3000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3082": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 25.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3090": {
+      "DefaultEnemyLevel": 20,
+      "HardEnemyLevel": 20,
+      "NightmareEnemyLevel": 20,
+      "BloodlessModeDefaultEnemyLevel": 20,
+      "BloodlessModeHardEnemyLevel": 20,
+      "BloodlessModeNightmareEnemyLevel": 20,
+      "STR": 7.0,
+      "INT": 7.0,
+      "STR99Enemy": 225.0,
+      "INT99Enemy": 225.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3090_Generator": {
+      "DefaultEnemyLevel": 20,
+      "HardEnemyLevel": 20,
+      "NightmareEnemyLevel": 20,
+      "BloodlessModeDefaultEnemyLevel": 20,
+      "BloodlessModeHardEnemyLevel": 20,
+      "BloodlessModeNightmareEnemyLevel": 20,
+      "STR": 7.0,
+      "INT": 7.0,
+      "STR99Enemy": 225.0,
+      "INT99Enemy": 225.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3084": {
+      "CON": 5.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "CON99Enemy": 70.0,
+      "SLO": 25.0
+    },
+    "N3001_Armor": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CUR": 50.0,
+      "SLO": 25.0
+    },
+    "N2002": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N2002_GUARD": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N3033": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "CON": 6.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CON99Enemy": 80.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3017": {
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "SLO": 25.0
+    },
+    "N3063": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3103": {
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3064": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3010": {
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "SLO": 25.0
+    },
+    "N3099": {
+      "DefaultEnemyLevel": 20,
+      "HardEnemyLevel": 20,
+      "NightmareEnemyLevel": 20,
+      "BloodlessModeDefaultEnemyLevel": 20,
+      "BloodlessModeHardEnemyLevel": 20,
+      "BloodlessModeNightmareEnemyLevel": 20,
+      "STR": 7.0,
+      "INT": 7.0,
+      "STR99Enemy": 225.0,
+      "INT99Enemy": 225.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3008": {
+      "CON": 0.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "CON99Enemy": 0.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3111": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3111_Guard": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 100.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 100.0
+    },
+    "N3058": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 25.0,
+      "SLO": 25.0
+    },
+    "N3019": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 2.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 40.0,
+      "SLO": 25.0
+    },
+    "N2009": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 2500,
+      "MaxMP99Enemy": 2500,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N3025": {
+      "DefaultEnemyLevel": 44,
+      "HardEnemyLevel": 44,
+      "NightmareEnemyLevel": 44,
+      "BloodlessModeDefaultEnemyLevel": 44,
+      "BloodlessModeHardEnemyLevel": 44,
+      "BloodlessModeNightmareEnemyLevel": 44,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 3000,
+      "MaxMP99Enemy": 3000,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3043": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3092": {
+      "DefaultEnemyLevel": 19,
+      "HardEnemyLevel": 19,
+      "NightmareEnemyLevel": 19,
+      "BloodlessModeDefaultEnemyLevel": 19,
+      "BloodlessModeHardEnemyLevel": 19,
+      "BloodlessModeNightmareEnemyLevel": 19,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3024": {
+      "DefaultEnemyLevel": 21,
+      "HardEnemyLevel": 21,
+      "NightmareEnemyLevel": 21,
+      "BloodlessModeDefaultEnemyLevel": 21,
+      "BloodlessModeHardEnemyLevel": 21,
+      "BloodlessModeNightmareEnemyLevel": 21,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateNormal": 1.6,
+      "AnimaionPlayRateHard": 2.0,
+      "AnimaionPlayRateNightmare": 2.0
+    },
+    "N3024_RHAND": {
+      "DefaultEnemyLevel": 21,
+      "HardEnemyLevel": 21,
+      "NightmareEnemyLevel": 21,
+      "BloodlessModeDefaultEnemyLevel": 21,
+      "BloodlessModeHardEnemyLevel": 21,
+      "BloodlessModeNightmareEnemyLevel": 21,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 3.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 50.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateNormal": 1.6,
+      "AnimaionPlayRateHard": 2.0,
+      "AnimaionPlayRateNightmare": 2.0
+    },
+    "N3070": {
+      "DefaultEnemyLevel": 22,
+      "HardEnemyLevel": 22,
+      "NightmareEnemyLevel": 22,
+      "BloodlessModeDefaultEnemyLevel": 22,
+      "BloodlessModeHardEnemyLevel": 22,
+      "BloodlessModeNightmareEnemyLevel": 22,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "STO": 75.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3114": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3102": {
+      "BloodlessModeDefaultEnemyLevel": 8,
+      "BloodlessModeHardEnemyLevel": 8,
+      "BloodlessModeNightmareEnemyLevel": 8,
+      "CON": 6.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "CON99Enemy": 80.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3009": {
+      "BloodlessModeDefaultEnemyLevel": 9,
+      "BloodlessModeHardEnemyLevel": 9,
+      "BloodlessModeNightmareEnemyLevel": 9,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 75.0
+    },
+    "N3087": {
+      "BloodlessModeDefaultEnemyLevel": 10,
+      "BloodlessModeHardEnemyLevel": 10,
+      "BloodlessModeNightmareEnemyLevel": 10,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3072": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 300,
+      "MaxMP99Enemy": 300,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3012": {
+      "BloodlessModeDefaultEnemyLevel": 8,
+      "BloodlessModeHardEnemyLevel": 8,
+      "BloodlessModeNightmareEnemyLevel": 8,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3052": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3085": {
+      "BloodlessModeDefaultEnemyLevel": 9,
+      "BloodlessModeHardEnemyLevel": 9,
+      "BloodlessModeNightmareEnemyLevel": 9,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1100,
+      "MaxMP99Enemy": 1100,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3109": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3037": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 4.0,
+      "MaxHP99Enemy": 1400,
+      "MaxMP99Enemy": 1400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 60.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3077": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0
+    },
+    "N3093": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3110": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 50.0,
+      "CUR": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0
+    },
+    "N3098": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3078": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3098_Guard": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "LIG": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3022": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3044": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 300,
+      "MaxMP99Enemy": 300,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3076": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1200,
+      "MaxMP99Enemy": 1200,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3089": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "SLO": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3056": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2000,
+      "MaxMP99Enemy": 2000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "STO": 100.0,
+      "SLO": 75.0
+    },
+    "N3014": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "POI": 100.0,
+      "STO": 75.0,
+      "SLO": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3002": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "CON": 1.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CON99Enemy": 30.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3112": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 1.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 30.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3115": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "STO": 100.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2010": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 5.0,
+      "MaxHP99Enemy": 2500,
+      "MaxMP99Enemy": 2500,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 70.0
+    },
+    "N3101": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3059": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3113": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 3000,
+      "MaxMP99Enemy": 3000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3083": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 225.0,
+      "INT99Enemy": 225.0,
+      "POI": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3032": {
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3119": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0
+    },
+    "N3123": {
+      "STR": 12.0,
+      "INT": 12.0,
+      "CON": 0.0,
+      "MND": 2.0,
+      "MaxHP99Enemy": 900,
+      "MaxMP99Enemy": 900,
+      "STR99Enemy": 350.0,
+      "INT99Enemy": 350.0,
+      "CON99Enemy": 20.0,
+      "MND99Enemy": 40.0,
+      "POI": 25.0,
+      "CUR": 25.0
+    },
+    "N3086": {
+      "DefaultEnemyLevel": 34,
+      "HardEnemyLevel": 34,
+      "NightmareEnemyLevel": 34,
+      "BloodlessModeDefaultEnemyLevel": 34,
+      "BloodlessModeHardEnemyLevel": 34,
+      "BloodlessModeNightmareEnemyLevel": 34,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1100,
+      "MaxMP99Enemy": 1100,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0
+    },
+    "N3071": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1300,
+      "MaxMP99Enemy": 1300,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3035": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 0.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 20.0,
+      "POI": 25.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3054": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3074": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1800,
+      "MaxMP99Enemy": 1800,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3020": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 75.0
+    },
+    "N3117": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 3000,
+      "MaxMP99Enemy": 3000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3038": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1400,
+      "MaxMP99Enemy": 1400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3067": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3030": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3045": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3016": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3023": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2000,
+      "MaxMP99Enemy": 2000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "STO": 100.0,
+      "SLO": 75.0
+    },
+    "N3028": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2216,
+      "MaxMP99Enemy": 2216,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3028_Leg": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2216,
+      "MaxMP99Enemy": 2216,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 75.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2003": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 50.0,
+      "CUR": 100.0
+    },
+    "N2003_GUARD": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N3081": {
+      "MeshScaleX": 2.1,
+      "MeshScaleY": 2.1,
+      "MeshScaleZ": 2.1,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2216,
+      "MaxMP99Enemy": 2216,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0
+    },
+    "N2008": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 4000,
+      "MaxMP99Enemy": 4000,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 50.0,
+      "CUR": 100.0
+    },
+    "N2008_BOSS": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 4000,
+      "MaxMP99Enemy": 4000,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 50.0,
+      "CUR": 100.0
+    },
+    "N3021": {
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3031": {
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3088": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "CON": 0.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CON99Enemy": 20.0,
+      "POI": 25.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3018": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1000,
+      "MaxMP99Enemy": 1000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3120": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "POI": 75.0,
+      "CUR": 75.0
+    },
+    "N3057": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 2000,
+      "MaxMP99Enemy": 2000,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 50.0
+    },
+    "N3121": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3122": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3124": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 800,
+      "MaxMP99Enemy": 800,
+      "STR99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3106": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3107": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3107_Second": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3108": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "LUC": 7.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "LUC99Enemy": 77.0,
+      "SA_EnduranceNormal": 777.0,
+      "SA_EnduranceHard": 777.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3108_Second": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "LUC": 7.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "LUC99Enemy": 77.0,
+      "SA_EnduranceNormal": 777.0,
+      "SA_EnduranceHard": 777.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3108_GUARD": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 8.0,
+      "MND": 4.0,
+      "LUC": 7.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 100.0,
+      "MND99Enemy": 60.0,
+      "LUC99Enemy": 77.0,
+      "DAG": 55.0,
+      "FLA": 80.0,
+      "ICE": 80.0,
+      "LIG": 55.0,
+      "HOL": 80.0,
+      "DAR": 80.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "N3108_BOMB": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "LUC": 7.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "LUC99Enemy": 77.0,
+      "AnimaionPlayRateNormal": 0.8
+    },
+    "JuckPod": {
+      "IsBoss": true,
+      "STR": 10.0,
+      "INT": 10.0,
+      "LUC": 7.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "LUC99Enemy": 77.0
+    },
+    "N1001": {
+      "BloodlessModeDefaultEnemyLevel": 15,
+      "BloodlessModeHardEnemyLevel": 15,
+      "BloodlessModeNightmareEnemyLevel": 15,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 3.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N1001_HEAD": {
+      "BloodlessModeDefaultEnemyLevel": 15,
+      "BloodlessModeHardEnemyLevel": 15,
+      "BloodlessModeNightmareEnemyLevel": 15,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 3.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "FLA": -80.0,
+      "ICE": -80.0,
+      "LIG": -100.0,
+      "HOL": -100.0,
+      "DAR": -60.0
+    },
+    "N1001_Tentacle": {
+      "BloodlessModeDefaultEnemyLevel": 15,
+      "BloodlessModeHardEnemyLevel": 15,
+      "BloodlessModeNightmareEnemyLevel": 15,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 3.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 50.0,
+      "LIG": -25.0,
+      "SLO": 50.0
+    },
+    "N1003": {
+      "BloodlessModeDefaultEnemyLevel": 10,
+      "BloodlessModeHardEnemyLevel": 10,
+      "BloodlessModeNightmareEnemyLevel": 10,
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0
+    },
+    "N2004": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0
+    },
+    "N1005": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "MND": 0.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "MND99Enemy": 20.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N1005Manager": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "DAG": 20.0,
+      "TOT": -20.0,
+      "FLA": 20.0,
+      "ICE": -20.0,
+      "HOL": -20.0,
+      "DAR": 20.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2001": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2001_HEAD": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 2.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 40.0,
+      "MND99Enemy": 20.0,
+      "ZAN": -80.0,
+      "DAG": -100.0,
+      "TOT": -80.0,
+      "FLA": -55.0,
+      "ICE": -100.0,
+      "LIG": -80.0,
+      "HOL": -80.0,
+      "DAR": -80.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2001_ARMOR": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 2.0,
+      "MND": 0.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 40.0,
+      "MND99Enemy": 20.0,
+      "ZAN": 80.0,
+      "DAG": 60.0,
+      "TOT": 80.0,
+      "FLA": 100.0,
+      "ICE": 55.0,
+      "LIG": 80.0,
+      "HOL": 80.0,
+      "DAR": 80.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N1006": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "SA_EnduranceNormal": 1250.0,
+      "SA_EnduranceHard": 2500.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2015": {
+      "STR": 11.0,
+      "INT": 11.0,
+      "MaxHP99Enemy": 6666.0,
+      "MaxMP99Enemy": 6666.0,
+      "STR99Enemy": 325.0,
+      "INT99Enemy": 325.0
+    },
+    "N1002": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "SA_EnduranceNormal": 1250.0,
+      "SA_EnduranceHard": 2500.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N1002_Umbrella": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "HOL": 0.0,
+      "DAR": 0.0,
+      "POI": 100.0,
+      "SLO": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2014": {
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0
+    },
+    "N2007": {
+      "STR": 7.0,
+      "INT": 7.0,
+      "STR99Enemy": 225.0,
+      "INT99Enemy": 225.0,
+      "SA_EnduranceNormal": 1000.0,
+      "SA_EnduranceHard": 2000.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2006": {
+      "INT": 11.0,
+      "MaxHP99Enemy": 4444.0,
+      "MaxMP99Enemy": 4444.0,
+      "INT99Enemy": 325.0
+    },
+    "N1004": {
+      "STR": 11.0,
+      "INT": 11.0,
+      "STR99Enemy": 325.0,
+      "INT99Enemy": 325.0,
+      "POI": 100.0
+    },
+    "N1008": {
+      "INT": 11.0,
+      "INT99Enemy": 325.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0
+    },
+    "N1009_Enemy": {
+      "DefaultEnemyLevel": 45,
+      "HardEnemyLevel": 45,
+      "NightmareEnemyLevel": 45,
+      "BloodlessModeDefaultEnemyLevel": 45,
+      "BloodlessModeHardEnemyLevel": 45,
+      "BloodlessModeNightmareEnemyLevel": 45,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MaxHP99Enemy": 5000.0,
+      "MaxMP99Enemy": 5000.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "Experience99Enemy": 0,
+      "ArtsExperience99Enemy": 0,
+      "ZAN": 10.0,
+      "DAG": 10.0,
+      "TOT": 10.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 50.0,
+      "DAR": 0.0,
+      "POI": 50.0,
+      "CUR": 100.0,
+      "Experience": 0,
+      "ArtsExperience": 0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N1011": {
+      "BloodlessModeDefaultEnemyLevel": 13,
+      "BloodlessModeHardEnemyLevel": 13,
+      "BloodlessModeNightmareEnemyLevel": 13,
+      "STR": 9.0,
+      "INT": 9.0,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0
+    },
+    "N1011_STRONG": {
+      "INT": 11.0,
+      "MaxHP99Enemy": 6000.0,
+      "MaxMP99Enemy": 6000.0,
+      "INT99Enemy": 325.0,
+      "POI": 25.0,
+      "CUR": 100.0
+    },
+    "N1011_COOP": {
+      "DefaultEnemyLevel": 45,
+      "HardEnemyLevel": 45,
+      "NightmareEnemyLevel": 45,
+      "BloodlessModeDefaultEnemyLevel": 45,
+      "BloodlessModeHardEnemyLevel": 45,
+      "BloodlessModeNightmareEnemyLevel": 45,
+      "STR": 11.0,
+      "INT": 11.0,
+      "MaxHP99Enemy": 6000.0,
+      "MaxMP99Enemy": 6000.0,
+      "STR99Enemy": 325.0,
+      "INT99Enemy": 325.0,
+      "POI": 25.0,
+      "SA_EnduranceNormal": 1500.0,
+      "SA_EnduranceHard": 3000.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2012": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 6.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 80.0,
+      "SA_EnduranceNormal": 2000.0,
+      "SA_EnduranceHard": 4000.0
+    },
+    "N2013": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 6.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 80.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0
+    },
+    "N2013_HEAD": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 6.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 80.0
+    },
+    "N1013_Bael": {
+      "NoDamageBonusItemId": "None",
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0
+    },
+    "N1013_Cat": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0
+    },
+    "N1013_Frog": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0
+    },
+    "N1009_Bael": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0
+    },
+    "N1013_BaelHead": {
+      "NoDamageBonusItemId": "None",
+      "DefaultEnemyLevel": 55,
+      "HardEnemyLevel": 55,
+      "NightmareEnemyLevel": 55,
+      "BloodlessModeDefaultEnemyLevel": 55,
+      "BloodlessModeHardEnemyLevel": 55,
+      "BloodlessModeNightmareEnemyLevel": 55,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "MaxHP99Enemy": 7000.0,
+      "MaxMP99Enemy": 7000.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "Experience99Enemy": 0,
+      "ArtsExperience99Enemy": 0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0,
+      "Experience": 0,
+      "ArtsExperience": 0
+    },
+    "N1013_Dominique": {
+      "DefaultEnemyLevel": 55,
+      "HardEnemyLevel": 55,
+      "NightmareEnemyLevel": 55,
+      "BloodlessModeDefaultEnemyLevel": 55,
+      "BloodlessModeHardEnemyLevel": 55,
+      "BloodlessModeNightmareEnemyLevel": 55,
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 4.0,
+      "MND": 4.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 60.0,
+      "MND99Enemy": 60.0,
+      "Experience99Enemy": 0,
+      "ArtsExperience99Enemy": 0,
+      "ZAN": 25.0,
+      "DAG": 25.0,
+      "TOT": 25.0,
+      "FLA": 25.0,
+      "ICE": 25.0,
+      "LIG": 25.0,
+      "HOL": 25.0,
+      "DAR": 25.0,
+      "Experience": 0,
+      "ArtsExperience": 0
+    },
+    "N0000": {
+      "STR": 10.0,
+      "INT": 10.0,
+      "CON": 6.0,
+      "MND": 6.0,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "CON99Enemy": 80.0,
+      "MND99Enemy": 80.0,
+      "POI": 100.0,
+      "SA_EnduranceNormal": 2000.0,
+      "SA_EnduranceHard": 4000.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2016": {
+      "STR": 11.0,
+      "INT": 11.0,
+      "MaxHP99Enemy": 3333.0,
+      "MaxMP99Enemy": 3333.0,
+      "STR99Enemy": 325.0,
+      "INT99Enemy": 325.0,
+      "HOL": -25.0,
+      "DAR": 75.0,
+      "POI": 100.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3125": {
+      "DefaultEnemyLevel": 30,
+      "HardEnemyLevel": 30,
+      "NightmareEnemyLevel": 30,
+      "BloodlessModeDefaultEnemyLevel": 30,
+      "BloodlessModeHardEnemyLevel": 30,
+      "BloodlessModeNightmareEnemyLevel": 30,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "Experience99Enemy": 0,
+      "ArtsExperience99Enemy": 0,
+      "HOL": -25.0,
+      "DAR": 75.0,
+      "POI": 100.0,
+      "CUR": 100.0,
+      "STO": 100.0,
+      "SLO": 100.0,
+      "Experience": 0,
+      "ArtsExperience": 0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N2017": {
+      "DefaultEnemyLevel": 50,
+      "HardEnemyLevel": 50,
+      "NightmareEnemyLevel": 50,
+      "BloodlessModeDefaultEnemyLevel": 50,
+      "BloodlessModeHardEnemyLevel": 50,
+      "BloodlessModeNightmareEnemyLevel": 50,
+      "STR": 10.0,
+      "INT": 10.0,
+      "MaxHP99Enemy": 5555,
+      "MaxMP99Enemy": 5555,
+      "STR99Enemy": 300.0,
+      "INT99Enemy": 300.0,
+      "ZAN": 50.0,
+      "DAG": -50.0,
+      "TOT": 50.0,
+      "FLA": 25.0,
+      "ICE": -25.0,
+      "LIG": 25.0,
+      "HOL": 0.0,
+      "DAR": 0.0,
+      "POI": 100.0,
+      "CUR": 100.0
+    },
+    "N3126": {
+      "DefaultEnemyLevel": 40,
+      "HardEnemyLevel": 40,
+      "NightmareEnemyLevel": 40,
+      "BloodlessModeDefaultEnemyLevel": 40,
+      "BloodlessModeHardEnemyLevel": 40,
+      "BloodlessModeNightmareEnemyLevel": 40,
+      "STR": 8.0,
+      "INT": 8.0,
+      "MaxHP99Enemy": 400,
+      "MaxMP99Enemy": 400,
+      "STR99Enemy": 250.0,
+      "INT99Enemy": 250.0,
+      "CUR": 100.0,
+      "AnimaionPlayRateHard": 1.25,
+      "AnimaionPlayRateNightmare": 1.25
+    },
+    "N3127": {
+      "DefaultEnemyLevel": 45,
+      "HardEnemyLevel": 45,
+      "NightmareEnemyLevel": 45,
+      "BloodlessModeDefaultEnemyLevel": 45,
+      "BloodlessModeHardEnemyLevel": 45,
+      "BloodlessModeNightmareEnemyLevel": 45,
+      "STR": 9.0,
+      "INT": 9.0,
+      "MaxHP99Enemy": 1600,
+      "MaxMP99Enemy": 1600,
+      "STR99Enemy": 275.0,
+      "INT99Enemy": 275.0,
+      "POI": 25.0,
+      "CUR": 25.0,
+      "STO": 75.0,
+      "SLO": 50.0
+    },
+    "N3001_SHARD": {
+      "IsBoss": true
+    },
+    "N3082_SHARD": {
+      "IsBoss": true
+    },
+    "N3073_SHARD": {
+      "IsBoss": true
+    },
+    "N3044_SHARD": {
+      "IsBoss": true
+    },
+    "N3065_SHARD": {
+      "IsBoss": true
+    },
+    "N3066_SHARD": {
+      "IsBoss": true
+    },
+    "N3042_SHARD": {
+      "IsBoss": true
+    },
+    "N3010_SHARD": {
+      "IsBoss": true
+    },
+    "N3034_SHARD": {
+      "IsBoss": true
+    },
+    "N3013_SHARD": {
+      "IsBoss": true
+    },
+    "N3029_SHARD": {
+      "IsBoss": true
+    },
+    "SummonTracer": {
+      "IsBoss": true
+    },
+    "N3121_SHARD": {
+      "IsBoss": true
+    },
+    "N3122_SHARD": {
+      "IsBoss": true
+    },
+    "N2015_SHARD": {
+      "IsBoss": true
+    },
+    "N3123_SHARD": {
+      "IsBoss": true
+    },
+    "N3051_SHARD": {
+      "IsBoss": true
+    },
+    "RaigingGail": {
+      "IsBoss": true
+    },
+    "GratefulAssist": {
+      "IsBoss": true
+    },
+    "N3001_Familia": {
+      "STR": 5,
+      "INT": 5,
+      "STR99Enemy": 5,
+      "INT99Enemy": 5
+    },
+    "N3052_Familia": {
+      "STR": 6,
+      "INT": 6,
+      "STR99Enemy": 90,
+      "INT99Enemy": 90
+    },
+    "N3091_Familia": {
+      "STR": 18,
+      "INT": 18,
+      "STR99Enemy": 200,
+      "INT99Enemy": 200
+    },
+    "N3063_Familia": {
+      "STR": 18,
+      "INT": 18,
+      "STR99Enemy": 200,
+      "INT99Enemy": 200
+    },
+    "N3090_Familia": {
+      "STR": 5,
+      "INT": 5,
+      "STR99Enemy": 50,
+      "INT99Enemy": 50
+    },
+    "N6001": {
+      "STR": 6,
+      "INT": 6,
+      "STR99Enemy": 70,
+      "INT99Enemy": 70
+    },
+    "Archer_Familia": {
+      "STR": 7,
+      "INT": 7,
+      "STR99Enemy": 70,
+      "INT99Enemy": 70
+    },
+    "Igniculus_Familia": {
+      "STR": 8,
+      "INT": 8,
+      "STR99Enemy": 90,
+      "INT99Enemy": 90
+    }
+  },
+  "PB_DT_CharaUniqueParameterMaster": {
+    "N1004_MoneyStealHealRate_N1004": {
+      "ParamValueHard": 1.0,
+      "ParamValueNightmare": 1.0
+    },
+    "N1004_MoneySteelVoiceCoin1_N1004": {
+      "ParamValueHard": 2000.0,
+      "ParamValueNightmare": 2000.0
+    },
+    "N1004_MoneySteelVoiceCoin2_N1004": {
+      "ParamValueHard": 20000.0,
+      "ParamValueNightmare": 20000.0
+    },
+    "N2014_Doping_STR_N2014": {
+      "ParamValue": 0.25,
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N2014_Doping_INT_N2014": {
+      "ParamValue": 0.25,
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N2014_Doping_MND_N2014": {
+      "ParamValue": 0.25,
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N2014_Doping_CON_N2014": {
+      "ParamValue": 0.25,
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N3053_AttackInterval_N3053": {
+      "ParamValue": 1.0
+    },
+    "N3054_MoveRate_N3054": {
+      "ParamValueHard": 1.5,
+      "ParamValueNightmare": 1.5
+    },
+    "N3058_AttackCoolTime_N3058": {
+      "ParamValueHard": 0.0,
+      "ParamValueNightmare": 0.0
+    },
+    "N3058_MoveCoolTime_N3058": {
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N3058_ForciblyMoveCoolTime_N3058": {
+      "ParamValueHard": 0.5,
+      "ParamValueNightmare": 0.5
+    },
+    "N3058_UniqueAttackBeginWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3058_UniqueAttackFinishWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3058_JumpKickBeginWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3058_JumpKickFinishWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3058_DuringJumpAttackBeginWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3058_DuringJumpAttackFinishWaitRate_N3058": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3059_AttackCoolTime_N3059": {
+      "ParamValueHard": 0.0,
+      "ParamValueNightmare": 0.0
+    },
+    "N3059_MoveCoolTime_N3059": {
+      "ParamValueHard": 0.25,
+      "ParamValueNightmare": 0.25
+    },
+    "N3059_ForciblyMoveCoolTime_N3059": {
+      "ParamValueHard": 0.5,
+      "ParamValueNightmare": 0.5
+    },
+    "N3059_UniqueAttackBeginWaitRate_N3059": {
+      "ParamValue": 0.5,
+      "ParamValueHard": 1.0,
+      "ParamValueNightmare": 1.0
+    },
+    "N3059_UniqueAttackFinishWaitRate_N3059": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3059_JumpKickBeginWaitRate_N3059": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3059_JumpKickFinishWaitRate_N3059": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3059_DuringJumpAttackBeginWaitRate_N3059": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3059_DuringJumpAttackFinishWaitRate_N3059": {
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3063_Familia_BuffMagicSpecRateGradeMax_N3063_Familia": {
+      "ParamValue": 10.0,
+      "ParamValueHard": 10.0,
+      "ParamValueNightmare": 10.0
+    },
+    "N3091_AttackInterval_N3091": {
+      "ParamValue": 1.0,
+      "ParamValueHard": 0.5,
+      "ParamValueNightmare": 0.5
+    },
+    "N3091_MoveRate_N3091": {
+      "ParamValue": 1.5,
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    },
+    "N3091_ShootWaitTime_N3091": {
+      "ParamValue": 1.0
+    },
+    "N3092_AttackInterval_N3092": {
+      "ParamValue": 1.0,
+      "ParamValueHard": 0.5,
+      "ParamValueNightmare": 0.5
+    },
+    "N3092_MoveRate_N3092": {
+      "ParamValue": 1.5,
+      "ParamValueHard": 2.0,
+      "ParamValueNightmare": 2.0
+    }
+  },
+  "PB_DT_CollisionMaster": {
+    "N2013_SWORDWHIP": {
+      "R00": 0.3,
+      "R10": 0.3,
+      "R20": 0.3,
+      "R30": 0.3
+    }
+  },
+  "PB_DT_CoordinateParameter": {
+    "PlayerBulletInitNum": {
+      "Value": 30.0
+    },
+    "PlayerBulletMaxNum": {
+      "Value": 150.0
+    },
+    "HardEnemyAttackAdd": {
+      "Value": 0.0
+    },
+    "HardEnemyDamageRate": {
+      "Value": 2.0
+    },
+    "HardBossAttackAdd": {
+      "Value": 0.0
+    },
+    "HardBossDamageRate": {
+      "Value": 2.0
+    },
+    "NightmareEnemyAttackAdd": {
+      "Value": 0.0
+    },
+    "NightmareEnemyDamageRate": {
+      "Value": 3.0
+    },
+    "NightmareBossAttackAdd": {
+      "Value": 0.0
+    },
+    "NightmareBossDamageRate": {
+      "Value": 3.0
+    },
+    "PauseLevelUpTime": {
+      "Value": 0.0
+    },
+    "PauseArtsLevelUpTime": {
+      "Value": 0.0
+    },
+    "MiriamGrowthCoeffHp": {
+      "Value": 10.0
+    },
+    "MiriamGrowthCoeffMp": {
+      "Value": 5.0
+    },
+    "ZangetsuGrowthCoeffHp": {
+      "Value": 10.0
+    },
+    "ZangetsuGrowthCoeffMp": {
+      "Value": 5.0
+    },
+    "ZangetsuGrowthCoeffStr": {
+      "Value": 1.1
+    },
+    "ZangetsuGrowthCoeffCon": {
+      "Value": 1.0
+    },
+    "ZangetsuGrowthCoeffInt": {
+      "Value": 1.0
+    },
+    "ZangetsuGrowthCoeffMnd": {
+      "Value": 0.9
+    },
+    "ZangetsuGrowthCoeffLuc": {
+      "Value": 0.25
+    },
+    "BloodlessGrowthCoeffHp": {
+      "Value": 10.0
+    },
+    "BloodlessGrowthCoeffMp": {
+      "Value": 5.0
+    },
+    "BloodlessGrowthCoeffStr": {
+      "Value": 0.88
+    },
+    "BloodlessGrowthCoeffCon": {
+      "Value": 0.72
+    },
+    "BloodlessGrowthCoeffInt": {
+      "Value": 0.8
+    },
+    "BloodlessGrowthCoeffMnd": {
+      "Value": 0.8
+    },
+    "BloodlessGrowthCoeffLuc": {
+      "Value": 0.2
+    },
+    "BloodlessMainStoryModeMaxHpUpAmount": {
+      "Value": 20.0
+    },
+    "BloodlessMainStoryModeMaxMpUpAmount": {
+      "Value": 10.0
+    },
+    "BloodlessMainStoryModeDamageCoeff_STR_A": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeDamageCoeff_STR_B": {
+      "Value": 0.0
+    },
+    "BloodlessMainStoryModeDamageCoeff_INT_A": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeDamageCoeff_INT_B": {
+      "Value": 0.0
+    },
+    "BloodlessMainStoryModeBloodstealMPAmountStatic": {
+      "Value": 0.0
+    },
+    "BloodlessMainStoryModeBloodstealMPAmountPercentage": {
+      "Value": 1.25
+    },
+    "BloodlessMainStoryModeBloodstealHPAmountStatic": {
+      "Value": 0.0
+    },
+    "BloodlessMainStoryModeBloodstealHPAmountPercentage": {
+      "Value": 1.25
+    },
+    "BloodlessMainStoryModeMPRegenerationUpgradeAmount": {
+      "Value": 1.0
+    },
+    "BloodlessMainStoryModeStrUpgradeAmount": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeIntUpgradeAmount": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeConUpgradeAmount": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeMndUpgradeAmount": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeLckUpgradeAmount": {
+      "Value": 8.0
+    },
+    "BloodlessMainStoryModeWaterResistUpgradeAmount": {
+      "Value": 0.0
+    },
+    "BloodlessMainStoryModePoisonDurationRate": {
+      "Value": 1.0
+    },
+    "HpMaxUpLimit": {
+      "Value": 600.0
+    },
+    "P0000_SILVERMANRING_ENEMY_KILL_MAX": {
+      "Value": 3000.0
+    },
+    "P0000_GOLDRING_GOLD_MAX": {
+      "Value": 3000000.0
+    },
+    "P0000_ADVERSITYRING_POISON_RATE": {
+      "Value": 20.0
+    },
+    "P0000_ADVERSITYRING_STONE_RATE": {
+      "Value": 80.0
+    },
+    "P0000_ADVERSITYRING_CURSE_RATE": {
+      "Value": 10.0
+    },
+    "P0000_ADVERSITYRING_SLOW_RATE": {
+      "Value": 40.0
+    },
+    "PoisonAddDamageEnemy": {
+      "Value": 0.0
+    },
+    "PoisonAddDamageBoss": {
+      "Value": 0.0
+    }
+  },
+  "PB_DT_CraftMaster": {
+    "Gunpowder": {
+      "CraftValue": 1
+    },
+    "Gold": {
+      "Ingredient1Total": 5,
+      "Ingredient2Total": 1
+    },
+    "Dineslave": {
+      "Ingredient3Id": "Bixbite"
+    },
+    "Florenberg": {
+      "Ingredient3Id": "Ruby"
+    },
+    "Juwuse": {
+      "Ingredient4Id": "Diamond"
+    },
+    "Charwell": {
+      "Ingredient2Id": "Sapphire"
+    },
+    "ElderTiara": {
+      "Ingredient3Id": "Emerald"
+    },
+    "ShiningBreast": {
+      "Ingredient2Id": "Ruby"
+    },
+    "Firemuffler": {
+      "Ingredient2Id": "Ruby"
+    },
+    "CurrySauce": {
+      "OpenKeyRecipeID": "None"
+    },
+    "VongoleSauce": {
+      "OpenKeyRecipeID": "None"
+    },
+    "SoyBroth": {
+      "OpenKeyRecipeID": "None"
+    },
+    "TonkotsuBroth": {
+      "OpenKeyRecipeID": "None"
+    },
+    "MisoBroth": {
+      "OpenKeyRecipeID": "None"
+    },
+    "SaltBroth": {
+      "OpenKeyRecipeID": "None"
+    },
+    "FishAndChips": {
+      "Ingredient2Total": 1
+    },
+    "FishHotPot": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        5.0,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    "SeaUrchinPasta": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        20.0,
+        0.0,
+        0.0,
+        2.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "ChickenCasserole": {
+      "FirstBonusValue": [
+        0.0,
+        20.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0
+      ]
+    },
+    "Lemonade": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    "AppleJuice": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    "StrawberryAuLait": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.5
+      ]
+    },
+    "Smoothie": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.5
+      ]
+    },
+    "FruitJuice": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.5
+      ]
+    },
+    "Nectar": {
+      "FirstBonusValue": [
+        0.0,
+        0.0,
+        30.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0
+      ]
+    },
+    "Hollowpoint": {
+      "CraftValue": 8
+    },
+    "ArmorPiercing": {
+      "CraftValue": 7
+    },
+    "Firebullet": {
+      "CraftValue": 6
+    },
+    "Icebullet": {
+      "CraftValue": 6
+    },
+    "ThunderRounds": {
+      "CraftValue": 6
+    },
+    "SilverBullets": {
+      "CraftValue": 5,
+      "OpenKeyRecipeID": "BalletRecipe002"
+    },
+    "WeaponbaneRounds": {
+      "CraftValue": 4
+    },
+    "ShieldbaneRounds": {
+      "CraftValue": 4
+    },
+    "PoisonRounds": {
+      "CraftValue": 4
+    },
+    "PetrifyingRounds": {
+      "CraftValue": 4
+    },
+    "CurseRounds": {
+      "CraftValue": 4
+    },
+    "Shotshell": {
+      "CraftValue": 3,
+      "Ingredient2Id": "Mithril"
+    },
+    "CriticalBullet": {
+      "CraftValue": 2,
+      "Ingredient2Id": "Platinum"
+    },
+    "DiamondBullets": {
+      "CraftValue": 1
+    },
+    "FoldingTurb": {
+      "Ingredient2Id": "Bixbite"
+    },
+    "Voidlay02": {
+      "Ingredient2Id": "Bixbite"
+    },
+    "ResistFire01": {
+      "Ingredient1Total": 2
+    },
+    "ResistFire02": {
+      "Ingredient1Total": 3
+    },
+    "Resistice01": {
+      "Ingredient1Total": 2
+    },
+    "Resistice02": {
+      "Ingredient1Total": 3
+    },
+    "ResistThunder01": {
+      "Ingredient1Total": 2
+    },
+    "ResistThunder02": {
+      "Ingredient1Total": 3
+    },
+    "Resistdark00": {
+      "Ingredient1Id": "Bixbite"
+    },
+    "Resistdark01": {
+      "Ingredient1Id": "Bixbite"
+    },
+    "Resistdark02": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient1Total": 2
+    },
+    "Resistmagic01": {
+      "Ingredient1Total": 2,
+      "Ingredient2Total": 2,
+      "Ingredient3Total": 2
+    },
+    "Resistmagic02": {
+      "Ingredient1Total": 3,
+      "Ingredient2Total": 3,
+      "Ingredient3Total": 3
+    },
+    "PetraBless02": {
+      "Ingredient2Id": "Bixbite"
+    },
+    "Zombie8Bit01": {
+      "Ingredient1Id": "16BitCoin",
+      "Ingredient1Total": 1
+    },
+    "Zombie8Bit02": {
+      "Ingredient1Id": "32BitCoin",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "None",
+      "Ingredient2Total": 0
+    },
+    "Ghost8Bit01": {
+      "Ingredient1Id": "16BitCoin",
+      "Ingredient1Total": 1
+    },
+    "Ghost8Bit02": {
+      "Ingredient1Id": "32BitCoin",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "None",
+      "Ingredient2Total": 0
+    },
+    "EightBitFire01": {
+      "Ingredient1Id": "16BitCoin",
+      "Ingredient1Total": 1
+    },
+    "EightBitFire02": {
+      "Ingredient1Id": "32BitCoin",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "None",
+      "Ingredient2Total": 0
+    },
+    "Nightmare8Bit01": {
+      "Ingredient1Id": "16BitCoin",
+      "Ingredient1Total": 1
+    },
+    "Nightmare8Bit02": {
+      "Ingredient1Id": "32BitCoin",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "None",
+      "Ingredient2Total": 0
+    },
+    "LigaStreyma00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "LigaStreyma01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "LigaStreyma02": {
+      "Ingredient1Total": 3
+    },
+    "VaIsha00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "VaIsha01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "VaIsha02": {
+      "Ingredient1Total": 3
+    },
+    "FoldShiu00": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "FoldShiu01": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "FoldShiu02": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient1Total": 1
+    },
+    "TepesOsius00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TepesOsius01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TepesOsius02": {
+      "Ingredient1Total": 3
+    },
+    "TissLeif00": {
+      "Ingredient1Id": "Diamond",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TissLeif01": {
+      "Ingredient1Id": "Diamond",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TissLeif02": {
+      "Ingredient1Total": 2,
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "VaSka00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "VaSka01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "VaSka02": {
+      "Ingredient1Total": 3
+    },
+    "TissRosain00": {
+      "Ingredient1Id": "Diamond",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TissRosain01": {
+      "Ingredient1Id": "Diamond",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TissRosain02": {
+      "Ingredient1Total": 2,
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TepsSalenda00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TepsSalenda01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "TepsSalenda02": {
+      "Ingredient1Total": 3
+    },
+    "FoldingTurb00": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "FoldingTurb01": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient1Total": 1,
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "FoldingTurb02": {
+      "Ingredient1Id": "Bixbite",
+      "Ingredient1Total": 1
+    },
+    "LigaDoin00": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "LigaDoin01": {
+      "Ingredient2Id": "Gold",
+      "Ingredient2Total": 1
+    },
+    "LigaDoin02": {
+      "Ingredient1Total": 3
+    },
+    "VampiricSkinsuit2": {
+      "Ingredient1Id": "VampiricSkinsuit",
+      "OpenKeyRecipeID": "VampiricSkinsuit"
+    },
+    "VampiricSkinsuit4": {
+      "Ingredient1Id": "VampiricSkinsuit2",
+      "OpenKeyRecipeID": "VampiricSkinsuit2"
+    },
+    "Scythe2": {
+      "Ingredient1Id": "Scythe",
+      "OpenKeyRecipeID": "Scythe"
+    },
+    "Scythe4": {
+      "Ingredient1Id": "Scythe2",
+      "OpenKeyRecipeID": "Scythe2"
+    },
+    "PirateGun3": {
+      "Ingredient1Id": "PirateGun1",
+      "OpenKeyRecipeID": "PirateGun1"
+    },
+    "PirateGun5": {
+      "Ingredient1Id": "PirateGun3",
+      "OpenKeyRecipeID": "PirateGun3"
+    },
+    "PirateSword3": {
+      "Ingredient1Id": "PirateSword1",
+      "OpenKeyRecipeID": "PirateSword1"
+    },
+    "PirateSword5": {
+      "Ingredient1Id": "PirateSword3",
+      "OpenKeyRecipeID": "PirateSword3"
+    },
+    "ShantaeOutfit3": {
+      "Ingredient1Id": "ShantaeOutfit1",
+      "OpenKeyRecipeID": "ShantaeOutfit1"
+    },
+    "ShantaeOutfit5": {
+      "Ingredient1Id": "ShantaeOutfit3",
+      "OpenKeyRecipeID": "ShantaeOutfit3"
+    },
+    "FestivalKimono2": {
+      "Ingredient1Id": "FestivalKimono",
+      "OpenKeyRecipeID": "FestivalKimono"
+    },
+    "FestivalKimono4": {
+      "Ingredient1Id": "FestivalKimono2",
+      "OpenKeyRecipeID": "FestivalKimono2"
+    },
+    "Wagasa2": {
+      "Ingredient1Id": "Wagasa",
+      "OpenKeyRecipeID": "Wagasa"
+    },
+    "Wagasa4": {
+      "Ingredient1Id": "Wagasa2",
+      "OpenKeyRecipeID": "Wagasa2"
+    },
+    "MagicalGirlBody2": {
+      "Ingredient1Id": "MagicalGirlBody",
+      "OpenKeyRecipeID": "MagicalGirlBody"
+    },
+    "MagicalGirlBody4": {
+      "Ingredient1Id": "MagicalGirlBody2",
+      "OpenKeyRecipeID": "MagicalGirlBody2"
+    },
+    "MagicalScepter2": {
+      "Ingredient1Id": "MagicalScepter",
+      "OpenKeyRecipeID": "MagicalScepter"
+    },
+    "MagicalScepter4": {
+      "Ingredient1Id": "MagicalScepter2",
+      "OpenKeyRecipeID": "MagicalScepter2"
+    }
+  },
+  "PB_DT_DamageMaster": {
+    "POISON_SLIP_ENEMY": {
+      "RateDamage": 0.05
+    },
+    "P0000_NSWORD_SWORDWHIP": {
+      "AddCriticalPercent": 20.0
+    },
+    "P0000_LSWORD_LOOP": {
+      "AddCriticalPercent": 20.0
+    },
+    "P0000_SCYTHE_DEFAULT": {
+      "ZAN": true,
+      "DAG": false
+    },
+    "N3014_ATTACK_001_PL": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75,
+      "DAG": false,
+      "DAR": true
+    },
+    "N3080_VenomousSmoke": {
+      "DAG": false
+    },
+    "N3104_Acidgouache": {
+      "DAG": false
+    },
+    "N3024_BaudRideBlast": {
+      "LIG": false,
+      "HOL": false
+    },
+    "N3091_FLOWER_NEEDLE": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "P0000_REFLECTIONARY_DAMAGE": {
+      "HOL": true
+    },
+    "P0000_HIDDEN_DIRT": {
+      "ZAN": true,
+      "TOT": false
+    },
+    "P0000_TISS_ROSAIN": {
+      "DAG": false,
+      "HOL": true
+    },
+    "P0000_SHOOTING_KNIFE": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0000_TOXICSTORM": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "NP0000_RAGINGGIRL": {
+      "ZAN": false
+    },
+    "P0000_DRAGONIC_PUNCH": {
+      "STR_Correction": 1.33,
+      "INT_Correction": 1.33
+    },
+    "P0000_DRAGONIC_FIREPUNCH": {
+      "STR_Correction": 1.46,
+      "INT_Correction": 1.46
+    },
+    "N2008_DRAGONIC_EXPLOSION": {
+      "STR_Correction": 0.4,
+      "INT_Correction": 0.4
+    },
+    "P0000_DEAD_HOWLING_EX": {
+      "DAR": true
+    },
+    "P0000_JUCK_POD_BELL": {
+      "DAG": true,
+      "TOT": false
+    },
+    "P0000_JUCK_POD_BELL_SHOCKWAVE": {
+      "DAG": true,
+      "TOT": false
+    },
+    "P0000_JUCK_POD_EXPLOSION": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0000_VAISHA": {
+      "TOT": false
+    },
+    "P0000_HELLETICAL_GRINDER": {
+      "ZAN": false,
+      "TOT": true
+    },
+    "P0000_GOLD_BULLET": {
+      "LIG": true
+    },
+    "P0000_GOLD_BULLET_NO_MONEY": {
+      "LIG": true
+    },
+    "P0001_CHARGEATTACK_FIRE": {
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5,
+      "FLA": false,
+      "HOL": true
+    },
+    "P0001_CHARGEATTACK_FIRE_EXPLOSION": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_CHARGEATTACK_ICE": {
+      "STR_Correction": 0.3,
+      "INT_Correction": 0.3
+    },
+    "P0001_CHARGEATTACK_DARK": {
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_CHARGEATTACK_DARK_EXPLOSION": {
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_CHARGEATTACK": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0,
+      "ZAN": false
+    },
+    "P0001_CHARGEATTACK_THUNDER": {
+      "STR_Correction": 0.4,
+      "INT_Correction": 0.4,
+      "ZAN": false
+    },
+    "P0000_Shande1": {
+      "STR_Correction": 1.33,
+      "INT_Correction": 1.33
+    },
+    "P0000_Shande2": {
+      "STR_Correction": 1.66,
+      "INT_Correction": 1.66
+    },
+    "P0000_Shande3": {
+      "STR_Correction": 1.99,
+      "INT_Correction": 1.99
+    },
+    "P0000_TOKKAN": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0000_ArtsHundredFlowersFinish": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5
+    },
+    "P0000_ArtsSpearRotate": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0000_ArtsSpearRotate_Impact": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5
+    },
+    "P0000_STEEL_CY": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5
+    },
+    "P0000_STEEL_CY_LOOP": {
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0000_POWER_SLASH": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5,
+      "ZAN": false
+    },
+    "P0000_ArtsAxeKick": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0000_ThreeKicks1": {
+      "STR_Correction": 1.33,
+      "INT_Correction": 1.33
+    },
+    "P0000_ThreeKicks2": {
+      "STR_Correction": 1.66,
+      "INT_Correction": 1.66
+    },
+    "P0000_ThreeKicks3": {
+      "STR_Correction": 1.99,
+      "INT_Correction": 1.99
+    },
+    "P0000_Jsword_Kabuto": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0000_Jsword_GrearfulDead1": {
+      "STR_Correction": 1.33,
+      "INT_Correction": 1.33
+    },
+    "P0000_Jsword_GrearfulDead2": {
+      "STR_Correction": 1.66,
+      "INT_Correction": 1.66
+    },
+    "P0000_Jsword_GrearfulDead3": {
+      "STR_Correction": 1.99,
+      "INT_Correction": 1.99
+    },
+    "P0000_Foot_DropKick": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0000_Foot_DropKick_Return": {
+      "STR_Correction": 0.8,
+      "INT_Correction": 0.8
+    },
+    "P0000_Jsword_ArtOfDrawing": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0000_DrawingArtEdge": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0000_MOON_EDGE": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5
+    },
+    "P0000_ArtsKnifeBackstab": {
+      "STR_Correction": 3.5,
+      "INT_Correction": 3.5
+    },
+    "P0000_ArtsKnifeBackSteal": {
+      "ZAN": true,
+      "TOT": false
+    },
+    "P0000_GROUND_MOON": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0000_THREE_SEC_STAFF": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0000_THREE_SEC_STUFF_IMPACT": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0000_BUNNY_KICK": {
+      "STR_Correction": 0.8,
+      "INT_Correction": 0.8
+    },
+    "P0000_SPIKE_BREAST": {
+      "DAG": false
+    },
+    "P0000_BIG_ATTACK": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0000_BIG_ATTACK_TORNADE": {
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5,
+      "DAG": false,
+      "TOT": true
+    },
+    "P0001_ATTACK_CHAIN": {
+      "SA_Attack": 1000,
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "P0001_NSWORD_DEFAULT": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_NSWORD_FIRE": {
+      "SA_Attack": 60,
+      "STR_Correction": 0.66,
+      "INT_Correction": 0.66
+    },
+    "P0001_NSWORD_ICE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_NSWORD_THUNDER": {
+      "SA_Attack": 50,
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_LARGEATTACK_DEFAULT": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0001_LARGEATTACK_FIRE": {
+      "SA_Attack": 180,
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_LARGEATTACK_ICE": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0001_LARGEATTACK_THUNDER": {
+      "SA_Attack": 150,
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "P0001_KYOKUKEN_DEFAULT": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "P0001_KYOKUKEN_FIRE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "P0001_KYOKUKEN_ICE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "P0001_KYOKUKEN_THUNDER": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "P0001_KOUJINKEN_DEFAULT": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "P0001_KOUJINKEN_FIRE": {
+      "SA_Attack": 240,
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_KOUJINKEN_ICE": {
+      "SA_Attack": 400,
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0001_KOUJINKEN_THUNDER": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "P0001_KOUJINKEN_FIRE_EXPLOSION": {
+      "SA_Attack": 240,
+      "SA_Correction": 1.0,
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "ZAN": false
+    },
+    "P0001_KOUJINKEN_ICE_EXPLOSION": {
+      "SA_Attack": 200,
+      "SA_Correction": 1.0,
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5,
+      "TOT": false
+    },
+    "P0001_KOUJINKEN_THUNDERFALL": {
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.33,
+      "INT_Correction": 0.33
+    },
+    "P0001_KNIFE_DEFAULT": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_KNIFE_THUNDER": {
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_KNIFE_FIRE_EXPLOSION": {
+      "STR_Correction": 0.66,
+      "INT_Correction": 0.66,
+      "TOT": false
+    },
+    "P0001_KNIFE_ICICLE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_KNIFE_THUNDER_FALL": {
+      "SA_Attack": 50,
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_JIKOKU_DEFAULT": {
+      "STR_Correction": 1.33,
+      "INT_Correction": 1.33
+    },
+    "P0001_JIKOKU_FIRE": {
+      "SA_Attack": 120,
+      "STR_Correction": 0.66,
+      "INT_Correction": 0.66
+    },
+    "P0001_JIKOKU_ICE": {
+      "SA_Attack": 200,
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "P0001_JIKOKU_THUNDER": {
+      "SA_Attack": 100,
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_JIKOKU_FIRE_EXPLOSION": {
+      "SA_Attack": 120,
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.83,
+      "INT_Correction": 0.83,
+      "ZAN": false
+    },
+    "P0001_JIKOKU_ICE_EXPLOSION": {
+      "SA_Correction": 1.0,
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "TOT": false
+    },
+    "P0001_JIKOKU_THUNDERFALL": {
+      "SA_Attack": 25,
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.22,
+      "INT_Correction": 0.22
+    },
+    "P0001_TOBIKONGO_DEFAULT": {
+      "SA_Attack": 900,
+      "STR_Correction": 3.0,
+      "INT_Correction": 3.0
+    },
+    "P0001_TOBIKONGO_FIRE": {
+      "SA_Attack": 360,
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "P0001_TOBIKONGO_ICE": {
+      "SA_Attack": 600,
+      "STR_Correction": 2.25,
+      "INT_Correction": 2.25
+    },
+    "P0001_TOBIKONGO_THUNDER": {
+      "SA_Attack": 300,
+      "STR_Correction": 1.125,
+      "INT_Correction": 1.125
+    },
+    "P0001_TOBIKONGO_FIRE_EXPLOSION": {
+      "SA_Attack": 360,
+      "SA_Correction": 1.0,
+      "STR_Correction": 1.875,
+      "INT_Correction": 1.875,
+      "ZAN": false
+    },
+    "P0001_TOBIKONGO_ICE_EXPLOSION": {
+      "SA_Attack": 300,
+      "SA_Correction": 1.0,
+      "STR_Correction": 2.25,
+      "INT_Correction": 2.25,
+      "TOT": false
+    },
+    "P0001_TOBIKONGO_THUNDERFALL": {
+      "SA_Attack": 75,
+      "SA_Correction": 1.0,
+      "STR_Correction": 0.5,
+      "INT_Correction": 0.5
+    },
+    "P0001_LANDATTACK": {
+      "STR_Correction": 0.0,
+      "INT_Correction": 0.0
+    },
+    "P0001_SLIDING": {
+      "STR_Correction": 3.6,
+      "INT_Correction": 3.6
+    },
+    "P0001_JUMPKICK": {
+      "STR_Correction": 3.0,
+      "INT_Correction": 3.0
+    },
+    "N1001_WaterBall_Attack": {
+      "DAG": false
+    },
+    "N1001_FrontRazer": {
+      "DAG": false
+    },
+    "N1002_BLOOD_STEEL_FOOTING": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N1002_ATTACK_002_Charge": {
+      "STR_Correction": 1.4,
+      "INT_Correction": 1.4
+    },
+    "N1002_ATTACK_001_OPEN": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2
+    },
+    "N1004_GRAB_AFTER": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "N1004_RAISE_COIN_TOWER": {
+	  "RateDamage": 0.15
+    },
+    "N1004_RAISE_COIN_TOWER_SANDWICH": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1005_ATTACK_FIRE": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2,
+      "KnockBackDistance": 10.0
+    },
+    "N1005_ATTACK_BITE": {
+      "ZAN": false,
+      "TOT": true
+    },
+    "N1005_ATTACK_COMBINATION": {
+      "STR_Correction": 2.5,
+      "INT_Correction": 2.5
+    },
+    "N1006_DARK_BOMB": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1006_DARK_BOMB_MAIN": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1006_ATTACK_REFLECTION": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "TOT": true,
+      "SpecialEffectDenominator": 0.0,
+      "Dir": "EAttackDirection::None",
+      "BlastMin": 1.0,
+      "BlastMax": 1.0,
+      "ForceMin": 1.0,
+      "ForceMax": 1.0,
+      "KnockBackDistance": 3.5,
+      "KnockBackLimitAngleMin": 60.0,
+      "RapidHitTime": 0.5,
+      "DamageFlashRed": 0.0,
+      "DamageFlashSec": 0.5
+    },
+    "N1006_ATTACK_TOGE1": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_TOGE2": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_TOGE3": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_TOGE4": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_TOGE5": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_TOGE6": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_ATTACK_SNAKE": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N1006_SNAKE_LASER_BRV": {
+      "TOT": false,
+      "FLA": true
+    },
+    "N1008_Moon_Attack_Screen": {
+      "STR_Correction": 0.8,
+      "INT_Correction": 0.8
+    },
+	"N1008_ScissorsAttack": {
+      "STR_Correction": 1.8,
+      "INT_Correction": 1.8
+    },
+    "N1008_Full_MoonBeam": {
+      "LIG": false
+    },
+    "N1008_MoonFall": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N1008_MoonFall_Beam": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0,
+      "ZAN": false,
+      "DAG": true
+    },
+    "N1009_Attack_RimonChouChu": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75,
+      "DAG": false,
+      "KnockBackDistance": 20.0,
+      "RapidHitTime": 0.0
+    },
+    "N1009_Attack_StraightElbow": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75,
+      "DAG": false,
+      "KnockBackDistance": 20.0,
+      "RapidHitTime": 0.0
+    },
+    "N1009_LigaDoin": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1009_LigaDoin_Explosion": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N1009_MangetusLaser": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "N1009_Attack_Band": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "HOL": true
+    },
+    "N1009_Attack_CannonBall": {
+      "STR_Correction": 0.0,
+      "INT_Correction": 0.0,
+      "NoDamage": true
+    },
+    "N1009_JUMP_KICK": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1009_SLIDING": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1009_DROPKICK": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "N5020_YellowBeamShield": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0,
+      "DAG": false,
+      "FLA": true
+    },
+    "N1009_LigaStreyma": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1011_ATTACK_ICE_EXPLOSION": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5,
+      "TOT": false
+    },
+    "N1011_ATTACK_006_KNIFE_FIRE_EXPLOSION": {
+      "TOT": false
+    },
+    "N1011_ATTACK_006_KNIFE_THUNDER": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N1011_ATTACK_006_KNIFE_ICE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N1011_ATTACK_006_KNIFE_ICE_BREAK": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "TOT": false
+    },
+    "N1011_ATTACK_FIRE_EXPLOSION": {
+      "ZAN": false
+    },
+    "N1011_ATTACK_GIGADEIN": {
+      "STR_Correction": 1.15,
+      "INT_Correction": 1.15
+    },
+    "N1011_ATTACK_GIGADEIN_FALL": {
+      "STR_Correction": 1.15,
+      "INT_Correction": 1.15
+    },
+    "N1011_MATTER_OF_VOID": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1011_CAPTURE_FIRE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "AddCriticalPercent": 999.0
+    },
+    "N1011_CAPTURE_ICE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "AddCriticalPercent": 999.0
+    },
+    "N1011_CAPTURE_THUNDER": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "AddCriticalPercent": 999.0
+    },
+    "N1011_MERAZOMA": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "N1011_MERAZOMA_NONE": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "N1011_HYAD_DECAL": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75,
+      "IsIceDamage": true
+    },
+    "N1012_ATTACK_002_ICE_NEEDLE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N1012_ATTACK_003_EXPLOSION_TYPE1_EXPAND": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N1012_CONTINUOUS_FIRE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N2014_ATTACK_SLASH": {
+      "ICE": true,
+      "IsIceDamage": true
+    },
+    "N2001_FIRE_PLILLAR": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2,
+      "KnockBackDistance": 1.5
+    },
+    "N2001_DAMAGE_SUPPLY_HAND": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N2002_BITE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "DAG": false,
+      "TOT": true
+    },
+    "N2004_ATTACK_001": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2
+    },
+    "N2004_ATTACK_001_BRV": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2
+    },
+    "N2004_ATTACK_002": {
+      "STR_Correction": 1.4,
+      "INT_Correction": 1.4
+    },
+    "N2004_ATTACK_003_1": {
+      "STR_Correction": 1.4,
+      "INT_Correction": 1.4
+    },
+    "N2004_Jump_Kick": {
+      "STR_Correction": 1.2,
+      "INT_Correction": 1.2
+    },
+    "N2006__BULLET_Ground": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N2006__BULLET_Ceiling": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N2007_ATTACK_DrawingArtEdge": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "N2012_Slash": {
+      "HOL": true,
+      "DAR": true
+    },
+    "N2012_SuckingBlood": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "N2012_Magic_Fire_S": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "N2012_Magic_Fire_M": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N2012_Magic_Ice_S": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N2012_Magic_Ice_M": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N2012_ThrowSword": {
+      "ZAN": false,
+      "TOT": true,
+      "HOL": true,
+      "DAR": true
+    },
+    "N2013_ATTACK_ICE_NEEDLE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N2013_ATTACK_FIREBALL": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75
+    },
+    "N2013_WINE_EXPLOSION": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N2014_Default": {
+      "FLA": true
+    },
+    "N3003_ATTACK_001": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3003_ATTACH": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3003_BLAST": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3005_ATTACK_CANNON": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3010_CLOD": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N3016_ATTACK_CANNON": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3017_ATTACK_CANNON": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3007_WIND_STRIKE": {
+      "ZAN": false
+    },
+    "N3024_EXPLOSION": {
+      "STR_Correction": 3.0,
+      "INT_Correction": 3.0
+    },
+    "N3025_EYE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+	  "RapidHitTime": 1.0
+    },
+    "N3044_JUMP_ATTACK": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0
+    },
+    "N3066_ATTACK_DEFAULT": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3067_ATTACK_DEFAULT": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3073_ATTACK_GEBEL": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "N3078_BITE": {
+      "ZAN": false,
+      "TOT": true
+    },
+    "N3080_Poison_Smork": {
+      "DAG": false
+    },
+    "N3080_Poison_Smork_Bound": {
+      "DAG": false
+    },
+    "N3098_PearlAttack": {
+      "DAG": false,
+      "ICE": true
+    },
+    "N3103_Whip": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N3105_Attack_Drill": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3107_Sickle": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3107_HolyWater_Fire": {
+      "FLA": true
+    },
+    "N3108_BOMB": {
+      "INT_Correction": 1.5
+    },
+    "N3108_BOMB_EXPLOSION": {
+      "INT_Correction": 1.5
+    },
+    "N3108_ATTACK_CANNON_COIN": {
+      "INT_Correction": 1.5
+    },
+    "N3108_ATTACK_FALL_COIN": {
+      "INT_Correction": 1.25
+    },
+    "N3108_SUICIDE": {
+      "STR_Correction": 0.0,
+      "INT_Correction": 0.0,
+      "DAG": false,
+      "FLA": true,
+	  "RateDamage": 1.0
+    },
+    "N3109__FireBall": {
+      "STR_Correction": 1.1,
+      "INT_Correction": 1.1
+    },
+    "N3109_FireBeam": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3111_ShieldBash": {
+      "DAG": true,
+      "TOT": false
+    },
+    "N3113_ATTACK_TORNADO": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3113_ATTACK_TOXIC": {
+      "STR_Correction": 0.75,
+      "INT_Correction": 0.75,
+      "ZAN": false,
+      "DAG": true
+    },
+    "N3113_ATTACK_FIRE": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N3115_Bite": {
+      "ZAN": false,
+      "TOT": true
+    },
+    "N3119_BULLET": {
+      "DAG": false
+    },
+    "N3124_BALLET": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N6001_SkyLightBrust": {
+      "HOL": true
+    },
+    "GroundDamage": {
+      "RapidHitTime": 1.0
+    },
+    "SlashDamage": {
+      "RapidHitTime": 1.0
+    },
+    "LavaDamage": {
+      "TOT": false,
+      "FLA": true,
+      "RapidHitTime": 1.0
+    },
+    "N1013_FlameSkull": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1013_LavaRise": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "N1013_TracerRay": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1013_Tongue": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0
+    },
+    "N1013_RingLasers": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N1013_Screech": {
+      "STR_Correction": 1.75,
+      "INT_Correction": 1.75,
+      "DAG": true,
+      "HOL": false
+    },
+    "N1013_Laser": {
+      "STR_Correction": 2.25,
+      "INT_Correction": 2.25
+    },
+    "N0000_LSWORD_DEFAULT": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "ICE": true,
+      "IsIceDamage": true
+    },
+    "N0000_NSWORD_DEFAULT": {
+      "ICE": true,
+      "IsIceDamage": true
+    },
+    "N0000_INFERNO_BREATH": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25
+    },
+    "N0000_REFLECTIONARY_DAMAGE": {
+      "STR_Correction": 1.0,
+      "INT_Correction": 1.0,
+      "HOL": true
+    },
+    "N0000_GROUND_MOON": {
+      "ICE": true,
+      "IsIceDamage": true
+    },
+    "N0000_CHARGEATTACK_ICE": {
+      "STR_Correction": 0.6,
+      "INT_Correction": 0.6
+    },
+    "N0000_AIMINGSHIELD_ATTACK": {
+      "STR_Correction": 0.4,
+      "INT_Correction": 0.4
+    },
+    "N0000_MOON_ATTACK": {
+      "STR_Correction": 0.8,
+      "INT_Correction": 0.8
+    },
+    "P0003_GEN": {
+      "DAR": true
+    },
+    "N2016_DEFAULT": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N2016_PUNCH": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5,
+      "ZAN": false,
+      "DAG": true
+    },
+    "N2016_PUNCH_IGNITED": {
+      "STR_Correction": 2.0,
+      "INT_Correction": 2.0,
+      "DAG": true
+    },
+    "N2016_BREEDER_ROCK": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N2016_BREEDER_ROCK_EXPLODE": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N2016_BREEDER_PUKE_PUDDLE": {
+      "ZAN": false,
+      "DAR": true
+    },
+    "N2016_SELF_BURN_DAMAGE": {
+      "RateDamage": 0.005
+    },
+    "N3125_DEFAULT": {
+      "ZAN": false,
+      "DAG": true
+    },
+    "N3125_SELF_BURN_DAMAGE": {
+      "RateDamage": 0.025
+    },
+    "FAMILIA_ARCHER_ARROW": {
+      "DAG": false,
+      "TOT": true
+    },
+    "N2017_PunchAttack": {
+      "STR_Correction": 1.5,
+      "INT_Correction": 1.5
+    },
+    "N2017_Laser": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "HOL": true,
+      "DAR": false
+    },
+    "N2017_NeckLaser": {
+      "STR_Correction": 1.25,
+      "INT_Correction": 1.25,
+      "HOL": true,
+      "DAR": false
+    }
+  },
+  "PB_DT_DropRateMaster": {
+    "Treasurebox_LIB012_1": {
+      "RareItemId": "MaxBulletUP"
+    },
+    "Treasurebox_UGD036_2": {
+      "RareItemId": "MaxBulletUP",
+      "RareItemRate": 100.0,
+      "CommonItemId": "None",
+      "CommonItemQuantity": 0,
+      "CommonRate": 0.0,
+      "RareIngredientId": "None",
+      "RareIngredientQuantity": 0,
+      "RareIngredientRate": 0.0,
+      "CommonIngredientId": "None",
+      "CommonIngredientQuantity": 0,
+      "CommonIngredientRate": 0.0,
+      "CoinType": "EDropCoin::None",
+      "CoinOverride": 0,
+      "AreaChangeTreasureFlag": false
+    },
+    "Treasurebox_RVA001_1": {
+      "CommonIngredientId": "Ruby",
+      "CommonIngredientRate": 50.0
+    },
+    "Treasurebox_RVA002_1": {
+      "CommonIngredientId": "Ruby",
+      "CommonIngredientRate": 50.0
+    },
+    "Treasurebox_RVA010_1": {
+      "CommonIngredientId": "Ruby",
+      "CommonIngredientRate": 50.0
+    },
+    "Treasurebox_RVA011_2": {
+      "CommonIngredientId": "Ruby",
+      "CommonIngredientRate": 50.0
+    },
+    "Treasurebox_RVA012_1": {
+      "CommonIngredientId": "Ruby",
+      "CommonIngredientRate": 50.0
+    },
+    "N3025_Shard": {
+      "ShardRate": 100.0
+    },
+    "N2015_Shard": {
+      "ShardRate": 100.0
+    },
+    "N3101_Shard": {
+      "RareItemId": "Bixbite"
+    },
+    "N3032_Shard": {
+      "RareItemId": "Ruby",
+      "CommonItemId": "None",
+      "CommonItemQuantity": 0,
+      "CommonRate": 0.0
+    },
+    "N3028_Shard": {
+      "ShardId": "SummonBuell"
+    },
+    "N3038_Shard": {
+      "ShardId": "FamiliaBuell"
+    },
+    "N3106_Shard": {
+      "ShardRate": 100.0
+    },
+    "N3107_Shard_Second": {
+      "ShardRate": 100.0
+    },
+    "N3108_Shard": {
+      "ShardRate": 100.0
+    },
+    "Treasurebox_JRN001_1": {
+      "CommonItemId": "Leather",
+      "RareIngredientId": "CypressLumber",
+      "CommonIngredientId": "Alexandrite"
+    },
+    "Treasurebox_JRN001_2": {
+      "CommonItemId": "Leather",
+      "RareIngredientId": "CypressLumber",
+      "CommonIngredientId": "Alexandrite"
+    },
+    "Treasurebox_JRN001_3": {
+      "CommonItemId": "Leather",
+      "RareIngredientId": "CypressLumber",
+      "CommonIngredientId": "Alexandrite"
+    },
+    "Treasurebox_JRN002_1": {
+      "RareItemId": "Waystone",
+      "RareItemRate": 100.0,
+      "CommonItemId": "None",
+      "CommonItemQuantity": 0,
+      "CommonRate": 0.0,
+      "RareIngredientId": "None",
+      "RareIngredientQuantity": 0,
+      "RareIngredientRate": 0.0,
+      "CommonIngredientId": "None",
+      "CommonIngredientQuantity": 0,
+      "CommonIngredientRate": 0.0,
+      "CoinType": "EDropCoin::None",
+      "CoinOverride": 0,
+      "AreaChangeTreasureFlag": false
+    }
+  },
+  "PB_DT_EnchantParameterType": {
+    "CriticalRate34": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 15.0
+    },
+    "CriticalRate35": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 15.0
+    },
+    "BackStepRate36": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.3
+    },
+    "BackStepRate37": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.3
+    },
+    "SlidingRate38": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.4
+    },
+    "SlidingRate39": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.4
+    },
+    "CriticalRate40": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 7.5
+    },
+    "CriticalRate41": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 7.5
+    },
+    "CriticalDamageRate42": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.15
+    },
+    "CriticalDamageRate43": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.15
+    },
+    "RecoveryMpRate44": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 1.0
+    },
+    "RecoveryMpRate45": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 1.0
+    },
+    "NormalMoveUpRate56": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.2
+    },
+    "NormalMoveUpRate57": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.2
+    },
+    "DropMoneyRate58": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 999.0
+    },
+    "DropMoneyRate59": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 999.0
+    },
+    "MagicSpeedRate62": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 1.0
+    },
+    "MagicSpeedRate63": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 1.0
+    },
+    "CriticalDamageRate67": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.3
+    },
+    "CriticalDamageRate68": {
+      "EquipValue_28_5CFE97924D56254C9B62AF83698220FC": 0.3
+    },
+    "CriticalRate102": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 15.0,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 15.0
+    },
+    "AttackSpeedRate106": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.1,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.1
+    },
+    "DropMoneyRate107": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25
+    },
+    "ShardMPRate108": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.2,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.2
+    },
+    "OptimizerAttackRate137": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.05,
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.1,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.05,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.1
+    },
+    "WaterSpeedHorizontalRate142": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.5,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.5
+    },
+    "RegenerationRate149": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25
+    },
+    "CriticalRate159": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 15.0,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 15.0
+    },
+    "AttackSpeedRate163": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.1,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.1
+    },
+    "DropMoneyRate107": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25
+    },
+    "ShardMPRate165": {
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.2,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.2
+    },
+    "OptimizerAttackRate191": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.05,
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.1,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.05,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.1
+    },
+    "RegenerationRate195": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25
+    },
+    "WaterSpeedHorizontalRate205": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 0.25,
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 0.5,
+      "GradeMinValue_17_91AE73DD41FDAAC8F8DA31AD866DCA50": 0.25,
+      "GradeMaxvalue_18_93F3C28741CDEF08451A2C8C3D6083A0": 0.5
+    },
+    "BuffHOL223": {
+      "RankMinValue_13_9BFEECC74D2F4182BE533180CAB65B5D": 5.0,
+      "RankMaxValue_14_AA320341476CDE86FC5AAA8C355BA3A5": 10.0
+    }
+  },
+  "PB_DT_ItemMaster": {
+    "Poison": {
+      "max": 5
+    },
+    "Waystone": {
+      "buyPrice": 50,
+      "sellPrice": 0
+    },
+    "Certificationboard": {
+      "IconPath": "456"
+    },
+    "IDphoto": {
+      "IconPath": "454"
+    },
+    "VillageKey": {
+      "IconPath": "965"
+    },
+    "Medal022": {
+      "buyPrice": 94000,
+      "sellPrice": 9400
+    },
+    "COL_FireflyElixir": {
+      "NotListedInArchive": false,
+      "NotCountAsCompleteness": false
+    },
+    "CoolShoesOfMrNarita": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "CoolShoesOfMrNarita2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "CoolShoesOfMrNarita3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "IceSlewShoes": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "IceSlewShoes2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "IceSlewShoes3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "PoisonSpikeShoes": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "PoisonSpikeShoes2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "PoisonSpikeShoes3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "CrystalSword": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "CrystalSword2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "CrystalSword3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "Redumbrella": {
+      "buyPrice": 11700,
+      "sellPrice": 1170
+    },
+    "HuntedBrad": {
+      "buyPrice": 30000,
+      "sellPrice": 3000
+    },
+    "SwordWhip": {
+      "buyPrice": 59400,
+      "sellPrice": 5940
+    },
+    "ShieldWeapon": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "ShieldWeapon2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "ShieldWeapon3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "XrossBrade": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "XrossBrade2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "XrossBrade3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "BradeOfEU": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "BradeOfEU2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "BradeOfEU3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "LightSaber": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "LightSaber2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "LightSaber3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "JodoSwordLight": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "JodoSwordLight2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "JodoSwordLight3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "SpearCutDownAside": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "SpearCutDownAside2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "SpearCutDownAside3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "ClockSowrd": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "LoveOfPizza": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "KongSword": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "SwordOfTheMushroom": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "PowerSword": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "SilverAndBlackSword": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "DungeonNightSword": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "EvilTheSword": {
+      "buyPrice": 27000,
+      "sellPrice": 2700
+    },
+    "ValkyrieSword": {
+      "buyPrice": 50700,
+      "sellPrice": 5070
+    },
+    "StickOfMagiGirl": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "StickOfMagiGirl2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "StickOfMagiGirl3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "RemoteDart": {
+      "buyPrice": 9100,
+      "sellPrice": 910
+    },
+    "OracleBlade": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "DeathBringer": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "DeathBringer2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "DeathBringer3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "SacredSword": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "SacredSword2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "SacredSword3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "ChargeWideEnd": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "ChargeWideEnd2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "ChargeWideEnd3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "DrillWideEnd": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "DrillWideEnd2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "DrillWideEnd3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "PetrifactionSword": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "PetrifactionSword2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "PetrifactionSword3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "IcePillarSpear": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "IcePillarSpear2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "IcePillarSpear3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "LoveOfFairyDragon": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "LoveOfFairyDragon2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "LoveOfFairyDragon3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "WhipsOfLightDarkness": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "WhipsOfLightDarkness2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "WhipsOfLightDarkness3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "TrustMusket": {
+      "buyPrice": 3000,
+      "sellPrice": 300
+    },
+    "TrustMusket2": {
+      "buyPrice": 19200,
+      "sellPrice": 1920
+    },
+    "TrustMusket3": {
+      "buyPrice": 43200,
+      "sellPrice": 4320
+    },
+    "AriesHorns": {
+      "buyPrice": 50,
+      "sellPrice": 5
+    },
+    "Maidheadband": {
+      "buyPrice": 7200,
+      "sellPrice": 720
+    },
+    "Recyclehat": {
+      "buyPrice": 24100,
+      "sellPrice": 2410
+    },
+    "HumptyDumpty": {
+      "buyPrice": 10000,
+      "sellPrice": 1000
+    },
+    "LoveOfBenki": {
+      "buyPrice": 10000,
+      "sellPrice": 1000
+    },
+    "Plan9FOSpace": {
+      "buyPrice": 10000,
+      "sellPrice": 1000
+    },
+    "Mega64Head": {
+      "buyPrice": 10000,
+      "sellPrice": 1000
+    },
+    "ValkyrieTiara": {
+      "buyPrice": 28700,
+      "sellPrice": 2870
+    },
+    "Muffler": {
+      "buyPrice": 80,
+      "sellPrice": 8,
+      "Producted": "None"
+    },
+    "NoseEyeglasses": {
+      "buyPrice": 6360,
+      "sellPrice": 636
+    },
+    "Gebelsglasses": {
+      "buyPrice": 24100,
+      "sellPrice": 2410
+    },
+    "Walkerking": {
+      "buyPrice": 2960,
+      "sellPrice": 296
+    },
+    "PlagueDoctorFace": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "BigMustache": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "The-BazMask": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "HeyI’mGrump": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "I’mNotSoGrump": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "AKindaFunnyMask": {
+      "buyPrice": 8080,
+      "sellPrice": 808
+    },
+    "Valkyriedress": {
+      "buyPrice": 28700,
+      "sellPrice": 2870
+    },
+    "Paddy": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "Corn": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "Potato": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "SeedCorn": {
+      "buyPrice": 1000,
+      "sellPrice": 100
+    },
+    "SeedRice": {
+      "buyPrice": 1000,
+      "sellPrice": 100
+    },
+    "SeedPotato": {
+      "buyPrice": 1000,
+      "sellPrice": 100
+    },
+    "Softpoint": {
+      "buyPrice": 20,
+      "sellPrice": 2
+    },
+    "Hollowpoint": {
+      "buyPrice": 80,
+      "sellPrice": 8
+    },
+    "ArmorPiercing": {
+      "buyPrice": 150,
+      "sellPrice": 15,
+      "Producted": "Event_08_002_0000"
+    },
+    "Firebullet": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "Icebullet": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "ThunderRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "SilverBullets": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "WeaponbaneRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "ShieldbaneRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "PoisonRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "PetrifyingRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "CurseRounds": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "Shotshell": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "CriticalBullet": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "DiamondBullets": {
+      "buyPrice": 0,
+      "sellPrice": 0
+    },
+    "FamiliaIgniculus": {
+      "NotListedInArchive": false,
+      "NotCountAsCompleteness": false
+    },
+    "FamiliaArcher": {
+      "NotListedInArchive": false,
+      "NotCountAsCompleteness": false
+    },
+    "MonarchCrown": {
+      "NotInheritable": true,
+      "NotListedInArchive": false,
+      "NotCountAsCompleteness": false
+    },
+    "JourneyScarf": {
+      "buyPrice": 15840,
+      "sellPrice": 1584,
+      "NotListedInArchive": false,
+      "NotCountAsCompleteness": false
+    },
+    "Dreamsteal": {
+      "sellPrice": 500
+    },
+    "SummonBuChan": {
+      "sellPrice": 500
+    },
+    "Fireball": {
+      "sellPrice": 500
+    },
+    "MagicalScepter": {
+      "buyPrice": 2700,
+      "sellPrice": 270
+    },
+    "MagicalScepter1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "MagicalScepter2": {
+      "IconPath": "689",
+      "buyPrice": 17280,
+      "sellPrice": 1728
+    },
+    "MagicalScepter3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "MagicalScepter4": {
+      "IconPath": "1011",
+      "buyPrice": 38880,
+      "sellPrice": 3888
+    },
+    "MagicalGirlHead": {
+      "buyPrice": 8100,
+      "sellPrice": 810
+    },
+    "MagicalGirlBody": {
+      "buyPrice": 2300,
+      "sellPrice": 230
+    },
+    "MagicalGirlBody1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "MagicalGirlBody2": {
+      "IconPath": "690",
+      "buyPrice": 14400,
+      "sellPrice": 1440
+    },
+    "MagicalGirlBody3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "MagicalGirlBody4": {
+      "IconPath": "1012",
+      "buyPrice": 22500,
+      "sellPrice": 2250
+    },
+    "MagicalGirlBody5": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "MagicalGirlAccessory": {
+      "buyPrice": 2080,
+      "sellPrice": 208
+    },
+    "Scythe": {
+      "buyPrice": 2700,
+      "sellPrice": 270
+    },
+    "Scythe1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "Scythe2": {
+      "IconPath": "685",
+      "buyPrice": 17280,
+      "sellPrice": 1728
+    },
+    "Scythe3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "Scythe4": {
+      "IconPath": "1007",
+      "buyPrice": 38880,
+      "sellPrice": 3888
+    },
+    "AlluringHorns": {
+      "buyPrice": 8100,
+      "sellPrice": 810
+    },
+    "VampiricSkinsuit": {
+      "buyPrice": 2300,
+      "sellPrice": 230
+    },
+    "VampiricSkinsuit1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "VampiricSkinsuit2": {
+      "IconPath": "686",
+      "buyPrice": 14400,
+      "sellPrice": 1440
+    },
+    "VampiricSkinsuit3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "VampiricSkinsuit4": {
+      "IconPath": "1008",
+      "buyPrice": 22500,
+      "sellPrice": 2250
+    },
+    "VampiricSkinsuit5": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "VampiricWings": {
+      "buyPrice": 2080,
+      "sellPrice": 208
+    },
+    "VampiricChoker": {
+      "buyPrice": 5200,
+      "sellPrice": 520
+    },
+    "PirateGun1": {
+      "buyPrice": 2700,
+      "sellPrice": 270
+    },
+    "PirateGun2": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "PirateGun3": {
+      "IconPath": "693",
+      "buyPrice": 17280,
+      "sellPrice": 1728
+    },
+    "PirateGun4": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "PirateGun5": {
+      "IconPath": "1015",
+      "buyPrice": 38880,
+      "sellPrice": 3888
+    },
+    "PirateSword1": {
+      "buyPrice": 2700,
+      "sellPrice": 270
+    },
+    "PirateSword2": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "PirateSword3": {
+      "IconPath": "691",
+      "buyPrice": 17280,
+      "sellPrice": 1728
+    },
+    "PirateSword4": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "PirateSword5": {
+      "IconPath": "1013",
+      "buyPrice": 38880,
+      "sellPrice": 3888
+    },
+    "ShantaeBandana": {
+      "buyPrice": 900,
+      "sellPrice": 90
+    },
+    "ShantaeOutfit1": {
+      "buyPrice": 2300,
+      "sellPrice": 230
+    },
+    "ShantaeOutfit2": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "ShantaeOutfit3": {
+      "IconPath": "692",
+      "buyPrice": 14400,
+      "sellPrice": 1440
+    },
+    "ShantaeOutfit4": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "ShantaeOutfit5": {
+      "IconPath": "1014",
+      "buyPrice": 22500,
+      "sellPrice": 2250
+    },
+    "ShantaeOutfit6": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "ShantaeVest": {
+      "buyPrice": 1360,
+      "sellPrice": 136
+    },
+    "ShantaeTiara": {
+      "buyPrice": 2080,
+      "sellPrice": 208
+    },
+    "Wagasa": {
+      "buyPrice": 2700,
+      "sellPrice": 270
+    },
+    "Wagasa1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "Wagasa2": {
+      "IconPath": "687",
+      "buyPrice": 17280,
+      "sellPrice": 1728
+    },
+    "Wagasa3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "Wagasa4": {
+      "IconPath": "1009",
+      "buyPrice": 38880,
+      "sellPrice": 3888
+    },
+    "Kanzashi": {
+      "buyPrice": 2500,
+      "sellPrice": 250
+    },
+    "FestivalKimono": {
+      "buyPrice": 2300,
+      "sellPrice": 230
+    },
+    "FestivalKimono1": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "FestivalKimono2": {
+      "IconPath": "688",
+      "buyPrice": 14400,
+      "sellPrice": 1440
+    },
+    "FestivalKimono3": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "FestivalKimono4": {
+      "IconPath": "1010",
+      "buyPrice": 22500,
+      "sellPrice": 2250
+    },
+    "FestivalKimono5": {
+      "ItemType": "ECarriedCatalog::None"
+    },
+    "FestivalMask": {
+      "buyPrice": 1360,
+      "sellPrice": 136
+    },
+    "Sarashi": {
+      "buyPrice": 40,
+      "sellPrice": 4
+    },
+    "SakuraRain": {
+      "sellPrice": 500
+    }
+  },
+  "PB_DT_SetBonus": {
+    "VampiricSkinsuit": {
+      "STR": 6,
+      "LCK": 3
+    },
+    "VampiricSkinsuit2": {
+      "STR": 13,
+      "LCK": 6
+    },
+    "MagicalGirlBody": {
+      "INT": 1,
+      "MND": 5
+    },
+    "MagicalGirlBody2": {
+      "INT": 3,
+      "MND": 10
+    },
+    "FestivalKimono": {
+      "STR": 1,
+      "CON": 5
+    },
+    "FestivalKimono2": {
+      "STR": 3,
+      "CON": 10
+    },
+    "ShantaeOutfit1": {
+      "STR": 3,
+      "INT": 3
+    },
+    "ShantaeOutfit3": {
+      "STR": 6,
+      "INT": 6
+    }
+  },
+  "PB_DT_ShardMaster": {
+    "Ceruleansplash": {
+      "MaxNum": 8
+    },
+    "SummonButt": {
+      "MaxNum": 15
+    },
+    "Shovelshooter": {
+      "MaxNum": 3
+    },
+    "SamonSamHiggin": {
+      "minRankValue": 1.5
+    },
+    "SummonTracer": {
+      "MaxNum": 3
+    },
+    "HiddenDart": {
+      "MaxNum": 20,
+      "maxRankValue": 5.0
+    },
+    "RapidSpear": {
+      "MaxNum": 15
+    },
+    "Upbeatheat": {
+      "minRankValue": 5
+    },
+    "HellHound": {
+      "MaxNum": 3
+    },
+    "LigaStreyma": {
+      "MaxNum": 9,
+      "WeightForCategoryMax": 3
+    },
+    "VaIsha": {
+      "MaxNum": 10,
+      "minRankValue": 6.0
+    },
+    "TepsSalenda": {
+      "MaxNum": 3
+    },
+    "TissLeif": {
+      "MaxNum": 14
+    },
+    "Beastguard": {
+      "maxRankValue": 1.0
+    },
+    "WildScratch": {
+      "minRankValue": 1.33
+    },
+    "Healing": {
+      "minRankValue": 1.0
+    },
+    "Dimensionshift": {
+      "useMP": 5.0
+    },
+    "FireCannon": {
+      "minRankValue": 3.0
+    },
+    "StraightArrow": {
+      "MaxNum": 25
+    },
+    "ChaseArrow": {
+      "MaxNum": 25
+    },
+    "Aimingshield": {
+      "maxRankValue": 1.2,
+      "useMP": 60.0
+    },
+    "Acidgouache": {
+      "useMP": 60.0
+    },
+    "Venomsmog": {
+      "useMP": 20.0
+    },
+    "CircleRipper": {
+      "minRankValue": 0.4
+    },
+    "FireThrower": {
+      "MaxNum": 6
+    },
+    "Chiselbalage": {
+      "MaxNum": 30
+    },
+    "RuinBeak": {
+      "minRankValue": 1.0
+    },
+    "LigaDoin": {
+      "MaxNum": 10
+    },
+    "EightBitFire": {
+      "MaxNum": 25,
+      "minRankValue": 3.0
+    },
+    "STREnhance": {
+      "minGradeValue": 5.0
+    },
+    "CONEnhance": {
+      "minGradeValue": 5.0
+    },
+    "INTEnhance": {
+      "minGradeValue": 5.0
+    },
+    "MNDEnhance": {
+      "minGradeValue": 5.0
+    },
+    "LUKEnhance": {
+      "minGradeValue": 5.0
+    },
+    "EnhancedGOLD": {
+      "maxGradeValue": 20.0
+    },
+    "Resistedge": {
+      "minGradeValue": 10.0,
+      "maxGradeValue": 20.0
+    },
+    "Resistthrust": {
+      "minGradeValue": 10.0,
+      "maxGradeValue": 20.0
+    },
+    "ResistBrow": {
+      "minGradeValue": 10.0,
+      "maxGradeValue": 20.0
+    },
+    "ResistFire": {
+      "maxGradeValue": 10.0
+    },
+    "Resistice": {
+      "maxGradeValue": 10.0
+    },
+    "ResistThunder": {
+      "maxGradeValue": 10.0
+    },
+    "ResistHorley": {
+      "maxGradeValue": 10.0
+    },
+    "Resistdark": {
+      "maxGradeValue": 10.0
+    },
+    "ResistPoison": {
+      "minGradeValue": 15.0,
+      "maxGradeValue": 30.0
+    },
+    "Resistcurse": {
+      "minGradeValue": 15.0,
+      "maxGradeValue": 30.0
+    },
+    "ResistPetri": {
+      "minGradeValue": 15.0,
+      "maxGradeValue": 30.0
+    },
+    "Resistmagic": {
+      "minGradeValue": 2.5,
+      "maxGradeValue": 5.0
+    },
+    "optimizer": {
+      "minGradeValue": 0.1,
+      "maxGradeValue": 0.25
+    },
+    "drain": {
+      "minRankValue": 10.0,
+      "maxRankValue": 25.0
+    },
+    "Detectiveeye": {
+      "maxGradeValue": 20.0
+    },
+    "FamiliaIgniculus": {
+      "minRankValue": 3.0,
+      "maxRankValue": 1.5
+    }
+  },
+  "PB_DT_SpecialEffectDefinitionMaster": {
+    "N3081_HEAL": {
+      "Parameter01": 9999.0
+    }
+  },
+  "PB_DT_WeaponMaster": {
+    "KillerBoots": {
+      "DAG": true
+    },
+    "Hermesshoes": {
+      "ZAN": false,
+      "TOT": true
+    },
+    "Knife": {
+      "MeleeAttack": 9
+    },
+    "Baselard": {
+      "MeleeAttack": 15
+    },
+    "Kukuri": {
+      "MeleeAttack": 21
+    },
+    "PoisonKukri": {
+      "MeleeAttack": 18
+    },
+    "ManGauche": {
+      "MeleeAttack": 30
+    },
+    "Calnwenan": {
+      "MeleeAttack": 39
+    },
+    "Mandaupasar": {
+      "MeleeAttack": 50
+    },
+    "Juwuse": {
+      "IsIceDamage": true,
+      "MeleeAttack": 44,
+      "FLA": true,
+      "ICE": true,
+      "LIG": true,
+      "HOL": true
+    },
+    "RemoteDart": {
+      "MeleeAttack": 20
+    },
+    "OracleBlade": {
+      "MeleeAttack": 25
+    },
+    "ValralAltar": {
+      "MeleeAttack": 12
+    },
+    "Gambanttain": {
+      "ZAN": true
+    },
+    "Karadanda": {
+      "ZAN": true
+    },
+    "Swordsman": {
+      "ZAN": false
+    },
+    "Triplet": {
+      "TOT": true
+    },
+    "ShieldWeapon": {
+      "MeleeAttack": 18
+    },
+    "ShieldWeapon2": {
+      "MeleeAttack": 36
+    },
+    "ShieldWeapon3": {
+      "MeleeAttack": 52
+    },
+    "IcePillarSpear": {
+      "MeleeAttack": 12
+    },
+    "IcePillarSpear2": {
+      "MeleeAttack": 24
+    },
+    "IcePillarSpear3": {
+      "MeleeAttack": 35
+    },
+    "SwordOfTheMushroom": {
+      "SpecialEffectId": "Poison",
+      "SpecialEffectDenominator": 3.0,
+      "MeleeAttack": 12,
+      "POI": true
+    },
+    "SilverAndBlackSword": {
+      "SpecialEffectId": "Slow",
+      "SpecialEffectDenominator": 3.0,
+      "MeleeAttack": 9
+    },
+    "DungeonNightSword": {
+      "SpecialEffectId": "Curse",
+      "SpecialEffectDenominator": 3.0,
+      "MeleeAttack": 12,
+      "CUR": true
+    },
+    "EvilTheSword": {
+      "SpecialEffectId": "Stone",
+      "SpecialEffectDenominator": 3.0,
+      "MeleeAttack": 9,
+      "STO": true
+    },
+    "Scythe": {
+      "MeleeAttack": 17,
+      "DAR": true
+    },
+    "Scythe2": {
+      "MeleeAttack": 34,
+      "DAR": true
+    },
+    "Scythe4": {
+      "MeleeAttack": 50,
+      "DAR": true
+    },
+    "MagicalScepter": {
+      "MeleeAttack": 10
+    },
+    "MagicalScepter2": {
+      "MeleeAttack": 20
+    },
+    "MagicalScepter4": {
+      "MeleeAttack": 29
+    },
+    "PirateSword1": {
+      "MeleeAttack": 18
+    },
+    "PirateSword3": {
+      "MeleeAttack": 36
+    },
+    "PirateSword5": {
+      "MeleeAttack": 52
+    },
+    "PirateGun1": {
+      "MeleeAttack": 10
+    },
+    "PirateGun3": {
+      "MeleeAttack": 20
+    },
+    "PirateGun5": {
+      "MeleeAttack": 29
+    },
+    "Wagasa": {
+      "MeleeAttack": 7
+    },
+    "Wagasa2": {
+      "MeleeAttack": 14
+    },
+    "Wagasa4": {
+      "MeleeAttack": 21
+    }
+  }
+}

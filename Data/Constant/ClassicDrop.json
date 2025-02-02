@@ -1,0 +1,15 @@
+{
+  "ItemCommonMoneySmall":         20,
+  "ItemCommonMoneyMedium":        15,
+  "ItemCommonMoneyLarge":         10,
+  "ItemCommonMPSmall":           188,
+  "ItemCommonMPLarge":            45,
+  "ItemCommonMagicKillAll":        6,
+  "ItemCommonPotionInvisible":     6,
+  "ItemCommonWeaponDagger":        7,
+  "ItemCommonWeaponBoneArc":       7,
+  "ItemCommonWeaponRuinousRood":   7,
+  "ItemCommonWeaponUnholyFire":    7,
+  "ItemCommonMagicTimeShard":      7,
+  "ItemSpecialExtraLife":          2
+}

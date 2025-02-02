@@ -1,0 +1,116 @@
+[
+  {
+    "Room": [
+      "m01SIP_020",
+      "m01SIP_022",
+      "m02VIL_000"
+    ],
+    "CanMove": false
+  },
+  {
+    "Room": [
+      "m02VIL_007",
+      "m02VIL_008",
+      "m02VIL_009",
+      "m02VIL_011",
+      "m02VIL_012",
+      "m02VIL_1200"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m05SAN_009",
+      "m05SAN_019"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m05SAN_011",
+      "m05SAN_012",
+      "m05SAN_013"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m06KNG_019",
+      "m06KNG_020"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m07LIB_000",
+      "m07LIB_005"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m07LIB_009",
+      "m07LIB_010"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m07LIB_032",
+      "m07LIB_041"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m08TWR_000",
+      "m08TWR_017"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m08TWR_005",
+      "m08TWR_006",
+      "m08TWR_018"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m08TWR_016",
+      "m08TWR_019"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m09TRN_000",
+      "m09TRN_001"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m09TRN_003",
+      "m09TRN_004"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m12SND_023",
+      "m12SND_025",
+      "m12SND_026",
+      "m12SND_027"
+    ],
+    "CanMove": true
+  },
+  {
+    "Room": [
+      "m13ARC_006",
+      "m13ARC_007"
+    ],
+    "CanMove": true
+  }
+]

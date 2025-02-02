@@ -1,0 +1,11 @@
+{
+  "InvisibleCloak": {
+    "Mesh":                   "/Game/Core/Character/P0000/Mesh/SK_P1001",
+    "DefaultBodyMat":         "/Game/Core/Character/P0000/Material/Body/M_Body01_01",
+    "ChromaBodyMat":          "/Game/Core/Character/P0000/Material/Body/ChromaWheel/M_Body01_01_CW",
+    "DefaultSkinMat":         "/Game/Core/Character/P0000/Material/Skin/M_Skin01",
+    "ChromaSkinMat":          "/Game/Core/Character/P0000/Material/Skin/M_Skin01_CW",
+    "DialogueDefaultSkinMat": "/Game/Core/Character/P0000/Material/Skin/M_Skin_Master_Demo",
+    "DialogueChromaSkinMat":  "/Game/Core/Character/P0000/Material/Skin/MI_Skin_Master_Demo_CW"
+  }
+}

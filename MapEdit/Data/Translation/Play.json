@@ -1,0 +1,5 @@
+{
+  "ERoomBgmType::PlayNormal":   "Play normally",
+  "ERoomBgmType::PlaySemiMute": "Play half-muted",
+  "ERoomBgmType::PlayMute":     "Play muted"
+}

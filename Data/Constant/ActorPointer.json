@@ -1,0 +1,722 @@
+{
+  "PBEasyTreasureBox_BP_C": {
+    "Name": "None",
+    "File": "m01SIP_002_Gimmick",
+    "Index": 63
+  },
+  "PBEasyTreasureBox_BP_C(Gold)": {
+    "Name": "None",
+    "File": "m08TWR_019_Gimmick",
+    "Index": 991
+  },
+  "PBPureMiriamTreasureBox_BP_C": {
+    "Name": "None",
+    "File": "m01SIP_003_Gimmick",
+    "Index": 134
+  },
+  "HPMaxUp_C": {
+    "Name": "None",
+    "File": "m04GDN_002_Gimmick",
+    "Index": 16
+  },
+  "MPMaxUp_C": {
+    "Name": "None",
+    "File": "m01SIP_025_Gimmick",
+    "Index": 16
+  },
+  "BulletMaxUp_C": {
+    "Name": "None",
+    "File": "m01SIP_024_Gimmick",
+    "Index": 2
+  },
+  "PBBossDoor_BP_C": {
+    "Name": "None",
+    "File": "m15JPN_015_Gimmick",
+    "Index": 34
+  },
+  "PBBakkerDoor_BP_C": {
+    "Name": "None",
+    "File": "m15JPN_011_Gimmick",
+    "Index": 80
+  },
+  "BP_AreaDoor_C(Left)": {
+    "Name": "None",
+    "File": "m11UGD_014_Gimmick",
+    "Index": 1
+  },
+  "BP_AreaDoor_C(Right)": {
+    "Name": "None",
+    "File": "m04GDN_016_Gimmick",
+    "Index": 1
+  },
+  "UGD_WeakPlatform_C": {
+    "Name": "None",
+    "File": "m11UGD_006_Gimmick",
+    "Index": 338
+  },
+  "ReadableBookShelf_C": {
+    "Name": "None",
+    "File": "m01SIP_005_Gimmick",
+    "Index": 163
+  },
+  "BP_SwitchDoor_C": {
+    "Name": "None",
+    "File": "m11UGD_015_Gimmick",
+    "Index": 3
+  },
+  "ToriiWarp_BP_C": {
+    "Name": "None",
+    "File": "m07LIB_006_Gimmick",
+    "Index": 142
+  },
+  "BP_MagicDoor_C": {
+    "Name": "None",
+    "File": "m01SIP_002_Gimmick",
+    "Index": 3
+  },
+  "TWR009_ElevatorLever_BP_C": {
+    "Name": "None",
+    "File": "m08TWR_009_Gimmick",
+    "Index": 210
+  },
+  "BP_DM_BaseLantern_ShardChild2_C": {
+    "Name": "None",
+    "File": "m05SAN_000_Gimmick",
+    "Index": 16
+  },
+  "BP_DM_BloodlessAbilityGimmick_C": {
+    "Name": "None",
+    "File": "m01SIP_000_Gimmick",
+    "Index": 7
+  },
+  "BP_PBC2_ItemChest_Base_C": {
+    "Name": "None",
+    "File": "Classic2_Region1_Town01_Design",
+    "Index": 45
+  },
+  "N3003_Generator_C": {
+    "Name": "N3003",
+    "File": "m01SIP_001_Enemy_Hard",
+    "Index": 31
+  },
+  "Chr_N3003_C": {
+    "Name": "N3003",
+    "File": "m01SIP_001_Enemy_Normal",
+    "Index": 2
+  },
+  "Chr_N3005_C": {
+    "Name": "N3005",
+    "File": "m01SIP_015_Enemy",
+    "Index": 7
+  },
+  "Chr_N3006_Generator_C": {
+    "Name": "N3006",
+    "File": "m01SIP_003_Enemy",
+    "Index": 7
+  },
+  "Chr_N3006_C": {
+    "Name": "N3006",
+    "File": "m01SIP_004_Enemy",
+    "Index": 5
+  },
+  "Chr_N1001_C": {
+    "Name": "N3006",
+    "File": "m01SIP_016_Enemy",
+    "Index": 4
+  },
+  "Chr_N3007_C": {
+    "Name": "N3007",
+    "File": "m01SIP_003_Enemy",
+    "Index": 8
+  },
+  "Chr_N3013_C": {
+    "Name": "N3013",
+    "File": "m01SIP_015_Enemy",
+    "Index": 8
+  },
+  "Chr_N3015_C": {
+    "Name": "N3015",
+    "File": "m01SIP_003_Enemy",
+    "Index": 9
+  },
+  "Chr_N3051_C": {
+    "Name": "N3051",
+    "File": "m02VIL_001_Enemy",
+    "Index": 12
+  },
+  "Chr_N3004_C": {
+    "Name": "N3004",
+    "File": "m02VIL_001_Enemy",
+    "Index": 11
+  },
+  "Chr_N3029_C": {
+    "Name": "N3029",
+    "File": "m02VIL_006_Enemy",
+    "Index": 26
+  },
+  "Chr_N3073_C": {
+    "Name": "N3073",
+    "File": "m03ENT_003_Enemy",
+    "Index": 53
+  },
+  "Chr_N3105_C": {
+    "Name": "N3105",
+    "File": "m03ENT_005_Enemy",
+    "Index": 10
+  },
+  "Chr_N3080_C": {
+    "Name": "N3080",
+    "File": "m03ENT_002_Enemy",
+    "Index": 12
+  },
+  "Chr_N3066_C": {
+    "Name": "N3066",
+    "File": "m04GDN_000_Enemy",
+    "Index": 131
+  },
+  "Chr_N3042_C": {
+    "Name": "N3042",
+    "File": "m04GDN_006_Enemy",
+    "Index": 11
+  },
+  "Chr_N3065_C": {
+    "Name": "N3065",
+    "File": "m04GDN_000_Enemy",
+    "Index": 129
+  },
+  "Chr_N3011_C": {
+    "Name": "N3011",
+    "File": "m03ENT_011_Enemy",
+    "Index": 6
+  },
+  "Chr_N3091_C": {
+    "Name": "N3091",
+    "File": "m04GDN_008_Enemy",
+    "Index": 34
+  },
+  "Chr_N3034_C": {
+    "Name": "N3034",
+    "File": "m04GDN_013_Enemy",
+    "Index": 9
+  },
+  "Chr_N3075_C": {
+    "Name": "N3075",
+    "File": "m04GDN_013_Enemy",
+    "Index": 13
+  },
+  "Chr_N3100_006_C": {
+    "Name": "N3100",
+    "File": "m01SIP_023_Enemy",
+    "Index": 2
+  },
+  "Chr_N3100_009_C": {
+    "Name": "N3100",
+    "File": "m05SAN_000_Enemy",
+    "Index": 17
+  },
+  "Chr_N3100_011_C": {
+    "Name": "N3100",
+    "File": "m05SAN_000_Enemy",
+    "Index": 18
+  },
+  "Chr_N3100_027_C": {
+    "Name": "N3100",
+    "File": "m05SAN_000_Enemy",
+    "Index": 19
+  },
+  "Chr_N3100_028_C": {
+    "Name": "N3100",
+    "File": "m05SAN_010_Enemy",
+    "Index": 2
+  },
+  "Chr_N3100_002_C": {
+    "Name": "N3100",
+    "File": "m07LIB_001_Enemy",
+    "Index": 3
+  },
+  "Chr_N3100_020_C": {
+    "Name": "N3100",
+    "File": "m07LIB_001_Enemy",
+    "Index": 4
+  },
+  "Chr_N3100_012_C": {
+    "Name": "N3100",
+    "File": "m07LIB_004_Enemy",
+    "Index": 9
+  },
+  "Chr_N3100_014_C": {
+    "Name": "N3100",
+    "File": "m07LIB_004_Enemy",
+    "Index": 10
+  },
+  "Chr_N3100_022_C": {
+    "Name": "N3100",
+    "File": "m07LIB_004_Enemy",
+    "Index": 11
+  },
+  "Chr_N3100_007_C": {
+    "Name": "N3100",
+    "File": "m08TWR_001_Enemy",
+    "Index": 3
+  },
+  "Chr_N3100_018_C": {
+    "Name": "N3100",
+    "File": "m08TWR_001_Enemy",
+    "Index": 4
+  },
+  "Chr_N3100_029_C": {
+    "Name": "N3100",
+    "File": "m08TWR_001_Enemy",
+    "Index": 5
+  },
+  "Chr_N3100_004_C": {
+    "Name": "N3100",
+    "File": "m08TWR_007_Enemy",
+    "Index": 4
+  },
+  "Chr_N3100_036_C": {
+    "Name": "N3100",
+    "File": "m08TWR_007_Enemy",
+    "Index": 5
+  },
+  "Chr_N3100_001_C": {
+    "Name": "N3100",
+    "File": "m08TWR_011_Enemy",
+    "Index": 4
+  },
+  "Chr_N3100_008_C": {
+    "Name": "N3100",
+    "File": "m08TWR_011_Enemy",
+    "Index": 5
+  },
+  "Chr_N3100_026_C": {
+    "Name": "N3100",
+    "File": "m08TWR_011_Enemy",
+    "Index": 6
+  },
+  "Chr_N3104_C": {
+    "Name": "N3104",
+    "File": "m04GDN_013_Enemy",
+    "Index": 16
+  },
+  "Chr_N3053_C": {
+    "Name": "N3053",
+    "File": "m04GDN_013_Enemy",
+    "Index": 11
+  },
+  "Chr_N3079_C": {
+    "Name": "N3079",
+    "File": "m05SAN_000_Enemy",
+    "Index": 14
+  },
+  "Chr_N3055_C": {
+    "Name": "N3055",
+    "File": "m05SAN_005_Enemy",
+    "Index": 4
+  },
+  "Chr_N3001_C": {
+    "Name": "N3001",
+    "File": "m05SAN_000_Enemy",
+    "Index": 11
+  },
+  "Chr_N3001_Lift_C": {
+    "Name": "N3001",
+    "File": "m11UGD_013_Enemy",
+    "Index": 18
+  },
+  "Chr_N3116_C": {
+    "Name": "N3116",
+    "File": "m03ENT_017_Enemy",
+    "Index": 22
+  },
+  "N3082_Generator_C": {
+    "Name": "N3082",
+    "File": "m08TWR_017_Enemy",
+    "Index": 76
+  },
+  "N3090_Generator_C": {
+    "Name": "N3090",
+    "File": "m05SAN_016_Enemy_Normal",
+    "Index": 4
+  },
+  "Chr_N3084_C": {
+    "Name": "N3084",
+    "File": "m04GDN_013_Enemy",
+    "Index": 14
+  },
+  "Chr_N2002_C": {
+    "Name": "N2002",
+    "File": "m08TWR_017_Enemy",
+    "Index": 6
+  },
+  "Chr_N3033_C": {
+    "Name": "N3033",
+    "File": "m07LIB_000_Enemy",
+    "Index": 2
+  },
+  "Chr_N3017_C": {
+    "Name": "N3017",
+    "File": "m07LIB_004_Enemy",
+    "Index": 7
+  },
+  "Chr_N3063_C": {
+    "Name": "N3063",
+    "File": "m07LIB_044_Enemy",
+    "Index": 8
+  },
+  "Chr_N3103_C": {
+    "Name": "N3103",
+    "File": "m07LIB_002_Enemy",
+    "Index": 2
+  },
+  "Chr_N3064_C": {
+    "Name": "N3064",
+    "File": "m11UGD_002_Enemy",
+    "Index": 9
+  },
+  "Chr_N3010_C": {
+    "Name": "N3010",
+    "File": "m11UGD_002_Enemy",
+    "Index": 7
+  },
+  "Chr_N3008_C": {
+    "Name": "N3008",
+    "File": "m08TWR_000_Enemy",
+    "Index": 2
+  },
+  "Chr_N3111_C": {
+    "Name": "N3111",
+    "File": "m03ENT_024_Enemy",
+    "Index": 6
+  },
+  "Chr_N3114_C": {
+    "Name": "N3114",
+    "File": "m09TRN_000_Enemy",
+    "Index": 10
+  },
+  "Chr_N3058_C": {
+    "Name": "N3058",
+    "File": "m09TRN_000_Enemy",
+    "Index": 7
+  },
+  "Chr_N3019_C": {
+    "Name": "N3019",
+    "File": "m09TRN_002_Enemy",
+    "Index": 23
+  },
+  "Chr_N2009_C": {
+    "Name": "N2009",
+    "File": "m07LIB_019_Enemy",
+    "Index": 3
+  },
+  "Chr_N3043_C": {
+    "Name": "N3043",
+    "File": "m08TWR_018_Enemy",
+    "Index": 21
+  },
+  "Chr_N3092_C": {
+    "Name": "N3092",
+    "File": "m13ARC_000_Enemy",
+    "Index": 8
+  },
+  "Chr_N3024_C": {
+    "Name": "N3024",
+    "File": "m13ARC_000_Enemy",
+    "Index": 6
+  },
+  "Chr_N3070_C": {
+    "Name": "N3070",
+    "File": "m07LIB_028_Enemy",
+    "Index": 2
+  },
+  "Chr_N3102_C": {
+    "Name": "N3102",
+    "File": "m05SAN_016_Enemy",
+    "Index": 8
+  },
+  "Chr_N3009_C": {
+    "Name": "N3009",
+    "File": "m05SAN_016_Enemy",
+    "Index": 5
+  },
+  "Chr_N3087_C": {
+    "Name": "N3087",
+    "File": "m03ENT_023_Enemy",
+    "Index": 2
+  },
+  "Chr_N3072_C": {
+    "Name": "N3072",
+    "File": "m07LIB_013_Enemy",
+    "Index": 2
+  },
+  "Chr_N3012_C": {
+    "Name": "N3012",
+    "File": "m05SAN_015_Enemy",
+    "Index": 3
+  },
+  "Chr_N3052_C": {
+    "Name": "N3052",
+    "File": "m03ENT_024_Enemy",
+    "Index": 4
+  },
+  "Chr_N3085_C": {
+    "Name": "N3085",
+    "File": "m05SAN_003_Enemy",
+    "Index": 10
+  },
+  "Chr_3109_C": {
+    "Name": "N3109",
+    "File": "m07LIB_012_Enemy",
+    "Index": 2
+  },
+  "Chr_3109_Tank_C": {
+    "Name": "N3037",
+    "File": "m06KNG_002_Enemy",
+    "Index": 2
+  },
+  "Chr_N3077_C": {
+    "Name": "N3077",
+    "File": "m05SAN_018_Enemy",
+    "Index": 2
+  },
+  "Chr_N3093_C": {
+    "Name": "N3093",
+    "File": "m06KNG_000_Enemy",
+    "Index": 3
+  },
+  "Chr_N3110_C": {
+    "Name": "N3110",
+    "File": "m03ENT_024_Enemy",
+    "Index": 5
+  },
+  "Chr_N3098_C": {
+    "Name": "N3098",
+    "File": "m11UGD_024_Enemy",
+    "Index": 3
+  },
+  "Chr_N3078_C": {
+    "Name": "N3078",
+    "File": "m11UGD_005_Enemy",
+    "Index": 19
+  },
+  "Chr_N3022_C": {
+    "Name": "N3022",
+    "File": "m11UGD_019_Enemy",
+    "Index": 12
+  },
+  "Chr_N3044_C": {
+    "Name": "N3044",
+    "File": "m11UGD_018_Enemy",
+    "Index": 14
+  },
+  "Chr_N3076_C": {
+    "Name": "N3076",
+    "File": "m11UGD_019_Enemy",
+    "Index": 18
+  },
+  "Chr_N3089_C": {
+    "Name": "N3089",
+    "File": "m11UGD_037_Enemy",
+    "Index": 18
+  },
+  "Chr_N3056_C": {
+    "Name": "N3056",
+    "File": "m05SAN_021_Enemy",
+    "Index": 7
+  },
+  "Chr_N3014_C": {
+    "Name": "N3014",
+    "File": "m12SND_000_Enemy",
+    "Index": 4
+  },
+  "Chr_N3002_C": {
+    "Name": "N3002",
+    "File": "m12SND_014_Enemy",
+    "Index": 7
+  },
+  "Chr_N3112_C": {
+    "Name": "N3112",
+    "File": "m12SND_004_Enemy",
+    "Index": 8
+  },
+  "Chr_N2010_C": {
+    "Name": "N2010",
+    "File": "m12SND_001_Enemy",
+    "Index": 4
+  },
+  "Chr_N3115_C": {
+    "Name": "N3115",
+    "File": "m12SND_002_Enemy",
+    "Index": 8
+  },
+  "Chr_N3101_C": {
+    "Name": "N3101",
+    "File": "m14TAR_001_Enemy",
+    "Index": 4
+  },
+  "Chr_N3059_C": {
+    "Name": "N3059",
+    "File": "m14TAR_001_Enemy",
+    "Index": 3
+  },
+  "Chr_N3113_C": {
+    "Name": "N3113",
+    "File": "m11UGD_053_Enemy",
+    "Index": 2
+  },
+  "Chr_N3083_C": {
+    "Name": "N3083",
+    "File": "m17RVA_002_Enemy",
+    "Index": 8
+  },
+  "Chr_N3032_C": {
+    "Name": "N3032",
+    "File": "m17RVA_000_Enemy",
+    "Index": 3
+  },
+  "Chr_N3119_C": {
+    "Name": "N3119",
+    "File": "m17RVA_001_Enemy",
+    "Index": 11
+  },
+  "Chr_N3123_C": {
+    "Name": "N3123",
+    "File": "m17RVA_005_Enemy",
+    "Index": 8
+  },
+  "Chr_N3086_C": {
+    "Name": "N3086",
+    "File": "m12SND_003_Enemy",
+    "Index": 4
+  },
+  "Chr_N3071_C": {
+    "Name": "N3071",
+    "File": "m15JPN_008_Enemy",
+    "Index": 2
+  },
+  "Chr_N3035_C": {
+    "Name": "N3035",
+    "File": "m15JPN_000_Enemy",
+    "Index": 3
+  },
+  "Chr_N3054_C": {
+    "Name": "N3054",
+    "File": "m15JPN_002_Enemy",
+    "Index": 11
+  },
+  "Chr_N3074_C": {
+    "Name": "N3074",
+    "File": "m15JPN_002_Enemy",
+    "Index": 12
+  },
+  "Chr_3117_C": {
+    "Name": "N3117",
+    "File": "m15JPN_010_Enemy",
+    "Index": 16
+  },
+  "Chr_N3020_C": {
+    "Name": "N3020",
+    "File": "m15JPN_003_Enemy",
+    "Index": 2
+  },
+  "Chr_N3067_C": {
+    "Name": "N3067",
+    "File": "m10BIG_007_Enemy",
+    "Index": 35
+  },
+  "Chr_N3030_C": {
+    "Name": "N3030",
+    "File": "m10BIG_006_Enemy",
+    "Index": 101
+  },
+  "Chr_N3045_C": {
+    "Name": "N3045",
+    "File": "m10BIG_002_Enemy",
+    "Index": 19
+  },
+  "Chr_N3016_C": {
+    "Name": "N3016",
+    "File": "m10BIG_008_Enemy",
+    "Index": 34
+  },
+  "Chr_N3023_C": {
+    "Name": "N3023",
+    "File": "m10BIG_008_Enemy",
+    "Index": 37
+  },
+  "Chr_N3028_C": {
+    "Name": "N3028",
+    "File": "m10BIG_006_Enemy",
+    "Index": 89
+  },
+  "Chr_3038_C": {
+    "Name": "N3038",
+    "File": "m10BIG_001_Enemy",
+    "Index": 3
+  },
+  "Chr_N3081_C": {
+    "Name": "N3081",
+    "File": "m10BIG_006_Enemy",
+    "Index": 116
+  },
+  "Chr_N2003_C": {
+    "Name": "N2003",
+    "File": "m10BIG_006_Enemy",
+    "Index": 87
+  },
+  "Chr_N2008_C": {
+    "Name": "N2008",
+    "File": "m10BIG_006_Enemy",
+    "Index": 88
+  },
+  "Chr_N3031_C": {
+    "Name": "N3031",
+    "File": "m18ICE_001_Enemy",
+    "Index": 3
+  },
+  "Chr_N3088_C": {
+    "Name": "N3088",
+    "File": "m18ICE_009_Enemy",
+    "Index": 3
+  },
+  "Chr_N3018_C": {
+    "Name": "N3018",
+    "File": "m18ICE_013_Enemy",
+    "Index": 3
+  },
+  "Chr_N3120_C": {
+    "Name": "N3120",
+    "File": "m18ICE_007_Enemy",
+    "Index": 6
+  },
+  "Chr_N3057_C": {
+    "Name": "N3057",
+    "File": "m18ICE_005_Enemy",
+    "Index": 4
+  },
+  "Chr_N3121_Generator_C": {
+    "Name": "N3121",
+    "File": "m51EBT_000_Enemy",
+    "Index": 48
+  },
+  "Chr_N3122_C": {
+    "Name": "N3122",
+    "File": "m51EBT_000_Enemy",
+    "Index": 52
+  },
+  "Chr_N3124_C": {
+    "Name": "N3124",
+    "File": "m51EBT_000_Enemy",
+    "Index": 69
+  },
+  "N3126_Generator_C": {
+    "Name": "N3126",
+    "File": "m20JRN_000_Enemy",
+    "Index": 79
+  },
+  "Chr_N3127_C": {
+    "Name": "N3127",
+    "File": "m20JRN_000_Enemy",
+    "Index": 10
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "DT_PBC2_ShopData": {
+    "HEALTH_RESTORE": {
+      "RMNT_COST": 15
+    },
+    "OFUDA_CHARM": {
+      "RMNT_COST": 20
+    },
+    "EFFIGY": {
+      "RMNT_COST": 25,
+      "COIN_COST": 50
+    },
+    "PLUNDERERS_RING": {
+      "RMNT_COST": 15
+    },
+    "EYE_OF_HORUS": {
+      "RMNT_COST": 10
+    },
+    "WAYSTONE": {
+      "COIN_COST": 10
+    },
+    "MAX_HP_UP_1": {
+      "RMNT_COST": 20,
+      "COIN_COST": 40
+    },
+    "MAX_HP_UP_2": {
+      "RMNT_COST": 40,
+      "COIN_COST": 80
+    },
+    "MAX_HP_UP_3": {
+      "RMNT_COST": 60,
+      "COIN_COST": 120
+    },
+    "MAX_HP_UP_4": {
+      "RMNT_COST": 80,
+      "COIN_COST": 160
+    },
+    "MAX_HP_UP_5": {
+      "RMNT_COST": 100,
+      "COIN_COST": 200
+    },
+    "MAX_MP_UP_1": {
+      "RMNT_COST": 15,
+      "COIN_COST": 30
+    },
+    "MAX_MP_UP_2": {
+      "RMNT_COST": 30,
+      "COIN_COST": 60
+    },
+    "MAX_MP_UP_3": {
+      "RMNT_COST": 45,
+      "COIN_COST": 90
+    },
+    "MAX_MP_UP_4": {
+      "RMNT_COST": 60,
+      "COIN_COST": 120
+    },
+    "MAX_MP_UP_5": {
+      "RMNT_COST": 75,
+      "COIN_COST": 150
+    },
+    "MAX_MP_UP_6": {
+      "RMNT_COST": 90,
+      "COIN_COST": 180
+    },
+    "MAX_MP_UP_7": {
+      "RMNT_COST": 105,
+      "COIN_COST": 210
+    },
+    "RNG_UP_1": {
+      "RMNT_COST": 25
+    },
+    "RNG_UP_2": {
+      "RMNT_COST": 50
+    },
+    "RNG_UP_3": {
+      "RMNT_COST": 100
+    },
+    "RNG_UP_4": {
+      "RMNT_COST": 200
+    },
+    "ATK_UP_1": {
+      "RMNT_COST": 25
+    },
+    "ATK_UP_2": {
+      "RMNT_COST": 50
+    },
+    "ATK_UP_3": {
+      "RMNT_COST": 100
+    },
+    "ATK_UP_4": {
+      "RMNT_COST": 200
+    },
+    "ATK_UP_5": {
+      "RMNT_COST": 300
+    },
+    "SHARD_DAGGER": {
+      "RMNT_COST": 15
+    },
+    "SHARD_BONE": {
+      "RMNT_COST": 25
+    },
+    "SHARD_FIRE": {
+      "RMNT_COST": 35
+    },
+    "SHARD_ROOD": {
+      "RMNT_COST": 45,
+      "COIN_COST": 90
+    },
+    "SHARD_TIME": {
+      "RMNT_COST": 50
+    },
+    "SHARD_RIGADOHIN": {
+      "RMNT_COST": 75
+    },
+    "SHARD_VAISCHA": {
+      "RMNT_COST": 75
+    },
+    "SHARD_DANTALION": {
+      "RMNT_COST": 75
+    }
+  }
+}

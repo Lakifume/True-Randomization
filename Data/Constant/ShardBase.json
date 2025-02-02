@@ -1,0 +1,330 @@
+{
+  "SwingTentacle": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "Bloodsteel": {
+    "Base": 0.001875,
+    "Grade": 1.0
+  },
+  "DragonicRage": {
+    "Base": 1.2,
+    "Grade": 1.3
+  },
+  "Ceruleansplash": {
+    "Base": 0.95,
+    "Grade": 1.3
+  },
+  "Raginggirl": {
+    "Base": 0.9,
+    "Grade": 1.3
+  },
+  "Headfail": {
+    "Base": 1.0,
+    "Grade": 1.3
+  },
+  "SummonRat": {
+    "Base": 0.55,
+    "Grade": 1.3
+  },
+  "SummonAme": {
+    "Base": 0.75,
+    "Grade": 1.3
+  },
+  "SummonButt": {
+    "Base": 0.5,
+    "Grade": 1.3
+  },
+  "SummonApe": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "SummonGilemund": {
+    "Base": 0.9,
+    "Grade": 1.3
+  },
+  "Shovelshooter": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "SamonSamHiggin": {
+    "Base": 0.7,
+    "Grade": 1.3
+  },
+  "SummonBuell": {
+    "Base": 0.3,
+    "Grade": 1.3
+  },
+  "SummonBugs": {
+    "Base": 0.9,
+    "Grade": 1.3
+  },
+  "SummonChair": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "SummonTracer": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "HiddenDart": {
+    "Base": 0.45,
+    "Grade": 1.3
+  },
+  "RapidSpear": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "EntangleBind": {
+    "Base": 1.8,
+    "Grade": 1.3
+  },
+  "GratefulAssist": {
+    "Base": 0.3,
+    "Grade": 1.3
+  },
+  "ThrowAxe": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "AxStrike": {
+    "Base": 0.85,
+    "Grade": 1.3
+  },
+  "Deadhowling": {
+    "Base": 0.65,
+    "Grade": 1.3
+  },
+  "Upbeatheat": {
+    "Base": 0.35,
+    "Grade": 1.3
+  },
+  "Toxicstorm": {
+    "Base": 0.25,
+    "Grade": 1.3
+  },
+  "HellHound": {
+    "Base": 1.2,
+    "Grade": 1.3
+  },
+  "Jackpot": {
+    "Base": 0.5,
+    "Grade": 1.3
+  },
+  "LigaStreyma": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "VaIsha": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "VaSka": {
+    "Base": 0.5,
+    "Grade": 1.3
+  },
+  "TepsSalenda": {
+    "Base": 0.2,
+    "Grade": 1.3
+  },
+  "TissLeif": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "NeverSatisfied": {
+    "Base": 0.35,
+    "Grade": 1.3
+  },
+  "Zombie8Bit": {
+    "Base": 1.0,
+    "Grade": 1.3
+  },
+  "Ghost8Bit": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "Nightmare8Bit": {
+    "Base": 0.35,
+    "Grade": 1.3
+  },
+  "Dreamsteal": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "SummonBuChan": {
+    "Base": 0.3,
+    "Grade": 1.3
+  },
+  "Demoniccapture": {
+    "Base": 12.0,
+    "Grade": 1.0
+  },
+  "Accelerator": {
+    "Base": 1.5,
+    "Grade": 1.3
+  },
+  "AccelWorld": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "Beastguard": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "WildScratch": {
+    "Base": 1.5,
+    "Grade": 1.3
+  },
+  "Shadowtracer": {
+    "Base": 2.0,
+    "Grade": 1.3
+  },
+  "ChangeBunny": {
+    "Base": 4.0,
+    "Grade": 1.3
+  },
+  "Healing": {
+    "Base": 0.5,
+    "Grade": 1.5
+  },
+  "Sacredshade": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "SummonYorkton": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "Reflectionray": {
+    "Base": 4.8,
+    "Grade": 1.0
+  },
+  "Aquastream": {
+    "Base": 0.2,
+    "Grade": 1.0
+  },
+  "Dimensionshift": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "InfernoBrace": {
+    "Base": 0.3,
+    "Grade": 1.3
+  },
+  "Hammerknuckle": {
+    "Base": 0.55,
+    "Grade": 1.3
+  },
+  "GoldBarrett": {
+    "Base": 2.0,
+    "Grade": 1.3
+  },
+  "FireCannon": {
+    "Base": 0.5,
+    "Grade": 1.3
+  },
+  "BoonsLore": {
+    "Base": 1.0,
+    "Grade": 1.3
+  },
+  "StraightArrow": {
+    "Base": 0.45,
+    "Grade": 1.3
+  },
+  "Releasetoade": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "ChaseArrow": {
+    "Base": 0.45,
+    "Grade": 1.3
+  },
+  "Aimingshield": {
+    "Base": 0.2,
+    "Grade": 1.3
+  },
+  "HelleTicalGrinder": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "CurseDray": {
+    "Base": 0.6,
+    "Grade": 0.77
+  },
+  "Petrey": {
+    "Base": 0.2,
+    "Grade": 1.3
+  },
+  "Voidlay": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "PetraBless": {
+    "Base": 0.3,
+    "Grade": 1.3
+  },
+  "Acidgouache": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "Venomsmog": {
+    "Base": 0.0,
+    "Grade": 0.0
+  },
+  "CircleRipper": {
+    "Base": 0.45,
+    "Grade": 1.3
+  },
+  "ShootingDagger": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "BaudRideBlast": {
+    "Base": 0.9,
+    "Grade": 1.3
+  },
+  "Tornadoslicer": {
+    "Base": 0.8,
+    "Grade": 1.3
+  },
+  "FireThrower": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "Chiselbalage": {
+    "Base": 0.25,
+    "Grade": 1.3
+  },
+  "RuinBeak": {
+    "Base": 0.35,
+    "Grade": 1.3
+  },
+  "LigaDoin": {
+    "Base": 1.1,
+    "Grade": 1.3
+  },
+  "TepesOsius": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "TissRosain": {
+    "Base": 0.6,
+    "Grade": 1.3
+  },
+  "FoldShiu": {
+    "Base": 1.1,
+    "Grade": 1.3
+  },
+  "FoldingTurb": {
+    "Base": 0.4,
+    "Grade": 1.3
+  },
+  "EightBitFire": {
+    "Base": 0.5,
+    "Grade": 1.3
+  },
+  "Fireball": {
+    "Base": 0.7,
+    "Grade": 1.3
+  }
+}
