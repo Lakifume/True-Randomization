@@ -20,10 +20,10 @@ If the seed turns out to be unbeatable report it on NexusMods, Github or Discord
 
 # In-game hotkeys
 
-F1: Toggle CC effect notifications (Crowd Control only)
-F2: Force Craftwork/Glutton Train/IGA boss fights to end if the doors fail to open after getting their shard
-F3: Instantly warp to the starting room of the game
-F4: While on the title screen toggle automatic starting DLC items (disabled by default)
+- F1: Toggle CC effect notifications (Crowd Control only)
+- F2: Force Craftwork/Glutton Train/IGA boss fights to end if the doors fail to open after getting their shard
+- F3: Instantly warp to the starting room of the game
+- F4: While on the title screen toggle automatic starting DLC items (disabled by default)
 
 # Things to know when using this rando
 
@@ -72,7 +72,6 @@ Here are some known game glitches to watch out for:
 
 3.0.5:
 - Fixed an issue where OD could clip into the ground on custom maps
-- 
 
 3.0.4:
 - Fixed Bloodless not spawning properly when her room is moved
