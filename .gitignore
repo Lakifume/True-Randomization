@@ -161,7 +161,7 @@ cython_debug/
 
 # Project specifics
 
-Game/**
-Spoiler/**
+Game/
+Spoiler/
 Randomizer.exe
 MapEdit/Map Editor.exe
