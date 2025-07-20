@@ -1,16 +1,16 @@
 import Manager
-import Item
-import Classic
-import Shop
-import Library
-import Shard
-import Equipment
-import Enemy
-import Room
-import Graphic
-import Sound
-import Bloodless
 import Utility
+from _randomizer import Item
+from _randomizer import Classic
+from _randomizer import Shop
+from _randomizer import Library
+from _randomizer import Shard
+from _randomizer import Equipment
+from _randomizer import Enemy
+from _randomizer import Room
+from _randomizer import Graphic
+from _randomizer import Sound
+from _randomizer import Bloodless
 
 from PySide6.QtCore import*
 from PySide6.QtGui import*

@@ -1,8 +1,8 @@
 from System import *
 import Manager
-import Item
-import Room
 import Utility
+from . import Item
+from . import Room
 
 def init():
     global main_resistances

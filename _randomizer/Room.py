@@ -1,7 +1,7 @@
 from System import *
 import Manager
-import Item
 import Utility
+from . import Item
 
 class Direction(Enum):
     LEFT         = 0x0001
@@ -31,6 +31,9 @@ OppositeDirection = {
     Direction.BOTTOM_RIGHT: Direction.TOP_RIGHT,
     Direction.BOTTOM_LEFT:  Direction.TOP_LEFT,
 }
+
+TILEWIDTH = 12.6
+TILEHEIGHT = 7.2
 
 class Door:
     def __init__(self, room, x_block, z_block, direction_part, breakable):
@@ -1184,16 +1187,16 @@ def is_room_adjacent(room_1, room_2):
         door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
 
 def left_room_check(room_1, room_2):
-    return bool(room_2["OffsetX"] == round(room_1["OffsetX"] - 12.6 * room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
+    return room_2["OffsetX"] == round(room_1["OffsetX"] - 12.6*room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2*(room_1["AreaHeightSize"] - 1), 1)
 
 def bottom_room_check(room_1, room_2):
-    return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - 7.2 * room_2["AreaHeightSize"], 1))
+    return round(room_1["OffsetX"] - 12.6*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - 7.2*room_2["AreaHeightSize"], 1)
 
 def right_room_check(room_1, room_2):
-    return bool(room_2["OffsetX"] == round(room_1["OffsetX"] + 12.6 * room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2 * (room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2 * (room_1["AreaHeightSize"] - 1), 1))
+    return room_2["OffsetX"] == round(room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2*(room_1["AreaHeightSize"] - 1), 1)
 
 def top_room_check(room_1, room_2):
-    return bool(round(room_1["OffsetX"] - 12.6 * (room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6 * (room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + 7.2 * room_1["AreaHeightSize"], 1))
+    return round(room_1["OffsetX"] - 12.6*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"], 1)
 
 def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
     for door_1 in map_connections[room_1]:
@@ -1224,6 +1227,22 @@ def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3)
             for door_2 in map_connections[room_2]:
                 if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
                     map_connections[room_1][door_1].append(door_2)
+
+def get_nearby_rooms(room_1, search_radius, invert_shape_relation = False):
+    #Get rooms nearby another room based on a search radius with a relation of point to rectangle bounds
+    nearby_rooms = []
+    center_1 = (room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"]/2, room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"]/2)
+    bounds_1 = (room_1["OffsetX"], room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"], room_1["OffsetZ"], room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"])
+    for room_2 in datatable["PB_DT_RoomMaster"]:
+        center_2 = (room_2["OffsetX"] + 12.6*room_2["AreaWidthSize"]/2, room_2["OffsetZ"] + 7.2*room_2["AreaHeightSize"]/2)
+        bounds_2 = (room_2["OffsetX"], room_2["OffsetX"] + 12.6*room_2["AreaWidthSize"], room_2["OffsetZ"], room_2["OffsetZ"] + 7.2*room_2["AreaHeightSize"])
+        chosen_point = center_1 if invert_shape_relation else center_2
+        chosen_bound = bounds_2 if invert_shape_relation else bounds_1
+        closest_x = max(chosen_bound[0], min(chosen_point[0], chosen_bound[1]))
+        closest_y = max(chosen_bound[2], min(chosen_point[1], chosen_bound[3]))
+        if math.hypot(chosen_point[0] - closest_x, chosen_point[1] - closest_y) <= search_radius:
+            nearby_rooms.append(room_2)
+    return nearby_rooms
 
 def get_gimmick_filename(room):
     if room in room_to_gimmick:

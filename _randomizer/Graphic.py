@@ -1,6 +1,6 @@
 from System import *
 import Manager
-import Enemy
+from . import Enemy
 
 def init():
     global portrait_replacement

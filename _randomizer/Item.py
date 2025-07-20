@@ -1,21 +1,27 @@
 from System import *
 import Manager
-import Shop
-import Enemy
-import Room
 import Utility
+from . import Shop
+from . import Enemy
+from . import Room
 
 class CheckType(Enum):
     Door  = 0
     Chest = 1
     Enemy = 2
 
+class HintType(Enum):
+    Default = 0
+    Area    = 1
+    Room    = 2
+    Enemy   = 3
+
 def init():
     #Logic
     global game_difficulty
     game_difficulty = "Normal"
-    global used_chests
-    used_chests = [
+    global vanilla_chests
+    vanilla_chests = [
         "PotionMaterial",
         "Qu07_Last",
         "Swordsman",
@@ -510,6 +516,8 @@ def init():
     enemy_to_room = {}
     global enemy_skip_list
     enemy_skip_list = ["N2013"]
+    global room_unique_items
+    room_unique_items = {}
     #Pool
     global chest_type
     chest_type = []
@@ -528,10 +536,11 @@ def init():
     for entry in constant["ItemDrop"]:
         for odd in range(constant["ItemDrop"][entry]["ChestRatio"]):
             chest_type.append(entry)
-            if constant["ItemDrop"][entry]["ChestColor"] == "Green":
-                green_chest_type.append(entry)
-            if constant["ItemDrop"][entry]["ChestColor"] == "Blue":
-                blue_chest_type.append(entry)
+            match constant["ItemDrop"][entry]["ChestColor"]:
+                case "Green":
+                    green_chest_type.append(entry)
+                case "Blue":
+                    blue_chest_type.append(entry)
         for odd in range(constant["ItemDrop"][entry]["QuestRatio"]):
             quest_type.append(entry)
     #Shop
@@ -565,6 +574,32 @@ def init():
     constant["ItemDrop"]["Potion"]["ShopRatio"]      -= 3
     constant["ItemDrop"]["CookingMat"]["ShopRatio"]  -= 3
     constant["ItemDrop"]["StandardMat"]["ShopRatio"] -= 3
+    #Hints
+    global hint_bosses
+    hint_bosses = [
+        "N1001",
+        "N1011",
+        "N1003",
+        "N2004",
+	    "N2001",
+	    "N1005Manager",
+	    "N1006",
+        "N2008_BOSS",
+        "N1012",
+        "N1002",
+        "N2014",
+        "N2006",
+        "N1011_STRONG",
+        "N1004",
+        "N1008",
+        "N2015",
+        "N2007",
+        "N2016"
+    ]
+    global check_to_hint
+    check_to_hint = {}
+    global item_to_hint
+    item_to_hint = {}
 
 def set_logic_complexity(complexity):
     global logic_complexity
@@ -926,7 +961,7 @@ def add_requirement_to_check(check, requirement):
     check_to_requirement[check] = new_list
 
 def get_check_type(check):
-    if check in used_chests:
+    if check in vanilla_chests:
         return CheckType.Chest
     if is_valid_enemy_check(check)[0]:
         return CheckType.Enemy
@@ -1099,7 +1134,7 @@ def randomize_overworld_items():
     #Start chest
     patch_start_chest_entry()
     #Skip Vepar chest
-    used_chests.remove("Treasurebox_SIP020_1")
+    vanilla_chests.remove("Treasurebox_SIP020_1")
     #Johannes mats
     patch_chest_entry(random.choice(blue_chest_type), "PotionMaterial")
     #100% chest
@@ -1119,22 +1154,22 @@ def randomize_overworld_items():
     #Upgrades
     #Don't put any upgrades in areas that extra character can't access
     for num in range(30):
-        chosen = random.choice(used_chests)
+        chosen = random.choice(vanilla_chests)
         while "JRN" in chosen:
-            chosen = random.choice(used_chests)
+            chosen = random.choice(vanilla_chests)
         patch_key_item_entry("MaxHPUP", chosen)
     for num in range(30):
-        chosen = random.choice(used_chests)
+        chosen = random.choice(vanilla_chests)
         while "JRN" in chosen:
-            chosen = random.choice(used_chests)
+            chosen = random.choice(vanilla_chests)
         patch_key_item_entry("MaxMPUP", chosen)
     for num in range(24):
-        chosen = random.choice(used_chests)
+        chosen = random.choice(vanilla_chests)
         while "JRN" in chosen:
-            chosen = random.choice(used_chests)
+            chosen = random.choice(vanilla_chests)
         patch_key_item_entry("MaxBulletUP", chosen)
     #Item pool
-    chest_pool = copy.deepcopy(used_chests)
+    chest_pool = copy.deepcopy(vanilla_chests)
     random.shuffle(chest_pool)
     for chest in chest_pool:
         patch_chest_entry(random.choice(chest_type), chest)
@@ -1206,6 +1241,12 @@ def create_area_pools():
                     chosen = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
                 area_pools[area_id][item_type].append(chosen)
 
+def flag_room_unique_item(container):
+    room = chest_to_room(container)
+    if not room in room_unique_items:
+        room_unique_items[room] = []
+    room_unique_items[room].append(datatable["PB_DT_DropRateMaster"][container]["RareItemId"])
+
 def empty_drop_entry(container):
     datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = "None"
     datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = 0
@@ -1229,7 +1270,7 @@ def patch_key_item_entry(item, container):
     datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = item
     datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = 1
     datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = 100.0
-    used_chests.remove(container)
+    vanilla_chests.remove(container)
     
 def patch_key_shard_entry(shard, enemy):
     #Assign a key shard to an entry
@@ -1265,39 +1306,44 @@ def patch_start_chest_entry():
         datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(constant["ItemDrop"]["Bullet"]["ItemPool"], constant["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
         datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = constant["ItemDrop"]["Bullet"]["ItemHighQuantity"]
         datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = constant["ItemDrop"]["Bullet"]["ItemRate"]
-    used_chests.remove(container)
+    vanilla_chests.remove(container)
+    if constant["ItemDrop"]["Weapon"]["IsUnique"]:
+        flag_room_unique_item(container)
 
 def patch_chest_entry(item_type, container):
     #Randomize chest items based on item types
-    if not container in used_chests:
+    if not container in vanilla_chests:
         return
     empty_drop_entry(container)
-    if constant["ItemDrop"][item_type]["ChestColor"] == "Blue":
-        area_id = chest_to_room(container)[:6]
-        datatable["PB_DT_DropRateMaster"][container]["RareItemId"]               = area_pools[area_id][item_type][0]
-        datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"]         = constant["ItemDrop"][item_type]["ItemQuantity"]
-        datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]             = constant["ItemDrop"][item_type]["ItemRate"]
-        datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]             = area_pools[area_id][item_type][1]
-        datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"]       = constant["ItemDrop"][item_type]["ItemQuantity"]
-        datatable["PB_DT_DropRateMaster"][container]["CommonRate"]               = constant["ItemDrop"][item_type]["ItemRate"]
-        datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"]         = area_pools[area_id][item_type][2]
-        datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"]   = constant["ItemDrop"][item_type]["ItemQuantity"]
-        datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"]       = constant["ItemDrop"][item_type]["ItemRate"]
-        datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = area_pools[area_id][item_type][3]
-        datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = constant["ItemDrop"][item_type]["ItemQuantity"]
-        datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
-        datatable["PB_DT_DropRateMaster"][container]["CoinOverride"]             = random.choice(coin_type)
-        datatable["PB_DT_DropRateMaster"][container]["CoinType"]                 = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][container]["CoinOverride"])
-        datatable["PB_DT_DropRateMaster"][container]["AreaChangeTreasureFlag"]   = True
-    elif constant["ItemDrop"][item_type]["ChestColor"] == "Red":
-        datatable["PB_DT_DropRateMaster"][container]["CoinOverride"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
-        datatable["PB_DT_DropRateMaster"][container]["CoinType"]     = "EDropCoin::D2000"
-        datatable["PB_DT_DropRateMaster"][container]["CoinRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
-    else:
-        datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
-        datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = constant["ItemDrop"][item_type]["ItemQuantity"]
-        datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
-    used_chests.remove(container)
+    match constant["ItemDrop"][item_type]["ChestColor"]:
+        case "Blue":
+            area_id = chest_to_room(container)[:6]
+            datatable["PB_DT_DropRateMaster"][container]["RareItemId"]               = area_pools[area_id][item_type][0]
+            datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"]         = constant["ItemDrop"][item_type]["ItemQuantity"]
+            datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]             = constant["ItemDrop"][item_type]["ItemRate"]
+            datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]             = area_pools[area_id][item_type][1]
+            datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"]       = constant["ItemDrop"][item_type]["ItemQuantity"]
+            datatable["PB_DT_DropRateMaster"][container]["CommonRate"]               = constant["ItemDrop"][item_type]["ItemRate"]
+            datatable["PB_DT_DropRateMaster"][container]["RareIngredientId"]         = area_pools[area_id][item_type][2]
+            datatable["PB_DT_DropRateMaster"][container]["RareIngredientQuantity"]   = constant["ItemDrop"][item_type]["ItemQuantity"]
+            datatable["PB_DT_DropRateMaster"][container]["RareIngredientRate"]       = constant["ItemDrop"][item_type]["ItemRate"]
+            datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = area_pools[area_id][item_type][3]
+            datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = constant["ItemDrop"][item_type]["ItemQuantity"]
+            datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
+            datatable["PB_DT_DropRateMaster"][container]["CoinOverride"]             = random.choice(coin_type)
+            datatable["PB_DT_DropRateMaster"][container]["CoinType"]                 = "EDropCoin::D" + str(datatable["PB_DT_DropRateMaster"][container]["CoinOverride"])
+            datatable["PB_DT_DropRateMaster"][container]["AreaChangeTreasureFlag"]   = True
+        case "Red":
+            datatable["PB_DT_DropRateMaster"][container]["CoinOverride"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
+            datatable["PB_DT_DropRateMaster"][container]["CoinType"]     = "EDropCoin::D2000"
+            datatable["PB_DT_DropRateMaster"][container]["CoinRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
+        case _:
+            datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
+            datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = constant["ItemDrop"][item_type]["ItemQuantity"]
+            datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
+    vanilla_chests.remove(container)
+    if constant["ItemDrop"][item_type]["IsUnique"]:
+        flag_room_unique_item(container)
     
 def patch_enemy_entry(item_type, item_rate, container):
     #Randomize enemy drops in a varied fashion while slightly favouring one item type
@@ -1426,15 +1472,13 @@ def randomize_quest_rewards():
     invert_ratio()
     for entry in datatable["PB_DT_QuestMaster"]:
         item_type = random.choice(quest_type)
-        if constant["ItemDrop"][item_type]["ChestColor"] == "Blue":
-            datatable["PB_DT_QuestMaster"][entry]["RewardItem01"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
-            datatable["PB_DT_QuestMaster"][entry]["RewardNum01"] = constant["ItemDrop"][item_type]["ItemHighQuantity"]
-        elif constant["ItemDrop"][item_type]["ChestColor"] == "Red":
-            datatable["PB_DT_QuestMaster"][entry]["RewardItem01"] = "Money"
-            datatable["PB_DT_QuestMaster"][entry]["RewardNum01"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
-        else:
-            datatable["PB_DT_QuestMaster"][entry]["RewardItem01"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
-            datatable["PB_DT_QuestMaster"][entry]["RewardNum01"] = constant["ItemDrop"][item_type]["ItemHighQuantity"]
+        match constant["ItemDrop"][item_type]["ChestColor"]:
+            case "Red":
+                datatable["PB_DT_QuestMaster"][entry]["RewardItem01"] = "Money"
+                datatable["PB_DT_QuestMaster"][entry]["RewardNum01"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
+            case _:
+                datatable["PB_DT_QuestMaster"][entry]["RewardItem01"] = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
+                datatable["PB_DT_QuestMaster"][entry]["RewardNum01"] = constant["ItemDrop"][item_type]["ItemHighQuantity"]
     invert_ratio()
 
 def update_catering_quest_info():
@@ -1509,6 +1553,54 @@ def update_shard_candles():
     for shard in ["Shortcut", "Deepsinker", "FamiliaSilverKnight", "Aquastream", "FamiliaIgniculus"]:
         for room in enemy_to_room[shard]:
             Utility.search_and_replace_string(f"{room}_Gimmick", "BP_DM_BaseLantern_ShardChild2_C", "ShardID", shard, datatable["PB_DT_DropRateMaster"][f"{shard}_Shard"]["ShardId"])
+
+def fill_check_to_hint():
+    for hint_dict in ["HintArea", "HintRoom", "HintEnemy"]:
+        for hint in constant[hint_dict]:
+            for check in constant[hint_dict][hint]:
+                check_to_hint[check] = hint
+
+def create_hints():
+    hint_type_list = []
+    for item, check in key_item_to_location.items():
+        hint_type_list.clear()
+        room = chest_to_room(check)
+        if room in check_to_hint:
+            hint_type_list.append(HintType.Room)
+        area = room.split("_")[0]
+        if area in check_to_hint:
+            hint_type_list.append(HintType.Area)
+        chosen_hint_type = 0
+        placeholder(chosen_hint_type)
+    for shard, check in key_shard_to_location.items():
+        pass
+
+def placeholder(item, check, hint_type):
+    room = chest_to_room(check)
+    area = room.split("_")[0]
+    room = enemy_shard_to_room(check)
+    match hint_type:
+        case HintType.Room:
+            item_to_hint[item] = check_to_hint[room]
+        case HintType.Area:
+            item_to_hint[item] = check_to_hint[area]
+        case HintType.Enemy:
+            item_to_hint[item] = check_to_hint[check]
+        case _:
+            item_to_hint[item] = 0
+
+def update_hints():
+    hinted_items = list(item_to_hint)
+    for index in range(len(hint_bosses)):
+        boss = hint_bosses[index]
+        boss_name = translation["Enemy"][boss]
+        #Give the internal name a random id so that hints cannot be obtained from previous save files
+        unique_id = "{:08x}".format(random.randint(0, 0xFFFFFFFF)).upper()
+        hint_item_name = "Hint{unique_id}"
+        chosen_item = random.choice(hinted_items)
+        hinted_items.remove(chosen_item)
+        add_game_item(89 + index, hint_item_name, "Key", "None", (512, 1792), "{boss_name} Hint", item_to_hint[chosen_item], 0, False)
+        datatable["PB_DT_CharacterParameterMaster"][boss]["NoDamageBonusItemId"] = hint_item_name
 
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
@@ -1587,6 +1679,11 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
                 datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
                 datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
             Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]   = index
+        case "Key":                                                  
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Key"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 1
+            datatable["PB_DT_KeyItemMaster"][item_id]                          = copy.deepcopy(datatable["PB_DT_KeyItemMaster"]["VillageKey"])
+            Manager.datatable_entry_index["PB_DT_KeyItemMaster"][item_id]      = index
 
 def pick_and_remove(item_array, remove, item_type):
     #Function for picking and remove an item at random

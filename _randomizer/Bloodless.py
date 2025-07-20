@@ -1,7 +1,7 @@
 from System import *
-import Item
-import Room
 import Utility
+from . import Item
+from . import Room
 
 class CheckType(Enum):
     Door   = 0

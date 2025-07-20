@@ -1,7 +1,7 @@
 from System import *
 import Manager
 import Utility
-import Room
+from . import Room
 
 def init():
     global item_to_level

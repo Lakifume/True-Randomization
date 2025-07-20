@@ -176,6 +176,7 @@
   "PB_DT_DropRateMaster":                     "Core\\DataTable",
   "PB_DT_EnchantParameterType":               "Core\\DataTable",
   "PB_DT_HairSalonOldDefaults":               "Core\\DataTable",
+  "PB_DT_KeyItemMaster":                      "Core\\DataTable",
   "PB_DT_QuestMaster":                        "Core\\DataTable",
   "PB_DT_RoomMaster":                         "Core\\DataTable",
   "PB_DT_ShardMaster":                        "Core\\DataTable",

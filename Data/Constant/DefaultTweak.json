@@ -1161,8 +1161,9 @@
       "STR99Enemy": 275.0,
       "INT99Enemy": 275.0,
       "SLO": 25.0,
-      "AnimaionPlayRateHard": 1.25,
-      "AnimaionPlayRateNightmare": 1.25
+      "AnimaionPlayRateNormal": 1.2,
+      "AnimaionPlayRateHard": 1.5,
+      "AnimaionPlayRateNightmare": 1.5
     },
     "N3037": {
       "STR": 9.0,

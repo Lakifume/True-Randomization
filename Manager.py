@@ -1,9 +1,9 @@
 from System import *
-import Item
-import Equipment
-import Enemy
-import Room
-import Graphic
+from _randomizer import Item
+from _randomizer import Equipment
+from _randomizer import Enemy
+from _randomizer import Room
+from _randomizer import Graphic
 import Utility
 
 class FileType(Enum):
@@ -548,8 +548,10 @@ def apply_default_tweaks():
     datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]            = copy.deepcopy(datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_CON_WITH_EFFECT"])
     datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["GroupId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
     datatable["PB_DT_SpecialEffectGroupMaster"]["DEBUFF_RATE_MND_WITH_EFFECT"]["DefId"]   = "DEBUFF_RATE_MND_WITH_EFFECT"
-    datatable["PB_DT_WeaponMaster"]["Swordbreaker"]["SpecialEffectId"]        = "DEBUFF_RATE_ATK_WITH_EFFECT"
-    datatable["PB_DT_DamageMaster"]["P0000_Jsword_Kabuto"]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_WeaponMaster"]["Swordbreaker"]["SpecialEffectId"]               = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_DamageMaster"]["P0000_Jsword_Kabuto"]["SpecialEffectId"]        = "DEBUFF_RATE_DEF_WITH_EFFECT"
+    datatable["PB_DT_DamageMaster"]["N1009_Attack_RimonChouChu"]["SpecialEffectId"]  = "DEBUFF_RATE_ATK_WITH_EFFECT"
+    datatable["PB_DT_DamageMaster"]["N1009_Attack_StraightElbow"]["SpecialEffectId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
     for suffix in ["", "_EX", "_EX2"]:
         datatable["PB_DT_DamageMaster"]["WeaponbaneRounds" + suffix]["SpecialEffectId"] = "DEBUFF_RATE_ATK_WITH_EFFECT"
         datatable["PB_DT_DamageMaster"]["ShieldbaneRounds" + suffix]["SpecialEffectId"] = "DEBUFF_RATE_DEF_WITH_EFFECT"
