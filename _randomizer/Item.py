@@ -11,10 +11,13 @@ class CheckType(Enum):
     Enemy = 2
 
 class HintType(Enum):
-    Default = 0
-    Area    = 1
-    Room    = 2
-    Enemy   = 3
+    Invalid    = 0
+    NearItem   = 1
+    AreaType   = 2
+    RoomType   = 3
+    EnemyType  = 4
+    EnemyLevel = 5
+    Other      = 6
 
 def init():
     #Logic
@@ -594,7 +597,7 @@ def init():
         "N1008",
         "N2015",
         "N2007",
-        "N2016"
+        "N2017"
     ]
     global check_to_hint
     check_to_hint = {}
@@ -1561,46 +1564,95 @@ def fill_check_to_hint():
                 check_to_hint[check] = hint
 
 def create_hints():
-    hint_type_list = []
     for item, check in key_item_to_location.items():
-        hint_type_list.clear()
-        room = chest_to_room(check)
-        if room in check_to_hint:
-            hint_type_list.append(HintType.Room)
-        area = room.split("_")[0]
-        if area in check_to_hint:
-            hint_type_list.append(HintType.Area)
-        chosen_hint_type = 0
-        placeholder(chosen_hint_type)
+        create_hint_for_item(item, check)
     for shard, check in key_shard_to_location.items():
-        pass
+        create_hint_for_item(shard, check)
 
-def placeholder(item, check, hint_type):
-    room = chest_to_room(check)
-    area = room.split("_")[0]
-    room = enemy_shard_to_room(check)
+def create_hint_for_item(item, check):
+    #Determine possible hint types for that item
+    is_shard = item in datatable["PB_DT_ShardMaster"]
+    room = random.choice(enemy_shard_to_room(check)) if is_shard else chest_to_room(check)
+    room_nearby_items = get_room_nearby_items(room)
+    area = datatable["PB_DT_RoomMaster"][room]["AreaID"].split("::")[1]
+    hint_type_list = []
+    if room_nearby_items:
+        add_hint_type(hint_type_list, HintType.NearItem, 3)
+    if area in check_to_hint:
+        add_hint_type(hint_type_list, HintType.AreaType, 2)
+    if room in check_to_hint:
+        add_hint_type(hint_type_list, HintType.RoomType, 4)
+    if check in check_to_hint:
+        add_hint_type(hint_type_list, HintType.EnemyType, 6)
+    if check in datatable["PB_DT_CharacterParameterMaster"]:
+        if datatable["PB_DT_CharacterParameterMaster"][check]["DefaultEnemyLevel"] >= 80:
+            add_hint_type(hint_type_list, HintType.EnemyLevel, 15)
+    if "Wall" in check or Enemy.is_boss(check):
+        add_hint_type(hint_type_list, HintType.Other, 2)
+    hint_type = random.choice(hint_type_list) if hint_type_list else HintType.Invalid
+    #Piece together the hint text based on the chosen type
+    text_part_0 = translation["Shard" if is_shard else "Item"][item]
+    text_part_1 = "can be found" if is_shard else "is"
+    text_part_2 = ""
+    text_part_3 = ""
     match hint_type:
-        case HintType.Room:
-            item_to_hint[item] = check_to_hint[room]
-        case HintType.Area:
-            item_to_hint[item] = check_to_hint[area]
-        case HintType.Enemy:
-            item_to_hint[item] = check_to_hint[check]
+        case HintType.NearItem:
+            text_part_2 = "near the location of the"
+            text_part_3 = translation["Item"][random.choice(room_nearby_items)]
+        case HintType.AreaType:
+            text_part_2 = "in"
+            text_part_3 = check_to_hint[area]
+        case HintType.RoomType:
+            text_part_2 = "in"
+            text_part_3 = check_to_hint[room]
+        case HintType.EnemyType:
+            text_part_1 = "is"
+            text_part_2 = "on"
+            text_part_3 = check_to_hint[check]
+        case HintType.EnemyLevel:
+            text_part_1 = "is"
+            text_part_2 = "on"
+            text_part_3 = "an extremely powerful enemy"
+        case HintType.Other:
+            if is_shard:
+                text_part_1 = "is"
+                text_part_2 = "on"
+                text_part_3 = "a boss"
+            else:
+                text_part_2 = "inside"
+                text_part_3 = "of a breakable wall"
         case _:
-            item_to_hint[item] = 0
+            text_part_1 = "failed to generate a hint"
+    text_list = [text_part_0, text_part_1, text_part_2, text_part_3]
+    text_list = [part for part in text_list if part.strip()]
+    item_to_hint[item] = " ".join(text_list) + "."
+
+def add_hint_type(hint_type_list, hint_type, odds):
+    for index in range(odds):
+        hint_type_list.append(hint_type)
 
 def update_hints():
+    #Apply the hints to the description of no-damage boss rewards
     hinted_items = list(item_to_hint)
     for index in range(len(hint_bosses)):
         boss = hint_bosses[index]
         boss_name = translation["Enemy"][boss]
         #Give the internal name a random id so that hints cannot be obtained from previous save files
         unique_id = "{:08x}".format(random.randint(0, 0xFFFFFFFF)).upper()
-        hint_item_name = "Hint{unique_id}"
+        hint_item_name = f"Hint{unique_id}"
         chosen_item = random.choice(hinted_items)
         hinted_items.remove(chosen_item)
-        add_game_item(89 + index, hint_item_name, "Key", "None", (512, 1792), "{boss_name} Hint", item_to_hint[chosen_item], 0, False)
+        add_game_item(-1, hint_item_name, "Key", "None", (512, 1792), f"{boss_name} Hint", item_to_hint[chosen_item], 0, False)
+        datatable["PB_DT_ItemMaster"][hint_item_name]["NotCountAsCompleteness"] = True
         datatable["PB_DT_CharacterParameterMaster"][boss]["NoDamageBonusItemId"] = hint_item_name
+
+def get_room_nearby_items(from_room):
+    nearby_rooms = Room.get_nearby_rooms(from_room, 5.0, True)
+    nearby_items = []
+    for room in nearby_rooms:
+        if room in room_unique_items:
+            nearby_items.extend(room_unique_items[room])
+    return nearby_items
 
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
@@ -1613,7 +1665,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
     datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                       = f"ITEM_NAME_{item_id}"
     datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]                = f"ITEM_EXPLAIN_{item_id}"
     datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                         = price
-    datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                        = price//10 if price > 10 else 1
+    datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                        = max(1, price//10) if price > 0 else 0
     datatable["PB_DT_ItemMaster"][item_id]["Producted"]                        = "None"
     #Edit string entries                                                       
     stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]                 = name

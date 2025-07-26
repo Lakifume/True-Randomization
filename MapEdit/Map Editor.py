@@ -762,7 +762,7 @@ class MainWindow(QMainWindow):
     
     def open_json(self, json_path, is_writable):
         self.current_path = json_path
-        self.title_string = f" ({self.current_path})"
+        self.title_string = f" ({self.current_path})" if is_writable else ""
         self.load_from_json(self.current_path)
         self.direct_save = is_writable
 
@@ -770,8 +770,7 @@ class MainWindow(QMainWindow):
         if self.direct_save:
             self.save_to_json(self.current_path)
             return True
-        else:
-            return self.save_file_as()
+        return self.save_file_as()
 
     def save_file_as(self):
         self.path = (QFileDialog.getSaveFileName(parent=self, caption="Save as", dir="Custom", filter="*.json"))[0]
@@ -932,24 +931,25 @@ class MainWindow(QMainWindow):
             box.setWindowTitle("Error")
             box.setIcon(QMessageBox.Critical)
             try:
-                log_path = os.path.abspath(os.path.join("", os.pardir)) + "\\Spoiler\\KeyLocation.json"
-                with open(log_path, "r", encoding="utf8") as file_reader:
-                    self.log = json.load(file_reader)
-                if not self.log["Map"] and name.split("\\")[-1] != "PB_DT_RoomMaster":
+                spoiler_path = os.path.abspath(os.path.join("", os.pardir)) + "\\Spoiler\\KeyLocation.json"
+                with open(spoiler_path, "r", encoding="utf8") as file_reader:
+                    self.spoiler_log = json.load(file_reader)
+                spoiler_map = self.spoiler_log["Map"]
+                if not spoiler_map and name.split("\\")[-1] != "PB_DT_RoomMaster":
                     self.open_json(DEFAULT_MAP, False)
                     return
-                if self.log["Map"] and name.split("\\")[-1] != self.log["Map"]:
-                    log_map_path = "Custom\\" + self.log["Map"] + ".json"
+                if spoiler_map and name.split("\\")[-1] != spoiler_map:
+                    log_map_path = f"Custom\\{spoiler_map}.json"
                     if os.path.isfile(log_map_path):
                         self.open_json(log_map_path, True)
                         return
-                    box.setText("Current key location is meant for map " + self.log["Map"] + ".")
+                    box.setText(f"Current key location is meant for map {spoiler_map}.")
                     box.exec()
                     self.key_location.setChecked(False)
                     self.key_location_action()
                     return
-                seed_text = str(self.log["Seed"])
-                if not self.log["Beatable"]:
+                seed_text = str(self.spoiler_log["Seed"])
+                if not self.spoiler_log["Beatable"]:
                     seed_text += " (not beatable)"
                 self.seed_label.setText(seed_text)
             except FileNotFoundError:
@@ -964,7 +964,7 @@ class MainWindow(QMainWindow):
             self.show_out.setEnabled(False)
             #Fill information
             self.key_drop_down.clear()
-            for entry in self.log["Key"]:
+            for entry in self.spoiler_log["Key"]:
                 self.key_drop_down.addItem(entry)
             #Initiate
             self.disable_menus()
@@ -991,9 +991,11 @@ class MainWindow(QMainWindow):
         + "\n\n"
         + "This editor allows you to fully customize the layout of the game's map."
         + "\n"
-        + "You can click and drag each room to change its location on the grid and you can select entire areas by double-clicking one of its rooms."
+        + "You can click and drag each room to change its location on the grid and you can select an entire area by double-clicking one of its rooms."
         + "\n"
         + "You can navigate the viewport with the mouse wheel to scroll vertically and with Alt held to scroll horizontally."
+        + "\n"
+        + "You can also drag the entire viewport with the mouse wheel button."
         + "\n\n"
         + "Save your creations to the Custom folder for them to be picked by the randomizer."
         + "\n\n"
@@ -1171,7 +1173,7 @@ class MainWindow(QMainWindow):
         if index < 0:
             return
         for room in self.room_list:
-            if room.room_data.name in self.log["Key"][self.key_drop_down.itemText(index)]:
+            if room.room_data.name in self.spoiler_log["Key"][self.key_drop_down.itemText(index)]:
                 room.set_theme(RoomTheme.Default)
             else:
                 room.set_theme(RoomTheme.Dark)

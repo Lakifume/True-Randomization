@@ -460,10 +460,14 @@
       "BloodlessModeNightmareEnemyLevel": 14,
       "STR": 9.0,
       "INT": 9.0,
+      "CON": 6.0,
+      "MND": 2.0,
       "MaxHP99Enemy": 1600,
       "MaxMP99Enemy": 1600,
       "STR99Enemy": 275.0,
       "INT99Enemy": 275.0,
+      "CON99Enemy": 80.0,
+      "MND99Enemy": 40.0,
       "SLO": 25.0
     },
     "N3015_HEAD": {
@@ -2310,8 +2314,8 @@
     "N2016": {
       "STR": 11.0,
       "INT": 11.0,
-      "MaxHP99Enemy": 3333.0,
-      "MaxMP99Enemy": 3333.0,
+      "MaxHP99Enemy": 4000.0,
+      "MaxMP99Enemy": 4000.0,
       "STR99Enemy": 325.0,
       "INT99Enemy": 325.0,
       "HOL": -25.0,
@@ -2399,10 +2403,14 @@
       "BloodlessModeNightmareEnemyLevel": 45,
       "STR": 9.0,
       "INT": 9.0,
+      "CON": 6.0,
+      "MND": 2.0,
       "MaxHP99Enemy": 1600,
       "MaxMP99Enemy": 1600,
       "STR99Enemy": 275.0,
       "INT99Enemy": 275.0,
+      "CON99Enemy": 80.0,
+      "MND99Enemy": 40.0,
       "POI": 25.0,
       "CUR": 25.0,
       "STO": 75.0,
@@ -4402,7 +4410,7 @@
       "DAG": true
     },
     "N3125_SELF_BURN_DAMAGE": {
-      "RateDamage": 0.025
+      "RateDamage": 0.1
     },
     "FAMILIA_ARCHER_ARROW": {
       "DAG": false,
@@ -4664,6 +4672,24 @@
     "Waystone": {
       "buyPrice": 50,
       "sellPrice": 0
+    },
+    "FaerieMedicine": {
+      "buyPrice": 100,
+      "sellPrice": 10
+    },
+    "FaerieElixir": {
+      "max": 5,
+      "buyPrice": 500,
+      "sellPrice": 50
+    },
+    "FaerieAllheal": {
+      "max": 3,
+      "buyPrice": 5000,
+      "sellPrice": 500
+    },
+    "FaeriePanacea": {
+      "buyPrice": 500,
+      "sellPrice": 50
     },
     "Certificationboard": {
       "IconPath": "456"

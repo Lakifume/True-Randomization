@@ -365,7 +365,7 @@ def update_any_map():
     #Shift those lists if the rooms are below 0
     for room in ["m08TWR_017", "m08TWR_018", "m08TWR_019", "m11UGD_013", "m11UGD_031"]:
         if datatable["PB_DT_RoomMaster"][room]["OffsetZ"] < 0:
-            multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/7.2)) - 1
+            multiplier = abs(int(datatable["PB_DT_RoomMaster"][room]["OffsetZ"]/TILEHEIGHT)) - 1
             if multiplier > datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1:
                 multiplier = datatable["PB_DT_RoomMaster"][room]["AreaHeightSize"] - 1
             for index in range(len(datatable["PB_DT_RoomMaster"][room]["NoTraverse"])):
@@ -393,7 +393,7 @@ def update_custom_map():
     for room in datatable["PB_DT_RoomMaster"]:
         if   datatable["PB_DT_RoomMaster"][room]["OffsetX"] < 214.2:
             datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m01SIP"
-        elif datatable["PB_DT_RoomMaster"][room]["OffsetX"] + datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*12.6 > 1108.8:
+        elif datatable["PB_DT_RoomMaster"][room]["OffsetX"] + datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*TILEWIDTH > 1108.8:
             datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m13ARC"
         else:
             datatable["PB_DT_RoomMaster"][room]["AreaID"] = "EAreaID::m03ENT"
@@ -1187,61 +1187,69 @@ def is_room_adjacent(room_1, room_2):
         door_horizontal_check(room_1, room_2, Direction.TOP, Direction.TOP_LEFT, Direction.TOP_RIGHT)
 
 def left_room_check(room_1, room_2):
-    return room_2["OffsetX"] == round(room_1["OffsetX"] - 12.6*room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2*(room_1["AreaHeightSize"] - 1), 1)
+    return room_2["OffsetX"] == round(room_1["OffsetX"] - TILEWIDTH*room_2["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - TILEHEIGHT*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + TILEHEIGHT*(room_1["AreaHeightSize"] - 1), 1)
 
 def bottom_room_check(room_1, room_2):
-    return round(room_1["OffsetX"] - 12.6*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - 7.2*room_2["AreaHeightSize"], 1)
+    return round(room_1["OffsetX"] - TILEWIDTH*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + TILEWIDTH*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] - TILEHEIGHT*room_2["AreaHeightSize"], 1)
 
 def right_room_check(room_1, room_2):
-    return room_2["OffsetX"] == round(room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - 7.2*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + 7.2*(room_1["AreaHeightSize"] - 1), 1)
+    return room_2["OffsetX"] == round(room_1["OffsetX"] + TILEWIDTH*room_1["AreaWidthSize"], 1) and round(room_1["OffsetZ"] - TILEHEIGHT*(room_2["AreaHeightSize"] - 1), 1) <= room_2["OffsetZ"] <= round(room_1["OffsetZ"] + TILEHEIGHT*(room_1["AreaHeightSize"] - 1), 1)
 
 def top_room_check(room_1, room_2):
-    return round(room_1["OffsetX"] - 12.6*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + 12.6*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"], 1)
+    return round(room_1["OffsetX"] - TILEWIDTH*(room_2["AreaWidthSize"] - 1), 1) <= room_2["OffsetX"] <= round(room_1["OffsetX"] + TILEWIDTH*(room_1["AreaWidthSize"] - 1), 1) and room_2["OffsetZ"] == round(room_1["OffsetZ"] + TILEHEIGHT*room_1["AreaHeightSize"], 1)
 
 def door_vertical_check(room_1, room_2, direction_1, direction_2, direction_3):
     for door_1 in map_connections[room_1]:
         if door_string_to_door[door_1].direction_part == direction_1:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/TILEHEIGHT)):
                     map_connections[room_1][door_1].append(door_2)
         if door_string_to_door[door_1].direction_part == direction_2:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/TILEHEIGHT)):
                     map_connections[room_1][door_1].append(door_2)
         if door_string_to_door[door_1].direction_part == direction_3:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/7.2)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].z_block == (door_string_to_door[door_2].z_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetZ"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetZ"])/TILEHEIGHT)):
                     map_connections[room_1][door_1].append(door_2)
 
 def door_horizontal_check(room_1, room_2, direction_1, direction_2, direction_3):
     for door_1 in map_connections[room_1]:
         if door_string_to_door[door_1].direction_part == direction_1:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_1] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/TILEWIDTH)):
                     map_connections[room_1][door_1].append(door_2)
         if door_string_to_door[door_1].direction_part == direction_2:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_2] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/TILEWIDTH)):
                     map_connections[room_1][door_1].append(door_2)
         if door_string_to_door[door_1].direction_part == direction_3:
             for door_2 in map_connections[room_2]:
-                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/12.6)):
+                if door_string_to_door[door_2].direction_part == OppositeDirection[direction_3] and door_string_to_door[door_1].x_block == (door_string_to_door[door_2].x_block + round((datatable["PB_DT_RoomMaster"][room_2]["OffsetX"] - datatable["PB_DT_RoomMaster"][room_1]["OffsetX"])/TILEWIDTH)):
                     map_connections[room_1][door_1].append(door_2)
 
-def get_nearby_rooms(room_1, search_radius, invert_shape_relation = False):
+def get_nearby_rooms(room_1_name, search_radius, invert_shape_relation = False):
     #Get rooms nearby another room based on a search radius with a relation of point to rectangle bounds
     nearby_rooms = []
-    center_1 = (room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"]/2, room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"]/2)
-    bounds_1 = (room_1["OffsetX"], room_1["OffsetX"] + 12.6*room_1["AreaWidthSize"], room_1["OffsetZ"], room_1["OffsetZ"] + 7.2*room_1["AreaHeightSize"])
-    for room_2 in datatable["PB_DT_RoomMaster"]:
-        center_2 = (room_2["OffsetX"] + 12.6*room_2["AreaWidthSize"]/2, room_2["OffsetZ"] + 7.2*room_2["AreaHeightSize"]/2)
-        bounds_2 = (room_2["OffsetX"], room_2["OffsetX"] + 12.6*room_2["AreaWidthSize"], room_2["OffsetZ"], room_2["OffsetZ"] + 7.2*room_2["AreaHeightSize"])
+    room_1 = datatable["PB_DT_RoomMaster"][room_1_name]
+    if room_1["AreaID"] == "EAreaID::None":
+        return [room_1_name]
+    center_1 = (round(room_1["OffsetX"]/TILEWIDTH) + room_1["AreaWidthSize"]/2, round(room_1["OffsetZ"]/TILEHEIGHT) + room_1["AreaHeightSize"]/2)
+    bounds_1 = (round(room_1["OffsetX"]/TILEWIDTH), round(room_1["OffsetX"]/TILEWIDTH) + room_1["AreaWidthSize"], round(room_1["OffsetZ"]/TILEHEIGHT), round(room_1["OffsetZ"]/TILEHEIGHT) + room_1["AreaHeightSize"])
+    for room_2_name in datatable["PB_DT_RoomMaster"]:
+        room_2 = datatable["PB_DT_RoomMaster"][room_2_name]
+        if room_1["OutOfMap"]  != room_2["OutOfMap"]:
+            continue
+        if room_1["OutOfMap"] and room_2["OutOfMap"] and room_1["AreaID"] != room_2["AreaID"]:
+            continue
+        center_2 = (round(room_2["OffsetX"]/TILEWIDTH) + room_2["AreaWidthSize"]/2, round(room_2["OffsetZ"]/TILEHEIGHT) + room_2["AreaHeightSize"]/2)
+        bounds_2 = (round(room_2["OffsetX"]/TILEWIDTH), round(room_2["OffsetX"]/TILEWIDTH) + room_2["AreaWidthSize"], round(room_2["OffsetZ"]/TILEHEIGHT), round(room_2["OffsetZ"]/TILEHEIGHT) + room_2["AreaHeightSize"])
         chosen_point = center_1 if invert_shape_relation else center_2
         chosen_bound = bounds_2 if invert_shape_relation else bounds_1
         closest_x = max(chosen_bound[0], min(chosen_point[0], chosen_bound[1]))
         closest_y = max(chosen_bound[2], min(chosen_point[1], chosen_bound[3]))
         if math.hypot(chosen_point[0] - closest_x, chosen_point[1] - closest_y) <= search_radius:
-            nearby_rooms.append(room_2)
+            nearby_rooms.append(room_2_name)
     return nearby_rooms
 
 def get_gimmick_filename(room):

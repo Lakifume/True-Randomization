@@ -218,6 +218,8 @@ def update_datatable_order():
         for entry_1 in datatable_entry_index[file]:
             old_index = list(datatable[file]).index(entry_1)
             new_index = datatable_entry_index[file][entry_1]
+            if new_index < 0:
+                continue
             current_entry = game_data[file].Exports[0].Table.Data[old_index].Clone()
             game_data[file].Exports[0].Table.Data.Remove(game_data[file].Exports[0].Table.Data[old_index])
             game_data[file].Exports[0].Table.Data.Insert(new_index, current_entry)

@@ -1402,14 +1402,15 @@ def calculate_stat_with_level(entry, level, stat_name):
     return int(((datatable["PB_DT_CharacterParameterMaster"][entry][stat_name + "99Enemy"] - datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])/98)*(level-1) + datatable["PB_DT_CharacterParameterMaster"][entry][stat_name])
 
 def is_enemy(character):
-    if is_main_enemy(character):
-        return True
+    if not character in datatable["PB_DT_CharacterParameterMaster"]:
+        return False
     if character[0:5] in constant["EnemyInfo"]:
-        return list(datatable["PB_DT_CharacterParameterMaster"]).index("P0007") < list(datatable["PB_DT_CharacterParameterMaster"]).index(character) < list(datatable["PB_DT_CharacterParameterMaster"]).index("SubChar")
+        character_list = list(datatable["PB_DT_CharacterParameterMaster"])
+        return character_list.index("P0007") < character_list.index(character) < character_list.index("SubChar")
     return is_final_boss(character)
 
 def is_main_enemy(character):
-    return character in constant["EnemyInfo"]
+    return character in constant["EnemyInfo"] and character in datatable["PB_DT_CharacterParameterMaster"]
 
 def is_boss(character):
     if is_enemy(character):
@@ -1420,7 +1421,7 @@ def is_boss_part(character):
     return is_boss(character) or character in ["N1001_Tentacle", "N3125"]
 
 def is_final_boss(character):
-    return character[0:5] in ["N1009", "N1013"]
+    return character[0:5] in ["N1009", "N1013"] and character in datatable["PB_DT_CharacterParameterMaster"]
 
 def create_log():
     log = {}

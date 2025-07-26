@@ -1,0 +1,13 @@
+{
+  "a zone outside of the demon realm":                    ["m01SIP", "m02VIL"],
+  "a very wet area":                                      ["m01SIP", "m11UGD"],
+  "a rich reception-like area":                           ["m03ENT", "m06KNG"],
+  "an overgrown area":                                    ["m04GDN", "m10BIG"],
+  "an area featuring towers":                             ["m05SAN", "m08TWR"],
+  "a mechanically-powered area":                          ["m07LIB", "m08TWR"],
+  "a transportation area":                                ["m01SIP", "m09TRN"],
+  "an area that is a remnant of an ancient civilization": ["m12SND", "m20JRN"],
+  "a sorcery lab":                                        ["m13ARC", "m14TAR", "m15JPN"],
+  "a place of extreme temperatures":                      ["m17RVA", "m18ICE"],
+  "a very nostalgic area":                                ["m51EBT", "m19K2C"]
+}

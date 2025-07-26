@@ -1,0 +1,22 @@
+{
+  "a room with curved traversal":                       ["m02VIL_008", "m02VIL_011", "m08TWR_017", "m08TWR_018", "m08TWR_019", "m12SND_025", "m12SND_026", "m12SND_027"],
+  "a room with damage spikes":                          ["m08TWR_005", "m08TWR_013", "m08TWR_019", "m07LIB_044", "m07LIB_015", "m07LIB_013", "m07LIB_012", "m07LIB_017", "m07LIB_029", "m14TAR_001", "m14TAR_006", "m10BIG_015"],
+  "a room with no ceiling":                             ["m01SIP_003", "m01SIP_004", "m01SIP_019", "m01SIP_022", "m01SIP_026", "m02VIL_001", "m02VIL_002", "m02VIL_006", "m02VIL_008", "m04GDN_009", "m05SAN_015", "m05SAN_020", "m09TRN_002", "m12SND_025", "m12SND_026", "m12SND_027"],
+  "a room fully or partially submerged":                ["m11UGD_005", "m11UGD_019", "m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_026", "m11UGD_036", "m11UGD_040", "m11UGD_042", "m11UGD_043", "m11UGD_044", "m11UGD_045", "m11UGD_046"],
+  "a room with a static painting":                      ["m03ENT_001", "m03ENT_003", "m03ENT_022", "m05SAN_000", "m06KNG_016", "m06KNG_021", "m07LIB_043", "m11UGD_048", "m88BKR_002", "m88BKR_003", "m88BKR_004"],
+  "a room with a movable block":                        ["m01SIP_018", "m03ENT_014", "m04GDN_006", "m05SAN_012", "m07LIB_002", "m07LIB_003", "m07LIB_021", "m07LIB_023", "m07LIB_032"],
+  "a room with a device that responds to magic":        ["m01SIP_002", "m07LIB_001", "m07LIB_044", "m08TWR_000", "m09TRN_002"],
+  "a room with breakable floor":                        ["m02VIL_006", "m03ENT_018", "m05SAN_019", "m06KNG_018", "m13ARC_006"],
+  "a room with reflect panels":                         ["m05SAN_003", "m07LIB_006", "m07LIB_014", "m07LIB_022", "m13ARC_005"],
+  "a room with a swinging platform":                    ["m03ENT_002", "m03ENT_004", "m05SAN_003", "m05SAN_016", "m05SAN_019", "m05SAN_021", "m06KNG_000", "m06KNG_002", "m06KNG_010"],
+  "a room with a shard candle":                         ["m03ENT_021", "m05SAN_000", "m11UGD_047", "m13ARC_004", "m12SND_026", "m05SAN_014", "m05SAN_015", "m05SAN_021", "m07LIB_041", "m07LIB_042", "m11UGD_019", "m88BKR_003"],
+  "a room with a place to sit":                         ["m03ENT_022", "m04GDN_009", "m05SAN_013", "m06KNG_016", "m07LIB_003", "m07LIB_024", "m07LIB_043", "m13ARC_002", "m14TAR_002", "m18ICE_005"],
+  "a room with a hidden chest":                         ["m02VIL_008", "m06KNG_021", "m07LIB_009", "m09TRN_002", "m12SND_002", "m12SND_003", "m12SND_013"],
+  "a room where the moon is always visible":            ["m04GDN_003", "m04GDN_006", "m04GDN_009", "m04GDN_013", "m04GDN_014", "m04GDN_016", "m05SAN_015", "m05SAN_016", "m05SAN_017", "m05SAN_018", "m05SAN_019", "m05SAN_020", "m05SAN_021", "m10BIG_001", "m10BIG_006", "m10BIG_008", "m10BIG_012", "m19K2C_000"],
+  "a room with stained glass windows":                  ["m05SAN_003", "m05SAN_005", "m05SAN_008", "m05SAN_009", "m05SAN_012", "m05SAN_013", "m05SAN_014", "m05SAN_016", "m05SAN_019", "m05SAN_021", "m05SAN_023"],
+  "a room with mirrors":                                ["m06KNG_004", "m06KNG_005", "m06KNG_017", "m06KNG_022"],
+  "a room with moving platforms on tracks":             ["m07LIB_017", "m07LIB_023", "m07LIB_027", "m07LIB_006", "m11UGD_013", "m11UGD_031"],
+  "a very large room with a map surface of 18 or more": ["m04GDN_006", "m05SAN_003", "m08TWR_018", "m08TWR_019", "m09TRN_002", "m10BIG_006", "m10BIG_012"],
+  "a room where Zangetsu has been spotted":             ["m01SIP_003", "m01SIP_019", "m09TRN_002", "m15JPN_016", "m18ICE_018"],
+  "a room locked by a key":                             ["m88BKR_001", "m88BKR_002", "m88BKR_003", "m88BKR_004"]
+}

@@ -96,6 +96,7 @@ modified_files = {
             "PB_DT_GimmickFlagMaster",
             "PB_DT_HairSalonOldDefaults",
             "PB_DT_ItemMaster",
+            "PB_DT_KeyItemMaster",
             "PB_DT_QuestMaster",
             "PB_DT_RoomMaster",
             "PB_DT_SetBonus",
@@ -284,7 +285,6 @@ class Generate(QThread):
             self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
         Manager.load_map(self.selected_map)
         Room.get_map_info()
-        Room.update_any_map()
         
         #Apply tweaks
         
@@ -307,7 +307,6 @@ class Generate(QThread):
         has_risky_option = (config.getboolean("EnemyRandomization", "bEnemyLevels") or config.getboolean("EnemyRandomization", "bBossLevels")) and not config.getboolean("SpecialMode", "bCustomNG")
         
         if self.selected_map:
-            Room.update_custom_map()
             Enemy.rebalance_enemies_to_map()
         
         if not config.getboolean("GameDifficulty", "bNormal"):
@@ -480,6 +479,13 @@ class Generate(QThread):
             random.seed(self.selected_seed)
             Sound.randomize_music()
         
+        #Create hints
+        if config.getboolean("ItemRandomization", "bOverworldPool"):
+            random.seed(self.selected_seed)
+            Item.fill_check_to_hint()
+            Item.create_hints()
+            Item.update_hints()
+        
         #Change some in-game properties based on the difficulty chosen
         if config.getboolean("GameDifficulty", "bNormal"):
             Manager.set_single_difficulty("Normal")
@@ -529,7 +535,9 @@ class Generate(QThread):
         Manager.update_item_descriptions()
         Room.update_map_connections()
         Room.update_map_doors()
+        Room.update_any_map()
         if self.selected_map:
+            Room.update_custom_map()
             Room.update_map_indicators()
         
         #Display game version, mod version and seed on the title screen
@@ -1149,7 +1157,7 @@ class MainWindow(QGraphicsView):
         main_widget_to_param[self.check_box_14] = 0x400000
         
         self.check_box_21 = QCheckBox("Bloodless Candles")
-        self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode.")
+        self.check_box_21.setToolTip("Randomize candle placement in Bloodless mode. Selecting\nthis option will override the spoiler log for Bloodless")
         self.check_box_21.stateChanged.connect(self.check_box_21_changed)
         center_box_10_layout.addWidget(self.check_box_21, 0, 0)
         main_widget_to_param[self.check_box_21] = 0x800000
@@ -1339,7 +1347,7 @@ class MainWindow(QGraphicsView):
         
         self.preset_values = [p.value for p in Preset]
         self.preset_drop_down = QComboBox()
-        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: To get started with this mod.\nRACE: Most fitting for a King of Speed.\nMEME: Time to break the game.\nRISK: Chaos awaits !\nBLOOD: She needs more blood.")
+        self.preset_drop_down.setToolTip("EMPTY: Clear all options.\nTRIAL: To get started with this mod.\nRACE: Most fitting for a King of Speed.\nMEME: Let's break the game.\nRISK: The time for games is over.\nBLOOD: She needs more blood.")
         self.preset_drop_down.addItem("Custom preset")
         for preset in Preset:
             self.preset_drop_down.addItem(f"{preset.name} preset")
