@@ -76,6 +76,10 @@ Here are some known game glitches to watch out for:
 
 # Changelog
 
+3.0.6:
+- Implemented progression hints in the randomized game if items are shuffled
+- Made it so that checking the spoiler on the map editor automatically opens the correct map
+
 3.0.5:
 - Fixed an issue where OD could clip into the ground on custom maps
 - Disabled the long Alfred death cutscene in the Den of Behemoths

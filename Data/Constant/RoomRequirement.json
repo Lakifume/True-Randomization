@@ -4810,15 +4810,15 @@
   "m11UGD_036": {
     "UGD_036_0_1_LEFT": {
       "UGD_036_3_1_RIGHT": ["WaterM"],
-      "Treasurebox_UGD036_1": ["Deepsinker"],
-      "Treasurebox_UGD036_2": [],
+      "Treasurebox_UGD036_1": [],
+      "Treasurebox_UGD036_2": ["Deepsinker"],
       "N3029": [],
       "N3078": ["WaterM"]
     },
     "UGD_036_3_1_RIGHT": {
       "UGD_036_0_1_LEFT": ["WaterM"],
-      "Treasurebox_UGD036_1": ["Deepsinker"],
-      "Treasurebox_UGD036_2": [],
+      "Treasurebox_UGD036_1": [],
+      "Treasurebox_UGD036_2": ["Deepsinker"],
       "N3029": [],
       "N3078": ["WaterM"]
     }

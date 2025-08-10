@@ -5434,6 +5434,23 @@
       "sellPrice": 500
     }
   },
+  "PB_DT_QuestMaster": {
+    "Quest_Enemy02": {
+      "RewardNum01": 1
+    },
+    "Quest_Memento03": {
+      "RewardNum01": 1
+    },
+    "Quest_Memento04": {
+      "RewardNum01": 1
+    },
+    "Quest_Memento10": {
+      "RewardNum01": 1
+    },
+    "Quest_Memento14": {
+      "RewardNum01": 1
+    }
+  },
   "PB_DT_SetBonus": {
     "VampiricSkinsuit": {
       "STR": 6,
