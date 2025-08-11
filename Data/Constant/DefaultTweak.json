@@ -2611,9 +2611,8 @@
       "ParamValueNightmare": 0.5
     },
     "N3059_UniqueAttackBeginWaitRate_N3059": {
-      "ParamValue": 0.5,
-      "ParamValueHard": 1.0,
-      "ParamValueNightmare": 1.0
+      "ParamValueHard": 0.8,
+      "ParamValueNightmare": 0.8
     },
     "N3059_UniqueAttackFinishWaitRate_N3059": {
       "ParamValueHard": 2.0,
