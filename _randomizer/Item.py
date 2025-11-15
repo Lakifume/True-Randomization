@@ -481,10 +481,6 @@ def init():
     key_shard_to_location = {}
     global all_keys
     all_keys = key_items + list(key_shards)
-    global previous_available_chests
-    previous_available_chests = []
-    global previous_available_enemies
-    previous_available_enemies = []
     global current_available_doors
     current_available_doors = ["SIP_000_START"]
     global current_available_chests
@@ -812,6 +808,7 @@ def check_requirement(requirement):
 
 def process_key_logic():
     #Logic that adapts to any map layout
+    reset_available_checks()
     move_through_rooms()
     while True:
         #Place key item
@@ -874,12 +871,8 @@ def check_lifted_obstacles():
         analyse_check(check, requirement)
 
 def reset_available_checks():
-    previous_available_chests.clear()
-    previous_available_chests.extend(current_available_chests)
-    current_available_chests.clear()
-    previous_available_enemies.clear()
-    previous_available_enemies.extend(current_available_enemies)
-    current_available_enemies.clear()
+    current_available_chests.insert(0, [])
+    current_available_enemies.insert(0, [])
 
 def pick_next_key(requirement_list):
     #Weight requirements
@@ -938,10 +931,10 @@ def analyse_check(check, requirement):
                     if destination in check_to_requirement:
                         del check_to_requirement[destination]
             case CheckType.Chest:
-                current_available_chests.append(check)
+                current_available_chests[0].append(check)
                 all_available_chests.append(check)
             case CheckType.Enemy:
-                current_available_enemies.append(enemy_id)
+                current_available_enemies[0].append(enemy_id)
                 all_available_enemies.append(enemy_id)
     #Add to requirement list
     else:
@@ -1004,46 +997,33 @@ def get_requirement_weight(requirement):
 
 def place_next_key(chosen_item):
     #Item
-    current_valid_chests = validate_chest_list(current_available_chests)
-    previous_valid_chests = validate_chest_list(previous_available_chests)
-    all_valid_chests = validate_chest_list(all_available_chests)
     if chosen_item in key_items:
-        if should_place_key_in(current_valid_chests):
-            try:
-                chosen_chest = pick_key_chest(current_valid_chests)
-            except IndexError:
+        chosen_chest = None
+        for history in current_available_chests:
+            current_valid_chests = validate_chest_list(history)
+            if should_place_key_in(current_valid_chests):
                 try:
-                    chosen_chest = pick_key_chest(previous_valid_chests)
+                    chosen_chest = pick_key_chest(current_valid_chests)
+                    break
                 except IndexError:
-                    chosen_chest = pick_key_chest(all_valid_chests)
-        elif should_place_key_in(previous_valid_chests):
-            try:
-                chosen_chest = pick_key_chest(previous_valid_chests)
-            except IndexError:
-                chosen_chest = pick_key_chest(all_valid_chests)
-        else:
-            chosen_chest = pick_key_chest(all_valid_chests)
+                    pass
+        if not chosen_chest:
+            chosen_chest = pick_key_chest(validate_chest_list(all_available_chests))
         key_item_to_location[chosen_item] = chosen_chest
     #Shard
-    current_valid_enemies = validate_enemy_list(current_available_enemies)
-    previous_valid_enemies = validate_enemy_list(previous_available_enemies)
     all_valid_enemies = validate_enemy_list(all_available_enemies)
     if chosen_item in key_shards:
-        if should_place_key_in(current_valid_enemies):
-            try:
-                chosen_enemy = pick_key_enemy(current_valid_enemies)
-            except IndexError:
+        chosen_enemy = None
+        for history in current_available_enemies:
+            current_valid_enemies = validate_enemy_list(history)
+            if should_place_key_in(current_valid_enemies):
                 try:
-                    chosen_enemy = pick_key_enemy(previous_valid_enemies)
+                    chosen_enemy = pick_key_enemy(current_valid_enemies)
+                    break
                 except IndexError:
-                    chosen_enemy = pick_key_enemy(all_valid_enemies)
-        elif should_place_key_in(previous_valid_enemies):
-            try:
-                chosen_enemy = pick_key_enemy(previous_valid_enemies)
-            except IndexError:
-                chosen_enemy = pick_key_enemy(all_valid_enemies)
-        else:
-            chosen_enemy = pick_key_enemy(all_valid_enemies)
+                    pass
+        if not chosen_enemy:
+            chosen_enemy = pick_key_enemy(validate_enemy_list(all_available_enemies))
         key_shard_to_location[chosen_item] = chosen_enemy
     all_keys.remove(chosen_item)
     key_order.append(chosen_item)

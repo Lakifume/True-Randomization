@@ -1109,8 +1109,8 @@
     "N3072": {
       "STR": 8.0,
       "INT": 8.0,
-      "MaxHP99Enemy": 300,
-      "MaxMP99Enemy": 300,
+      "MaxHP99Enemy": 600,
+      "MaxMP99Enemy": 600,
       "STR99Enemy": 250.0,
       "INT99Enemy": 250.0,
       "SLO": 25.0,
@@ -3486,11 +3486,15 @@
     },
     "P0000_ArtsSpearRotate": {
       "STR_Correction": 1.0,
-      "INT_Correction": 1.0
+      "INT_Correction": 1.0,
+      "ZAN": false,
+      "TOT": true
     },
     "P0000_ArtsSpearRotate_Impact": {
       "STR_Correction": 2.5,
-      "INT_Correction": 2.5
+      "INT_Correction": 2.5,
+      "ZAN": false,
+      "TOT": true
     },
     "P0000_STEEL_CY": {
       "STR_Correction": 2.5,

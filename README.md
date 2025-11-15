@@ -64,12 +64,13 @@ Here are some known game glitches to watch out for:
 # Troubleshooting
 
 - If the program fails to open when double clicking the exe open it via command prompt instead to be able to read the error.
-- If you get an error get the zip file again, right click on it, go to Properties, check Unblock and extract again.
+- If you get an error go into the Tools\UAssetAPI folder and for each .dll file right click on one, go to Properties, check Unblock and confirm.
 - If the program gets stuck while a process is loading check the command window behind the interface to see if any error messages show up.
 - If problems still persist open an issue on Github or on Discord and try to be as specific as possible.
 
 # Building from source
 
+- Install Python 3.12
 - Clone the True Randomization repository
 - Run python.exe -m pip install -r requirements.txt
 - Run pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py

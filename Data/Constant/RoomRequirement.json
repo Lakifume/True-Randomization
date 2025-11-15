@@ -641,29 +641,29 @@
       "ENT_000_1_0_RIGHT": [],
       "ENT_000_0_9_LEFT": ["Flight"],
       "ENT_000_1_9_RIGHT": ["Flight"],
-      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
-      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"]
     },
     "ENT_000_1_0_RIGHT": {
       "ENT_000_0_0_LEFT": [],
       "ENT_000_0_9_LEFT": ["Flight"],
       "ENT_000_1_9_RIGHT": ["Flight"],
-      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
-      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"]
     },
     "ENT_000_0_9_LEFT": {
       "ENT_000_0_0_LEFT": [],
       "ENT_000_1_0_RIGHT": [],
       "ENT_000_1_9_RIGHT": [],
-      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
-      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"]
     },
     "ENT_000_1_9_RIGHT": {
       "ENT_000_0_0_LEFT": [],
       "ENT_000_1_0_RIGHT": [],
       "ENT_000_0_9_LEFT": [],
-      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"]],
-      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"]]
+      "ENT_000_0_15_LEFT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"],
+      "ENT_000_1_15_RIGHT": [["Flight", "BreastplateofAguilar"], "Dimensionshift"]
     },
     "ENT_000_0_15_LEFT": {
       "ENT_000_0_0_LEFT": ["BreastplateofAguilar"],
@@ -2568,7 +2568,7 @@
   "m06KNG_020": {
     "KNG_020_0_0_LEFT_BOTTOM": {
       "N1012": [],
-      "N2013": []
+      "N2013": ["Doublejump", "Dimensionshift", ["HighJump", "Accelerator"]]
     }
   },
   "m06KNG_021": {
@@ -3458,10 +3458,10 @@
     "TWR_009_0_10_RIGHT": {
       "TWR_009_0_0_LEFT": [],
       "TWR_009_0_0_RIGHT": [],
-      "TWR_009_0_5_LEFT": ["Doublejump", "Flight"],
+      "TWR_009_0_5_LEFT": ["Doublejump", "Flight", "Accelerator"],
       "TWR_009_0_15_LEFT": ["Dimensionshift"],
       "TWR_009_0_15_RIGHT": ["Dimensionshift"],
-      "Treasurebox_TWR009_1": ["Doublejump", "Flight"]
+      "Treasurebox_TWR009_1": ["Doublejump", "Flight", "Accelerator"]
     },
     "TWR_009_0_15_LEFT": {
       "TWR_009_0_0_LEFT": [],
@@ -4228,16 +4228,16 @@
   },
   "m11UGD_005": {
     "UGD_005_0_1_LEFT": {
-      "UGD_005_3_1_TOP": ["WaterM"],
-      "UGD_005_5_1_RIGHT": ["WaterM"],
+      "UGD_005_3_1_TOP": ["WaterM", ["Doublejump", "Dimensionshift"]],
+      "UGD_005_5_1_RIGHT": ["WaterM", ["Doublejump", "Dimensionshift"]],
       "Treasurebox_UGD005_1": ["Deepsinker"],
       "Treasurebox_UGD005_2": ["Deepsinker"],
-      "N3029": ["WaterM"],
-      "N3010": ["WaterM"],
+      "N3029": ["WaterM", ["Doublejump", "Dimensionshift"]],
+      "N3010": ["WaterM", ["Doublejump", "Dimensionshift"]],
       "N3078": ["WaterM"]
     },
     "UGD_005_3_1_TOP": {
-      "UGD_005_0_1_LEFT": ["WaterM"],
+      "UGD_005_0_1_LEFT": ["WaterM", "Dimensionshift"],
       "UGD_005_5_1_RIGHT": [],
       "Treasurebox_UGD005_1": ["Deepsinker"],
       "Treasurebox_UGD005_2": ["Deepsinker"],
@@ -4246,7 +4246,7 @@
       "N3078": ["WaterM"]
     },
     "UGD_005_5_1_RIGHT": {
-      "UGD_005_0_1_LEFT": ["WaterM"],
+      "UGD_005_0_1_LEFT": ["WaterM", "Dimensionshift"],
       "UGD_005_3_1_TOP": [],
       "Treasurebox_UGD005_1": ["Deepsinker"],
       "Treasurebox_UGD005_2": ["Deepsinker"],
@@ -4573,13 +4573,13 @@
       "Treasurebox_UGD021_1": ["Deepsinker"]
     },
     "UGD_021_0_0_BOTTOM": {
-      "UGD_021_0_0_LEFT": ["WaterM"],
+      "UGD_021_0_0_LEFT": ["WaterM", "Accelerator"],
       "Treasurebox_UGD021_1": ["Deepsinker"]
     }
   },
   "m11UGD_022": {
     "UGD_022_1_0_RIGHT": {
-      "UGD_022_1_1_TOP": ["WaterM"],
+      "UGD_022_1_1_TOP": ["WaterM", "Dimensionshift"],
       "N3098_Hard": ["WaterM"],
       "N3078": ["WaterM"]
     },
@@ -4591,19 +4591,19 @@
   },
   "m11UGD_023": {
     "UGD_023_0_0_LEFT": {
-      "UGD_023_1_0_RIGHT": ["WaterM"],
+      "UGD_023_1_0_RIGHT": ["WaterM", "Dimensionshift"],
       "N3098_Hard": ["WaterM"],
       "N3076": ["WaterM"]
     },
     "UGD_023_1_0_RIGHT": {
-      "UGD_023_0_0_LEFT": ["WaterM"],
+      "UGD_023_0_0_LEFT": ["WaterM", "Dimensionshift", "BreastplateofAguilar"],
       "N3098_Hard": ["WaterM"],
       "N3076": ["WaterM"]
     }
   },
   "m11UGD_024": {
     "UGD_024_1_1_RIGHT": {
-      "UGD_024_0_2_LEFT": ["WaterM"],
+      "UGD_024_0_2_LEFT": ["WaterM", "Dimensionshift"],
       "Treasurebox_UGD024_1": ["Deepsinker"],
       "Treasurebox_UGD024_2": ["Deepsinker"],
       "Treasurebox_UGD024_3": ["Deepsinker"],
@@ -4621,7 +4621,7 @@
   },
   "m11UGD_025": {
     "UGD_025_0_0_BOTTOM": {
-      "UGD_025_0_1_LEFT": ["WaterM"],
+      "UGD_025_0_1_LEFT": [],
       "Treasurebox_UGD025_1": ["Deepsinker"],
       "Treasurebox_UGD025_2": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
       "Treasurebox_UGD025_3": ["Deepsinker"],
@@ -4644,7 +4644,7 @@
       "UGD_026_1_0_RIGHT": ["WaterM"]
     },
     "UGD_026_1_0_RIGHT": {
-      "UGD_026_0_0_TOP": ["WaterM"]
+      "UGD_026_0_0_TOP": []
     }
   },
   "m11UGD_027": {
@@ -4809,14 +4809,14 @@
   },
   "m11UGD_036": {
     "UGD_036_0_1_LEFT": {
-      "UGD_036_3_1_RIGHT": ["WaterM"],
-      "Treasurebox_UGD036_1": [],
+      "UGD_036_3_1_RIGHT": ["WaterM", ["Doublejump", "Dimensionshift"]],
+      "Treasurebox_UGD036_1": ["WaterM", ["Doublejump", "Dimensionshift"]],
       "Treasurebox_UGD036_2": ["Deepsinker"],
-      "N3029": [],
+      "N3029": ["WaterM", ["Doublejump", "Dimensionshift"]],
       "N3078": ["WaterM"]
     },
     "UGD_036_3_1_RIGHT": {
-      "UGD_036_0_1_LEFT": ["WaterM"],
+      "UGD_036_0_1_LEFT": ["WaterM", "Dimensionshift"],
       "Treasurebox_UGD036_1": [],
       "Treasurebox_UGD036_2": ["Deepsinker"],
       "N3029": [],
@@ -4964,11 +4964,11 @@
   },
   "m11UGD_045": {
     "UGD_045_0_0_LEFT": {
-      "UGD_045_1_0_RIGHT": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "UGD_045_1_0_RIGHT": ["Dimensionshift", ["Deepsinker", "Reflectionray"]],
       "N3076": ["WaterM"]
     },
     "UGD_045_1_0_RIGHT": {
-      "UGD_045_0_0_LEFT": [["Deepsinker", "Dimensionshift"], ["Deepsinker","Reflectionray"]],
+      "UGD_045_0_0_LEFT": [["WaterM", "Dimensionshift"], ["Deepsinker", "Reflectionray"]],
       "N3076": ["WaterM"]
     }
   },
@@ -5506,23 +5506,23 @@
   "m12SND_023": {
     "SND_023_0_0_LEFT": {
       "SND_023_0_1_RIGHT": [],
-      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"],
+      "SND_023_0_3_RIGHT": [],
       "SND_023_0_5_RIGHT": []
     },
     "SND_023_0_1_RIGHT": {
       "SND_023_0_0_LEFT": [],
-      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"],
+      "SND_023_0_3_RIGHT": [],
       "SND_023_0_5_RIGHT": []
     },
     "SND_023_0_3_RIGHT": {
-      "SND_023_0_0_LEFT": ["Dimensionshift"],
-      "SND_023_0_1_RIGHT": ["Dimensionshift"],
-      "SND_023_0_5_RIGHT": ["Dimensionshift"]
+      "SND_023_0_0_LEFT": [],
+      "SND_023_0_1_RIGHT": [],
+      "SND_023_0_5_RIGHT": []
     },
     "SND_023_0_5_RIGHT": {
       "SND_023_0_0_LEFT": [],
       "SND_023_0_1_RIGHT": [],
-      "SND_023_0_3_RIGHT": ["Doublejump", "HighJump", "Invert"]
+      "SND_023_0_3_RIGHT": []
     }
   },
   "m12SND_024": {
@@ -5539,12 +5539,12 @@
   },
   "m12SND_026": {
     "SND_026_0_0_LEFT": {
-      "Deepsinker": []
+      "Deepsinker": ["Doublejump", "HighJump", "Invert", "Accelerator"]
     }
   },
   "m12SND_027": {
     "SND_027_0_0_LEFT": {
-      "N2014": []
+      "N2014": ["Doublejump", "HighJump", "Invert", "Accelerator"]
     }
   },
   "m13ARC_000": {
@@ -6198,21 +6198,21 @@
   },
   "m17RVA_003": {
     "RVA_003_0_0_LEFT": {
-      "RVA_003_1_0_RIGHT": ["Height"],
+      "RVA_003_1_0_RIGHT": ["Height", "BreastplateofAguilar"],
       "RVA_003_1_2_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
       "N3083": ["Height"],
-      "N3032": ["Height"],
-      "N3119": ["Height"]
+      "N3032": ["Height", "BreastplateofAguilar"],
+      "N3119": ["Height", "BreastplateofAguilar"]
     },
     "RVA_003_1_0_RIGHT": {
-      "RVA_003_0_0_LEFT": ["Height"],
+      "RVA_003_0_0_LEFT": [],
       "RVA_003_1_2_RIGHT": ["Invert", "Dimensionshift", "Reflectionray"],
       "N3083": ["Height"],
       "N3032": [],
       "N3119": []
     },
     "RVA_003_1_2_RIGHT": {
-      "RVA_003_0_0_LEFT": ["Height"],
+      "RVA_003_0_0_LEFT": [],
       "RVA_003_1_0_RIGHT": [],
       "N3083": [],
       "N3032": [],
@@ -6338,14 +6338,14 @@
   "m17RVA_012": {
     "RVA_012_0_0_LEFT": {
       "RVA_012_2_0_RIGHT": [],
-      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray", "BreastplateofAguilar"],
       "N2009": [],
       "N3119_Hard": [],
       "N3123": []
     },
     "RVA_012_2_0_RIGHT": {
       "RVA_012_0_0_LEFT": [],
-      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray"],
+      "Treasurebox_RVA012_1": ["Invert", "Dimensionshift", "Reflectionray", "BreastplateofAguilar"],
       "N2009": [],
       "N3119_Hard": [],
       "N3123": []
@@ -6446,11 +6446,11 @@
   "m18ICE_004": {
     "ICE_004_0_0_LEFT": {
       "ICE_004_0_0_RIGHT": [],
-      "N2012": ["Doublejump"]
+      "N2012": []
     },
     "ICE_004_0_0_RIGHT": {
       "ICE_004_0_0_LEFT": [],
-      "N2012": ["Doublejump"]
+      "N2012": []
     }
   },
   "m18ICE_005": {
@@ -6645,7 +6645,7 @@
   },
   "m18ICE_018": {
     "ICE_018_1_0_RIGHT": {
-      "N1008": ["Invert", "Dimensionshift", "Reflectionray"]
+      "N1008": ["Invert", "Dimensionshift", "Reflectionray", "Accelerator"]
     }
   },
   "m18ICE_019": {

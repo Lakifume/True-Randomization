@@ -1,6 +1,6 @@
-psutil == 5.9.*
+psutil == 7.1.*
 pythonnet == 3.0.*
-requests == 2.31.*
+requests == 2.32.*
 vdf == 3.4
-PySide6 == 6.6.*
-pyinstaller == 6.5.*
+PySide6 == 6.10.*
+pyinstaller == 6.16.*
