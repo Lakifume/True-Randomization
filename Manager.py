@@ -51,19 +51,19 @@ def reset():
 def load_file_info():
     #Variables
     global mod_dir
-    mod_dir = "Tools\\UnrealPak\\Mod\\BloodstainedRotN\\Content"
+    mod_dir = "Tools/UnrealPak/Mod/BloodstainedRotN/Content"
     global asset_dir
     asset_dir = "Game"
     global lipsync_dir
-    lipsync_dir = "Core\\UI\\Dialog\\Data\\LipSync"
+    lipsync_dir = "Core/UI/Dialog/Data/LipSync"
     global file_to_path
     file_to_path = {}
     global file_to_type
     file_to_type = {}
     #Path info
-    with open("Data\\FileToPath.json", "r", encoding="utf8") as file_reader:
+    with open("Data/FileToPath.json", "r", encoding="utf8") as file_reader:
         file_to_path.update(json.load(file_reader))
-    with open("Data\\LipSync.txt", "r", encoding="utf8") as file_reader:
+    with open("Data/LipSync.txt", "r", encoding="utf8") as file_reader:
         file_to_path.update({file.strip(): lipsync_dir for file in file_reader.readlines()})
     #Type info
     for file in file_to_path:
@@ -86,18 +86,18 @@ def load_game_data():
     for file in file_to_type:
         if file_to_type[file] in load_types:
             extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
-            game_data[file] = UAsset(f"{asset_dir}\\{file_to_path[file]}\\{file}{extension}", EngineVersion.VER_UE4_22)
+            game_data[file] = UAsset(f"{asset_dir}/{file_to_path[file]}/{file}{extension}", EngineVersion.VER_UE4_22)
     
 def load_constant():
-    for file in os.listdir("Data\\Constant"):
+    for file in os.listdir("Data/Constant"):
         name, extension = os.path.splitext(file)
-        with open(f"Data\\Constant\\{file}", "r", encoding="utf8") as file_reader:
+        with open(f"Data/Constant/{file}", "r", encoding="utf8") as file_reader:
             constant[name] = json.load(file_reader)
 
 def load_translation():
-    for file in os.listdir("Data\\Translation"):
+    for file in os.listdir("Data/Translation"):
         name, extension = os.path.splitext(file)
-        with open(f"Data\\Translation\\{file}", "r", encoding="utf8") as file_reader:
+        with open(f"Data/Translation/{file}", "r", encoding="utf8") as file_reader:
             translation[name] = json.load(file_reader)
     global start_item_translation
     start_item_translation = {}
@@ -107,7 +107,7 @@ def load_translation():
 
 def load_map(path):
     if not path:
-        path = "MapEdit\\Data\\PB_DT_RoomMaster.json"
+        path = "MapEdit/Data/PB_DT_RoomMaster.json"
     with open(path, "r", encoding="utf8") as file_reader:
         json_file = json.load(file_reader)
     if "PB_DT_RoomMaster" in datatable:
@@ -777,21 +777,21 @@ def set_bigtoss_mode():
             datatable["PB_DT_DamageMaster"][entry]["KnockBackLimitAngleMax"] = float(random.randint(-180, 180))
 
 def write_log(filename, log):
-    with open(f"Spoiler\\{filename}.json", "w", encoding="utf8") as file_writer:
+    with open(f"Spoiler/{filename}.json", "w", encoding="utf8") as file_writer:
         file_writer.write(json.dumps(log, ensure_ascii=False, indent=2))
 
 def write_files():
     #Dump all uasset objects to files
     for file in game_data:
         extension = ".umap" if file_to_type[file] == FileType.Level else ".uasset"
-        game_data[file].Write(f"{mod_dir}\\{file_to_path[file]}\\{file}{extension}")
+        game_data[file].Write(f"{mod_dir}/{file_to_path[file]}/{file}{extension}")
 
 def debug_output_datatables():
     if os.path.isdir("Debug"):
         shutil.rmtree("Debug")
     os.makedirs("Debug")
     for file in datatable:
-        with open(f"Debug\\{file}.json", "w", encoding="utf8") as file_writer:
+        with open(f"Debug/{file}.json", "w", encoding="utf8") as file_writer:
             file_writer.write(json.dumps(datatable[file], ensure_ascii=False, indent=2))
 
 def remove_unchanged_files():
@@ -802,16 +802,16 @@ def remove_unchanged_files():
         if file_to_path[file] == lipsync_dir:
             continue
         remove = True
-        for sub_file in os.listdir(f"{mod_dir}\\{file_to_path[file]}"):
+        for sub_file in os.listdir(f"{mod_dir}/{file_to_path[file]}"):
             name, extension = os.path.splitext(sub_file)
             if name == file:
-                if not filecmp.cmp(f"{mod_dir}\\{file_to_path[file]}\\{sub_file}", f"{asset_dir}\\{file_to_path[file]}\\{sub_file}", shallow=False):
+                if not filecmp.cmp(f"{mod_dir}/{file_to_path[file]}/{sub_file}", f"{asset_dir}/{file_to_path[file]}/{sub_file}", shallow=False):
                     remove = False
         if remove:
-            for sub_file in os.listdir(f"{mod_dir}\\{file_to_path[file]}"):
+            for sub_file in os.listdir(f"{mod_dir}/{file_to_path[file]}"):
                 name, extension = os.path.splitext(sub_file)
                 if name == file:
-                    os.remove(f"{mod_dir}\\{file_to_path[file]}\\{sub_file}")
+                    os.remove(f"{mod_dir}/{file_to_path[file]}/{sub_file}")
 
 def append_string_entry(file, entry, text):
     #Make sure the text never exceeds two lines

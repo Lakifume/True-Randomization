@@ -22,7 +22,7 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
-DEFAULT_MAP = "Data\\PB_DT_RoomMaster.json"
+DEFAULT_MAP = "Data/PB_DT_RoomMaster.json"
 DEFAULT_MAP_SURFACE = 1553
 DEFAULT_MAP_ROOMS   = 383
 
@@ -93,14 +93,14 @@ music_name = []
 play_id = []
 play_name = []
 
-for file in os.listdir("Data\\Constant"):
+for file in os.listdir("Data/Constant"):
     name = os.path.splitext(file)[0]
-    with open("Data\\Constant\\" + file, "r", encoding="utf8") as file_reader:
+    with open("Data/Constant/" + file, "r", encoding="utf8") as file_reader:
         constant[name] = json.load(file_reader)
 
-for file in os.listdir("Data\\Translation"):
+for file in os.listdir("Data/Translation"):
     name = os.path.splitext(file)[0]
-    with open("Data\\Translation\\" + file, "r", encoding="utf8") as file_reader:
+    with open("Data/Translation/" + file, "r", encoding="utf8") as file_reader:
         translation[name] = json.load(file_reader)
 
 music_id.append(None)
@@ -551,10 +551,10 @@ class MainWindow(QMainWindow):
         
         self.context_menu = QMenu(self)
         
-        context_action_1 = self.context_menu.addAction(QIcon("Data\\Icon\\reverse_icon.png")  , "Entrances")
-        context_action_2 = self.context_menu.addAction(QIcon("Data\\Icon\\swap_icon.png")     , "Room type")
-        context_action_3 = self.context_menu.addAction(QIcon("Data\\Icon\\duplicate_icon.png"), "Duplicate")
-        context_action_4 = self.context_menu.addAction(QIcon("Data\\Icon\\delete_icon.png")   , "Delete")
+        context_action_1 = self.context_menu.addAction(QIcon("Data/Icon/reverse_icon.png")  , "Entrances")
+        context_action_2 = self.context_menu.addAction(QIcon("Data/Icon/swap_icon.png")     , "Room type")
+        context_action_3 = self.context_menu.addAction(QIcon("Data/Icon/duplicate_icon.png"), "Duplicate")
+        context_action_4 = self.context_menu.addAction(QIcon("Data/Icon/delete_icon.png")   , "Delete")
         
         context_action_1.triggered.connect(self.reverse_action)
         context_action_2.triggered.connect(self.swap_action)
@@ -565,42 +565,42 @@ class MainWindow(QMainWindow):
         
         self.reverse = QPushButton()
         self.reverse.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_E))
-        self.reverse.setIcon(QIcon("Data\\Icon\\reverse_icon.png"))
+        self.reverse.setIcon(QIcon("Data/Icon/reverse_icon.png"))
         self.reverse.setToolTip("Toggle save/warp entrances\nShortcut: Ctrl + E")
         self.reverse.clicked.connect(self.reverse_action)
         self.reverse.setFixedSize(50, 30)
         
         self.swap = QPushButton()
         self.swap.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_T))
-        self.swap.setIcon(QIcon("Data\\Icon\\swap_icon.png"))
+        self.swap.setIcon(QIcon("Data/Icon/swap_icon.png"))
         self.swap.setToolTip("Toggle save/warp room type\nShortcut: Ctrl + T")
         self.swap.clicked.connect(self.swap_action)
         self.swap.setFixedSize(50, 30)
         
         self.duplicate = QPushButton()
         self.duplicate.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_D))
-        self.duplicate.setIcon(QIcon("Data\\Icon\\duplicate_icon.png"))
+        self.duplicate.setIcon(QIcon("Data/Icon/duplicate_icon.png"))
         self.duplicate.setToolTip("Duplicate a save/warp/transition room\nShortcut: Ctrl + D")
         self.duplicate.clicked.connect(self.duplicate_action)
         self.duplicate.setFixedSize(50, 30)
         
         self.delete = QPushButton()
         self.delete.setShortcut(QKeySequence(Qt.Key_Delete))
-        self.delete.setIcon(QIcon("Data\\Icon\\delete_icon.png"))
+        self.delete.setIcon(QIcon("Data/Icon/delete_icon.png"))
         self.delete.setToolTip("Delete a duplicated room\nShortcut: Del")
         self.delete.clicked.connect(self.delete_action)
         self.delete.setFixedSize(50, 30)
         
         self.zoom_in = QPushButton()
         self.zoom_in.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Plus))
-        self.zoom_in.setIcon(QIcon("Data\\Icon\\in_icon.png"))
+        self.zoom_in.setIcon(QIcon("Data/Icon/in_icon.png"))
         self.zoom_in.setToolTip("Zoom in\nShortcut: Ctrl + Scroll Up")
         self.zoom_in.clicked.connect(self.zoom_in_action)
         self.zoom_in.setFixedSize(50, 30)
         
         self.zoom_out = QPushButton()
         self.zoom_out.setShortcut(QKeySequence(Qt.CTRL | Qt.Key_Minus))
-        self.zoom_out.setIcon(QIcon("Data\\Icon\\out_icon.png"))
+        self.zoom_out.setIcon(QIcon("Data/Icon/out_icon.png"))
         self.zoom_out.setToolTip("Zoom out\nShortcut: Ctrl + Scroll Down")
         self.zoom_out.clicked.connect(self.zoom_out_action)
         self.zoom_out.setFixedSize(50, 30)
@@ -608,7 +608,7 @@ class MainWindow(QMainWindow):
         #Labels
         
         self.lock_label = QLabel()
-        self.lock_label.setPixmap(QPixmap("Data\\Icon\\lock_icon.png"))
+        self.lock_label.setPixmap(QPixmap("Data/Icon/lock_icon.png"))
         
         self.seed_label = QLabel()
         self.seed_label.setVisible(False)
@@ -758,7 +758,7 @@ class MainWindow(QMainWindow):
             return
         self.path = (QFileDialog.getOpenFileName(parent=self, caption="Open", dir="Custom", filter="*.json"))[0]
         if self.path:
-            self.open_json(self.path.replace("/", "\\"), True)
+            self.open_json(self.path, True)
     
     def open_json(self, json_path, is_writable):
         self.current_path = json_path
@@ -775,7 +775,7 @@ class MainWindow(QMainWindow):
     def save_file_as(self):
         self.path = (QFileDialog.getSaveFileName(parent=self, caption="Save as", dir="Custom", filter="*.json"))[0]
         if self.path:
-            self.current_path = self.path.replace("/", "\\")
+            self.current_path = self.path
             self.title_string = f" ({self.current_path})"
             self.save_to_json(self.current_path)
             self.direct_save = True
@@ -790,10 +790,10 @@ class MainWindow(QMainWindow):
     def use_restr_action(self):
         if self.use_restr.isChecked():
             self.restrictions = True
-            self.lock_label.setPixmap(QPixmap("Data\\Icon\\lock_icon.png"))
+            self.lock_label.setPixmap(QPixmap("Data/Icon/lock_icon.png"))
         else:
             self.restrictions = False
-            self.lock_label.setPixmap(QPixmap("Data\\Icon\\unlock_icon.png"))
+            self.lock_label.setPixmap(QPixmap("Data/Icon/unlock_icon.png"))
         for room in self.room_list:
             room.reset_flags()
             room.setSelected(False)
@@ -931,15 +931,15 @@ class MainWindow(QMainWindow):
             box.setWindowTitle("Error")
             box.setIcon(QMessageBox.Critical)
             try:
-                spoiler_path = os.path.abspath(os.path.join("", os.pardir)) + "\\Spoiler\\KeyLocation.json"
+                spoiler_path = os.path.abspath(os.path.join("", os.pardir)) + "/Spoiler/KeyLocation.json"
                 with open(spoiler_path, "r", encoding="utf8") as file_reader:
                     self.spoiler_log = json.load(file_reader)
                 spoiler_map = self.spoiler_log["Map"]
-                if not spoiler_map and name.split("\\")[-1] != "PB_DT_RoomMaster":
+                if not spoiler_map and name.split("/")[-1] != "PB_DT_RoomMaster":
                     self.open_json(DEFAULT_MAP, False)
                     return
-                if spoiler_map and name.split("\\")[-1] != spoiler_map:
-                    log_map_path = f"Custom\\{spoiler_map}.json"
+                if spoiler_map and name.split("/")[-1] != spoiler_map:
+                    log_map_path = f"Custom/{spoiler_map}.json"
                     if os.path.isfile(log_map_path):
                         self.open_json(log_map_path, True)
                         return
@@ -1059,11 +1059,11 @@ class MainWindow(QMainWindow):
         for room in self.scene.selectedItems():
             if room.room_data.room_type == "ERoomType::Save":
                 room.room_data.room_type = "ERoomType::Warp"
-                room.childItems()[0].setPixmap(QPixmap("Data\\Icon\\warp.png"))
+                room.childItems()[0].setPixmap(QPixmap("Data/Icon/warp.png"))
                 self.set_unsaved()
             elif room.room_data.room_type == "ERoomType::Warp":
                 room.room_data.room_type = "ERoomType::Save"
-                room.childItems()[0].setPixmap(QPixmap("Data\\Icon\\save.png"))
+                room.childItems()[0].setPixmap(QPixmap("Data/Icon/save.png"))
                 self.set_unsaved()
     
     def duplicate_action(self):
@@ -1437,77 +1437,77 @@ class MainWindow(QMainWindow):
         #Icons
         
         if room.room_data.room_type == "ERoomType::Save":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\save.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/save.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.room_type == "ERoomType::Warp":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\warp.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/warp.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in boss_room:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\boss.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/boss.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if int(room.room_data.name[1:3]) == 88:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\key.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/key.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m01SIP_000":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\start.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/start.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m03ENT_004":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\blood.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/blood.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m03ENT_1200":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\cross.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/cross.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m04GDN_001", "m10BIG_000"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\portal.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/portal.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m05SAN_006":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\barber.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/barber.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m06KNG_021":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\flame.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/flame.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m07LIB_009":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\book.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/book.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m09TRN_001", "m09TRN_004"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\gate.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/gate.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m19K2C_000":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\crown.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/crown.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m51EBT_000":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\8bit.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/8bit.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m18ICE_019", "m77LBP_000"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\end.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/end.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT/2 + EDIT_TILEHEIGHT/2 - 1.5)
             icon.setParentItem(room)
@@ -1515,112 +1515,112 @@ class MainWindow(QMainWindow):
         #Wall
         
         if room.room_data.name == "m03ENT_000":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\spike_opening.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/spike_opening.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT*13 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m03ENT_007":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m05SAN_003":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wall_horizontal.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/wall_horizontal.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT*8 + 6)
             icon.setParentItem(room)
         if room.room_data.name == "m05SAN_009":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_down.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_down.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT*4 + 11)
             icon.setParentItem(room)
         if room.room_data.name == "m05SAN_017":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 1, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m05SAN_019", "m08TWR_019"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(EDIT_TILEWIDTH - 23.5, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m05SAN_021":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_right.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_right.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, room.room_data.height*EDIT_TILEHEIGHT - EDIT_TILEHEIGHT*2 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m06KNG_013":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_right.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_right.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m07LIB_005":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_down.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_down.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH -18.5, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m07LIB_006", "m11UGD_045"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\hole.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/hole.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m07LIB_008", "m07LIB_014", "m11UGD_016", "m18ICE_016"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\hole.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/hole.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 8.5, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m07LIB_021":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_down.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_down.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m07LIB_023":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 11.5, EDIT_TILEHEIGHT*3 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m07LIB_035" or room.room_data.name == "m11UGD_056":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\opening.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/opening.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT*3 - 9)
             icon.setParentItem(room)
         if room.room_data.name == "m09TRN_003":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_right.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_right.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m08TWR_009":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 11.5, EDIT_TILEHEIGHT*11 - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m11UGD_015":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\one_way_right.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/one_way_right.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 11, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m11UGD_046":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\hole_left.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/hole_left.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(1.5, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m11UGD_056":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wall_vertical.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/wall_vertical.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 8.5, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m15JPN_010", "m17RVA_005"]:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\ceiling_hole.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/ceiling_hole.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m17RVA_003":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\ceiling_hole_right.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/ceiling_hole_right.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH - 13.5, room.room_data.height*EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
         if room.room_data.name == "m18ICE_015":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wall_vertical.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/wall_vertical.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(room.room_data.width*EDIT_TILEWIDTH/2 - 6, EDIT_TILEHEIGHT - 1.5)
             icon.setParentItem(room)
@@ -1630,40 +1630,40 @@ class MainWindow(QMainWindow):
         if room.room_data.name in ["m11UGD_021", "m11UGD_022", "m11UGD_023", "m11UGD_024", "m11UGD_025", "m11UGD_044", "m11UGD_045"]:
             for num_1 in range(room.room_data.width):
                 for num_2 in range(room.room_data.height):
-                    icon = self.scene.addPixmap(QPixmap("Data\\Icon\\bubble.png"))
+                    icon = self.scene.addPixmap(QPixmap("Data/Icon/bubble.png"))
                     icon.setTransform(QTransform.fromScale(1, -1))
                     icon.setPos(num_1*EDIT_TILEWIDTH + 6, num_2*EDIT_TILEHEIGHT + 13.5)
                     icon.setParentItem(room)
         if room.room_data.name == "m11UGD_026":
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\bubble.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/bubble.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(6, 13.5)
             icon.setParentItem(room)
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/wave.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(EDIT_TILEWIDTH + 6, 13.5)
             icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_005", "m11UGD_036"]:
             for num in range(room.room_data.width):
-                icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+                icon = self.scene.addPixmap(QPixmap("Data/Icon/wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(num*EDIT_TILEWIDTH + 6, 20.5)
                 icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_019", "m11UGD_040"]:
             for num in range(room.room_data.width):
-                icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+                icon = self.scene.addPixmap(QPixmap("Data/Icon/wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(num*EDIT_TILEWIDTH + 6, 28.5)
                 icon.setParentItem(room)
         if room.room_data.name in ["m11UGD_042", "m11UGD_046"]:
             for num in range(room.room_data.width):
-                icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+                icon = self.scene.addPixmap(QPixmap("Data/Icon/wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(num*EDIT_TILEWIDTH + 6, 43.5)
                 icon.setParentItem(room)
         if room.room_data.name == "m11UGD_043":
             for num in range(room.room_data.width - 1):
-                icon = self.scene.addPixmap(QPixmap("Data\\Icon\\wave.png"))
+                icon = self.scene.addPixmap(QPixmap("Data/Icon/wave.png"))
                 icon.setTransform(QTransform.fromScale(1, -1))
                 icon.setPos(num*EDIT_TILEWIDTH + 6, 13.5)
                 icon.setParentItem(room)
@@ -1671,7 +1671,7 @@ class MainWindow(QMainWindow):
         #No traverse
         
         for void in room.room_data.no_traverse:
-            icon = self.scene.addPixmap(QPixmap("Data\\Icon\\void.png"))
+            icon = self.scene.addPixmap(QPixmap("Data/Icon/void.png"))
             icon.setTransform(QTransform.fromScale(1, -1))
             icon.setPos(void[0]*EDIT_TILEWIDTH + 0.5, (void[1] + 1)*EDIT_TILEHEIGHT + 4.5)
             icon.setParentItem(room)
@@ -1804,10 +1804,10 @@ class MainWindow(QMainWindow):
                 self.json_file["MapData"][room]["NoTraverse"] = sorted(no_traverse)
             offset += 1
         #Update 2.9.2
-        for file in os.listdir("Data\\ExtraRoom"):
+        for file in os.listdir("Data/ExtraRoom"):
             name = os.path.splitext(file)[0]
             if not name in self.json_file["MapData"]:
-                with open("Data\\ExtraRoom\\" + file, "r", encoding="utf8") as file_reader:
+                with open("Data/ExtraRoom/" + file, "r", encoding="utf8") as file_reader:
                     extra_room = json.load(file_reader)
                 self.json_file["MapData"][name] = extra_room
     

@@ -938,7 +938,7 @@ def fix_bathin_left_entrance():
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
         room = door_string_to_door[door].room
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
+        new_file = UAsset(Manager.asset_dir + "/" + Manager.file_to_path["m02VIL_012_RV"] + "/m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(room + "_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -955,7 +955,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, "dummy")
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, "dummy")
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, "m13ARC_005")
-        new_file.Write(Manager.mod_dir + "\\Core\\Environment\\" + area_path + "\\Level\\" + room + "_RV.umap")
+        new_file.Write(Manager.mod_dir + "/Core/Environment/" + area_path + "/Level/" + room + "_RV.umap")
     adjacent_room = None
     #Get Bathin's adjacent room while prioritizing the same area
     for door in map_connections["m13ARC_005"]["ARC_005_0_0_LEFT"]:
@@ -967,7 +967,7 @@ def fix_bathin_left_entrance():
     if adjacent_room:
         room = "m13ARC_005"
         area_path = "ACT" + room[1:3] + "_" + room[3:6]
-        new_file = UAsset(f"{Manager.asset_dir}\\" + Manager.file_to_path["m02VIL_012_RV"] + "\\m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
+        new_file = UAsset(f"{Manager.asset_dir}/" + Manager.file_to_path["m02VIL_012_RV"] + "/m02VIL_012_RV.umap", EngineVersion.VER_UE4_22)
         index = new_file.SearchNameReference(FString("m02VIL_012_RV"))
         new_file.SetNameReference(index, FString(f"{room}_RV"))
         index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT02_VIL/Level/m02VIL_012_RV"))
@@ -984,7 +984,7 @@ def fix_bathin_left_entrance():
         new_file.Exports[8].Data[1].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[2].Value = FName.FromString(new_file, adjacent_room[3:])
         new_file.Exports[8].Data[3].Value = FName.FromString(new_file, adjacent_room)
-        new_file.Write(f"{Manager.mod_dir}\\Core\\Environment\\{area_path}\\Level\\{room}_RV.umap")
+        new_file.Write(f"{Manager.mod_dir}/Core/Environment/{area_path}/Level/{room}_RV.umap")
 
 def add_global_room_pickup(room, drop_id):
     #Place an upgrade in a room at its origin
@@ -1004,13 +1004,13 @@ def add_global_room_pickup(room, drop_id):
 
 def add_game_room(room):
     area_path = "ACT" + room[1:3] + "_" + room[3:6]
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["m01SIP_1000_RV"] + "\\m01SIP_1000_RV.umap", EngineVersion.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "/" + Manager.file_to_path["m01SIP_1000_RV"] + "/m01SIP_1000_RV.umap", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("m01SIP_1000_RV"))
     new_file.SetNameReference(index, FString(f"{room}_RV"))
     index = new_file.SearchNameReference(FString("/Game/Core/Environment/ACT01_SIP/Level/m01SIP_1000_RV"))
     new_file.SetNameReference(index, FString(f"/Game/Core/Environment/{area_path}/Level/{room}_RV"))
     new_file.Exports[5].Data[1].Value = FName.FromString(new_file, room)
-    new_file.Write(f"{Manager.mod_dir}\\Core\\Environment\\{area_path}\\Level\\{room}_RV.umap")
+    new_file.Write(f"{Manager.mod_dir}/Core/Environment/{area_path}/Level/{room}_RV.umap")
 
 def add_level_actor(filename, actor_class, location, rotation, scale, properties):
     actor_index = len(game_data[filename].Exports)

@@ -60,7 +60,7 @@ sub_widget_to_param = {}
 spin_index_to_shift = {1: 0, 2: 2, 3: 1}
 shift_to_spin_index = {value: key for key, value in spin_index_to_shift.items()}
     
-map_num = len(glob.glob("MapEdit\\Custom\\*.json"))
+map_num = len(glob.glob("MapEdit/Custom/*.json"))
 window_sizes = [720, 900, 1080]
 
 cheats = {
@@ -148,10 +148,10 @@ modified_files = {
 
 config = configparser.ConfigParser()
 config.optionxform = str
-config.read("Data\\config.ini")
+config.read("Data/config.ini")
 
 def write_config():
-    with open("Data\\config.ini", "w") as file_writer:
+    with open("Data/config.ini", "w") as file_writer:
         config.write(file_writer)
 
 def write_and_exit():
@@ -212,14 +212,14 @@ class Generate(QThread):
         if os.path.isdir(Manager.mod_dir):
             shutil.rmtree(Manager.mod_dir)
         for directory in list(Manager.file_to_path.values()):
-            if not os.path.isdir(f"{Manager.mod_dir}\\{directory}"):
-                os.makedirs(f"{Manager.mod_dir}\\{directory}")
+            if not os.path.isdir(f"{Manager.mod_dir}/{directory}"):
+                os.makedirs(f"{Manager.mod_dir}/{directory}")
         
         #Log directory
         
         if os.path.isdir("Spoiler"):
             for file in os.listdir("Spoiler"):
-                os.remove(f"Spoiler\\{file}")
+                os.remove(f"Spoiler/{file}")
         else:
             os.makedirs("Spoiler")
         
@@ -282,7 +282,7 @@ class Generate(QThread):
         
         random.seed(self.selected_seed)
         if not self.selected_map and config.getboolean("MapRandomization", "bRoomLayout"):
-            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
+            self.selected_map = random.choice(glob.glob("MapEdit/Custom/*.json")) if glob.glob("MapEdit/Custom/*.json") else ""
         Manager.load_map(self.selected_map)
         Room.get_map_info()
         
@@ -558,7 +558,7 @@ class Generate(QThread):
             Manager.write_log("EnemyProperties", Enemy.create_log())
         
         #Add and import any mesh files found in the mesh directory
-        for directory in os.listdir("Data\\Mesh"):
+        for directory in os.listdir("Data/Mesh"):
             file_name, extension = os.path.splitext(directory)
             if extension == ".uasset":
                 Graphic.import_mesh(file_name)
@@ -568,7 +568,7 @@ class Generate(QThread):
             Equipment.add_armor_reference(item)
         
         #Add and import any music files found in the music directory
-        for directory in os.listdir("Data\\Music"):
+        for directory in os.listdir("Data/Music"):
             file_name = os.path.splitext(directory)[0]
             Sound.add_music_file(file_name)
         
@@ -636,19 +636,19 @@ class Generate(QThread):
         #Import chosen hues for Miriam and Zangetsu
         #While it is technically not necessary to first copy the textures out of the chosen folder we do it so that the random hue does not show up on the terminal
         if miriam_color:
-            for texture in os.listdir(f"Data\\Texture\\Miriam\\{miriam_color}"):
-                shutil.copyfile(f"Data\\Texture\\Miriam\\{miriam_color}\\{texture}", f"Data\\Texture\\{texture}")
+            for texture in os.listdir(f"Data/Texture/Miriam/{miriam_color}"):
+                shutil.copyfile(f"Data/Texture/Miriam/{miriam_color}/{texture}", f"Data/Texture/{texture}")
             
             Graphic.import_texture("Face_Miriam")
             Graphic.import_texture("T_Pl01_Cloth_Bace")
             Graphic.import_texture("T_Body01_01_Color")
             
-            for texture in os.listdir(f"Data\\Texture\\Miriam\\{miriam_color}"):
-                os.remove(f"Data\\Texture\\{texture}")
+            for texture in os.listdir(f"Data/Texture/Miriam/{miriam_color}"):
+                os.remove(f"Data/Texture/{texture}")
         
         if zangetsu_color:
-            for texture in os.listdir(f"Data\\Texture\\Zangetsu\\{zangetsu_color}"):
-                shutil.copyfile(f"Data\\Texture\\Zangetsu\\{zangetsu_color}\\{texture}", f"Data\\Texture\\{texture}")
+            for texture in os.listdir(f"Data/Texture/Zangetsu/{zangetsu_color}"):
+                shutil.copyfile(f"Data/Texture/Zangetsu/{zangetsu_color}/{texture}", f"Data/Texture/{texture}")
             
             Graphic.import_texture("Face_Zangetsu")
             Graphic.import_texture("T_N1011_body_color")
@@ -656,8 +656,8 @@ class Generate(QThread):
             Graphic.import_texture("T_N1011_weapon_color")
             Graphic.import_texture("T_Tknife05_Base")
             
-            for texture in os.listdir(f"Data\\Texture\\Zangetsu\\{zangetsu_color}"):
-                os.remove(f"Data\\Texture\\{texture}")
+            for texture in os.listdir(f"Data/Texture/Zangetsu/{zangetsu_color}"):
+                os.remove(f"Data/Texture/{texture}")
         
         Graphic.update_backer_portraits()
         
@@ -671,50 +671,50 @@ class Generate(QThread):
         
         self.progress_bar.setLabelText("Packing files...")
         
-        with open("Tools\\UnrealPak\\filelist.txt", "w") as file_writer:
-            file_writer.write("\"Mod\\*.*\" \"..\\..\\..\\*.*\" \n")
+        with open("Tools/UnrealPak/filelist.txt", "w") as file_writer:
+            file_writer.write("\"Mod/*.*\" \"../../../*.*\" \n")
         
         root = os.getcwd()
-        os.chdir("Tools\\UnrealPak")
+        os.chdir("Tools/UnrealPak")
         os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress")
         os.chdir(root)
         
         #Reset
         
-        if os.path.isdir("Tools\\UE4 DDS Tools\\src\\__pycache__"):
-            shutil.rmtree("Tools\\UE4 DDS Tools\\src\\__pycache__")
-        shutil.rmtree("Tools\\UnrealPak\\Mod")
-        os.remove("Tools\\UnrealPak\\filelist.txt")
+        if os.path.isdir("Tools/UE4 DDS Tools/src/__pycache__"):
+            shutil.rmtree("Tools/UE4 DDS Tools/src/__pycache__")
+        shutil.rmtree("Tools/UnrealPak/Mod")
+        os.remove("Tools/UnrealPak/filelist.txt")
         
         #Move
         
-        if not os.path.isdir(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods"):
-            os.makedirs(config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods")
-        shutil.move("Tools\\UnrealPak\\Randomizer.pak", config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Content\\Paks\\~mods\\Randomizer.pak")
+        if not os.path.isdir(config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods"):
+            os.makedirs(config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods")
+        shutil.move("Tools/UnrealPak/Randomizer.pak", config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods/Randomizer.pak")
         
         #Copy UE4SS
         
-        exe_directory = config.get("Misc", "sGamePath") + "\\BloodstainedRotN\\Binaries\\Win64"
-        if not os.path.isfile(f"{exe_directory}\\UE4SS.dll"):
-            for item in os.listdir("Tools\\UE4SS"):
-                if os.path.isfile(f"Tools\\UE4SS\\{item}"):
-                    shutil.copyfile(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}")
-                if os.path.isdir(f"Tools\\UE4SS\\{item}"):
-                    shutil.copytree(f"Tools\\UE4SS\\{item}", f"{exe_directory}\\{item}", dirs_exist_ok=True)
-        for directory in os.listdir(f"{exe_directory}\\Mods"):
+        exe_directory = config.get("Misc", "sGamePath") + "/BloodstainedRotN/Binaries/Win64"
+        if not os.path.isfile(f"{exe_directory}/UE4SS.dll"):
+            for item in os.listdir("Tools/UE4SS"):
+                if os.path.isfile(f"Tools/UE4SS/{item}"):
+                    shutil.copyfile(f"Tools/UE4SS/{item}", f"{exe_directory}/{item}")
+                if os.path.isdir(f"Tools/UE4SS/{item}"):
+                    shutil.copytree(f"Tools/UE4SS/{item}", f"{exe_directory}/{item}", dirs_exist_ok=True)
+        for directory in os.listdir(f"{exe_directory}/Mods"):
             if not directory in ["CrowdControl", "shared"]:
-                shutil.rmtree(f"{exe_directory}\\Mods\\{directory}")
-        for directory in os.listdir("Data\\UE4SS"):
-            shutil.copytree(f"Data\\UE4SS\\{directory}", f"{exe_directory}\\Mods\\{directory}", dirs_exist_ok=True)
-            if not os.path.isfile(f"{exe_directory}\\Mods\\{directory}\\enabled.txt"): 
-                open(f"{exe_directory}\\Mods\\{directory}\\enabled.txt", "w").close()
+                shutil.rmtree(f"{exe_directory}/Mods/{directory}")
+        for directory in os.listdir("Data/UE4SS"):
+            shutil.copytree(f"Data/UE4SS/{directory}", f"{exe_directory}/Mods/{directory}", dirs_exist_ok=True)
+            if not os.path.isfile(f"{exe_directory}/Mods/{directory}/enabled.txt"): 
+                open(f"{exe_directory}/Mods/{directory}/enabled.txt", "w").close()
         
         #User randomly chosen mod
         
-        if os.path.isdir("Data\\Mod"):
-            for directory in os.listdir("Data\\Mod"):
-                chosen_mod = random.choice(glob.glob(f"Data\\Mod\\{directory}\\*.pak"))
-                shutil.copyfile(chosen_mod, config.get("Misc", "sGamePath") + f"\\BloodstainedRotN\\Content\\Paks\\~mods\\{directory}.pak")
+        if os.path.isdir("Data/Mod"):
+            for directory in os.listdir("Data/Mod"):
+                chosen_mod = random.choice(glob.glob(f"Data/Mod/{directory}/*.pak"))
+                shutil.copyfile(chosen_mod, config.get("Misc", "sGamePath") + f"/BloodstainedRotN/Content/Paks/~mods/{directory}.pak")
         
         current += 1
         self.signaller.progress.emit(current)
@@ -755,18 +755,18 @@ class Update(QThread):
         #Purge folders
         
         shutil.rmtree("Data")
-        shutil.rmtree("MapEdit\\Data")
-        shutil.rmtree("Tools\\UE4 DDS Tools")
-        shutil.rmtree("Tools\\UE4SS")
-        shutil.rmtree("Tools\\UModel")
-        shutil.rmtree("Tools\\UnrealPak")
+        shutil.rmtree("MapEdit/Data")
+        shutil.rmtree("Tools/UE4 DDS Tools")
+        shutil.rmtree("Tools/UE4SS")
+        shutil.rmtree("Tools/UModel")
+        shutil.rmtree("Tools/UnrealPak")
         
         #Extract
         
         os.rename(exe_name, "delete.me")
-        os.rename("Tools\\UAssetAPI\\Newtonsoft.Json.dll", "Tools\\UAssetAPI\\delete1.me")
-        os.rename("Tools\\UAssetAPI\\UAssetAPI.dll",       "Tools\\UAssetAPI\\delete2.me")
-        os.rename("Tools\\UAssetAPI\\UAssetSnippet.dll",   "Tools\\UAssetAPI\\delete3.me")
+        os.rename("Tools/UAssetAPI/Newtonsoft.Json.dll", "Tools/UAssetAPI/delete1.me")
+        os.rename("Tools/UAssetAPI/UAssetAPI.dll",       "Tools/UAssetAPI/delete2.me")
+        os.rename("Tools/UAssetAPI/UAssetSnippet.dll",   "Tools/UAssetAPI/delete3.me")
         with zipfile.ZipFile(zip_name, "r") as zip_ref:
             zip_ref.extractall("")
         os.remove(zip_name)
@@ -775,7 +775,7 @@ class Update(QThread):
         
         new_config = configparser.ConfigParser()
         new_config.optionxform = str
-        new_config.read("Data\\config.ini")
+        new_config.read("Data/config.ini")
         for each_section in new_config.sections():
             for (each_key, each_val) in new_config.items(each_section):
                 if each_key == "sVersion":
@@ -784,7 +784,7 @@ class Update(QThread):
                     new_config.set(each_section, each_key, config.get(each_section, each_key))
                 except (configparser.NoSectionError, configparser.NoOptionError):
                     continue
-        with open("Data\\config.ini", "w") as file_writer:
+        with open("Data/config.ini", "w") as file_writer:
             new_config.write(file_writer)
         
         self.signaller.finished.emit()
@@ -811,14 +811,14 @@ class Import(QThread):
             shutil.rmtree(Manager.asset_dir)
         
         #There's a limit of around 8000 characters per command, split the list of packages into multiple batches of maximum 7500 characters
-        packages = " ".join([f"-pkg=\"{Manager.asset_dir}\\{Manager.file_to_path[asset]}\\{asset}\"" for asset in self.asset_list])
+        packages = " ".join([f"-pkg=\"{Manager.asset_dir}/{Manager.file_to_path[asset]}/{asset}\"" for asset in self.asset_list])
         batches = textwrap.wrap(packages, 7500)
         output_path = os.path.abspath("")
         
         root = os.getcwd()
-        os.chdir("Tools\\UModel")
+        os.chdir("Tools/UModel")
         for batch in batches:
-            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + f"\\BloodstainedRotN\\Content\\Paks\" -out=\"{output_path}\" -save {batch}")
+            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + f"/BloodstainedRotN/Content/Paks\" -out=\"{output_path}\" -save {batch}")
             current += batch.count(" ") + 1
             self.signaller.progress.emit(current)
         os.chdir(root)
@@ -875,7 +875,7 @@ class MainWindow(QGraphicsView):
         
         artwork_label = QLabel()
         artwork_label.setStyleSheet("border: 1px solid white")
-        artwork_label.setPixmap(QPixmap("Data\\artwork.png"))
+        artwork_label.setPixmap(QPixmap("Data/artwork.png"))
         artwork_label.setScaledContents(True)
         artwork_label.setFixedSize(self.size_multiplier*550, self.size_multiplier*978)
         main_window_layout.addWidget(artwork_label)
@@ -1272,7 +1272,7 @@ class MainWindow(QGraphicsView):
         center_box_7_layout.addWidget(self.browse_map_button, 0, 1)
         
         self.outfit_config_button = QPushButton()
-        self.outfit_config_button.setIcon(QPixmap("Data\\config.png"))
+        self.outfit_config_button.setIcon(QPixmap("Data/config.png"))
         self.outfit_config_button.setToolTip("Configure which outfit colors can be chosen.")
         self.outfit_config_button.setStyleSheet("QPushButton{color: #ffffff; font-family: Impact}" + "QToolTip{color: #ffffff; font-family: Cambria}")
         self.outfit_config_button.setFixedSize(self.size_multiplier*28, self.size_multiplier*24)
@@ -1358,7 +1358,7 @@ class MainWindow(QGraphicsView):
         
         self.starting_items_field = QLineEdit(config.get("StartWith", "sStartItem"))
         self.starting_items_field.setPlaceholderText("Starting items")
-        self.starting_items_field.setToolTip("Items to start with. Input their english names with\ncommas as separators. If unsure refer to the files\nin Data\\Translation for item names.")
+        self.starting_items_field.setToolTip("Items to start with. Input their english names with\ncommas as separators. If unsure refer to the files\nin Data/Translation for item names.")
         self.starting_items_field.textChanged[str].connect(self.starting_items_field_changed)
         center_box_16_layout.addWidget(self.starting_items_field, 0, 0)
         
@@ -1371,12 +1371,12 @@ class MainWindow(QGraphicsView):
         
         self.game_path_field = QLineEdit(config.get("Misc", "sGamePath"))
         self.game_path_field.setPlaceholderText("Game directory")
-        self.game_path_field.setToolTip("Path to your game's data (...\\steamapps\\common\\Bloodstained Ritual of the Night).")
+        self.game_path_field.setToolTip("Path to your game's data (.../steamapps/common/Bloodstained Ritual of the Night).")
         self.game_path_field.textChanged[str].connect(self.game_path_field_changed)
         center_box_14_layout.addWidget(self.game_path_field, 0, 0)
         
         browse_game_path_button = QPushButton()
-        browse_game_path_button.setIcon(QPixmap("Data\\browse.png"))
+        browse_game_path_button.setIcon(QPixmap("Data/browse.png"))
         browse_game_path_button.clicked.connect(self.browse_game_path_button_clicked)
         center_box_14_layout.addWidget(browse_game_path_button, 0, 1)
         
@@ -2140,10 +2140,10 @@ class MainWindow(QGraphicsView):
     def browse_game_path_button_clicked(self):
         path = QFileDialog.getExistingDirectory(self, "Folder")
         if path:
-            self.game_path_field.setText(path.replace("/", "\\"))
+            self.game_path_field.setText(path)
     
     def is_game_path_valid(self):
-        return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(config.get("Misc", "sGamePath") + "\\BloodstainedRotN.exe")
+        return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(config.get("Misc", "sGamePath") + "/BloodstainedRotN.exe")
     
     def label_change(self, filetype):
         files  = modified_files[filetype]["Files"]
@@ -2230,17 +2230,17 @@ class MainWindow(QGraphicsView):
         if "steamapps" in config.get("Misc", "sGamePath").lower():
             steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
             #Override the Steam path if the game path is on another drive
-            library_config_path = f"{steam_path}\\libraryfolder.vdf"
+            library_config_path = f"{steam_path}/libraryfolder.vdf"
             if os.path.isfile(library_config_path):
                 with open(library_config_path, "r", encoding="utf8") as file_reader:
                     steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
                     steam_path = os.path.split(steam_exe_path)[0]
             #Get user config
-            user_config_path = f"{steam_path}\\config\\loginusers.vdf"
+            user_config_path = f"{steam_path}/config/loginusers.vdf"
             if not os.path.isfile(user_config_path):
                 self.dlc_failure()
                 return dlc_list
-            with open(f"{steam_path}\\config\\loginusers.vdf", "r", encoding="utf8") as file_reader:
+            with open(f"{steam_path}/config/loginusers.vdf", "r", encoding="utf8") as file_reader:
                 user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
             #Determine the Steam friend code based on their user ID
             steam_user = None
@@ -2249,7 +2249,7 @@ class MainWindow(QGraphicsView):
                     steam_user = int(user) - 76561197960265728
                     break
             #Get local config
-            local_config_path = f"{steam_path}\\userdata\\{steam_user}\\config\\localconfig.vdf"
+            local_config_path = f"{steam_path}/userdata/{steam_user}/config/localconfig.vdf"
             if not os.path.isfile(local_config_path):
                 self.dlc_failure()
                 return dlc_list
@@ -2271,7 +2271,7 @@ class MainWindow(QGraphicsView):
         if "gog games" in config.get("Misc", "sGamePath").lower():
             #List the DLC IDs in the game path
             dlc_id_list = []
-            for file in glob.glob(config.get("Misc", "sGamePath") + "\\*.hashdb"):
+            for file in glob.glob(config.get("Misc", "sGamePath") + "/*.hashdb"):
                 file_name = os.path.split(os.path.splitext(file)[0])[-1]
                 dlc_id_list.append(file_name.split("-")[-1])
             #Check for DLC IDs in the list
@@ -2313,7 +2313,7 @@ class MainWindow(QGraphicsView):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\\steamapps\\common\\Bloodstained Ritual of the Night).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(.../steamapps/common/Bloodstained Ritual of the Night).")
             return
         
         #Check if starting items are valid
@@ -2464,7 +2464,7 @@ class MainWindow(QGraphicsView):
         
         random.seed(self.selected_seed)
         if not self.selected_map and config.getboolean("MapRandomization", "bRoomLayout"):
-            self.selected_map = random.choice(glob.glob("MapEdit\\Custom\\*.json")) if glob.glob("MapEdit\\Custom\\*.json") else ""
+            self.selected_map = random.choice(glob.glob("MapEdit/Custom/*.json")) if glob.glob("MapEdit/Custom/*.json") else ""
         Manager.load_map(self.selected_map)
         Room.get_map_info()
         
@@ -2519,19 +2519,19 @@ class MainWindow(QGraphicsView):
         if config.get("MapRandomization", "sSelectedMap"):
             config.set("MapRandomization", "sSelectedMap", "")
         else:
-            path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit\\Custom", filter="*.json")[0]
+            path = QFileDialog.getOpenFileName(parent=self, caption="Open", dir="MapEdit/Custom", filter="*.json")[0]
             if path:
-                config.set("MapRandomization", "sSelectedMap", path.replace("/", "\\"))
+                config.set("MapRandomization", "sSelectedMap", path)
         self.reset_selected_map_state()
     
     def reset_selected_map_state(self):
         selected_map = config.get("MapRandomization", "sSelectedMap")
         if config.getboolean("MapRandomization", "bRoomLayout") and selected_map:
-            self.browse_map_button.setIcon(QPixmap("Data\\cancel.png"))
+            self.browse_map_button.setIcon(QPixmap("Data/cancel.png"))
             self.browse_map_button.setToolTip("Revert map selection back to random.")
             self.setWindowTitle(f"{script_name} ({selected_map})")
         else:
-            self.browse_map_button.setIcon(QPixmap("Data\\browse.png"))
+            self.browse_map_button.setIcon(QPixmap("Data/browse.png"))
             self.browse_map_button.setToolTip("Manually browse a custom map to play on.")
             self.setWindowTitle(script_name)
     
@@ -2556,8 +2556,8 @@ class MainWindow(QGraphicsView):
         self.miriam_outfit_list = QListWidget()
         self.miriam_outfit_list.setSelectionMode(QListWidget.MultiSelection)
         miriam_outfit_box_layout.addWidget(self.miriam_outfit_list)
-        for folder in os.listdir("Data\\Texture\\Miriam"):
-            if os.path.isdir(f"Data\\Texture\\Miriam\\{folder}"):
+        for folder in os.listdir("Data/Texture/Miriam"):
+            if os.path.isdir(f"Data/Texture/Miriam/{folder}"):
                 self.miriam_outfit_list.addItem(folder)
         
         zangetsu_outfit_box_layout = QVBoxLayout()
@@ -2568,8 +2568,8 @@ class MainWindow(QGraphicsView):
         self.zangetsu_outfit_list = QListWidget()
         self.zangetsu_outfit_list.setSelectionMode(QListWidget.MultiSelection)
         zangetsu_outfit_box_layout.addWidget(self.zangetsu_outfit_list)
-        for folder in os.listdir("Data\\Texture\\Zangetsu"):
-            if os.path.isdir(f"Data\\Texture\\Zangetsu\\{folder}"):
+        for folder in os.listdir("Data/Texture/Zangetsu"):
+            if os.path.isdir(f"Data/Texture/Zangetsu/{folder}"):
                 self.zangetsu_outfit_list.addItem(folder)
         
         outfit_confirm_button = QPushButton("Confirm")
@@ -2672,7 +2672,7 @@ class MainWindow(QGraphicsView):
         #Check if path is valid
         
         if not self.is_game_path_valid():
-            self.notify_error("Game path invalid, input the path to your game's data\n(...\\steamapps\\common\\Bloodstained Ritual of the Night).")
+            self.notify_error("Game path invalid, input the path to your game's data\n(.../steamapps/common/Bloodstained Ritual of the Night).")
             return
         
         #Check DLC
@@ -2773,7 +2773,7 @@ class MainWindow(QGraphicsView):
     def credit_button_clicked(self):
         credit_1_layout = QHBoxLayout()
         credit_1_label_image = QLabel()
-        credit_1_label_image.setPixmap(QPixmap("Data\\profile1.png"))
+        credit_1_label_image.setPixmap(QPixmap("Data/profile1.png"))
         credit_1_label_image.setScaledContents(True)
         credit_1_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_1_layout.addWidget(credit_1_label_image)
@@ -2783,7 +2783,7 @@ class MainWindow(QGraphicsView):
         credit_1_layout.addWidget(credit_1_label_text)
         credit_2_layout = QHBoxLayout()
         credit_2_label_image = QLabel()
-        credit_2_label_image.setPixmap(QPixmap("Data\\profile2.png"))
+        credit_2_label_image.setPixmap(QPixmap("Data/profile2.png"))
         credit_2_label_image.setScaledContents(True)
         credit_2_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_2_layout.addWidget(credit_2_label_image)
@@ -2793,7 +2793,7 @@ class MainWindow(QGraphicsView):
         credit_2_layout.addWidget(credit_2_label_text)
         credit_3_layout = QHBoxLayout()
         credit_3_label_image = QLabel()
-        credit_3_label_image.setPixmap(QPixmap("Data\\profile3.png"))
+        credit_3_label_image.setPixmap(QPixmap("Data/profile3.png"))
         credit_3_label_image.setScaledContents(True)
         credit_3_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_3_layout.addWidget(credit_3_label_image)
@@ -2803,7 +2803,7 @@ class MainWindow(QGraphicsView):
         credit_3_layout.addWidget(credit_3_label_text)
         credit_4_layout = QHBoxLayout()
         credit_4_label_image = QLabel()
-        credit_4_label_image.setPixmap(QPixmap("Data\\profile4.png"))
+        credit_4_label_image.setPixmap(QPixmap("Data/profile4.png"))
         credit_4_label_image.setScaledContents(True)
         credit_4_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_4_layout.addWidget(credit_4_label_image)
@@ -2813,7 +2813,7 @@ class MainWindow(QGraphicsView):
         credit_4_layout.addWidget(credit_4_label_text)
         credit_5_layout = QHBoxLayout()
         credit_5_label_image = QLabel()
-        credit_5_label_image.setPixmap(QPixmap("Data\\profile5.png"))
+        credit_5_label_image.setPixmap(QPixmap("Data/profile5.png"))
         credit_5_label_image.setScaledContents(True)
         credit_5_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_5_layout.addWidget(credit_5_label_image)
@@ -2823,7 +2823,7 @@ class MainWindow(QGraphicsView):
         credit_5_layout.addWidget(credit_5_label_text)
         credit_6_layout = QHBoxLayout()
         credit_6_label_image = QLabel()
-        credit_6_label_image.setPixmap(QPixmap("Data\\profile6.png"))
+        credit_6_label_image.setPixmap(QPixmap("Data/profile6.png"))
         credit_6_label_image.setScaledContents(True)
         credit_6_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_6_layout.addWidget(credit_6_label_image)
@@ -2833,7 +2833,7 @@ class MainWindow(QGraphicsView):
         credit_6_layout.addWidget(credit_6_label_text)
         credit_7_layout = QHBoxLayout()
         credit_7_label_image = QLabel()
-        credit_7_label_image.setPixmap(QPixmap("Data\\profile7.png"))
+        credit_7_label_image.setPixmap(QPixmap("Data/profile7.png"))
         credit_7_label_image.setScaledContents(True)
         credit_7_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_7_layout.addWidget(credit_7_label_image)
@@ -2843,7 +2843,7 @@ class MainWindow(QGraphicsView):
         credit_7_layout.addWidget(credit_7_label_text)
         credit_8_layout = QHBoxLayout()
         credit_8_label_image = QLabel()
-        credit_8_label_image.setPixmap(QPixmap("Data\\profile8.png"))
+        credit_8_label_image.setPixmap(QPixmap("Data/profile8.png"))
         credit_8_label_image.setScaledContents(True)
         credit_8_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_8_layout.addWidget(credit_8_label_image)
@@ -2884,8 +2884,8 @@ class MainWindow(QGraphicsView):
         if os.path.isfile("delete.me"):
             os.remove("delete.me")
         for index in range(3):
-            if os.path.isfile(f"Tools\\UAssetAPI\\delete{index + 1}.me"):
-                os.remove(f"Tools\\UAssetAPI\\delete{index + 1}.me")
+            if os.path.isfile(f"Tools/UAssetAPI/delete{index + 1}.me"):
+                os.remove(f"Tools/UAssetAPI/delete{index + 1}.me")
         try:
             api = requests.get("https://api.github.com/repos/Lakifume/True-Randomization/releases/latest").json()
         except requests.ConnectionError:

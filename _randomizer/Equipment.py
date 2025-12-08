@@ -233,7 +233,7 @@ def update_special_properties():
 def add_armor_reference(armor_id):
     #Give a specific armor its own graphical asset pointer when equipped
     datatable["PB_DT_ArmorMaster"][armor_id]["ReferencePath"] = f"/Game/Core/Item/Body/BDBP_{armor_id}.BDBP_{armor_id}"
-    new_file = UAsset("\\".join([Manager.asset_dir, Manager.file_to_path["BDBP_BodyValkyrie"], "BDBP_BodyValkyrie.uasset"]), EngineVersion.VER_UE4_22)
+    new_file = UAsset("/".join([Manager.asset_dir, Manager.file_to_path["BDBP_BodyValkyrie"], "BDBP_BodyValkyrie.uasset"]), EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("BDBP_BodyValkyrie_C"))
     new_file.SetNameReference(index, FString(f"BDBP_{armor_id}_C"))
     index = new_file.SearchNameReference(FString("Default__BDBP_BodyValkyrie_C"))
@@ -257,7 +257,7 @@ def add_armor_reference(armor_id):
     new_file.Exports[1].Data[9].Value          = False
     new_file.Exports[1].Data[10].Value         = 1
     new_file.Exports[1].Data[11].Value         = 0
-    new_file.Write("\\".join([Manager.mod_dir, Manager.file_to_path["BDBP_BodyValkyrie"], f"BDBP_{armor_id}.uasset"]))
+    new_file.Write("/".join([Manager.mod_dir, Manager.file_to_path["BDBP_BodyValkyrie"], f"BDBP_{armor_id}.uasset"]))
 
 def has_negative_stat(equipment):
     for stat in stat_to_property:

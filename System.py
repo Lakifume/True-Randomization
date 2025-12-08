@@ -1,3 +1,9 @@
+from clr_loader import get_coreclr
+from pythonnet import set_runtime
+
+rt = get_coreclr(runtime_config = "tr.runtimeconfig.json")
+set_runtime(rt)
+
 import os
 import clr
 import json
@@ -12,7 +18,7 @@ import colorsys
 
 from enum import Enum
 
-sys.path.append(os.path.abspath("Tools\\UAssetAPI"))
+sys.path.append(os.path.abspath("Tools/UAssetAPI"))
 clr.AddReference("UAssetAPI")
 clr.AddReference("UAssetSnippet")
 

@@ -118,13 +118,13 @@ def update_default_outfit_hsv(parameter_string):
 def randomize_backer_portraits():
     #Shuffle backer portraits in a dict
     portraits = []
-    for directory in os.listdir(Manager.asset_dir + "\\" + Manager.file_to_path["Ml_N3100_picture_001"]):
+    for directory in os.listdir(Manager.asset_dir + "/" + Manager.file_to_path["Ml_N3100_picture_001"]):
         file_name = os.path.splitext(directory)[0]
         portraits.append(file_name)
     portraits = list(dict.fromkeys(portraits))
     new_list = copy.deepcopy(portraits)
     random.shuffle(new_list)
-    portrait_replacement = dict(zip(portraits, new_list))
+    portrait_replacement.update(dict(zip(portraits, new_list)))
 
 def update_backer_portraits():
     #Update the portrait material pointer
@@ -133,19 +133,19 @@ def update_backer_portraits():
 
 def update_portrait_pointer(portrait, portrait_replacement):
     #Simply swap the file's name in the name map and save as the new name
-    portrait_replacement_data = UAsset(f"{Manager.asset_dir}\\{Manager.file_to_path[portrait_replacement]}\\{portrait_replacement}.uasset", EngineVersion.VER_UE4_22)
+    portrait_replacement_data = UAsset(f"{Manager.asset_dir}/{Manager.file_to_path[portrait_replacement]}/{portrait_replacement}.uasset", EngineVersion.VER_UE4_22)
     index = portrait_replacement_data.SearchNameReference(FString(portrait_replacement))
     portrait_replacement_data.SetNameReference(index, FString(portrait))
     index = portrait_replacement_data.SearchNameReference(FString(f"/Game/Core/Character/N3100/Material/TextureMaterial/{portrait_replacement}"))
     portrait_replacement_data.SetNameReference(index, FString(f"/Game/Core/Character/N3100/Material/TextureMaterial/{portrait}"))
-    portrait_replacement_data.Write(f"{Manager.mod_dir}\\{Manager.file_to_path[portrait]}\\{portrait}.uasset")
+    portrait_replacement_data.Write(f"{Manager.mod_dir}/{Manager.file_to_path[portrait]}/{portrait}.uasset")
 
 def update_boss_crystal_color():
     #Unlike for regular enemies the crystalization color on bosses does not update to the shard they give
     #So update it manually in the material files
     for file in Manager.file_to_path:
         if Manager.file_to_type[file] == Manager.FileType.Material:
-            enemy_id = Manager.file_to_path[file].split("\\")[-2]
+            enemy_id = Manager.file_to_path[file].split("/")[-2]
             if Enemy.is_boss(enemy_id) or enemy_id == "N2008":
                 shard_name = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
                 shard_type = datatable["PB_DT_ShardMaster"][shard_name]["ShardType"]
@@ -212,30 +212,33 @@ def set_material_hsv(filename, parameter, new_hsv):
 
 def import_mesh(filename):
     #Import a mesh file at the right location by reading it in the file
-    new_file = UAsset(f"Data\\Mesh\\{filename}.uasset", EngineVersion.VER_UE4_22)
+    new_file = UAsset(f"Data/Mesh/{filename}.uasset", EngineVersion.VER_UE4_22)
     name_map = new_file.GetNameMapIndexList()
     filepath = None
     for name in name_map:
         if str(name)[0] == "/" and str(name).split("/")[-1] == filename:
-            filepath = str(name)[6:][:-(len(filename)+1)].replace("/", "\\")
+            filepath = str(name)[6:][:-(len(filename)+1)]
             break
     if not filepath:
         raise Exception(f"Failed to obtain filepath of asset {filename}")
-    if not os.path.isdir(f"{Manager.mod_dir}\\{filepath}"):
-        os.makedirs(f"{Manager.mod_dir}\\{filepath}")
-    new_file.Write(f"{Manager.mod_dir}\\{filepath}\\{filename}.uasset")
+    if not os.path.isdir(f"{Manager.mod_dir}/{filepath}"):
+        os.makedirs(f"{Manager.mod_dir}/{filepath}")
+    new_file.Write(f"{Manager.mod_dir}/{filepath}/{filename}.uasset")
 
 def import_texture(filename):
     #Convert DDS to game assets dynamically instead of cooking them within Unreal Editor
-    absolute_asset_dir   = os.path.abspath(f"{Manager.asset_dir}\\{Manager.file_to_path[filename]}")
-    absolute_texture_dir = os.path.abspath("Data\\Texture")
-    absolute_mod_dir     = os.path.abspath(f"{Manager.mod_dir}\\{Manager.file_to_path[filename]}")
+    absolute_asset_dir   = os.path.abspath(f"{Manager.asset_dir}/{Manager.file_to_path[filename]}")
+    absolute_texture_dir = os.path.abspath("Data/Texture")
+    absolute_mod_dir     = os.path.abspath(f"{Manager.mod_dir}/{Manager.file_to_path[filename]}")
+    
+    python_path = os.path.join("python", "python.exe")
+    source_path = os.path.join("src", "main.py")
     
     root = os.getcwd()
-    os.chdir("Tools\\UE4 DDS Tools")
-    os.system(f"cmd /c python\\python.exe src\\main.py \"{absolute_asset_dir}\\{filename}.uasset\" \"{absolute_texture_dir}\\{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
+    os.chdir("Tools/UE4 DDS Tools")
+    os.system(f"cmd /c {python_path} {source_path} \"{absolute_asset_dir}/{filename}.uasset\" \"{absolute_texture_dir}/{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
     os.chdir(root)
     
     #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here
-    if not os.path.isfile(f"{absolute_mod_dir}\\{filename}.uasset"):
+    if not os.path.isfile(f"{absolute_mod_dir}/{filename}.uasset"):
         raise FileNotFoundError(f"{filename}.dds failed to inject")

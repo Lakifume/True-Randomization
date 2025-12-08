@@ -224,24 +224,23 @@ def update_lip_movement():
         update_lip_pointer(event, event_replacement[event])
 
 def update_lip_pointer(old_event, new_event):
-    internal_path = Manager.lipsync_dir.replace("\\", "/")
     #Simply swap the file's name in the name map and save as the new name
     old_event = f"{voice_language}_{old_event}_LIP"
     new_event = f"{voice_language}_{new_event}_LIP"
     
-    if f"{new_event}.uasset" in os.listdir(f"{Manager.asset_dir}\\{Manager.lipsync_dir}"):
-        new_event_data = UAsset(f"{Manager.asset_dir}\\{Manager.lipsync_dir}\\{new_event}.uasset", EngineVersion.VER_UE4_22)
+    if f"{new_event}.uasset" in os.listdir(f"{Manager.asset_dir}/{Manager.lipsync_dir}"):
+        new_event_data = UAsset(f"{Manager.asset_dir}/{Manager.lipsync_dir}/{new_event}.uasset", EngineVersion.VER_UE4_22)
         index = new_event_data.SearchNameReference(FString(new_event))
         new_event_data.SetNameReference(index, FString(old_event))
-        index = new_event_data.SearchNameReference(FString(f"/Game/{internal_path}/{new_event}"))
-        new_event_data.SetNameReference(index, FString(f"/Game/{internal_path}/{old_event}"))
-        new_event_data.Write(f"{Manager.mod_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset")
-    elif f"{old_event}.uasset" in os.listdir(f"{Manager.asset_dir}\\{Manager.lipsync_dir}"):
-        old_event_data = UAsset(f"{Manager.asset_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset", EngineVersion.VER_UE4_22)
+        index = new_event_data.SearchNameReference(FString(f"/Game/{Manager.lipsync_dir}/{new_event}"))
+        new_event_data.SetNameReference(index, FString(f"/Game/{Manager.lipsync_dir}/{old_event}"))
+        new_event_data.Write(f"{Manager.mod_dir}/{Manager.lipsync_dir}/{old_event}.uasset")
+    elif f"{old_event}.uasset" in os.listdir(f"{Manager.asset_dir}/{Manager.lipsync_dir}"):
+        old_event_data = UAsset(f"{Manager.asset_dir}/{Manager.lipsync_dir}/{old_event}.uasset", EngineVersion.VER_UE4_22)
         for export in old_event_data.Exports:
             if str(export.ObjectName) == old_event:
                 export.Data.Clear()
-        old_event_data.Write(f"{Manager.mod_dir}\\{Manager.lipsync_dir}\\{old_event}.uasset")
+        old_event_data.Write(f"{Manager.mod_dir}/{Manager.lipsync_dir}/{old_event}.uasset")
 
 def add_music_file(filename):
     #Check if the filename is valid
@@ -256,13 +255,13 @@ def add_music_file(filename):
     except ValueError:
         raise TypeError(f"Invalid music name: {filename}")
     #Copy the awb and import the new music in it
-    old_awb_name = Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.awb"
-    new_awb_name = Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".awb"
+    old_awb_name = Manager.asset_dir + "/" + Manager.file_to_path["ACT50_BRM"] + "/ACT50_BRM.awb"
+    new_awb_name = Manager.mod_dir + "/" + Manager.file_to_path["ACT50_BRM"] + "/" + filename + ".awb"
     with open(old_awb_name, "rb") as inputfile, open(new_awb_name, "wb") as outfile:
         offset = inputfile.read().find(str.encode("HCA"))
         inputfile.seek(0)
         outfile.write(inputfile.read(offset))
-        with open(f"Data\\Music\\{filename}.hca", "rb") as hca:
+        with open(f"Data/Music/{filename}.hca", "rb") as hca:
             outfile.write(hca.read())
         outfile.seek(0, os.SEEK_END)
         filesize = outfile.tell()
@@ -274,7 +273,7 @@ def add_music_file(filename):
     replacement = music_replacement[music_id] if music_id in music_replacement else music_id
     datatable["PB_DT_SoundMaster"][music_id]["AssetPath"] = f"/Game/Core/Sound/bgm/{replacement}.{replacement}"
     #Copy the act file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\ACT50_BRM.uasset", EngineVersion.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "/" + Manager.file_to_path["ACT50_BRM"] + "/ACT50_BRM.uasset", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -292,9 +291,9 @@ def add_music_file(filename):
     for num in range(int(len(string)/2) -1, -1, -1):
         new_file.Exports[0].Extras[0x1A32 + count] = int(string[num*2] + string[num*2 + 1], 16)
         count += 1
-    new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["ACT50_BRM"] + "\\" + filename + ".uasset")
+    new_file.Write(Manager.mod_dir + "/" + Manager.file_to_path["ACT50_BRM"] + "/" + filename + ".uasset")
     #Copy the bgm file
-    new_file = UAsset(Manager.asset_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\BGM_m50BRM.uasset", EngineVersion.VER_UE4_22)
+    new_file = UAsset(Manager.asset_dir + "/" + Manager.file_to_path["BGM_m50BRM"] + "/BGM_m50BRM.uasset", EngineVersion.VER_UE4_22)
     index = new_file.SearchNameReference(FString("ACT50_BRM"))
     new_file.SetNameReference(index, FString(filename))
     index = new_file.SearchNameReference(FString("/Game/Core/Sound/bgm/ACT50_BRM"))
@@ -305,4 +304,4 @@ def add_music_file(filename):
     new_file.SetNameReference(index, FString(f"/Game/Core/Sound/bgm/{music_id}"))
     new_file.Exports[0].Data[1].Value = FString(music_id)
     new_file.Exports[0].Data[2].Value = 300.0
-    new_file.Write(Manager.mod_dir + "\\" + Manager.file_to_path["BGM_m50BRM"] + "\\" + music_id + ".uasset")
+    new_file.Write(Manager.mod_dir + "/" + Manager.file_to_path["BGM_m50BRM"] + "/" + music_id + ".uasset")

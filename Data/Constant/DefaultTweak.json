@@ -220,7 +220,8 @@
     },
     "N1002_ATTACK_001_OPEN": {
       "MPCost": 0.0,
-      "MainStoryBaseAttack": 25.0,
+      "MainStorySAValue": 800.0,
+      "MainStoryBaseAttack": 35.0,
       "MainStoryMinimumDamage": 1.0
     },
     "N1002_UMBRELLA_ROCKET": {
@@ -230,11 +231,10 @@
       "IsOverrideSAValue": false,
       "SAOverrideValue": 0.0,
       "MainStorySAValue": 200.0,
-      "MainStoryBaseAttack": 35.0,
       "MainStorySTRAddRate": 1.0,
       "MainStoryINTAddRate": 0.0,
       "MainStoryMinimumDamage": 1.0,
-      "MainStoryMPCost": 100.0
+      "MainStoryMPCost": 60.0
     },
     "N1002_ATTACK_002": {
       "MPCost": 30.0,
@@ -242,13 +242,13 @@
       "KnockbackFromCharacter": false,
       "MainStoryBaseAttack": 25.0,
       "MainStoryMinimumDamage": 1.0,
-      "MainStoryMPCost": 60.0
+      "MainStoryMPCost": 50.0
     },
     "N1002_ATTACK_002_Charge": {
       "MPCost": 30.0,
-      "MainStoryBaseAttack": 37.0,
+      "MainStoryBaseAttack": 35.0,
       "MainStoryMinimumDamage": 1.0,
-      "MainStoryMPCost": 60.0
+      "MainStoryMPCost": 50.0
     },
     "N1002_ATTACK_RED_TYPHOON": {
       "MPCost": 40.0,
