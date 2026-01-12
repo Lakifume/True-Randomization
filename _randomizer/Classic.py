@@ -54,8 +54,6 @@ def init():
     ]
     global current_available_checks
     current_available_checks = []
-    global previous_available_checks
-    previous_available_checks = []
     global all_available_checks
     all_available_checks = []
     global check_to_requirement
@@ -189,6 +187,7 @@ def randomize_candle_drops():
                 break
 
 def process_key_logic():
+    reset_available_checks()
     move_through_checks()
     while True:
         #Place key item
@@ -226,31 +225,24 @@ def move_through_checks():
         if check in all_available_checks:
             continue
         if accessible:
-            current_available_checks.append(check)
+            current_available_checks[0].append(check)
             all_available_checks.append(check)
         else:
             check_to_requirement[check] = requirement
 
 def reset_available_checks():
-    previous_available_checks.clear()
-    previous_available_checks.extend(current_available_checks)
-    current_available_checks.clear()
+    current_available_checks.insert(0, [])
 
 def place_next_key(chosen_item):
-    if random.random() < logic_complexity:
-        try:
-            chosen_check = pick_key_check(current_available_checks)
-        except IndexError:
+    chosen_check = None
+    for history in current_available_checks:
+        if random.random() < logic_complexity:
             try:
-                chosen_check = pick_key_check(previous_available_checks)
+                chosen_check = pick_key_check(history)
+                break
             except IndexError:
-                chosen_check = pick_key_check(all_available_checks)
-    elif random.random() < logic_complexity:
-        try:
-            chosen_check = pick_key_check(previous_available_checks)
-        except IndexError:
-            chosen_check = pick_key_check(all_available_checks)
-    else:
+                pass
+    if not chosen_check:
         chosen_check = pick_key_check(all_available_checks)
     key_item_to_location[chosen_item] = chosen_check
     key_items.remove(chosen_item)

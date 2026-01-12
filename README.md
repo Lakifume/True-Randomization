@@ -77,6 +77,11 @@ Here are some known game glitches to watch out for:
 
 # Changelog
 
+3.0.7:
+- Improved accuracy of progression logic on higher complexities
+- Fixed an issue that prevented backer portrait rando from working
+- Added the missing licenses for UAssetAPI and UE4SS
+
 3.0.6:
 - Implemented progression hints in the randomized game if items are shuffled
 - Made it so that checking the spoiler on the map editor automatically opens the correct map

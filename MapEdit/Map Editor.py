@@ -431,7 +431,7 @@ class MainWindow(QMainWindow):
         + "QMenu::item:selected{background: #320288ff}"
         + "QMenu::item:pressed{border: 1px solid #640288ff}" 
         + "QComboBox{background-color: #21222e; selection-background-color: #320288ff}"
-        + "QComboBox QAbstractItemView{border: 1px solid #21222e}"
+        + "QComboBox QAbstractItemView{background-color: #21222e; border: 1px solid #21222e}"
         + "QMessageBox{background-color: #21222e}"
         + "QDialog{background-color: #21222e}"
         + "QGroupBox{background-color: #21222e; border: 2px solid white}"

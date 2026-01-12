@@ -19,8 +19,11 @@ import colorsys
 from enum import Enum
 
 sys.path.append(os.path.abspath("Tools/UAssetAPI"))
-clr.AddReference("UAssetAPI")
-clr.AddReference("UAssetSnippet")
+try:
+    clr.AddReference("UAssetAPI")
+    clr.AddReference("UAssetSnippet")
+except Exception:
+    raise Exception("Unable to access required extension files. To proceed go into Tools>UAssetAPI and manually unblock each .dll file individually.")
 
 from UAssetAPI import *
 from UAssetAPI.FieldTypes import *

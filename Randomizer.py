@@ -847,7 +847,7 @@ class MainWindow(QGraphicsView):
         self.setStyleSheet("QWidget{background:transparent; color: #ffffff; font-family: Cambria; font-size: " + str(int(self.size_multiplier*18)) + "px}"
         + "QGraphicsView{border-image: url(MapEdit/Data/background.png)}"
         + "QComboBox{background-color: #21222e; selection-background-color: #320288ff}"
-        + "QComboBox QAbstractItemView{border: 1px solid #21222e}"
+        + "QComboBox QAbstractItemView{background-color: #21222e; border: 1px solid #21222e}"
         + "QScrollBar::add-page{background-color: #1b1c26}"
         + "QScrollBar::sub-page{background-color: #1b1c26}"
         + "QMenu{background-color: #21222e; margin: 4px}"

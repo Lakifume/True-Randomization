@@ -98,8 +98,6 @@ def init():
     global all_abilities
     all_abilities = list(candle_to_ability.values())
     #Logic
-    global previous_available_candles
-    previous_available_candles = []
     global current_available_doors
     current_available_doors = ["SAN_023_START"]
     global current_available_candles
@@ -137,6 +135,7 @@ def satisfies_requirement(requirement):
 
 def process_key_logic():
     #Simplified version of the function from Item
+    reset_available_checks()
     move_through_rooms()
     while True:
         #Place key item
@@ -204,9 +203,7 @@ def check_lifted_obstacles():
         analyse_check(check, requirement)
 
 def reset_available_checks():
-    previous_available_candles.clear()
-    previous_available_candles.extend(current_available_candles)
-    current_available_candles.clear()
+    current_available_candles.insert(0, [])
     current_available_bosses.clear()
 
 def analyse_check(check, requirement):
@@ -239,7 +236,7 @@ def analyse_check(check, requirement):
                     if destination in check_to_requirement:
                         del check_to_requirement[destination]
             case CheckType.Candle:
-                current_available_candles.append(check)
+                current_available_candles[0].append(check)
                 all_available_candles.append(check)
             case CheckType.Boss:
                 current_available_bosses.append(check)
@@ -272,20 +269,15 @@ def get_check_type(check):
     return CheckType.Door
 
 def place_next_key(chosen_item):
-    if random.random() < logic_complexity:
-        try:
-            chosen_candle = pick_key_candle(current_available_candles)
-        except IndexError:
+    chosen_candle = None
+    for history in current_available_candles:
+        if random.random() < logic_complexity:
             try:
-                chosen_candle = pick_key_candle(previous_available_candles)
+                chosen_candle = pick_key_candle(history)
+                break
             except IndexError:
-                chosen_candle = pick_key_candle(all_available_candles)
-    elif random.random() < logic_complexity:
-        try:
-            chosen_candle = pick_key_candle(previous_available_candles)
-        except IndexError:
-            chosen_candle = pick_key_candle(all_available_candles)
-    else:
+                pass
+    if not chosen_candle:
         chosen_candle = pick_key_candle(all_available_candles)
     key_ability_to_location[chosen_item] = chosen_candle
     all_keys.remove(chosen_item)

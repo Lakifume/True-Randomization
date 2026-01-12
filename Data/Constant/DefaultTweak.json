@@ -5531,6 +5531,9 @@
     "TissLeif": {
       "MaxNum": 14
     },
+    "NeverSatisfied": {
+      "MaxNum": 20
+    },
     "Beastguard": {
       "maxRankValue": 1.0
     },
@@ -5600,31 +5603,28 @@
       "maxGradeValue": 20.0
     },
     "Resistedge": {
-      "minGradeValue": 10.0,
-      "maxGradeValue": 20.0
+      "minGradeValue": 7.5
     },
     "Resistthrust": {
-      "minGradeValue": 10.0,
-      "maxGradeValue": 20.0
+      "minGradeValue": 7.5
     },
     "ResistBrow": {
-      "minGradeValue": 10.0,
-      "maxGradeValue": 20.0
+      "minGradeValue": 7.5
     },
     "ResistFire": {
-      "maxGradeValue": 10.0
+      "minGradeValue": 7.5
     },
     "Resistice": {
-      "maxGradeValue": 10.0
+      "minGradeValue": 7.5
     },
     "ResistThunder": {
-      "maxGradeValue": 10.0
+      "minGradeValue": 7.5
     },
     "ResistHorley": {
-      "maxGradeValue": 10.0
+      "minGradeValue": 7.5
     },
     "Resistdark": {
-      "maxGradeValue": 10.0
+      "minGradeValue": 7.5
     },
     "ResistPoison": {
       "minGradeValue": 15.0,
@@ -5639,8 +5639,7 @@
       "maxGradeValue": 30.0
     },
     "Resistmagic": {
-      "minGradeValue": 2.5,
-      "maxGradeValue": 5.0
+      "minGradeValue": 5.0
     },
     "optimizer": {
       "minGradeValue": 0.1,
