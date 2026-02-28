@@ -681,8 +681,6 @@ class Generate(QThread):
         
         #Reset
         
-        if os.path.isdir("Tools/UE4 DDS Tools/src/__pycache__"):
-            shutil.rmtree("Tools/UE4 DDS Tools/src/__pycache__")
         shutil.rmtree("Tools/UnrealPak/Mod")
         os.remove("Tools/UnrealPak/filelist.txt")
         
@@ -756,7 +754,7 @@ class Update(QThread):
         
         shutil.rmtree("Data")
         shutil.rmtree("MapEdit/Data")
-        shutil.rmtree("Tools/UE4 DDS Tools")
+        shutil.rmtree("Tools/UE4DDSTools")
         shutil.rmtree("Tools/UE4SS")
         shutil.rmtree("Tools/UModel")
         shutil.rmtree("Tools/UnrealPak")

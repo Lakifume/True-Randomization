@@ -1,6 +1,7 @@
 from System import *
 import Manager
 from . import Enemy
+from Tools.UE4DDSTools import main as UE4DDS
 
 def init():
     global portrait_replacement
@@ -231,13 +232,14 @@ def import_texture(filename):
     absolute_texture_dir = os.path.abspath("Data/Texture")
     absolute_mod_dir     = os.path.abspath(f"{Manager.mod_dir}/{Manager.file_to_path[filename]}")
     
-    python_path = os.path.join("python", "python.exe")
-    source_path = os.path.join("src", "main.py")
-    
-    root = os.getcwd()
-    os.chdir("Tools/UE4 DDS Tools")
-    os.system(f"cmd /c {python_path} {source_path} \"{absolute_asset_dir}/{filename}.uasset\" \"{absolute_texture_dir}/{filename}.dds\" --save_folder=\"{absolute_mod_dir}\" --mode=inject --version=4.22")
-    os.chdir(root)
+    args = UE4DDS.get_args([
+        f"{absolute_asset_dir}/{filename}.uasset",
+        f"{absolute_texture_dir}/{filename}.dds",
+        "--save_folder", absolute_mod_dir,
+        "--mode", "inject",
+        "--version", "4.22"
+    ])
+    UE4DDS.main(args)
     
     #UE4 DDS Tools does not interrupt the program if a texture fails to convert so do it from here
     if not os.path.isfile(f"{absolute_mod_dir}/{filename}.uasset"):
