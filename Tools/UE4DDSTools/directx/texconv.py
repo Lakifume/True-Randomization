@@ -11,7 +11,7 @@ import tempfile
 
 from .dds import DDS, DDSHeader, is_hdr
 from .dxgi_format import DXGI_FORMAT
-from util import mkdir, get_os_name, is_windows, is_mac, is_linux
+from ..util import mkdir, get_os_name, is_windows, is_mac, is_linux
 
 
 class Texconv:

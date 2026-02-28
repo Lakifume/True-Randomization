@@ -1,1 +1,0 @@
-pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py

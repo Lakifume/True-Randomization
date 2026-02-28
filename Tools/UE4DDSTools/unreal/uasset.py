@@ -3,7 +3,7 @@ import io
 from io import IOBase
 import os
 
-from util import mkdir
+from ..util import mkdir
 from .import_export import ExportBase
 from .utexture import Utexture
 from .version import VersionInfo

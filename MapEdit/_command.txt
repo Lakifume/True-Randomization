@@ -1,1 +1,0 @@
-pyinstaller.exe --onefile --noconsole --add-data "Map.ico;." --icon=Map.ico "Map Editor.py"

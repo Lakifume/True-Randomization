@@ -2,8 +2,8 @@
 from .data_resource import BulkType
 from .umipmap import Umipmap
 from .version import VersionInfo
-from directx.dds import DDSHeader, DDS
-from directx.dxgi_format import DXGI_FORMAT, DXGI_BYTE_PER_PIXEL
+from ..directx.dds import DDSHeader, DDS
+from ..directx.dxgi_format import DXGI_FORMAT, DXGI_BYTE_PER_PIXEL
 from .archive import (ArchiveBase, Bytes, Uint64, Uint32, String, StructArray)
 
 # Defined in UnrealEngine/Engine/Source/Runtime/D3D12RHI/Private/D3D12RHI.cpp

@@ -1,8 +1,8 @@
-#from clr_loader import get_coreclr
-#from pythonnet import set_runtime
-#
-#rt = get_coreclr(runtime_config = "tr.runtimeconfig.json")
-#set_runtime(rt)
+from clr_loader import get_coreclr
+from pythonnet import set_runtime
+
+rt = get_coreclr(runtime_config = "tr.runtimeconfig.json")
+set_runtime(rt)
 
 import os
 import clr

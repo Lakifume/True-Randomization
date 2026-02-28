@@ -7,16 +7,15 @@ import time
 from contextlib import redirect_stdout
 import concurrent.futures
 import functools
-import sys
-sys.path.append(os.path.dirname(__file__))
+
 # my scripts
-from util import (compare, get_ext, get_temp_dir,
+from .util import (compare, get_ext, get_temp_dir,
                   get_file_list, get_base_folder, remove_quotes,
                   check_python_version, is_windows)
-from unreal.uasset import Uasset, UASSET_EXT
-from directx.dds import DDS
-from directx.dxgi_format import DXGI_FORMAT
-from directx.texconv import Texconv
+from .unreal.uasset import Uasset, UASSET_EXT
+from .directx.dds import DDS
+from .directx.dxgi_format import DXGI_FORMAT
+from .directx.texconv import Texconv
 
 TOOL_VERSION = "0.6.1"
 
