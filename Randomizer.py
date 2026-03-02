@@ -22,6 +22,7 @@ import shutil
 import glob
 import random
 import zipfile
+import tarfile
 import requests
 import subprocess
 import configparser
@@ -35,6 +36,7 @@ import platform
 from enum import Enum
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
+is_windows = platform.system() == "Windows" 
 
 def resource_path(relative_path):
     try:
@@ -668,13 +670,13 @@ class Generate(QThread):
         current += 1
         self.signaller.progress.emit(current)
         
-        #UnrealPak
+        #Repak
         
         self.progress_bar.setLabelText("Packing files...")
         
         root = os.getcwd()
         os.chdir("Tools/Repak")
-        subprocess.check_call(["repak.exe" if platform.system() == "Windows" else "repak", "pack", "--version", "V8A", "--compression", "Zlib", "Mod"])
+        subprocess.check_call(["repak.exe" if is_windows else "repak", "pack", "--version", "V8A", "--compression", "Zlib", "Mod"])
         os.chdir(root)
         
         #Reset
@@ -689,7 +691,7 @@ class Generate(QThread):
         
         #Copy UE4SS
         
-        exe_directory = config.get("Misc", "sGamePath") + "/BloodstainedRotN/Binaries/Win64"
+        exe_directory = fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Binaries/Win64"
         if not os.path.isfile(f"{exe_directory}/UE4SS.dll"):
             for item in os.listdir("Tools/UE4SS"):
                 if os.path.isfile(f"Tools/UE4SS/{item}"):
@@ -732,14 +734,13 @@ class Update(QThread):
 
     def process(self):
         current = 0
-        zip_name = "True Randomization.zip"
-        exe_name = f"{script_name}.exe"
+        asset = self.api["assets"][0 if is_windows else 1]
         self.signaller.progress.emit(current)
         
         #Download
         
-        with open(zip_name, "wb") as file_writer:
-            url = requests.get(self.api["assets"][0]["browser_download_url"], stream=True)
+        with open(asset["name"], "wb") as file_writer:
+            url = requests.get(asset["browser_download_url"], stream=True)
             for data in url.iter_content(chunk_size=4096):
                 file_writer.write(data)
                 current += len(data)
@@ -754,17 +755,21 @@ class Update(QThread):
         shutil.rmtree("Tools/UE4DDSTools")
         shutil.rmtree("Tools/UE4SS")
         shutil.rmtree("Tools/UModel")
-        shutil.rmtree("Tools/UnrealPak")
+        shutil.rmtree("Tools/Repak")
         
         #Extract
         
-        os.rename(exe_name, "delete.me")
+        os.rename(f"{script_name}.exe" if is_windows else script_name, "delete.me")
         os.rename("Tools/UAssetAPI/Newtonsoft.Json.dll", "Tools/UAssetAPI/delete1.me")
         os.rename("Tools/UAssetAPI/UAssetAPI.dll",       "Tools/UAssetAPI/delete2.me")
         os.rename("Tools/UAssetAPI/UAssetSnippet.dll",   "Tools/UAssetAPI/delete3.me")
-        with zipfile.ZipFile(zip_name, "r") as zip_ref:
-            zip_ref.extractall("")
-        os.remove(zip_name)
+        if is_windows:
+            with zipfile.ZipFile(asset["name"], "r") as zip_ref:
+                zip_ref.extractall("")
+        else:
+            with tarfile.TarFile(asset["name"], "r") as tar_ref:
+                tar_ref.extractall("")
+        os.remove(asset["name"])
         
         #Carry previous config params
         
@@ -813,7 +818,7 @@ class Import(QThread):
         root = os.getcwd()
         os.chdir("Tools/UModel")
         for batch in batches:
-            subprocess.check_call(["umodel_64.exe" if platform.system() == "Windows" else "umodel", fr"-path={config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks", fr"-out={output_path}", "-save"] + batch.split(" "))
+            subprocess.check_call(["umodel_64.exe" if is_windows else "umodel", fr"-path={config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks", fr"-out={output_path}", "-save"] + batch.split(" "))
             current += batch.count(" ") + 1
             self.signaller.progress.emit(current)
         os.chdir(root)
@@ -2138,7 +2143,7 @@ class MainWindow(QGraphicsView):
             self.game_path_field.setText(path)
     
     def is_game_path_valid(self):
-        return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(config.get("Misc", "sGamePath") + "/BloodstainedRotN.exe")
+        return os.path.isdir(config.get("Misc", "sGamePath")) and os.path.isfile(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN.exe")
     
     def label_change(self, filetype):
         files  = modified_files[filetype]["Files"]
@@ -2266,7 +2271,7 @@ class MainWindow(QGraphicsView):
         if "gog games" in config.get("Misc", "sGamePath").lower():
             #List the DLC IDs in the game path
             dlc_id_list = []
-            for file in glob.glob(config.get("Misc", "sGamePath") + "/*.hashdb"):
+            for file in glob.glob(fr"{config.get("Misc", "sGamePath")}/*.hashdb"):
                 file_name = os.path.split(os.path.splitext(file)[0])[-1]
                 dlc_id_list.append(file_name.split("-")[-1])
             #Check for DLC IDs in the list
