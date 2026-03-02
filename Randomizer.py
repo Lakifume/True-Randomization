@@ -30,6 +30,7 @@ import psutil
 import vdf
 import textwrap
 import webbrowser
+import platform
 
 from enum import Enum
 
@@ -671,24 +672,20 @@ class Generate(QThread):
         
         self.progress_bar.setLabelText("Packing files...")
         
-        with open("Tools/UnrealPak/filelist.txt", "w") as file_writer:
-            file_writer.write("\"Mod/*.*\" \"../../../*.*\" \n")
-        
         root = os.getcwd()
-        os.chdir("Tools/UnrealPak")
-        os.system("cmd /c UnrealPak.exe \"Randomizer.pak\" -create=filelist.txt -compress")
+        os.chdir("Tools/Repak")
+        subprocess.check_call(["repak.exe" if platform.system() == "Windows" else "repak", "pack", "--version", "V8A", "--compression", "Zlib", "Mod"])
         os.chdir(root)
         
         #Reset
         
-        shutil.rmtree("Tools/UnrealPak/Mod")
-        os.remove("Tools/UnrealPak/filelist.txt")
+        shutil.rmtree("Tools/Repak/Mod")
         
         #Move
         
-        if not os.path.isdir(config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods"):
-            os.makedirs(config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods")
-        shutil.move("Tools/UnrealPak/Randomizer.pak", config.get("Misc", "sGamePath") + "/BloodstainedRotN/Content/Paks/~mods/Randomizer.pak")
+        if not os.path.isdir(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods"):
+            os.makedirs(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods")
+        shutil.move("Tools/Repak/Mod.pak", fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods/Randomizer.pak")
         
         #Copy UE4SS
         
@@ -809,14 +806,14 @@ class Import(QThread):
             shutil.rmtree(Manager.asset_dir)
         
         #There's a limit of around 8000 characters per command, split the list of packages into multiple batches of maximum 7500 characters
-        packages = " ".join([f"-pkg=\"{Manager.asset_dir}/{Manager.file_to_path[asset]}/{asset}\"" for asset in self.asset_list])
+        packages = " ".join([fr"-pkg={Manager.asset_dir}/{Manager.file_to_path[asset]}/{asset}" for asset in self.asset_list])
         batches = textwrap.wrap(packages, 7500)
         output_path = os.path.abspath("")
         
         root = os.getcwd()
         os.chdir("Tools/UModel")
         for batch in batches:
-            os.system("cmd /c umodel_64.exe -path=\"" + config.get("Misc", "sGamePath") + f"/BloodstainedRotN/Content/Paks\" -out=\"{output_path}\" -save {batch}")
+            subprocess.check_call(["umodel_64.exe" if platform.system() == "Windows" else "umodel", fr"-path={config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks", fr"-out={output_path}", "-save"] + batch.split(" "))
             current += batch.count(" ") + 1
             self.signaller.progress.emit(current)
         os.chdir(root)
