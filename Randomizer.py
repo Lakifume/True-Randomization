@@ -34,6 +34,9 @@ import webbrowser
 import platform
 
 from enum import Enum
+from pathlib import Path
+from pyuepak import PakFile
+from pyuepak import PakVersion
 
 script_name = os.path.splitext(os.path.basename(__file__))[0]
 is_windows = platform.system() == "Windows" 
@@ -674,20 +677,23 @@ class Generate(QThread):
         
         self.progress_bar.setLabelText("Packing files...")
         
-        root = os.getcwd()
-        os.chdir("Tools/Repak")
-        subprocess.check_call(["repak.exe" if is_windows else "repak", "pack", "--version", "V8A", "--compression", "Zlib", "Mod"])
-        os.chdir(root)
-        
-        #Reset
-        
-        shutil.rmtree("Tools/Repak/Mod")
-        
-        #Move
-        
-        if not os.path.isdir(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods"):
-            os.makedirs(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods")
-        shutil.move("Tools/Repak/Mod.pak", fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods/Randomizer.pak")
+        input_dir = Path(*Path(Manager.mod_dir).parts[:-2])
+
+        pak = PakFile()
+        pak.set_version(PakVersion.V8A)
+
+        files = [f for f in input_dir.rglob("*") if f.is_file()]
+
+        for file_path in files:
+            rel_path = file_path.relative_to(input_dir)
+            with open(file_path, "rb") as f:
+                pak.add_file(str(rel_path.as_posix()), f.read())
+
+        mods_folder = fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/~mods"
+        if not os.path.isdir(mods_folder):
+            os.makedirs(mods_folder)
+        pak.write(fr"{mods_folder}/Randomizer.pak")
+        shutil.rmtree("Mod")
         
         #Copy UE4SS
         
@@ -734,7 +740,7 @@ class Update(QThread):
 
     def process(self):
         current = 0
-        asset = self.api["assets"][0 if is_windows else 1]
+        asset = self.api["assets"][int(is_windows)]
         self.signaller.progress.emit(current)
         
         #Download
@@ -754,8 +760,6 @@ class Update(QThread):
         shutil.rmtree("MapEdit/Data")
         shutil.rmtree("Tools/UE4DDSTools")
         shutil.rmtree("Tools/UE4SS")
-        shutil.rmtree("Tools/UModel")
-        shutil.rmtree("Tools/Repak")
         
         #Extract
         
@@ -805,23 +809,31 @@ class Import(QThread):
         current = 0
         self.signaller.progress.emit(current)
         
-        #Extract specific assets from the game's pak using UModel
-        
         if os.path.isdir(Manager.asset_dir) and self.asset_list == list(Manager.file_to_path):
             shutil.rmtree(Manager.asset_dir)
+        os.makedirs(Manager.asset_dir)
         
-        #There's a limit of around 8000 characters per command, split the list of packages into multiple batches of maximum 7500 characters
-        packages = " ".join([fr"-pkg={Manager.asset_dir}/{Manager.file_to_path[asset]}/{asset}" for asset in self.asset_list])
-        batches = textwrap.wrap(packages, 7500)
-        output_path = os.path.abspath("")
-        
-        root = os.getcwd()
-        os.chdir("Tools/UModel")
-        for batch in batches:
-            subprocess.check_call(["umodel_64.exe" if is_windows else "umodel", fr"-path={config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks", fr"-out={output_path}", "-save"] + batch.split(" "))
-            current += batch.count(" ") + 1
-            self.signaller.progress.emit(current)
-        os.chdir(root)
+        unique_files = []
+        for pak_path in glob.glob(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/*.pak"):
+            pak = PakFile()
+            pak.read(pak_path)
+            
+            for file in pak.list_files():
+                file_full = os.path.split(file)[-1]
+                file_name = os.path.splitext(file_full)[0]
+                if not file_name in self.asset_list:
+                    continue
+                data = pak.read_file(file)
+                if "L10N" in Manager.file_to_path[file_name]:
+                    out = Path(f"{Manager.asset_dir}/{file.replace("BloodstainedRotN/Content/", "")}")
+                else:
+                    out = Path(f"{Manager.asset_dir}/{Manager.file_to_path[file_name]}/{file_full}")
+                out.parent.mkdir(parents=True, exist_ok=True)
+                out.write_bytes(data)
+                if not file_name in unique_files:
+                    unique_files.append(file_name)
+                    current += 1
+                    self.signaller.progress.emit(current)
         
         self.signaller.finished.emit()
 

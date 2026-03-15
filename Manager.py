@@ -51,7 +51,7 @@ def reset():
 def load_file_info():
     #Variables
     global mod_dir
-    mod_dir = "Tools/Repak/Mod/BloodstainedRotN/Content"
+    mod_dir = "Mod/BloodstainedRotN/Content"
     global asset_dir
     asset_dir = "Game"
     global lipsync_dir
