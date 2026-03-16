@@ -4,7 +4,7 @@ The randomizer that aims to accomplish what vanilla rando doesn't.
 
 # Requirements
 
-- Windows 10/11 or Linux
+- Windows 10/11 or Linux OS
 
 # Setup
 
