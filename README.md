@@ -4,7 +4,7 @@ The randomizer that aims to accomplish what vanilla rando doesn't.
 
 # Requirements
 
-- Windows 10 and above
+- Windows 10/11 or Linux
 
 # Setup
 
@@ -242,4 +242,4 @@ Eternity Audio Tool: https://mega.nz/file/W5NHxDYD#IM7xirUu1-K8e34lINmgC3MFqG1OW
 - Open Eternity Audio Tool, go to File > Convert Files to HCA, select your WAV and use the loop data option. This will output an HCA file in the same folder.
 - Grab the HCA, put it in the True Randomization\Data\Music folder and rename it using the following naming convention: ACT{2 digits number}_{3 character acronym}
 - Go to MapEdit\Data\Translation, open MusicTranslation.json and add an entry with the music id as the key (BGM_m{your 2 digits number}{your 3 character acronym}) and its readable name as the value.
-- Assign this new track to any room of your choice.
+- Assign this new track to any room of your choice in the map editor.

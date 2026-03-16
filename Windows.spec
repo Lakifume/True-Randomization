@@ -5,7 +5,7 @@ a = Analysis(
     ['Randomizer.py'],
     pathex=[],
     binaries=[],
-    datas=[('Bloodstained.ico', '.')],
+    datas=[('Bloodstained.ico', '.'), ('oo2core_9_win64.dll', 'pyuepak')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
