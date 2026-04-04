@@ -2240,7 +2240,7 @@ class MainWindow(QGraphicsView):
         dlc_list = [DLCType.Shantae]
         #Steam
         if "steamapps" in config.get("Misc", "sGamePath").lower():
-            steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
+            steam_path = config.get("Misc", "sSteamPath") if config.get("Misc", "sSteamPath") else os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
             #Override the Steam path if the game path is on another drive
             library_config_path = f"{steam_path}/libraryfolder.vdf"
             if os.path.isfile(library_config_path):
