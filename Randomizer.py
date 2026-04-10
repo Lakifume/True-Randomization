@@ -485,8 +485,11 @@ class Generate(QThread):
             random.seed(self.selected_seed)
             Sound.randomize_music()
         
-        #Create hints
-        if config.getboolean("ItemRandomization", "bOverworldPool"):
+        #Override item pool with AP placeholders
+        if config.getboolean("Archipelago", "bEnable"):
+            Item.override_pool_for_ap()
+        #Create hints if not for AP
+        elif config.getboolean("ItemRandomization", "bOverworldPool"):
             random.seed(self.selected_seed)
             Item.fill_check_to_hint()
             Item.create_hints()

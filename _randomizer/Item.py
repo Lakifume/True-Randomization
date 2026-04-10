@@ -390,6 +390,8 @@ def init():
         "Treasurebox_JRN002_1",
         "Treasurebox_JRN004_1"
     ]
+    global current_chests
+    current_chests = copy.deepcopy(vanilla_chests)
     global room_to_area
     room_to_area = {
         "SIP": "m01",
@@ -1117,7 +1119,7 @@ def randomize_overworld_items():
     #Start chest
     patch_start_chest_entry()
     #Skip Vepar chest
-    vanilla_chests.remove("Treasurebox_SIP020_1")
+    current_chests.remove("Treasurebox_SIP020_1")
     #Johannes mats
     patch_chest_entry(random.choice(blue_chest_type), "PotionMaterial")
     #100% chest
@@ -1137,22 +1139,22 @@ def randomize_overworld_items():
     #Upgrades
     #Don't put any upgrades in areas that extra character can't access
     for num in range(30):
-        chosen = random.choice(vanilla_chests)
+        chosen = random.choice(current_chests)
         while "JRN" in chosen:
-            chosen = random.choice(vanilla_chests)
+            chosen = random.choice(current_chests)
         patch_key_item_entry("MaxHPUP", chosen)
     for num in range(30):
-        chosen = random.choice(vanilla_chests)
+        chosen = random.choice(current_chests)
         while "JRN" in chosen:
-            chosen = random.choice(vanilla_chests)
+            chosen = random.choice(current_chests)
         patch_key_item_entry("MaxMPUP", chosen)
     for num in range(24):
-        chosen = random.choice(vanilla_chests)
+        chosen = random.choice(current_chests)
         while "JRN" in chosen:
-            chosen = random.choice(vanilla_chests)
+            chosen = random.choice(current_chests)
         patch_key_item_entry("MaxBulletUP", chosen)
     #Item pool
-    chest_pool = copy.deepcopy(vanilla_chests)
+    chest_pool = copy.deepcopy(current_chests)
     random.shuffle(chest_pool)
     for chest in chest_pool:
         patch_chest_entry(random.choice(chest_type), chest)
@@ -1253,7 +1255,7 @@ def patch_key_item_entry(item, container):
     datatable["PB_DT_DropRateMaster"][container]["RareItemId"] = item
     datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = 1
     datatable["PB_DT_DropRateMaster"][container]["RareItemRate"] = 100.0
-    vanilla_chests.remove(container)
+    current_chests.remove(container)
     
 def patch_key_shard_entry(shard, enemy):
     #Assign a key shard to an entry
@@ -1289,13 +1291,13 @@ def patch_start_chest_entry():
         datatable["PB_DT_DropRateMaster"][container]["CommonItemId"]       = pick_and_remove(constant["ItemDrop"]["Bullet"]["ItemPool"], constant["ItemDrop"]["Bullet"]["IsUnique"], "Bullet")
         datatable["PB_DT_DropRateMaster"][container]["CommonItemQuantity"] = constant["ItemDrop"]["Bullet"]["ItemHighQuantity"]
         datatable["PB_DT_DropRateMaster"][container]["CommonRate"]         = constant["ItemDrop"]["Bullet"]["ItemRate"]
-    vanilla_chests.remove(container)
+    current_chests.remove(container)
     if constant["ItemDrop"]["Weapon"]["IsUnique"]:
         flag_room_unique_item(container)
 
 def patch_chest_entry(item_type, container):
     #Randomize chest items based on item types
-    if not container in vanilla_chests:
+    if not container in current_chests:
         return
     empty_drop_entry(container)
     match constant["ItemDrop"][item_type]["ChestColor"]:
@@ -1324,7 +1326,7 @@ def patch_chest_entry(item_type, container):
             datatable["PB_DT_DropRateMaster"][container]["RareItemId"]       = pick_and_remove(constant["ItemDrop"][item_type]["ItemPool"], constant["ItemDrop"][item_type]["IsUnique"], item_type)
             datatable["PB_DT_DropRateMaster"][container]["RareItemQuantity"] = constant["ItemDrop"][item_type]["ItemQuantity"]
             datatable["PB_DT_DropRateMaster"][container]["RareItemRate"]     = constant["ItemDrop"][item_type]["ItemRate"]
-    vanilla_chests.remove(container)
+    current_chests.remove(container)
     if constant["ItemDrop"][item_type]["IsUnique"]:
         flag_room_unique_item(container)
     
@@ -1383,6 +1385,17 @@ def patch_enemy_entry(item_type, item_rate, container):
             datatable["PB_DT_DropRateMaster"][container]["CommonIngredientId"]       = pick_and_remove(constant["EnemyDrop"]["EnemyMat"]["ItemPool"], constant["EnemyDrop"]["EnemyMat"]["IsUnique"], item_type)
             datatable["PB_DT_DropRateMaster"][container]["CommonIngredientQuantity"] = constant["EnemyDrop"]["EnemyMat"]["ItemQuantity"]
             datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = constant["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
+
+def override_pool_for_ap():
+    #For AP replace every single item check with a uniquely-identified placeholder
+    for index in range(len(vanilla_chests)):
+        drop_id = vanilla_chests[index]
+        ap_item = f"AP_{drop_id}"
+        add_game_item(-1, ap_item, "Key", "None", (3968, 3968), f"AP Item #{index + 1}", "One of many relics that is part of the Archipelago world", 0, False)
+        empty_drop_entry(drop_id)
+        datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] = ap_item
+        datatable["PB_DT_DropRateMaster"][drop_id]["RareItemQuantity"] = 1
+        datatable["PB_DT_DropRateMaster"][drop_id]["RareItemRate"] = 100.0
 
 def unlock_all_quests():
     #Make all quests available from the start
@@ -1637,7 +1650,7 @@ def get_room_nearby_items(from_room):
 def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, description, price, craftable):
     #Add a completely new item slot into the game
     if item_id in datatable["PB_DT_ItemMaster"]:
-        raise Exception("Item already exists.")
+        raise Exception(f"Item {item_id} already exists.")
     #Edit ItemMaster
     icon_path                                                                  = (icon_coord[1]//128)*32 + icon_coord[0]//128
     datatable["PB_DT_ItemMaster"][item_id]                                     = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
