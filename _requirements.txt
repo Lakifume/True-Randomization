@@ -4,3 +4,5 @@ requests == 2.32.*
 vdf == 3.4
 PySide6 == 6.10.*
 pyinstaller == 6.16.*
+pyuepak
+cryptography

@@ -2238,69 +2238,67 @@ class MainWindow(QGraphicsView):
     def get_dlc_info(self):
         #Shantae is on by default
         dlc_list = [DLCType.Shantae]
-        #Steam
-        if "steamapps" in config.get("Misc", "sGamePath").lower():
-            steam_path = config.get("Misc", "sSteamPath") if config.get("Misc", "sSteamPath") else os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
-            #Override the Steam path if the game path is on another drive
-            library_config_path = f"{steam_path}/libraryfolder.vdf"
-            if os.path.isfile(library_config_path):
-                with open(library_config_path, "r", encoding="utf8") as file_reader:
-                    steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
-                    steam_path = os.path.split(steam_exe_path)[0]
-            #Get user config
-            user_config_path = f"{steam_path}/config/loginusers.vdf"
-            if not os.path.isfile(user_config_path):
-                self.dlc_failure()
+        try:
+            #Steam
+            if "steamapps" in config.get("Misc", "sGamePath").lower():
+                steam_path = config.get("Misc", "sSteamPath") or os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
+                #Override the Steam path if the game path is on another drive
+                library_config_path = f"{steam_path}/libraryfolder.vdf"
+                if os.path.isfile(library_config_path):
+                    with open(library_config_path, "r", encoding="utf8") as file_reader:
+                        steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
+                        steam_path = os.path.split(steam_exe_path)[0]
+                #Get user config
+                user_config_path = f"{steam_path}/config/loginusers.vdf"
+                with open(f"{steam_path}/config/loginusers.vdf", "r", encoding="utf8") as file_reader:
+                    user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
+                #Determine the Steam friend code based on their user ID
+                steam_user = None
+                for user in user_config:
+                    if user_config[user]["mostrecent"] == "1":
+                        steam_user = int(user) - 76561197960265728
+                        break
+                #Get local config
+                local_config_path = f"{steam_path}/userdata/{steam_user}/config/localconfig.vdf"
+                with open(local_config_path, "r", encoding="utf8") as file_reader:
+                    dlc_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["userlocalconfigstore"]["apptickets"]
+                #Check for DLC IDs in the config
+                if "1041460" in dlc_config:
+                    dlc_list.append(DLCType.IGA)
+                if "2380800" in dlc_config:
+                    dlc_list.append(DLCType.Succubus)
+                if "2380801" in dlc_config:
+                    dlc_list.append(DLCType.MagicGirl)
+                if "2380802" in dlc_config:
+                    dlc_list.append(DLCType.Japanese)
+                if "2380803" in dlc_config:
+                    dlc_list.append(DLCType.Classic2)
                 return dlc_list
-            with open(f"{steam_path}/config/loginusers.vdf", "r", encoding="utf8") as file_reader:
-                user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
-            #Determine the Steam friend code based on their user ID
-            steam_user = None
-            for user in user_config:
-                if user_config[user]["mostrecent"] == "1":
-                    steam_user = int(user) - 76561197960265728
-                    break
-            #Get local config
-            local_config_path = f"{steam_path}/userdata/{steam_user}/config/localconfig.vdf"
-            if not os.path.isfile(local_config_path):
-                self.dlc_failure()
+            #GOG
+            if "gog games" in config.get("Misc", "sGamePath").lower():
+                #List the DLC IDs in the game path
+                dlc_id_list = []
+                for file in glob.glob(fr"{config.get("Misc", "sGamePath")}/*.hashdb"):
+                    file_name = os.path.split(os.path.splitext(file)[0])[-1]
+                    dlc_id_list.append(file_name.split("-")[-1])
+                #Check for DLC IDs in the list
+                if "2089941670" in dlc_id_list:
+                    dlc_list.append(DLCType.IGA)
+                if "2021103941" in dlc_id_list:
+                    dlc_list.append(DLCType.Succubus)
+                if "1841144430" in dlc_id_list:
+                    dlc_list.append(DLCType.MagicGirl)
+                if "1255553972" in dlc_id_list:
+                    dlc_list.append(DLCType.Japanese)
+                if "1229761293" in dlc_id_list:
+                    dlc_list.append(DLCType.Classic2)
                 return dlc_list
-            with open(local_config_path, "r", encoding="utf8") as file_reader:
-                dlc_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["userlocalconfigstore"]["apptickets"]
-            #Check for DLC IDs in the config
-            if "1041460" in dlc_config:
-                dlc_list.append(DLCType.IGA)
-            if "2380800" in dlc_config:
-                dlc_list.append(DLCType.Succubus)
-            if "2380801" in dlc_config:
-                dlc_list.append(DLCType.MagicGirl)
-            if "2380802" in dlc_config:
-                dlc_list.append(DLCType.Japanese)
-            if "2380803" in dlc_config:
-                dlc_list.append(DLCType.Classic2)
+            #Installation is unknown
+            raise Exception("Unknown installation")
+        except Exception:
+            print(traceback.format_exc())
+            self.dlc_failure()
             return dlc_list
-        #GOG
-        if "gog games" in config.get("Misc", "sGamePath").lower():
-            #List the DLC IDs in the game path
-            dlc_id_list = []
-            for file in glob.glob(fr"{config.get("Misc", "sGamePath")}/*.hashdb"):
-                file_name = os.path.split(os.path.splitext(file)[0])[-1]
-                dlc_id_list.append(file_name.split("-")[-1])
-            #Check for DLC IDs in the list
-            if "2089941670" in dlc_id_list:
-                dlc_list.append(DLCType.IGA)
-            if "2021103941" in dlc_id_list:
-                dlc_list.append(DLCType.Succubus)
-            if "1841144430" in dlc_id_list:
-                dlc_list.append(DLCType.MagicGirl)
-            if "1255553972" in dlc_id_list:
-                dlc_list.append(DLCType.Japanese)
-            if "1229761293" in dlc_id_list:
-                dlc_list.append(DLCType.Classic2)
-            return dlc_list
-        #Installation is unknown
-        self.dlc_failure()
-        return dlc_list
     
     def lowercase_vdf_dict(self, vdf_dict):
         new_dict = {}
