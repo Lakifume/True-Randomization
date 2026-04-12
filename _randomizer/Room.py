@@ -47,7 +47,6 @@ def init():
     global c_cat_actors
     c_cat_actors = [
         "PBEasyTreasureBox_BP_C",
-        "PBEasyTreasureBox_BP_C(Gold)",
         "PBPureMiriamTreasureBox_BP_C",
         "PBBakkerDoor_BP_C",
         "Chr_N3016_C",
@@ -661,13 +660,10 @@ def update_room_containers(room):
     room_width = datatable["PB_DT_RoomMaster"][room]["AreaWidthSize"]*1260
     for export_index in range(len(game_data[filename].Exports)):
         old_class_name = Utility.get_export_class(game_data[filename], game_data[filename].Exports[export_index])
-        #Check if it is a golden chest
-        if old_class_name == "PBEasyTreasureBox_BP_C" and str(game_data[filename].Exports[export_index].Data[4].Name) == "IsAutoMaterial":
-            old_class_name = "PBEasyTreasureBox_BP_C(Gold)"
         #Pure miriam is considered a different class but it's the same as regular chests
         if old_class_name == "PBPureMiriamTreasureBox_BP_C":
             old_class_name = "PBEasyTreasureBox_BP_C"
-        if old_class_name in ["PBEasyTreasureBox_BP_C", "PBEasyTreasureBox_BP_C(Gold)", "HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
+        if old_class_name in ["PBEasyTreasureBox_BP_C", "HPMaxUp_C", "MPMaxUp_C", "BulletMaxUp_C"]:
             #Gather old actor properties
             location = FVector(0, 0, 0)
             rotation = FRotator(0, 0, 0)
@@ -696,18 +692,19 @@ def update_room_containers(room):
                 continue
             if safety_chest:
                 continue
-            if datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxHPUP":
+            main_item = datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"]
+            if   main_item == "MaxHPUP":
                 new_class_name = "HPMaxUp_C"
-            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxMPUP":
+            elif main_item == "MaxMPUP":
                 new_class_name = "MPMaxUp_C"
-            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] == "MaxBulletUP":
+            elif main_item == "MaxBulletUP":
                 new_class_name = "BulletMaxUp_C"
-            elif datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] in Item.key_items + ["Certificationboard"]:
-                new_class_name = "PBEasyTreasureBox_BP_C(Gold)"
             else:
                 new_class_name = "PBEasyTreasureBox_BP_C"
             #Check if container mismatches item type
             if old_class_name == new_class_name:
+                if "TreasureBox" in old_class_name:
+                    update_chest_visuals(game_data[filename], game_data[filename].Exports[export_index])
                 continue
             #Some upgrades in rotating rooms are on the wrong plane
             if room == "m02VIL_008":
@@ -763,7 +760,7 @@ def update_room_containers(room):
                 filename = "m20JRN_002_BG"
             #Setup the actor properties
             properties = {}
-            if "PBEasyTreasureBox_BP_C" in new_class_name:
+            if "TreasureBox" in new_class_name:
                 properties["DropItemID"]   = FName.FromString(game_data[filename], drop_id)
                 properties["ItemID"]       = FName.FromString(game_data[filename], drop_id)
                 properties["TreasureFlag"] = FName.FromString(game_data[filename], "EGameTreasureFlag::" + Utility.remove_inst_number(drop_id))
@@ -771,7 +768,64 @@ def update_room_containers(room):
                     properties["OptionalGimmickID"] = FName.FromString(game_data[filename], gimmick_id)
             else:
                 properties["DropRateID"]   = FName.FromString(game_data[filename], drop_id)
+            #Add the actor to the level
+            actor_index = len(game_data[filename].Exports)
             add_level_actor(filename, new_class_name, location, rotation, scale, properties)
+            if "TreasureBox" in new_class_name:
+                update_chest_visuals(game_data[filename], game_data[filename].Exports[actor_index])
+
+def update_chest_visuals(uasset, export):
+    #For a chest container determine whether it should be standard, gold or AP
+    auto_material_struct = None
+    for data in export.Data:
+        if str(data.Name) in ["DropItemID", "DropRateID"]:
+            drop_id = str(data.Value)
+        if str(data.Name) == "IsAutoMaterial":
+            auto_material_struct = data
+        if str(data.Name) == "SkeletalMesh":
+            mesh_index = data.Value.Index - 1
+    #Determine visual from the main item
+    main_item = datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"]
+    if main_item in Item.key_items + ["Certificationboard"]:
+        auto_material = False
+        chest_material = "TreasureBox_Gold_Mat_Inst"
+        source_asset = game_data["m08TWR_019_Gimmick"]
+    elif main_item.split("_")[0] == "AP":
+        auto_material = False
+        chest_material = "TreasureBox_Yellow_Mat_Inst"
+        source_asset = game_data["ChaosStage_01_Treasure_1"]
+    else:
+        auto_material = True
+    #Update the auto material field or add it if necessary
+    if auto_material_struct:
+        auto_material_struct.Value = auto_material
+    else:
+        struct = BoolPropertyData(FName.FromString(uasset, "IsAutoMaterial"))
+        struct.Value = auto_material
+        uasset.AddNameReference(struct.PropertyType)
+        export.Data.Add(struct)
+    #If auto material end there
+    if auto_material:
+        return
+    #If manual get the material information
+    material_import = Utility.copy_asset_import(chest_material, source_asset, uasset)
+    sub_struct = ObjectPropertyData(FName.FromString(uasset, "0"))
+    sub_struct.Value = material_import
+    materials_struct = None
+    for mesh_data in uasset.Exports[mesh_index].Data:
+        if str(mesh_data.Name) == "OverrideMaterials":
+            materials_struct = mesh_data
+            break
+    #Update the material override array or add it if necessary
+    if materials_struct:
+        materials_struct.Value = [sub_struct]
+    else:
+        struct = ArrayPropertyData(FName.FromString(uasset, "OverrideMaterials"))
+        struct.ArrayType = FName.FromString(uasset, "ObjectProperty")
+        struct.Value = [sub_struct]
+        uasset.AddNameReference(struct.PropertyType)
+        uasset.AddNameReference(sub_struct.PropertyType)
+        uasset.Exports[mesh_index].Data.Add(struct)
 
 def update_map_connections():
     #The game map requires you to manually input a list of which rooms can be transitioned into from the current room

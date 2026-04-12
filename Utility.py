@@ -124,6 +124,8 @@ def create_unreal_struct(unreal_type, dummy_struct=None):
             return IntPropertyData()
         case "NameProperty":
             return NamePropertyData()
+        case "ObjectProperty":
+            return ObjectPropertyData()
         case "SoftObjectProperty":
             return SoftObjectPropertyData()
         case "StrProperty":
@@ -140,7 +142,7 @@ def copy_asset_import(import_name, source_asset, target_asset):
     count = 0
     for old_import in target_asset.Imports:
         count -= 1
-        if import_name in str(old_import.ObjectName):
+        if import_name == str(old_import.ObjectName):
             return FPackageIndex(count)
     #Gather import information
     package_index = None

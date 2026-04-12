@@ -1002,6 +1002,7 @@
   "m88BKR_003_RV":                            "Core/Environment/ACT88_BKR/Level",
   "m88BKR_004_Gimmick":                       "Core/Environment/ACT88_BKR/Level",
   "m88BKR_004_RV":                            "Core/Environment/ACT88_BKR/Level",
+  "ChaosStage_01_Treasure_1":                 "Core/Environment/Chaos/ChaosStage_01_Ship",
   "BDBP_BodyValkyrie":                        "Core/Item/Body",
   "T_Tknife05_Base":                          "Core/Item/Weapon/Tknife/Tknife05/Texture",
   "ACT50_BRM":                                "Core/Sound/bgm",

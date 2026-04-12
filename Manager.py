@@ -71,7 +71,7 @@ def load_file_info():
             file_to_type[file] = FileType.DataTable
         elif "StringTable" in file_to_path[file]:
             file_to_type[file] = FileType.StringTable
-        elif "Level" in file_to_path[file]:
+        elif "Level" in file_to_path[file] or "Stage" in file_to_path[file]:
             file_to_type[file] = FileType.Level
         elif "Material" in file_to_path[file]:
             file_to_type[file] = FileType.Material
@@ -486,9 +486,6 @@ def apply_default_tweaks():
     #Add magic doors instead to truly prevent tanking through
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 7500), FRotator(  0, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
     Room.add_level_actor("m03ENT_000_Gimmick", "BP_MagicDoor_C", FVector(1260, -270, 9120), FRotator(180, 0, 0), FVector(-1, 1, 1), {"CommonFlag": FName.FromString(game_data["m03ENT_000_Gimmick"], "EGameCommonFlag::None")})
-    #Neutralize the golden chest interaction box transforms to prevent issues when copying
-    game_data["m08TWR_019_Gimmick"].Exports[1022].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1022].Data[5])
-    game_data["m08TWR_019_Gimmick"].Exports[1022].Data.Remove(game_data["m08TWR_019_Gimmick"].Exports[1022].Data[5])
     #Change Dark Matter so that consuming it puts the player in OHKO mode until the next death
     datatable["PB_DT_SpecialEffectMaster"]["DarkMatter"]["LifeTime"] = -1
     datatable["PB_DT_SpecialEffectDefinitionMaster"]["DarkMatter"]["Type"]                     = "EPBSpecialEffect::None"

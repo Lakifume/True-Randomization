@@ -485,8 +485,9 @@ class Generate(QThread):
             random.seed(self.selected_seed)
             Sound.randomize_music()
         
-        #Override item pool with AP placeholders
+        #Override item pool with AP placeholders and cache item locations in the log
         if config.getboolean("Archipelago", "bEnable"):
+            Manager.write_log("Archipelago", Item.create_ap_log())
             Item.override_pool_for_ap()
         #Create hints if not for AP
         elif config.getboolean("ItemRandomization", "bOverworldPool"):
@@ -812,9 +813,11 @@ class Import(QThread):
         current = 0
         self.signaller.progress.emit(current)
         
-        if os.path.isdir(Manager.asset_dir) and self.asset_list == list(Manager.file_to_path):
-            shutil.rmtree(Manager.asset_dir)
-        os.makedirs(Manager.asset_dir)
+        if os.path.isdir(Manager.asset_dir):
+            if self.asset_list == list(Manager.file_to_path):
+                shutil.rmtree(Manager.asset_dir)
+        else:
+            os.makedirs(Manager.asset_dir)
         
         unique_files = []
         for pak_path in glob.glob(fr"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Content/Paks/*.pak"):

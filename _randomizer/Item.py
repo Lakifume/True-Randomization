@@ -1801,12 +1801,24 @@ def create_log_string(seed, map, original_enemies):
     log_string += "Key:\n"
     for item in key_order:
         if item in key_items:
-            log_string += "  " + translation["Item"][item] + ": " + key_item_to_location[item]
+            log_string += f"  {translation["Item"][item]}: {key_item_to_location[item]}"
         if item in key_shards:
-            log_string += "  " + translation["Shard"][item] + ": " + translation["Enemy"][key_shard_to_location[item]]
+            log_string += f"  {translation["Shard"][item]}: {translation["Enemy"][key_shard_to_location[item]]}"
             if key_shard_to_location[item] in original_enemies:
-                log_string += " (over " + translation["Enemy"][original_enemies[key_shard_to_location[item]]] + ")"
+                log_string += f" (over {translation["Enemy"][original_enemies[key_shard_to_location[item]]]})"
         log_string += "\n"
     log_string += "Beatable: "
     log_string += "Yes" if final_boss_available() else "No"
     return log_string
+
+def create_ap_log():
+    log = {}
+    log["Items"] = {}
+    log["Doors"] = copy.deepcopy(Room.map_connections)
+    for chest in vanilla_chests:
+        log["Items"][chest] = []
+        for entry in ["RareItem", "CommonItem", "RareIngredient", "CommonIngredient"]:
+            item_id = datatable["PB_DT_DropRateMaster"][chest][f"{entry}Id"]
+            if item_id != "None":
+                log["Items"][chest].append(datatable["PB_DT_DropRateMaster"][chest][f"{entry}Id"])
+    return log
