@@ -2247,7 +2247,11 @@ class MainWindow(QGraphicsView):
         try:
             #Steam
             if "steamapps" in config.get("Misc", "sGamePath").lower():
-                steam_path = config.get("Misc", "sSteamPath") or os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
+                #Retrieve the optional steam path override from the config
+                steam_path = config.get("Misc", "sSteamPath")
+                #If null then determine path from OS/gamedir
+                if not steam_path:
+                    steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../..")) if is_windows else f"{os.getenv('HOME')}/.steam/steam"
                 #Override the Steam path if the game path is on another drive
                 library_config_path = f"{steam_path}/libraryfolder.vdf"
                 if os.path.isfile(library_config_path):
