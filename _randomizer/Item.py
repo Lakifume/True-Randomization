@@ -1391,7 +1391,7 @@ def override_pool_for_ap():
     for index in range(len(vanilla_chests)):
         drop_id = vanilla_chests[index]
         ap_item = f"AP_{drop_id}"
-        add_game_item(-1, ap_item, "Key", "None", (3968, 3968), f"AP Item #{index + 1}", "One of many relics that is part of the Archipelago world", 0, False)
+        add_game_item(-1, ap_item, "Key", "None", (3968, 3968), ap_item, "One of many relics that is part of the Archipelago world", 0, False)
         empty_drop_entry(drop_id)
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] = ap_item
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemQuantity"] = 1
