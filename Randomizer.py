@@ -2260,7 +2260,7 @@ class MainWindow(QGraphicsView):
                         steam_path = os.path.split(steam_exe_path)[0]
                 #Get user config
                 user_config_path = f"{steam_path}/config/loginusers.vdf"
-                with open(f"{steam_path}/config/loginusers.vdf", "r", encoding="utf8") as file_reader:
+                with open(user_config_path, "r", encoding="utf8") as file_reader:
                     user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
                 #Determine the Steam friend code based on their user ID
                 steam_user = None

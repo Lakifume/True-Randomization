@@ -1396,6 +1396,24 @@ def override_pool_for_ap():
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] = ap_item
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemQuantity"] = 1
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemRate"] = 100.0
+    for entry in datatable["PB_DT_DropRateMaster"]:
+        if "Treasure" in entry:
+            continue
+        enemy_id = entry.split("_")[0]
+        if not enemy_id in constant["EnemyInfo"]:
+            continue
+        if not constant["EnemyInfo"][enemy_id]["HasShard"]:
+            continue
+        if entry == f"{enemy_id}_Shard":
+            ap_shard = f"AP_{entry}"
+            shard_type = random.choice(["Trigger", "Effective", "Directional", "Enchant", "Familiar", "Skill"])
+            add_game_item(-1, ap_shard, "Shard", shard_type, (1280, 3456), f"{translation["Enemy"][enemy_id]} Shard", "A crystalized version of an Archipelago relic", 0, False)
+            datatable["PB_DT_DropRateMaster"][entry]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
+            datatable["PB_DT_DropRateMaster"][entry]["ShardId"] = ap_shard
+            datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = 100.0
+            continue
+        datatable["PB_DT_DropRateMaster"][entry]["ShardId"]   = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
+        datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardRate"]
 
 def unlock_all_quests():
     #Make all quests available from the start
@@ -1655,14 +1673,14 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
     icon_path                                                                  = (icon_coord[1]//128)*32 + icon_coord[0]//128
     datatable["PB_DT_ItemMaster"][item_id]                                     = copy.deepcopy(datatable["PB_DT_ItemMaster"]["Potion"])
     datatable["PB_DT_ItemMaster"][item_id]["IconPath"]                         = str(icon_path)
-    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                       = f"ITEM_NAME_{item_id}"
-    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]                = f"ITEM_EXPLAIN_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["NameStrKey"]                       = f"{"SHARD" if item_type == "Shard" else "ITEM"}_NAME_{item_id}"
+    datatable["PB_DT_ItemMaster"][item_id]["DescriptionStrKey"]                = f"{"SHARD" if item_type == "Shard" else "ITEM"}_EXPLAIN_{item_id}"
     datatable["PB_DT_ItemMaster"][item_id]["buyPrice"]                         = price
     datatable["PB_DT_ItemMaster"][item_id]["sellPrice"]                        = max(1, price//10) if price > 0 else 0
     datatable["PB_DT_ItemMaster"][item_id]["Producted"]                        = "None"
     #Edit string entries                                                       
-    stringtable["PBMasterStringTable"][f"ITEM_NAME_{item_id}"]                 = name
-    stringtable["PBMasterStringTable"][f"ITEM_EXPLAIN_{item_id}"]              = description
+    stringtable["PBMasterStringTable"][f"{"SHARD" if item_type == "Shard" else "ITEM"}_NAME_{item_id}"]                 = name
+    stringtable["PBMasterStringTable"][f"{"SHARD" if item_type == "Shard" else "ITEM"}_EXPLAIN_{item_id}"]              = description
     #Edit case by case properties
     match item_type:
         case "Accessory":
@@ -1676,7 +1694,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
                 datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Ring"])
                 datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
             Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
-        case "Armor":                                                  
+        case "Armor":
             datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Body"
             datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 99
             datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
@@ -1687,7 +1705,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
                 datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Tunic"])
                 datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
             Manager.datatable_entry_index["PB_DT_ArmorMaster"][item_id]        = index
-        case "Bullet":                                                 
+        case "Bullet":
             datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Bullet"
             datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 999
             datatable["PB_DT_ItemMaster"][item_id]["CarryToBossRushMode"]      = True
@@ -1707,7 +1725,7 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
                 datatable["PB_DT_DamageMaster"][item_id + "_EX"]               = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX"])
                 datatable["PB_DT_DamageMaster"][item_id + "_EX2"]              = copy.deepcopy(datatable["PB_DT_DamageMaster"]["Softpoint_EX2"])
             Manager.datatable_entry_index["PB_DT_AmmunitionMaster"][item_id]   = index
-        case "Potion":                                                 
+        case "Potion":
             datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Potion"
             datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
             datatable["PB_DT_ConsumableMaster"][item_id]                       = copy.deepcopy(datatable["PB_DT_ConsumableMaster"]["Potion"])
@@ -1724,11 +1742,18 @@ def add_game_item(index, item_id, item_type, item_subtype, icon_coord, name, des
                 datatable["PB_DT_CraftMaster"][item_id]                        = copy.deepcopy(datatable["PB_DT_CraftMaster"]["Potion"])
                 datatable["PB_DT_CraftMaster"][item_id]["CraftItemId"]         = item_id
             Manager.datatable_entry_index["PB_DT_ConsumableMaster"][item_id]   = index
-        case "Key":                                                  
+        case "Key":
             datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = "ECarriedCatalog::Key"
             datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 1
             datatable["PB_DT_KeyItemMaster"][item_id]                          = copy.deepcopy(datatable["PB_DT_KeyItemMaster"]["VillageKey"])
             Manager.datatable_entry_index["PB_DT_KeyItemMaster"][item_id]      = index
+        case "Shard":
+            datatable["PB_DT_ItemMaster"][item_id]["ItemType"]                 = f"ECarriedCatalog::{item_subtype}{"" if item_subtype == "Skill" else "Shard"}"
+            datatable["PB_DT_ItemMaster"][item_id]["max"]                      = 9
+            datatable["PB_DT_ShardMaster"][item_id]                            = copy.deepcopy(datatable["PB_DT_ShardMaster"]["Dummy"])
+            datatable["PB_DT_ShardMaster"][item_id]["ShardType"]               = f"EShardType::{item_subtype[:-1] if item_subtype == "Familiar" else item_subtype}"
+            datatable["PB_DT_ShardMaster"][item_id]["EnhanceStrKey"]           = f"SHARD_EFFECT_TXT_{item_id}"
+            Manager.datatable_entry_index["PB_DT_ShardMaster"][item_id]        = index
 
 def pick_and_remove(item_array, remove, item_type):
     #Function for picking and remove an item at random
