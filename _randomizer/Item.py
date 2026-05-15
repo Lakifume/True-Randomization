@@ -1410,10 +1410,8 @@ def override_pool_for_ap():
             add_game_item(-1, ap_shard, "Shard", shard_type, (1280, 3456), f"{translation["Enemy"][enemy_id]} Shard", "A crystalized version of an Archipelago relic", 0, False)
             datatable["PB_DT_DropRateMaster"][entry]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
             datatable["PB_DT_DropRateMaster"][entry]["ShardId"] = ap_shard
-            datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = 100.0
             continue
         datatable["PB_DT_DropRateMaster"][entry]["ShardId"]   = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
-        datatable["PB_DT_DropRateMaster"][entry]["ShardRate"] = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardRate"]
 
 def unlock_all_quests():
     #Make all quests available from the start
