@@ -1028,7 +1028,7 @@ class MainWindow(QGraphicsView):
         modified_file_label_right.addStretch(1)
         
         discord_label = QLabel()
-        discord_label.setText("<a href=\"https://discord.gg/nUbFA7MEeU\"><font face=Cambria color=#0080ff>Discord</font></a>")
+        discord_label.setText("<a href=\"https://discord.gg/5VAz5Jua4A\"><font face=Cambria color=#0080ff>Discord</font></a>")
         discord_label.setAlignment(Qt.AlignRight)
         discord_label.setOpenExternalLinks(True)
         modified_file_label_bottom.addStretch(1)
@@ -2245,30 +2245,51 @@ class MainWindow(QGraphicsView):
         #Shantae is on by default
         dlc_list = [DLCType.Shantae]
         try:
-            #Steam
+            
+            ###STEAM###
+            
             if "steamapps" in config.get("Misc", "sGamePath").lower():
-                #Retrieve the optional steam path override from the config
-                steam_path = config.get("Misc", "sSteamPath")
-                #If null then determine path from OS/gamedir
-                if not steam_path:
-                    steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../..")) if is_windows else f"{os.getenv('HOME')}/.steam/steam"
-                #Override the Steam path if the game path is on another drive
-                library_config_path = f"{steam_path}/libraryfolder.vdf"
-                if os.path.isfile(library_config_path):
-                    with open(library_config_path, "r", encoding="utf8") as file_reader:
-                        steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
-                        steam_path = os.path.split(steam_exe_path)[0]
-                #Get user config
-                user_config_path = f"{steam_path}/config/loginusers.vdf"
-                with open(user_config_path, "r", encoding="utf8") as file_reader:
-                    user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
-                #Determine the Steam friend code based on their user ID
-                steam_user = None
-                for user in user_config:
-                    if user_config[user]["mostrecent"] == "1":
-                        steam_user = int(user) - 76561197960265728
-                        break
-                #Get local config
+                
+                ##STEP 1: Get Steam's installation path
+                
+                #Favor the optional steam path override from the config
+                if config.get("Misc", "sSteamPath"):
+                    steam_path = config.get("Misc", "sSteamPath")
+                #If empty then determine it from the game path structure
+                elif is_windows:
+                    steam_path = os.path.abspath(os.path.join(config.get("Misc", "sGamePath"), "../../.."))
+                    #Override the Steam path if the game path is on another drive
+                    library_config_path = f"{steam_path}/libraryfolder.vdf"
+                    if os.path.isfile(library_config_path):
+                        with open(library_config_path, "r", encoding="utf8") as file_reader:
+                            steam_exe_path = self.lowercase_vdf_dict(vdf.parse(file_reader))["libraryfolder"]["launcher"]
+                            steam_path = os.path.split(steam_exe_path)[0]
+                #If Linux get the path from the home environment command
+                else:
+                    steam_path = f"{os.getenv('HOME')}/.steam/steam"
+                
+                ##STEP 2: Retrieve the user's friend code
+                
+                #Try to get the code directly from the cloud config in the game's folder first
+                try:
+                    cloud_config_path = f"{config.get("Misc", "sGamePath")}/BloodstainedRotN/Saved/SaveGames/steam_autocloud.vdf"
+                    with open(cloud_config_path, "r", encoding="utf8") as file_reader:
+                        steam_user = self.lowercase_vdf_dict(vdf.parse(file_reader))["steam_autocloud.vdf"]["accountid"]
+                #If this fails try obtaining it from the loginusers config
+                except Exception:
+                    #Get user config
+                    user_config_path = f"{steam_path}/config/loginusers.vdf"
+                    with open(user_config_path, "r", encoding="utf8") as file_reader:
+                        user_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["users"]
+                    #Determine the friend code based on their user ID
+                    steam_user = None
+                    for user in user_config:
+                        if user_config[user]["autologin"] == "1":
+                            steam_user = int(user) - 76561197960265728
+                            break
+                
+                ##STEP 3: Access the user's local config with the information gathered
+                
                 local_config_path = f"{steam_path}/userdata/{steam_user}/config/localconfig.vdf"
                 with open(local_config_path, "r", encoding="utf8") as file_reader:
                     dlc_config = self.lowercase_vdf_dict(vdf.parse(file_reader))["userlocalconfigstore"]["apptickets"]
@@ -2284,27 +2305,27 @@ class MainWindow(QGraphicsView):
                 if "2380803" in dlc_config:
                     dlc_list.append(DLCType.Classic2)
                 return dlc_list
-            #GOG
-            if "gog games" in config.get("Misc", "sGamePath").lower():
-                #List the DLC IDs in the game path
-                dlc_id_list = []
-                for file in glob.glob(fr"{config.get("Misc", "sGamePath")}/*.hashdb"):
-                    file_name = os.path.split(os.path.splitext(file)[0])[-1]
-                    dlc_id_list.append(file_name.split("-")[-1])
-                #Check for DLC IDs in the list
-                if "2089941670" in dlc_id_list:
-                    dlc_list.append(DLCType.IGA)
-                if "2021103941" in dlc_id_list:
-                    dlc_list.append(DLCType.Succubus)
-                if "1841144430" in dlc_id_list:
-                    dlc_list.append(DLCType.MagicGirl)
-                if "1255553972" in dlc_id_list:
-                    dlc_list.append(DLCType.Japanese)
-                if "1229761293" in dlc_id_list:
-                    dlc_list.append(DLCType.Classic2)
-                return dlc_list
-            #Installation is unknown
-            raise Exception("Unknown installation")
+            
+            ###IF NOT STEAM ASSUME IT'S GOG###
+            
+            #List the DLC IDs in the game path
+            dlc_id_list = []
+            for file in glob.glob(fr"{config.get("Misc", "sGamePath")}/*.hashdb"):
+                file_name = os.path.split(os.path.splitext(file)[0])[-1]
+                dlc_id_list.append(file_name.split("-")[-1])
+            #Check for DLC IDs in the list
+            if "2089941670" in dlc_id_list:
+                dlc_list.append(DLCType.IGA)
+            if "2021103941" in dlc_id_list:
+                dlc_list.append(DLCType.Succubus)
+            if "1841144430" in dlc_id_list:
+                dlc_list.append(DLCType.MagicGirl)
+            if "1255553972" in dlc_id_list:
+                dlc_list.append(DLCType.Japanese)
+            if "1229761293" in dlc_id_list:
+                dlc_list.append(DLCType.Classic2)
+            return dlc_list
+            
         except Exception:
             print(traceback.format_exc())
             self.dlc_failure()
@@ -2721,7 +2742,7 @@ class MainWindow(QGraphicsView):
         self.setEnabled(True)
     
     def cc_button_clicked(self):
-        webbrowser.open("https://crowdcontrol.live/game/bloodstained-ritual-of-the-night")
+        webbrowser.open("https://crowdcontrol.live/games/bloodstained")
     
     def archipelago_button_clicked(self):
         archi_window_layout = QVBoxLayout()
@@ -2868,7 +2889,7 @@ class MainWindow(QGraphicsView):
         credit_8_label_image.setFixedSize(self.size_multiplier*60, self.size_multiplier*60)
         credit_8_layout.addWidget(credit_8_label_image)
         credit_8_label_text = QLabel()
-        credit_8_label_text.setText("<span style=\"font-weight: bold; color: #dd872e;\">Tourmi</span><br/>True Randomization Contributor<br/><a href=\"https://github.com/Tourmi\"><font face=Cambria color=#dd872e>Github</font></a>")
+        credit_8_label_text.setText("<span style=\"font-weight: bold; color: #ffbfe7;\">VGFreak</span><br/>AP integration contributor<br/><a href=\"https://github.com/vgfreak95/BloodstainedAP\"><font face=Cambria color=#ffbfe7>Github</font></a>")
         credit_8_label_text.setOpenExternalLinks(True)
         credit_8_layout.addWidget(credit_8_label_text)
         credit_box_layout = QVBoxLayout()

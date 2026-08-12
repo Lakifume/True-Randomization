@@ -5,6 +5,7 @@ The randomizer that aims to accomplish what vanilla rando doesn't.
 # Requirements
 
 - Windows 10/11 or Linux OS
+- .NET 8.0
 
 # Setup
 
@@ -76,6 +77,11 @@ Here are some known game glitches to watch out for:
 - Run pyinstaller.exe --onefile --add-data "Bloodstained.ico;." --icon=Bloodstained.ico Randomizer.py
 
 # Changelog
+
+3.0.8:
+- Updated DLC check for Steam installations
+- Fixed an issue where custom game folder names caused the DLC check to fail for GOG
+- Updated the credits window
 
 3.0.7:
 - Improved accuracy of progression logic on higher complexities
