@@ -1387,7 +1387,7 @@ def patch_enemy_entry(item_type, item_rate, container):
             datatable["PB_DT_DropRateMaster"][container]["CommonIngredientRate"]     = constant["EnemyDrop"]["EnemyMat"]["ItemRate"]*item_rate
 
 def override_pool_for_ap():
-    #For AP replace every single item check with a uniquely-identified placeholder
+    #Replace every item check by a placeholder
     for index in range(len(vanilla_chests)):
         drop_id = vanilla_chests[index]
         ap_item = f"AP_{drop_id}"
@@ -1396,6 +1396,7 @@ def override_pool_for_ap():
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemId"] = ap_item
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemQuantity"] = 1
         datatable["PB_DT_DropRateMaster"][drop_id]["RareItemRate"] = 100.0
+    #Replace every enemy shard by a placeholder
     for entry in datatable["PB_DT_DropRateMaster"]:
         if "Treasure" in entry:
             continue
@@ -1411,7 +1412,11 @@ def override_pool_for_ap():
             datatable["PB_DT_DropRateMaster"][entry]["DropSpecialFlags"] = "EDropSpecialFlag::DropShardOnce"
             datatable["PB_DT_DropRateMaster"][entry]["ShardId"] = ap_shard
             continue
-        datatable["PB_DT_DropRateMaster"][entry]["ShardId"]   = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
+        datatable["PB_DT_DropRateMaster"][entry]["ShardId"] = datatable["PB_DT_DropRateMaster"][f"{enemy_id}_Shard"]["ShardId"]
+    #Add a placeholder dimension shift part
+    part_name = "AP_DimensionPart"
+    add_game_item(-1, part_name, "Key", "None", (896, 3456), f"{translation["Shard"]["Dimensionshift"]} Fragment", "Piece of a shard with the power to phase through dimensions", 0, False)
+    datatable["PB_DT_ItemMaster"][part_name]["max"] = 999
 
 def unlock_all_quests():
     #Make all quests available from the start
